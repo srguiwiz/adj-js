@@ -35,6 +35,10 @@
 //
 // Comments to: <adj.feedback AT nrvr DOT com>
 //
+// ==============================================================================
+//
+// Public repository - https://github.com/srguiwiz/adj-js
+//
 
 // invoke Adj by doing Adj.processAdjComments(document);
 // e.g. <svg onload="Adj.processAdjComments(document);">
