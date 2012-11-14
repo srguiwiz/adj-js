@@ -1,9 +1,6 @@
-<html>
-<head>
-<title>Adj Framework - README</title>
-</head>
-<body>
-<pre>Adj commands modify SVG.
+# Adj Framework - Repository README
+
+Adj commands modify SVG.
 
 The original purpose of the Adj framework has been to facilitate
 creation and long term maintenance of system diagrams.
@@ -14,6 +11,5 @@ Because of its general nature, other uses may be possible.
 
 Start by reading the User Guide at user-docs/index.html.
 
-A readable copy of the User Guide should be <a href="http://www.nrvr.com/open/adj/adj-js/user-docs/">online here</a>.</pre>
-</body>
-</html>
+A readable copy of the User Guide should be
+[online here](http://www.nrvr.com/open/adj/adj-js/user-docs/).
