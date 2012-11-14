@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="363" height="485">
+	<title>CompanyMobile Build Logic</title>
+	<!-- Sample drawing idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+		svg {
+			font-size: 12px;
+		}
+		text {
+			fill: black;
+			stroke: none;
+		}
+		.filler {
+			fill: none;
+			stroke: none;
+		}
+		.arrow {
+			stroke: grey;
+			fill: none;
+		}
+		.directory {
+			fill: lemonchiffon;
+			stroke: lightgray;
+		}
+		.file {
+			fill: ghostwhite;
+			stroke: lightgray;
+		}
+		.deemphasize {
+			font-size: smaller;
+		}
+		]]></style>
+	<defs>
+		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
+			<path d="M -3 1 L 0 0 L -3 -1"/>
+		</marker>
+	</defs>
+	<g>
+		<!-- Adj verticalList gap:5 -->
+		<rect fill="snow" stroke="none" width="362" height="484" x="0.5" y="0.5">
+			<!-- Adj frameForParent -->
+		</rect>
+		<text style="fill:gray" transform="translate(7,17)">Sample drawing only, not a real system design.</text>
+		<text transform="translate(7,37)">Directory Structure</text>
+		<g class="directory" transform="translate(5,45)">
+			<!-- Adj verticalList gap:5 -->
+			<rect stroke-width="2" width="351" height="433" x="1" y="1">
+				<!-- Adj frameForParent inset:1 -->
+			</rect>
+			<text transform="translate(7,17)">CompanyMobile <tspan class="deemphasize">(renaming this top level is OK, e.g. on checkout)</tspan>
+			</text>
+			<g class="directory" transform="translate(5,25)">
+				<!-- Adj verticalList gap:5 -->
+				<rect stroke-width="2" width="341" height="93" x="1" y="1">
+					<!-- Adj frameForParent inset:1 -->
+				</rect>
+				<text transform="translate(7,17)">CompanyMobile.xcodeproj</text>
+				<g class="file" transform="translate(5,25)">
+					<!-- Adj verticalList gap:5 -->
+					<rect stroke-width="2" width="331" height="63" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">project.pbxproj</text>
+					<text transform="translate(7,37)">• home of Build Settings</text>
+					<text transform="translate(7,57)">• in several instances defines custom HARDCODED_DOMAINS</text>
+				</g>
+			</g>
+			<g class="directory" transform="translate(5,125)">
+				<!-- Adj verticalList gap:5 -->
+				<rect stroke-width="2" width="266" height="303" x="1" y="1">
+					<!-- Adj frameForParent inset:1 -->
+				</rect>
+				<text transform="translate(7,17)">CompanyMobile</text>
+				<g class="directory" transform="translate(5,25)">
+					<!-- Adj verticalList gap:5 -->
+					<rect stroke-width="2" width="92" height="113" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">Settings.bundle</text>
+					<g class="file" transform="translate(5,25)">
+						<!-- Adj verticalList gap:5 -->
+						<rect stroke-width="2" width="62" height="23" x="1" y="1">
+							<!-- Adj frameForParent inset:1 -->
+						</rect>
+						<text transform="translate(7,17)">Root.plist</text>
+					</g>
+					<g class="directory" transform="translate(5,55)">
+						<!-- Adj verticalList gap:5 -->
+						<rect stroke-width="2" width="82" height="53" x="1" y="1">
+							<!-- Adj frameForParent inset:1 -->
+						</rect>
+						<text transform="translate(7,17)">en.lproj</text>
+						<g class="file" transform="translate(5,25)">
+							<!-- Adj verticalList gap:5 -->
+							<rect stroke-width="2" width="72" height="23" x="1" y="1">
+								<!-- Adj frameForParent inset:1 -->
+							</rect>
+							<text transform="translate(7,17)">Root.strings</text>
+						</g>
+					</g>
+				</g>
+				<g class="file" transform="translate(5,145)">
+					<!-- Adj verticalList gap:5 -->
+					<rect stroke-width="2" width="145" height="23" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">CompanyMobile-Info.plist</text>
+				</g>
+				<g class="file" transform="translate(5,175)">
+					<!-- Adj verticalList gap:5 -->
+					<rect stroke-width="2" width="49" height="23" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">main.m</text>
+				</g>
+				<g class="file" transform="translate(5,205)">
+					<!-- Adj verticalList gap:5 -->
+					<rect stroke-width="2" width="107" height="23" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">CMAppDelegate.h</text>
+				</g>
+				<g class="file" transform="translate(5,235)">
+					<!-- Adj verticalList gap:5 -->
+					<rect stroke-width="2" width="256" height="43" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">CMAppDelegate.m</text>
+					<text transform="translate(7,37)">• <tspan class="deemphasize">has some lines conditional #if HARDCODED_DOMAINS</tspan></text>
+				</g>
+				<text transform="translate(6,297)">…</text>
+			</g>
+		</g>
+	</g>
+</svg>

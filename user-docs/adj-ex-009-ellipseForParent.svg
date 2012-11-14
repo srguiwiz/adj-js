@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<rect x="30" y="30" width="50" height="20" fill="#000"/>
+		<ellipse rx="35.355" ry="14.142" stroke="gray" fill="gray" fill-opacity="0.2" cx="55" cy="40">
+			<!-- Adj ellipseForParent -->
+		</ellipse>
+	</g>
+</svg>

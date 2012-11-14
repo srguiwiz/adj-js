@@ -1,0 +1,6 @@
+# Windows image file caches
+Thumbs.db
+# Windows folder config file
+Desktop.ini
+# Mac artifact
+.DS_Store

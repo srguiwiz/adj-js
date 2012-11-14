@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+	<rect width="200" height="100" fill="linen"/>
+	<g font-size="12">
+		<!-- Adj textBreaks wordBreaks:true -->
+		<!-- Adj horizontalList maxWidth:170 gap:5 centerGap:3 topGap:10 leftGap:10 -->
+		<text transform="translate(12,22)">This</text>
+		<text transform="translate(42,22)">is</text>
+		<text transform="translate(58,22)">a</text>
+		<text transform="translate(72,22)">sentence</text>
+		<text transform="translate(121,22)">of</text>
+		<text transform="translate(141,22)">text</text>
+		<text transform="translate(12,42)">that</text>
+		<text transform="translate(39,42)">will</text>
+		<text transform="translate(66,42)">wrap.</text>
+		<text transform="translate(102,42)">Here</text>
+		<text transform="translate(133,42)">is</text>
+		<text transform="translate(12,62)">more.</text>
+		<rect fill="none" stroke="lightgray" stroke-width="2" width="165" height="68" x="1" y="1">
+			<!-- Adj frameForParent inset:1 -->
+		</rect>
+	</g>
+</svg>

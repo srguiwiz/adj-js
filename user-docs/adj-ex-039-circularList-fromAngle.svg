@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<!-- Adj circularList fromAngle:225 toAngle:315 cGap:5 -->
+		<g transform="translate(93.381,126.931)"/>
+		<rect width="15" height="15" fill="#000" transform="translate(3.107,36.657)"/>
+		<rect width="15" height="15" fill="#222" transform="translate(23.601,20.313)"/>
+		<rect width="15" height="15" fill="#444" transform="translate(47.218,8.94)"/>
+		<rect width="15" height="15" fill="#666" transform="translate(72.774,3.107)"/>
+		<rect width="15" height="15" fill="#888" transform="translate(98.987,3.107)"/>
+		<rect width="15" height="15" fill="#aaa" transform="translate(124.543,8.94)"/>
+		<rect width="15" height="15" fill="#bbb" transform="translate(148.161,20.313)"/>
+		<rect width="15" height="15" fill="#ccc" transform="translate(168.655,36.657)"/>
+	</g>
+</svg>

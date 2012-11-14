@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="sans-serif" width="511" height="395">
+	<title>Example Workflow</title>
+	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+	.subject {
+		fill: lightgray;
+		opacity: 0.5;
+		stroke: gray;
+	}
+	.arrow {
+		stroke: grey;
+		fill: none;
+	}
+]]></style>
+	<defs>
+		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
+			<path d="M -3 1 L 0 0 L -3 -1"/>
+		</marker>
+	</defs>
+	<g>
+		<!-- Adj horizontalList makeGrid:true gap:5 maxPerRow:3 hAlign:center -->
+		<g id="subject-editor" transform="translate(154,5)">
+			<!-- Adj horizontalList gap:10 -->
+			<rect width="81" height="33" class="subject" x="1" y="1">
+				<!-- Adj frameForParent inset:1 -->
+			</rect>
+			<text transform="translate(12,22)">XML editor</text>
+		</g>
+		<g transform="translate(416,5)"/>
+		<g transform="translate(476,5)"/>
+		<g transform="translate(196,45)"/>
+		<g transform="translate(391,45)">
+			<rect width="50" height="50" fill="none"/>
+		</g>
+		<g transform="translate(476,45)"/>
+		<g id="subject-disk" transform="translate(172,100)">
+			<!-- Adj horizontalList gap:10 -->
+			<rect width="46" height="33" class="subject" x="1" y="1">
+				<!-- Adj frameForParent inset:1 -->
+			</rect>
+			<text transform="translate(11,22)">disk</text>
+		</g>
+		<g transform="translate(416,100)"/>
+		<g id="subject-author" transform="translate(446,100)">
+			<!-- Adj horizontalList gap:10 -->
+			<rect width="58" height="33" class="subject" x="1" y="1">
+				<!-- Adj frameForParent inset:1 -->
+			</rect>
+			<text transform="translate(11,22)">author</text>
+		</g>
+		<g transform="translate(196,140)"/>
+		<g transform="translate(391,140)">
+			<rect width="50" height="150" fill="none"/>
+		</g>
+		<g transform="translate(476,140)"/>
+		<g id="subject-firefox" transform="translate(5,295)">
+			<!-- Adj horizontalList gap:10 -->
+			<rect width="379" height="93" class="subject" x="1" y="1">
+				<!-- Adj frameForParent inset:1 -->
+			</rect>
+			<text transform="translate(11,22)">Firefox</text>
+			<g transform="translate(61,10)">
+				<!-- Adj horizontalList gap:5 -->
+				<g id="add-on-auto-reload" transform="translate(5,5)">
+					<!-- Adj verticalList gap:5 -->
+					<rect width="80" height="43" class="subject" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(7,17)">Auto Reload</text>
+					<text transform="translate(6,37)">add-on</text>
+				</g>
+				<g id="add-on-onload-script" transform="translate(92,5)">
+					<!-- Adj verticalList gap:5 -->
+					<rect width="99" height="63" class="subject" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(6,17)">Onload Script</text>
+					<text transform="translate(6,37)">Document Files</text>
+					<text transform="translate(6,57)">add-on</text>
+				</g>
+				<g id="add-on-save-back" transform="translate(198,5)">
+					<!-- Adj verticalList gap:5 -->
+					<rect width="105" height="63" class="subject" x="1" y="1">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text transform="translate(6,17)">Save Back to File</text>
+					<text transform="translate(7,37)">from DOM</text>
+					<text transform="translate(6,57)">add-on</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: subject-editor, 0.2, 1.2 to: subject-disk, 0.2, -0.2 -->
+			<path class="arrow" d="M170.6,47q-4.226,25.326 11,46" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(127.321,57.385)">
+				<!-- Adj rider at:0.4 pin:1.1,0.5 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(2,13)">saves</text>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: subject-disk, 0.2, 1.2 to: subject-firefox, 0.1, -0.2 -->
+			<path class="arrow" d="M181.6,142q-76.203,59.813 -138.5,134" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(68.894,159.134)">
+				<!-- Adj rider at:0.4 pin:1,1 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(3,13)">first time</text>
+				<text transform="translate(2,29)">opens</text>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: subject-disk, 0.4, 1.2 to: add-on-auto-reload, 0.6, -0.1 -->
+			<path class="arrow" d="M191.2,142q-44.672,77.767 -71,163.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(77.644,255.488)">
+				<!-- Adj rider at:0.9 pin:1,1 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(2,13)">auto</text>
+				<text transform="translate(2,29)">reloads</text>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: add-on-onload-script, 0.2, -0.05 to: add-on-onload-script, 0.8, -0.05 -->
+			<path class="arrow" d="M178.2,306.75q30.3,-50 60.6,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(175.496,248.75)">
+				<!-- Adj rider at:0.5 pin:0.5,1 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(2,13)">on load</text>
+				<text transform="translate(2,29)">runs script</text>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: add-on-save-back, 0.6, -0.05 to: subject-disk, 0.6, 1.2 -->
+			<path class="arrow" d="M328.2,306.75q-55.789,-88.492 -127.4,-164.75" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(316.889,240.225)">
+				<!-- Adj rider at:0.1 pin:0,1 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(2,13)">can</text>
+				<text transform="translate(2,29)">save</text>
+				<text transform="translate(2,45)">back</text>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: subject-author, 0.0, -0.2 to: subject-editor, 1.2, 1.0 -->
+			<path class="arrow" d="M446,93q-93.544,-36.141 -192.4,-53" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(370.342,48.193)">
+				<!-- Adj rider at:0.4 pin:0,1.1 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(2,13)">edits</text>
+			</g>
+		</g>
+		<g>
+			<!-- Adj connection from: subject-author, 0.0, 1.2 to: subject-firefox, 1.05, 0.0 -->
+			<path class="arrow" d="M446,142q0.315,114.856 -40.95,153" stroke-width="3" marker-end="url(#arrowhead)"/>
+			<g transform="translate(446.048,206.795)">
+				<!-- Adj rider at:0.4 pin:-0.1,0 -->
+				<!-- Adj verticalList gap:1 -->
+				<text transform="translate(3,13)">views</text>
+			</g>
+		</g>
+	</g>
+</svg>

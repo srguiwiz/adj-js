@@ -1,0 +1,1663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Adj Framework - User Guide</title>
+  <style type="text/css">
+td {
+  padding: 1.0ex;
+}
+@media print {
+  tr, td, img {
+    page-break-inside: avoid;
+  }
+}
+h1 {
+  font-size: 130%;
+}
+h2 {
+  font-size: 120%;
+}
+h3 {
+  font-size: 110%;
+}
+h4, h5, h6 {
+  font-size: 105%;
+}
+h1,h2,h3,h4,h5,h6 {
+  page-break-after: avoid;
+}
+ .subtle-link {
+  color: black;
+}
+ .hilite {
+  background-color: #FFFF00;
+}
+ .example-code {
+  font-weight: bolder;
+  background-color: #FFFF80;
+}
+ .example-result {
+  font-weight: bolder;
+  background-color: #D0FFFF;
+}
+ .deemphasize-code {
+  color: #888;
+  font-size: smaller;
+}
+ .deemphasize {
+  font-size: smaller;
+}
+ .todo {
+  background-color: #ccffcc;
+}
+ .product-name {
+  font-family: sans-serif;
+}
+ .example-listing {
+  white-space: pre-wrap;
+  font-size: smaller;
+}
+  </style>
+</head>
+
+<body>
+<h1>Adj Framework</h1>
+
+<div class="toc">
+<ul>
+  <li><a href="#L7142">1. User Guide</a> 
+    <ul>
+      <li><a href="#L4238">1.1. Modified BSD License</a></li>
+      <li><a href="#L4276">1.2. Contributors</a></li>
+      <li><a href="#L4291">1.3. Contact</a></li>
+      <li><a href="#L26102">1.4. Introduction</a></li>
+      <li><a href="#L25888">1.5. Purpose</a></li>
+      <li><a href="#L25990">1.6. Implementation Rationale</a></li>
+      <li><a href="#L7144">1.7. Modifying SVG</a></li>
+      <li><a href="#L7202">1.8. Command Overview</a></li>
+      <li><a href="#L7353">1.9. Command Options</a> 
+        <ul>
+          <li><a href="#L7357">1.9.1. Command horizontalList Options</a></li>
+          <li><a href="#L7545">1.9.2. Command verticalList Options</a></li>
+          <li><a href="#L12321">1.9.3. Command frameForParent Options</a></li>
+          <li><a href="#L2589">1.9.4. Command textBreaks Options</a></li>
+          <li><a href="#L1740">1.9.5. Command connection Options</a></li>
+          <li><a href="#L8701">1.9.6. Command rider Options</a></li>
+          <li><a href="#L9691">1.9.7. Command circleForParent Options</a></li>
+          <li><a href="#L9743">1.9.8. Command ellipseForParent Options</a></li>
+          <li><a href="#L20521">1.9.9. Command circularList Options</a></li>
+        </ul>
+      </li>
+      <li><a href="#L7600">1.10. Auxiliary Commands</a> 
+        <ul>
+          <li><a href="#L7602">1.10.1. Command explain</a></li>
+          <li><a href="#L7627">1.10.2. Command relativate</a></li>
+        </ul>
+      </li>
+      <li><a href="#L86608">1.11. Commenting Out</a></li>
+      <li><a href="#L6319">1.12. Complete Authoring Workflow</a></li>
+      <li><a href="#L6329">1.13. Invocation</a> 
+        <ul>
+          <li><a href="#L6331">1.13.1. Explicit Invocation</a></li>
+          <li><a href="#L6345">1.13.2. Implicit Invocation</a></li>
+        </ul>
+      </li>
+      <li><a href="#L6360">1.14. Alternate Syntax</a></li>
+      <li><a href="#L86788">1.15. More Details</a> 
+        <ul>
+          <li><a href="#L86790">1.15.1. Commands Before Child Elements</a></li>
+          <li><a href="#L123304">1.15.2. Using SVG Group Element g</a></li>
+          <li><a href="#L123314">1.15.3. Overwriting Preexisting Transform
+            Attributes</a></li>
+          <li><a href="#L123334">1.15.4. Transforming An SVG Path</a> 
+            <ul>
+              <li><a href="#L123341">1.15.4.1. Changing Points</a></li>
+              <li><a href="#L123364">1.15.4.2. Arcs Not Supported</a></li>
+            </ul>
+          </li>
+          <li><a href="#L4599">1.15.5. Exception Handling</a></li>
+        </ul>
+      </li>
+      <li><a href="#L4606">1.16. Helpful Hints</a> 
+        <ul>
+          <li><a href="#L4608">1.16.1. Defining An SVG rect Element</a></li>
+          <li><a href="#L4638">1.16.2. Considerations For Nesting</a></li>
+        </ul>
+      </li>
+      <li><a href="#L123374">1.17. Implementation Details</a> 
+        <ul>
+          <li><a href="#L123378">1.17.1. Execution Path</a></li>
+        </ul>
+      </li>
+      <li><a href="#L1688">1.18. Example Files</a> 
+        <ul>
+          <li><a href="#L5397">1.18.1. Example File 001 Source Code</a></li>
+          <li><a href="#L5412">1.18.2. Example File 002</a></li>
+          <li><a href="#L1730">1.18.3. Example File 003</a></li>
+          <li><a href="#L5916">1.18.4. Example File 004</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<h2 id="L7142">1. User Guide</h2>
+
+<h3 id="L4238">1.1. Modified BSD License</h3>
+<pre class="deemphasize">// Copyright (c) 2002-2012, Nirvana Research
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the copyright holder nor the names of
+//       contributors may be used to endorse or promote products derived from
+//       this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT,
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+
+<h3 id="L4276">1.2. Contributors</h3>
+<pre class="deemphasize">// Idea and first implementation - Leo Baschy &lt;srguiwiz12 AT nrvr DOT com&gt;
+// Contributor - Hans Baschy</pre>
+
+<h3 id="L4291">1.3. Contact</h3>
+<pre class="deemphasize">// Comments to: &lt;adj.feedback AT nrvr DOT com&gt;</pre>
+
+<h3 id="L26102">1.4. Introduction</h3>
+
+<p>Adj commands modify SVG.</p>
+
+<p>It is possible to execute all Adj modification of SVG on the SVG document
+author's workstation, then save the document and let other users view it.</p>
+
+<p>Alternatively, it is possible to allow execution of Adj modification of SVG
+when a user is viewing, possibly interacting with an SVG document.</p>
+
+<p>As implemented, it builds on SVG and contemporary browsers.</p>
+
+<h3 id="L25888">1.5. Purpose</h3>
+
+<p>The original purpose of the Adj framework has been to facilitate creation
+and long term maintenance of system diagrams.</p>
+
+<p>Adj has been designed specifically for diagrams of large complexity.</p>
+
+<p>Because of its general nature, other uses may be possible.</p>
+
+<h3 id="L25990">1.6. Implementation Rationale</h3>
+
+<p>Other attempts had been made at enhancing drawing tools, e.g. an Adobe
+Illustrator plug-in. Still there were good reasons to implement Adj.</p>
+
+<p>Adj leverages several existing technologies:</p>
+<ul>
+  <li>SVG viewing is commonly possible with contemporary browsers: Firefox,
+    Chrome, Safari, and Internet Explorer since version 9</li>
+  <li>SVG being XML can be generated and manipulated in automated ways, i.e.
+    SVG documents can be created as output of a broad variety of scripts</li>
+  <li>JavaScript manipulation of SVG, while not perfect, has been defined
+    reasonably well and has become sufficiently consistently implemented across
+    browsers</li>
+  <li>as implemented, Adj uses widely available browser implementations of
+    JavaScript manipulation of SVG</li>
+</ul>
+
+<p>Additional highlights:</p>
+<ul>
+  <li>containment can be nested as many levels deep as needed, with Adj applied
+    at almost any and all levels, allowing diagrams of large complexity</li>
+  <li>a viewing user does not need to have Adj, at least not for basic
+    functionality</li>
+</ul>
+
+<p>SVG WYSIWYG editors at the time Adj has been developed have been found to be
+suboptimal in reliability and ease of use, and have not effectively supported
+JavaScript manipulation of SVG.</p>
+
+<h3 id="L7144">1.7. Modifying SVG</h3>
+
+<p>Adj commands modify SVG.</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td>source</td>
+      <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;
+  &lt;g&gt;
+    <span class="example-code">&lt;!-- Adj verticalList gap:5 --&gt;</span>
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444"/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+&lt;/svg&gt;</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>image before being processed by Adj</td>
+      <td><img alt="example"
+      src="adj-ex-001-verticalList-before.svg"></img></td>
+    </tr>
+    <tr>
+      <td>becomes</td>
+      <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;
+  &lt;g&gt;
+    &lt;!-- Adj verticalList gap:5 --&gt;
+    &lt;rect width="45" height="30" fill="#000"<span class="example-result"> transform="translate(5,5)"</span>/&gt;
+    &lt;rect width="40" height="25" fill="#444"<span class="example-result"> transform="translate(5,40)"</span>/&gt;
+    &lt;rect width="35" height="20" fill="#888"<span class="example-result"> transform="translate(5,70)"</span>/&gt;
+  &lt;/g&gt;
+&lt;/svg&gt;</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>image after <a href="adj-ex-001-verticalList-adj.svg"
+        class="subtle-link">processing</a> by Adj</td>
+      <td><img alt="example" src="adj-ex-001-verticalList-after.svg"></img></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="L7202">1.8. Command Overview</h3>
+
+<p>The main commands shown by simple examples:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-002-verticalList.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">verticalList gap:5</span> --&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444"/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-003-horizontalList.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList gap:5</span> --&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444"/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-004-frameForParent.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj horizontalList gap:5 --&gt;
+    &lt;rect fill="none" stroke="black" stroke-width="2" width="0" height="0"&gt;
+      &lt;!-- Adj <span class="example-code">frameForParent inset:1</span> --&gt;
+    &lt;/rect&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444"/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-005-textBreaks.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g font-size="12"&gt;
+    &lt;!-- Adj <span class="example-code">textBreaks wordBreaks:true</span> --&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxWidth:170 gap:5 centerGap:3 topGap:10 leftGap:10</span> --&gt;
+    &lt;text&gt;This is a sentence of text that will wrap.&lt;/text&gt;
+    &lt;text&gt;Here is more.&lt;/text&gt;
+    &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
+      &lt;!-- Adj frameForParent inset:1 --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-006-connection.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
+  &lt;rect id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
+  &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
+    &lt;!-- Adj <span class="example-code">connection from: one, 1, 0.5 to: other, 0, 0.5</span> --&gt;
+  &lt;/path&gt;
+  <span class="deemphasize-code">&lt;path d="M5,100 q40,10 80,0 t80,0" stroke="lightgray" stroke-width="2" fill="none" /&gt;
+&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-007-rider.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+  &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+  &lt;g&gt;
+    &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+    &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+    &lt;rect width="30" height="20" fill="#444"&gt;
+      &lt;!-- Adj <span class="example-code">rider at:0.5</span> --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-008-circleForParent.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
+    &lt;circle r="5" stroke="gray" fill="gray" fill-opacity="0.2"&gt;
+      &lt;!-- Adj <span class="example-code">circleForParent</span> --&gt;
+    &lt;/circle&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-009-ellipseForParent.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
+    &lt;ellipse rx="5" ry="5" stroke="gray" fill="gray" fill-opacity="0.2"&gt;
+      &lt;!-- Adj <span class="example-code">ellipseForParent</span> --&gt;
+    &lt;/ellipse&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-010-circularList.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">circularList gap:5</span> --&gt;
+    &lt;circle r="10" fill="#000"/&gt;
+    &lt;rect width="30" height="20" fill="#222"/&gt;
+    &lt;rect width="30" height="20" fill="#444"/&gt;
+    &lt;rect width="30" height="20" fill="#666"/&gt;
+    &lt;rect width="30" height="20" fill="#888"/&gt;
+    &lt;rect width="30" height="20" fill="#aaa"/&gt;
+    &lt;rect width="30" height="20" fill="#bbb"/&gt;
+    &lt;rect width="30" height="20" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="L7353">1.9. Command Options</h3>
+
+<p>Most commands take optional parameters.</p>
+
+<h4 id="L7357">1.9.1. Command horizontalList Options</h4>
+
+<p>The optional parameters of <code>horizontalList</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-011-horizontalList.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList gap:5</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    &lt;rect width="36" height="26" fill="#666"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-012-horizontalList-maxPerRow.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:3 gap:5</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    &lt;rect width="36" height="26" fill="#666"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-013-horizontalList-maxWidth.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxWidth:120 gap:5</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    &lt;rect width="36" height="26" fill="#666"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-014-horizontalList-makeGrid.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList makeGrid:true maxPerRow:3 gap:5</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    &lt;rect width="36" height="26" fill="#666"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-015-horizontalList-hAlign.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList makeGrid:true hAlign:center vAlign:middle maxPerRow:3 gap:5</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    &lt;rect width="36" height="26" fill="#666"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-016-horizontalList-horizontalGap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:4 horizontalGap:15 verticalGap:3</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="30" height="20" fill="#222"/&gt;
+    &lt;rect width="30" height="20" fill="#444"/&gt;
+    &lt;rect width="30" height="20" fill="#666"/&gt;
+    &lt;rect width="30" height="20" fill="#888"/&gt;
+    &lt;rect width="30" height="20" fill="#999"/&gt;
+    &lt;rect width="30" height="20" fill="#aaa"/&gt;
+    &lt;rect width="30" height="20" fill="#bbb"/&gt;
+    &lt;rect width="30" height="20" fill="#ccc"/&gt;
+    &lt;rect width="30" height="20" fill="#ddd"/&gt;
+    &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
+      &lt;!-- Adj frameForParent inset:1 --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-017-horizontalList-leftGap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:4 leftGap:20 centerGap:5 rightGap:12 topGap:10 middleGap:3 bottomGap:7</span> --&gt;
+    &lt;rect width="30" height="20" fill="#000"/&gt;
+    &lt;rect width="30" height="20" fill="#222"/&gt;
+    &lt;rect width="30" height="20" fill="#444"/&gt;
+    &lt;rect width="30" height="20" fill="#666"/&gt;
+    &lt;rect width="30" height="20" fill="#888"/&gt;
+    &lt;rect width="30" height="20" fill="#999"/&gt;
+    &lt;rect width="30" height="20" fill="#aaa"/&gt;
+    &lt;rect width="30" height="20" fill="#bbb"/&gt;
+    &lt;rect width="30" height="20" fill="#ccc"/&gt;
+    &lt;rect width="30" height="20" fill="#ddd"/&gt;
+    &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
+      &lt;!-- Adj frameForParent inset:1 --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The fractions in parameters <code>hAlign</code> and <code>vAlign</code>
+accept floating point numbers, but they also recognize some symbols (strings in
+JavaScript).</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td rowspan="3">hAlign</td>
+      <td>left</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>center</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>right</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td rowspan="3">vAlign</td>
+      <td>top</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>middle</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>bottom</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="L7545">1.9.2. Command verticalList Options</h4>
+
+<p>The optional parameters of <code>verticalList</code> are very similar to the
+optional parameters of <code>horizontalList</code>.</p>
+
+<p>Notably different, there is <code>maxHeight</code> <span
+class="deemphasize">(instead of <code>maxWidth</code>, duh)</span> and
+<code>maxPerColumn</code> <span class="deemphasize">(instead of
+<code>maxPerRow</code>)</span>.</p>
+
+<h4 id="L12321">1.9.3. Command frameForParent Options</h4>
+
+<p>The optional parameters of <code>frameForParent</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-018-frameForParent-horizontalInset.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj horizontalList gap:10 --&gt;
+    &lt;rect fill="none" stroke="black" stroke-width="4" width="0" height="0" rx="4" ry="4"&gt;
+      &lt;!-- Adj <span class="example-code">frameForParent inset:2</span> --&gt;
+    &lt;/rect&gt;
+    &lt;rect fill="none" stroke="gray" stroke-width="2" width="0" height="0" rx="2" ry="2"&gt;
+      &lt;!-- Adj <span class="example-code">frameForParent horizontalInset:4 verticalInset:3</span> --&gt;
+    &lt;/rect&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444"/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-019-frameForParent-leftInset.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj horizontalList gap:10 --&gt;
+    &lt;rect fill="none" stroke="black" stroke-width="4" width="0" height="0"&gt;
+      &lt;!-- Adj <span class="example-code">frameForParent leftInset:2 rightInset:0 topInset:2 bottomInset:0</span> --&gt;
+    &lt;/rect&gt;
+    &lt;rect fill="none" stroke="gray" stroke-width="4" width="0" height="0"&gt;
+      &lt;!-- Adj <span class="example-code">frameForParent inset:3</span> --&gt;
+    &lt;/rect&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444"/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="L2589">1.9.4. Command textBreaks Options</h4>
+
+<p>The optional parameters of <code>textBreaks</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-020-textBreaks-wordBreaks.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g font-size="12"&gt;
+    &lt;!-- Adj <span class="example-code">textBreaks wordBreaks:true</span> --&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxWidth:190 gap:5 centerGap:3 topGap:10 leftGap:10</span> --&gt;
+    &lt;text&gt;Source line one,
+source line two.&lt;/text&gt;
+    &lt;text&gt;And source line three.&lt;/text&gt;
+    &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
+      &lt;!-- Adj frameForParent inset:1 --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-021-textBreaks-lineBreaks.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g font-size="12"&gt;
+    &lt;!-- Adj <span class="example-code">textBreaks lineBreaks:true</span> --&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:1 gap:5 topGap:10 leftGap:10</span> --&gt;
+    &lt;text&gt;Source line one,
+source line two.&lt;/text&gt;
+    &lt;text&gt;And source line three.&lt;/text&gt;
+    &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
+      &lt;!-- Adj frameForParent inset:1 --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="L1740">1.9.5. Command connection Options</h4>
+
+<p>The optional parameters of <code>connection</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-022-connection-from.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#000" stroke-width="2" fill="none"&gt;
+    &lt;!-- Adj <span class="example-code">connection from:one to:other</span> --&gt;
+  &lt;/path&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-023-connection-fromXY.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#000" stroke-width="2" fill="none"&gt;
+    &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5</span> --&gt;
+  &lt;/path&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-024-connection-vector0.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5</span> --&gt;
+    &lt;line x1="5" y1="100" x2="185" y2="100"/&gt;
+    &lt;path d="M15,100 l-10,-10 20,0 5,5 135,0 0,-5 20,10 -20,10 0,-5 -135,0 -5,5 -20,0 z"
+      stroke="#000" stroke-width="1" fill-opacity="0.5" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-025-connection-vector1.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5 vector:1</span> --&gt;
+    &lt;path d="M15,100 l-10,-10 20,0 5,5 135,0 0,-5 20,10 -20,10 0,-5 -135,0 -5,5 -20,0 z"
+      stroke="#000" stroke-width="1" fill-opacity="0.5" fill="#888"/&gt;
+    &lt;line x1="5" y1="100" x2="185" y2="100"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The fraction pairs in parameters <code>from</code> and <code>to</code>
+accept floating point numbers. With values commonly between 0.0 and 1.0 they
+also could be outside that range.</p>
+
+<p>As implemented, <code>connection</code> works for simplified cases
+<code>line</code> and <code>path</code>, and for general case group
+<code>g</code> containing one <code>line</code> (or <code>path</code>) as
+<code>vector</code> (default first, i.e. index 0) and any number of lines and
+paths as children of that group.</p>
+
+<h4 id="L8701">1.9.6. Command rider Options</h4>
+
+<p>The optional parameters of <code>rider</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-026-rider.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+      &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#444"&gt;
+        &lt;!-- Adj <span class="example-code">rider</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-027-rider-at.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+  &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+  &lt;g&gt;
+    &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+    &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+    &lt;rect width="30" height="20" fill="#444"&gt;
+      &lt;!-- Adj <span class="example-code">rider at:0.7</span> --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-028-rider-at2.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+      &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#444"&gt;
+        &lt;!-- Adj <span class="example-code">rider at:0.2,0.7</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-029-rider-adjust-near.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+      &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#444"&gt;
+        &lt;!-- Adj <span class="example-code">rider at:0.2,0.7 adjust:near</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-030-rider-adjust-clear.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect x="85" y="15" width="40" height="30" fill="#666"/&gt;
+    &lt;rect x="25" y="45" width="40" height="30" fill="#888"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+      &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#444"&gt;
+        &lt;!-- Adj <span class="example-code">rider</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-031-rider-gap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect x="85" y="15" width="40" height="30" fill="#666"/&gt;
+    &lt;rect x="25" y="45" width="40" height="30" fill="#888"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+      &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#444"&gt;
+        &lt;!-- Adj <span class="example-code">rider at:0.2,0.7 adjust:near gap:2</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-032-rider-pin.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+      &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#444"&gt;
+        &lt;!-- Adj <span class="example-code">rider pin:0.0,1.0</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-033-rider-path.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;path id="connect" d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
+      &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+    &lt;/path&gt;
+    &lt;rect width="30" height="20" fill="#444" transform="translate(80.002,45.001)"&gt;
+      &lt;!-- Adj <span class="example-code">rider path:connect</span> --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The fraction or fraction pair in parameter <code>at</code> accepts floating
+point numbers. With values commonly between 0.0 and 1.0 they also could be
+outside that range.</p>
+
+<p>Parameter <code>adjust</code> accepts some symbols (strings in
+JavaScript).</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td rowspan="3">adjust</td>
+      <td>clear</td>
+    </tr>
+    <tr>
+      <td>near</td>
+    </tr>
+    <tr>
+      <td>none</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>If given no <code>at</code> and no <code>adjust</code> then <code>at</code>
+defaults from 0.0 to 1.0 and <code>adjust</code> defaults to
+<code>clear</code>. If given no <code>at</code> but <code>adjust</code> given
+<code>near</code> then <code>at</code> defaults from 0.0 to 0.5.</p>
+
+<p>If given one floating point number for <code>at</code> then
+<code>adjust</code> defaults to <code>none</code>.</p>
+
+<p>If given two floating point numbers for <code>at</code> then
+<code>adjust</code> defaults to <code>clear</code>.</p>
+
+<p>The fraction pair in parameter <code>pin</code> accepts floating point
+numbers. With values commonly between 0.0 and 1.0 they also could be outside
+that range.</p>
+
+<p>As implemented, <code>rider</code> tries to stay clear of siblings of the
+path.</p>
+
+<p>Parameter <code>steps</code> should not be set in most circumstances. It
+accepts an integer number and defaults to 10. It does not correspond to the
+final resolution of adjusting coordinates.</p>
+
+<h4 id="L9691">1.9.7. Command circleForParent Options</h4>
+
+<p>The optional parameters of <code>circleForParent</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-034-circleForParent-inset.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
+    &lt;circle r="5" stroke="gray" stroke-width="4" fill="gray" fill-opacity="0.2"&gt;
+      &lt;!-- Adj <span class="example-code">circleForParent inset:-2</span> --&gt;
+    &lt;/circle&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="L9743">1.9.8. Command ellipseForParent Options</h4>
+
+<p>The optional parameters of <code>ellipseForParent</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-035-ellipseForParent-inset.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
+    &lt;ellipse rx="5" ry="5" stroke="gray" stroke-width="4" fill="gray" fill-opacity="0.2"&gt;
+      &lt;!-- Adj <span class="example-code">ellipseForParent inset:-2</span> --&gt;
+    &lt;/ellipse&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-036-ellipseForParent-horizontalInset.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
+    &lt;ellipse rx="5" ry="5" stroke="gray" stroke-width="4" fill="gray" fill-opacity="0.2"&gt;
+      &lt;!-- Adj <span class="example-code">ellipseForParent horizontalInset:-3 verticalInset:-1</span> --&gt;
+    &lt;/ellipse&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="L20521">1.9.9. Command circularList Options</h4>
+
+<p>The optional parameters of <code>circularList</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-037-circularList-gap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">circularList gap:5</span> --&gt;
+    &lt;rect width="20" height="20" fill="#000"/&gt;
+    &lt;rect width="20" height="20" fill="#222"/&gt;
+    &lt;rect width="20" height="20" fill="#444"/&gt;
+    &lt;rect width="20" height="20" fill="#666"/&gt;
+    &lt;rect width="20" height="20" fill="#888"/&gt;
+    &lt;rect width="20" height="20" fill="#aaa"/&gt;
+    &lt;rect width="20" height="20" fill="#bbb"/&gt;
+    &lt;rect width="20" height="20" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-038-circularList-rGap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">circularList rGap:5 cGap:15</span> --&gt;
+    &lt;rect width="20" height="20" fill="#000"/&gt;
+    &lt;rect width="20" height="20" fill="#222"/&gt;
+    &lt;rect width="20" height="20" fill="#444"/&gt;
+    &lt;rect width="20" height="20" fill="#666"/&gt;
+    &lt;rect width="20" height="20" fill="#888"/&gt;
+    &lt;rect width="20" height="20" fill="#aaa"/&gt;
+    &lt;rect width="20" height="20" fill="#bbb"/&gt;
+    &lt;rect width="20" height="20" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-039-circularList-fromAngle.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">circularList fromAngle:225 toAngle:315 cGap:5</span> --&gt;
+    &lt;g/&gt;
+    &lt;rect width="15" height="15" fill="#000"/&gt;
+    &lt;rect width="15" height="15" fill="#222"/&gt;
+    &lt;rect width="15" height="15" fill="#444"/&gt;
+    &lt;rect width="15" height="15" fill="#666"/&gt;
+    &lt;rect width="15" height="15" fill="#888"/&gt;
+    &lt;rect width="15" height="15" fill="#aaa"/&gt;
+    &lt;rect width="15" height="15" fill="#bbb"/&gt;
+    &lt;rect width="15" height="15" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-040-circularList-rAlign.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">circularList rAlign:inside gap:2</span> --&gt;
+    &lt;circle r="20" fill="#000"/&gt;
+    &lt;rect width="3" height="3" fill="#222"/&gt;
+    &lt;rect width="6" height="6" fill="#444"/&gt;
+    &lt;rect width="9" height="9" fill="#666"/&gt;
+    &lt;rect width="12" height="12" fill="#888"/&gt;
+    &lt;rect width="15" height="15" fill="#aaa"/&gt;
+    &lt;rect width="18" height="18" fill="#bbb"/&gt;
+    &lt;rect width="21" height="21" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>First element is trunk in the center, remaining elements are branches. First
+element could be an empty group.</p>
+
+<p>The fraction in parameter <code>rAlign</code> accepts floating point
+numbers, but it also recognize some symbols (strings in JavaScript).</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td rowspan="3">rAlign</td>
+      <td>inside</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>median</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>outside</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="L7600">1.10. Auxiliary Commands</h3>
+
+<h4 id="L7602">1.10.1. Command explain</h4>
+
+<p>Command <code>explain</code> inserts explanatory elements.</p>
+
+<p>As implemented, <code>explain</code> inserts explanatory elements for
+<code>verticalList</code>, <code>horizontalList</code>,
+<code>connection</code>, <code>rider</code>, and <code>circularList</code>.</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-041-workflow-explained.png" /></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="sans-serif"&gt;
+  …</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">horizontalList makeGrid:true gap:5 maxPerRow:3 hAlign:center</span> --&gt;
+    &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+    &lt;g id="subject-editor"&gt;
+    &lt;!-- Adj horizontalList gap:10 --&gt;
+      &lt;rect width="0" height="0" class="subject"&gt;
+        &lt;!-- Adj frameForParent inset:1 --&gt;
+      &lt;/rect&gt;
+      &lt;text&gt;XML editor&lt;/text&gt;
+    &lt;/g&gt;
+    &lt;g/&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-007-rider-explained.png" /></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
+  &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#ccc"/&gt;
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5</span> --&gt;
+    &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+    &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#666" stroke-width="2" fill="none"/&gt;
+    &lt;rect width="30" height="20" fill="#aaa"&gt;
+      &lt;!-- Adj <span class="example-code">rider at:0.5</span> --&gt;
+      &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-031-rider-gap-explained.png" /></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
+    &lt;rect x="85" y="15" width="40" height="30" fill="#777"/&gt;
+    &lt;rect x="25" y="45" width="40" height="30" fill="#777"/&gt;
+    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#666"/&gt;
+    &lt;g&gt;
+      &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5</span> --&gt;
+      &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+      &lt;path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none"/&gt;
+      &lt;rect width="30" height="20" fill="#aaa" transform="translate(86.118,47.073)"&gt;
+        &lt;!-- Adj <span class="example-code">rider at:0.2,0.7 adjust:near gap:2</span> --&gt;
+        &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-040-circularList-rAlign-explained.png"
+        /></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;!-- Adj <span class="example-code">circularList rAlign:inside gap:2</span> --&gt;
+    &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+    &lt;circle r="20" fill="#000"/&gt;
+    &lt;rect width="3" height="3" fill="#222"/&gt;
+    &lt;rect width="6" height="6" fill="#444"/&gt;
+    &lt;rect width="9" height="9" fill="#666"/&gt;
+    &lt;rect width="12" height="12" fill="#888"/&gt;
+    &lt;rect width="15" height="15" fill="#aaa"/&gt;
+    &lt;rect width="18" height="18" fill="#bbb"/&gt;
+    &lt;rect width="21" height="21" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><span class="todo">TODO: explain how any explantory elements should not be
+saved back to disk, or implement a way to detect them</span></p>
+
+<h4 id="L7627">1.10.2. Command relativate</h4>
+
+<p>Command <code>relativate</code> converts the coordinates of a path into
+relative coordinates. Can be useful when editing.</p>
+
+<h3 id="L86608">1.11. Commenting Out</h3>
+
+<p>A command can be commented out with two leading slashes. E.g.</p>
+<pre class="example-listing">&lt;!-- <span class="example-code">//</span>Adj verticalList gap:5 --&gt;</pre>
+
+<h3 id="L6319">1.12. Complete Authoring Workflow</h3>
+
+<p>An author may increase productivity by using browser add-ons.</p>
+
+<p>Hereby it is noted that those who don't like using existing Firefox add-ons
+could implement alternate workflows and tools to support such workflows. E.g.
+Chrome extensions. The product of authoring should not depend on the brand of
+auxiliary authoring tools used.</p>
+
+<p>An example workflow:</p>
+<ul>
+  <li>Requirements 
+    <ul>
+      <li>an XML editor<span class="deemphasize">, listed without implying any
+        preference e.g. <span class="product-name">Altova <a
+        href="http://www.altova.com/xml-editor/">XMLSpy</a></span>, <span
+        class="product-name">Adobe <a
+        href="http://www.adobe.com/products/dreamweaver.html">Dreamweaver</a></span>,
+        free <span class="product-name">ActiveState <a
+        href="http://www.activestate.com/komodo-edit">Komodo Edit</a></span>
+        for Windows, Mac, Linux</span></li>
+      <li>a <span class="product-name"><a
+        href="https://www.mozilla.org/firefox/#desktop">Firefox</a></span><span
+        class="deemphasize">, e.g. version 16 in Windows, version 10 in
+        Linux</span></li>
+      <li>Firefox add-ons 
+        <ul>
+          <li><span class="product-name">Auto Reload</span>, from <a
+            href="https://addons.mozilla.org/en-US/firefox/addon/auto-reload/">https://addons.mozilla.org/en-US/firefox/addon/auto-reload/</a><span
+            class="deemphasize">, e.g. version 1.12</span></li>
+          <li><span class="product-name">Onload Script Some Document
+            Files</span>, aka
+            <code>onload-script-some-document-files.xpi</code>, from <a
+            href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/">https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/</a><span
+            class="deemphasize">, e.g. 1.rev39</span></li>
+          <li><span class="product-name">Save Back to File from DOM</span>, aka
+            <code>save-back-to-file-from-dom.xpi</code>, from <a
+            href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/">https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/</a><span
+            class="deemphasize">, e.g. 1.rev20</span></li>
+        </ul>
+      </li>
+      <li>Set up a directory which will contain files</li>
+      <li>Make sure that directory contains a subdirectory with a file
+        <code>.adj-js/adj.js</code></li>
+    </ul>
+  </li>
+  <li>Steps 
+    <ul>
+      <li>write SVG in XML editor</li>
+      <li>save to disk</li>
+      <li>open in <span class="product-name">Firefox</span> browser</li>
+      <li>watch the effects of implicit invocation, courtesy of the <span
+        class="product-name">Onload Script Some Document Files</span>
+      add-on</li>
+      <li>keep fixing SVG in editor and saving to disk</li>
+      <li>keep watching the effects of automatic reloading, courtesy of the
+        <span class="product-name">Auto Reload</span> add-on</li>
+      <li>when done click the <span class="product-name">Save Back to File from
+        DOM</span> add-on icon or select the <span class="product-name">Save
+        Back to File from DOM</span> context menu item to save the Adj modified
+        SVG back into the file, for document distribution without the Adj
+        JavaScript library</li>
+    </ul>
+  </li>
+</ul>
+<a name="example-workflow"></a> 
+
+<p>A diagram of this example workflow:</p>
+<a href="adj-ex-041-workflow-after.svg"><img alt="example workflow"
+src="adj-ex-041-workflow.png" /></a> 
+
+<p class="deemphasize">Only a PNG here to accommodate a browser limitation,
+with links to SVG for <a href="adj-ex-041-workflow-adj.svg">processing</a> and
+<a href="adj-ex-041-workflow-after.svg">after</a>.</p>
+
+<p><span class="todo">TODO: make short video how simple and fun this workflow
+is to use <span class="deemphasize">and to set up</span></span></p>
+
+<h3 id="L6329">1.13. Invocation</h3>
+
+<h4 id="L6331">1.13.1. Explicit Invocation</h4>
+
+<p>As implemented, Adj is a JavaScript library.</p>
+
+<p>At first, Adj had to be invoked explicitly, e.g. like</p>
+<pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd"&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" <span class="example-code">onload="Adj.doDoc();"</span>&gt;
+  <span class="example-code">&lt;script type="text/ecmascript" xlink:href="adj.js"/&gt;</span>
+  &lt;g&gt;…</pre>
+
+<h4 id="L6345">1.13.2. Implicit Invocation</h4>
+
+<p>With script injection, explicit invocation can be avoided.</p>
+
+<p>As an example implementation, the Firefox add-on <span
+class="product-name">Onload Script Some Document Files</span> can do the
+necessary script injection, effecting implicit invocation.</p>
+
+<p>Avoiding explicit invocation means less problems with viewing in users'
+browsers that are set not to allow script invocation.</p>
+
+<p>Avoiding explicit invocation also means no need to distribute the Adj
+JavaScript library.</p>
+
+<p>One downside, however, of not distributing the Adj JavaScript library is
+inability to dynamically adjust, e.g. to different fonts available in a
+different browser instance. This may be an acceptable compromise.</p>
+
+<h3 id="L6360">1.14. Alternate Syntax</h3>
+
+<p>It is expected that authors will prefer the concise form Adj syntax, which
+is prevalently used in this documentation, over more verbose JavaScript
+function calls.</p>
+
+<p>Nevertheless, via JavaScript function calls someone interested could invoke
+the Adj JavaScript library as needed, partially or wholly.</p>
+
+<p>One entry point could be explicit invocation with
+<code>Adj.doDoc();</code>.</p>
+
+<p>Another kind of entry point could be the setting of algorithms to be applied
+to an element. E.g. the concise form Adj command</p>
+<pre class="example-listing">&lt;!-- Adj horizontalList makeGrid:true hAlign:center vAlign:middle maxPerRow:3 gap:5 --&gt;</pre>
+
+<p>actually gets converted into, could have been written as, and gets
+interpreted as JavaScript</p>
+<pre class="example-listing">&lt;!-- Adj.setAlgorithm(this, 'horizontalList', {makeGrid:true, hAlign:'center', vAlign:'middle', maxPerRow:3, gap:5}); --&gt;</pre>
+
+<p>Some details of the syntax of Adj may still change depending on user
+feedback, at least after early distributions.</p>
+
+<h3 id="L86788">1.15. More Details</h3>
+
+<h4 id="L86790">1.15.1. Commands Before Child Elements</h4>
+
+<p>When an SVG element gets parsed for Adj commands, parsing for commands stops
+at the first child SVG element. Parsing does recursively descend into child SVG
+elements, but all Adj commands have to be before the first child SVG element.
+This has been implemented with the intention of comprehensibility, and could be
+changed depending on user feedback, at least after early distributions.</p>
+
+<h4 id="L123304">1.15.2. Using SVG Group Element g</h4>
+
+<p>Judicious use of SVG group elements <code>g</code> makes Adj quite
+practical.</p>
+
+<p><span class="todo">TODO: some good examples</span></p>
+
+<h4 id="L123314">1.15.3. Overwriting Preexisting Transform Attributes</h4>
+
+<p>When Adj inserts a <code>transform</code> attribute it overwrites a
+preexisting <code>transform</code> attribute, if any.</p>
+
+<p>This is actually quite practical when transformations are changing, and the
+preexisting transformation has been the older version.</p>
+
+<p>If indeed a separate transformation is needed, one possible solution seems
+to be applying it as appropriate at a parent or child element, possibly at a
+dedicate group element <code>g</code>.</p>
+
+<p><span class="todo">TODO: a good example, if we can find any</span></p>
+
+<h4 id="L123334">1.15.4. Transforming An SVG Path</h4>
+
+<p>For a <code>connection</code> its content may be scaled and rotated. This is
+different than merely moving around an element, which can be and is done by an
+arguably simpler translation transformation.</p>
+
+<h5 id="L123341">1.15.4.1. Changing Points</h5>
+
+<p>For transforming an SVG <code>path</code> element in a
+<code>connection</code> Adj changes the coordinates of its points. For
+transforming an SVG <code>path</code> element in a <code>connection</code> Adj
+does not insert <code>transform</code> attributes.</p>
+
+<p>This has been implemented this way because scaling effectively changes
+stroke width, which is undesirable. <span class="deemphasize">The issue of
+scaling and stroke width has been discussed for SVG version 2, which is far
+out.</span></p>
+
+<h5 id="L123364">1.15.4.2. Arcs Not Supported</h5>
+
+<p>As implemented, other than straight lines and curves, arcs in an SVG
+<code>path</code> element in a <code>connection</code> don't get handled
+correctly by Adj. As implemented, Adj replaces such arcs, if any, by straight
+lines. This could be improved depending on user feedback.</p>
+
+<h4 id="L4599">1.15.5. Exception Handling</h4>
+
+<p>A visual display is provided instead of the expected SVG in case a
+JavaScript exception occurs in an invocation of <code>Adj.doDoc();</code>.</p>
+
+<h3 id="L4606">1.16. Helpful Hints</h3>
+
+<h4 id="L4608">1.16.1. Defining An SVG rect Element</h4>
+
+<p>When defining an SVG <code>rect</code> element which will be sized and
+positioned by Adj, e.g. by a <code>frameForParent</code> command, it is
+possible to be minimalist.</p>
+
+<p>An SVG <code>rect</code> element only needs a <code>width</code> and
+<code>height</code> attribute, which can be zero. An SVG <code>rect</code>
+element needs neither an <code>x</code> nor a <code>y</code> attribute.</p>
+
+<h4 id="L4638">1.16.2. Considerations For Nesting</h4>
+
+<p><span class="todo">TODO: describe special limitations or benefits, if
+any</span></p>
+
+<h3 id="L123374">1.17. Implementation Details</h3>
+
+<p>Maybe should have been a separate document, but might matter to some
+authors.</p>
+
+<h4 id="L123378">1.17.1. Execution Path</h4>
+
+<p><span class="todo">TODO: describe, possibly illustrate with an Adj
+drawing</span></p>
+
+<h3 id="L1688">1.18. Example Files</h3>
+
+<h4 id="L5397">1.18.1. Example File 001 Source Code</h4>
+
+<p>The source code, before <a
+href="adj-ex-041-workflow-version-adj.svg">processing</a>, of an <a
+href="adj-ex-041-workflow-version-after.svg">older version</a> of <a
+href="#example-workflow">above</a> diagram of the example workflow:</p>
+<pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd"&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="sans-serif"&gt;
+    &lt;style type="text/css"&gt;&lt;![CDATA[
+    .subject {
+        fill: lightgray;
+        opacity: 0.5;
+        stroke: gray;
+    }
+    .arrow {
+        stroke: grey;
+        fill: none;
+    }
+]]&gt;&lt;/style&gt;
+    &lt;defs&gt;
+        &lt;marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none"&gt;
+            &lt;path d="M -3 1 L 0 0 L -3 -1"/&gt;
+        &lt;/marker&gt;
+    &lt;/defs&gt;
+    &lt;g&gt;
+        &lt;!-- Adj horizontalList makeGrid:true gap:5 maxPerRow:3 hAlign:center --&gt;
+        &lt;g id="subject-editor"&gt;
+            &lt;!-- Adj horizontalList gap:10 --&gt;
+            &lt;rect width="0" height="0" class="subject"&gt;
+                &lt;!-- Adj frameForParent inset:1 --&gt;
+            &lt;/rect&gt;
+            &lt;text&gt;XML editor&lt;/text&gt;
+        &lt;/g&gt;
+        &lt;g/&gt;
+        &lt;g/&gt;
+        &lt;g/&gt;
+        &lt;g&gt;
+            &lt;rect width="50" height="50" fill="none"/&gt;
+        &lt;/g&gt;
+        &lt;g/&gt;
+        &lt;g id="subject-disk"&gt;
+            &lt;!-- Adj horizontalList gap:10 --&gt;
+            &lt;rect width="0" height="0" class="subject"&gt;
+                &lt;!-- Adj frameForParent inset:1 --&gt;
+            &lt;/rect&gt;
+            &lt;text&gt;disk&lt;/text&gt;
+        &lt;/g&gt;
+        &lt;g/&gt;
+        &lt;g id="subject-author"&gt;
+            &lt;!-- Adj horizontalList gap:10 --&gt;
+            &lt;rect width="0" height="0" class="subject"&gt;
+                &lt;!-- Adj frameForParent inset:1 --&gt;
+            &lt;/rect&gt;
+            &lt;text&gt;author&lt;/text&gt;
+        &lt;/g&gt;
+        &lt;g/&gt;
+        &lt;g&gt;
+            &lt;rect width="50" height="150" fill="none"/&gt;
+        &lt;/g&gt;
+        &lt;g/&gt;
+        &lt;g id="subject-firefox"&gt;
+            &lt;!-- Adj horizontalList gap:10 --&gt;
+            &lt;rect width="0" height="0" class="subject"&gt;
+                &lt;!-- Adj frameForParent inset:1 --&gt;
+            &lt;/rect&gt;
+            &lt;text&gt;Firefox&lt;/text&gt;
+            &lt;g&gt;
+                &lt;!-- Adj horizontalList gap:5 --&gt;
+                &lt;g id="add-on-auto-reload"&gt;
+                    &lt;!-- Adj verticalList gap:5 --&gt;
+                    &lt;rect width="0" height="0" class="subject"&gt;
+                        &lt;!-- Adj frameForParent inset:1 --&gt;
+                    &lt;/rect&gt;
+                    &lt;text&gt;Auto Reload&lt;/text&gt;
+                    &lt;text&gt;add-on&lt;/text&gt;
+                &lt;/g&gt;
+                &lt;g id="add-on-onload-script"&gt;
+                    &lt;!-- Adj verticalList gap:5 --&gt;
+                    &lt;rect width="0" height="0" class="subject"&gt;
+                        &lt;!-- Adj frameForParent inset:1 --&gt;
+                    &lt;/rect&gt;
+                    &lt;text&gt;Onload Script&lt;/text&gt;
+                    &lt;text&gt;Document Files&lt;/text&gt;
+                    &lt;text&gt;add-on&lt;/text&gt;
+                &lt;/g&gt;
+                &lt;g id="add-on-save-back"&gt;
+                    &lt;!-- Adj verticalList gap:5 --&gt;
+                    &lt;rect width="0" height="0" class="subject"&gt;
+                        &lt;!-- Adj frameForParent inset:1 --&gt;
+                    &lt;/rect&gt;
+                    &lt;text&gt;Save Back to File&lt;/text&gt;
+                    &lt;text&gt;from DOM&lt;/text&gt;
+                    &lt;text&gt;add-on&lt;/text&gt;
+                &lt;/g&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: subject-editor, 0.2, 1.2 to: subject-disk, 0.2, -0.2 --&gt;
+            &lt;path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.4 pin:1.1,0.5 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;saves&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: subject-disk, 0.2, 1.2 to: subject-firefox, 0.1, -0.2 --&gt;
+            &lt;path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.4 pin:1,1 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;first time&lt;/text&gt;
+                &lt;text&gt;opens&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: subject-disk, 0.4, 1.2 to: add-on-auto-reload, 0.6, -0.1 --&gt;
+            &lt;path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.9 pin:1,1 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;auto&lt;/text&gt;
+                &lt;text&gt;reloads&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: add-on-onload-script, 0.2, -0.05 to: add-on-onload-script, 0.8, -0.05 --&gt;
+            &lt;path class="arrow" d="M0,0 q50,-50 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.5 pin:0.5,1 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;on load&lt;/text&gt;
+                &lt;text&gt;runs script&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: add-on-save-back, 0.6, -0.05 to: subject-disk, 0.6, 1.2 --&gt;
+            &lt;path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.1 pin:0,1 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;can&lt;/text&gt;
+                &lt;text&gt;save&lt;/text&gt;
+                &lt;text&gt;back&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: subject-author, 0.0, -0.2 to: subject-editor, 1.2, 1.0 --&gt;
+            &lt;path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.4 pin:0,1.1 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;edits&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+        &lt;g&gt;
+            &lt;!-- Adj connection from: subject-author, 0.0, 1.2 to: subject-firefox, 1.05, 0.0 --&gt;
+            &lt;path class="arrow" d="M0,0 q70,-30 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
+            &lt;g&gt;
+                &lt;!-- Adj rider at:0.4 pin:-0.1,0 --&gt;
+                &lt;!-- Adj verticalList gap:1 --&gt;
+                &lt;text&gt;views&lt;/text&gt;
+            &lt;/g&gt;
+        &lt;/g&gt;
+    &lt;/g&gt;
+&lt;/svg&gt;</pre>
+
+<h4 id="L5412">1.18.2. Example File 002</h4>
+
+<p>After <a href="adj-ex-042-image-adj.svg">processing</a>, an example:</p>
+<img alt="example image 002" src="adj-ex-042-image-after.svg"
+style="max-width:95%;max-height:auto;"></img> 
+
+<h4 id="L1730">1.18.3. Example File 003</h4>
+
+<p>After <a href="adj-ex-043-image-adj.svg">processing</a>, an example:</p>
+<img alt="example image 003" src="adj-ex-043-image-after.svg"
+style="max-width:95%;max-height:auto;"></img> 
+
+<h4 id="L5916">1.18.4. Example File 004</h4>
+<img alt="example image 004" src="adj-ex-044-image.svg"
+style="max-width:95%;max-height:auto;"></img> </body>
+</html>

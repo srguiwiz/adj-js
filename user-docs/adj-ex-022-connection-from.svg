@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+	<rect width="200" height="100" fill="linen"/>
+	<rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/>
+	<rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/>
+	<path d="M25,20q31.637,21.917 70,25t70,25" stroke="#000" stroke-width="2" fill="none">
+		<!-- Adj connection from:one to:other -->
+	</path>
+</svg>

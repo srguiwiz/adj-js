@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" font-size="12" font-family="sans-serif">
+	<title>Example Workflow</title>
+	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+	.subject {
+		fill: lightgray;
+		opacity: 0.5;
+		stroke: gray;
+	}
+	.arrow {
+		stroke: grey;
+		fill: none;
+	}
+	a {
+		fill: blue;
+	}
+	.workflow-user {
+		font-weight: bolder;
+	}
+	.workflow-machine {
+		fill: grey;
+	}
+]]></style>
+	<defs>
+		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
+			<path d="M -3 1 L 0 0 L -3 -1"/>
+		</marker>
+	</defs>
+	<g>
+		<!-- Adj verticalList gap:5 hAlign:center vAlign:middle -->
+		<g>
+			<!-- Adj horizontalList gap:5 hAlign:center vAlign:middle -->
+			<g>
+				<rect width="20" height="50" fill="none"/>
+			</g>
+			<g id="subject-author">
+				<!-- Adj verticalList gap:10 -->
+				<rect width="0" height="0" class="subject">
+					<!-- Adj frameForParent inset:1 -->
+				</rect>
+				<image xlink:href="adj-ex-041-author.png" width="64" height="64"/>
+				<text>author</text>
+			</g>
+			<g>
+				<rect width="100" height="50" fill="none"/>
+			</g>
+			<g>
+				<!-- Adj verticalList gap:5 hAlign:center vAlign:middle -->
+				<g id="subject-editor">
+					<!-- Adj verticalList gap:10 -->
+					<rect width="0" height="0" class="subject">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<image xlink:href="adj-ex-041-komodo.png" width="300" height="220"/>
+					<text>
+						<a xlink:href="http://www.activestate.com/komodo-edit" style="fill:blue">XML editor</a>
+					</text>
+				</g>
+				<g>
+					<rect width="50" height="70" fill="none"/>
+				</g>
+				<g id="subject-disk">
+					<!-- Adj horizontalList gap:10 -->
+					<rect width="0" height="0" class="subject">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<text>disk</text>
+				</g>
+				<g>
+					<rect width="50" height="110" fill="none"/>
+				</g>
+			</g>
+		</g>
+		<g id="subject-firefox">
+			<!-- Adj verticalList gap:10 -->
+			<rect width="0" height="0" class="subject">
+				<!-- Adj frameForParent inset:1 -->
+			</rect>
+			<text>
+				<a xlink:href="https://www.mozilla.org/firefox/#desktop" style="fill:blue">Firefox</a>
+			</text>
+			<g>
+				<!-- Adj horizontalList gap:5 -->
+				<image xlink:href="adj-ex-041-firefox.png" width="290" height="214"/>
+				<g id="add-on-auto-reload">
+					<!-- Adj verticalList gap:5 -->
+					<rect width="0" height="0" class="subject">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<image xlink:href="adj-ex-041-add-on.png" width="32" height="32"/>
+					<text>Auto Reload</text>
+					<text>
+						<a xlink:href="https://addons.mozilla.org/en-US/firefox/addon/auto-reload/" style="fill:blue">add-on</a>
+					</text>
+				</g>
+				<g id="add-on-onload-script">
+					<!-- Adj verticalList gap:5 -->
+					<rect width="0" height="0" class="subject">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<image xlink:href="adj-ex-041-add-on.png" width="32" height="32"/>
+					<text>Onload Script</text>
+					<text>Document Files</text>
+					<text>
+						<a xlink:href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/" style="fill:blue">add-on</a>
+					</text>
+				</g>
+				<g id="add-on-save-back">
+					<!-- Adj verticalList gap:5 -->
+					<rect width="0" height="0" class="subject">
+						<!-- Adj frameForParent inset:1 -->
+					</rect>
+					<image xlink:href="adj-ex-041-add-on.png" width="32" height="32"/>
+					<text>Save Back to File</text>
+					<text>from DOM</text>
+					<text>
+						<a xlink:href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/" style="fill:blue">add-on</a>
+					</text>
+				</g>
+			</g>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: subject-editor, 0.2, 1.05 to: subject-disk, 0.1, -0.2 -->
+		<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-machine">
+			<!-- Adj rider at:0.3 pin:1,0 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>save</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: subject-disk, 0.9, -0.2 to: subject-editor, 0.8, 1.05 -->
+		<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-machine">
+			<!-- Adj rider at:0.7 pin:0,0 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>optionally reload</text>
+			<text>if changed</text>
+			<text>from saving back</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: subject-disk, 0.1, 1.2 to: subject-firefox, 0.3, 0.05 -->
+		<path class="arrow" d="M0,0 q70,30 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-machine">
+			<!-- Adj rider at:0.5 pin:1,1 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>first time</text>
+			<text>open</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: subject-disk, 0.4, 1.2 to: add-on-auto-reload, 0.6, -0.1 -->
+		<path class="arrow" d="M0,0 q50,-20 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-machine">
+			<!-- Adj rider at:0.5 pin:0,0 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>auto</text>
+			<text>reload</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: add-on-onload-script, 0.2, 1.05 to: add-on-onload-script, 0.8, 1.05 -->
+		<path class="arrow" d="M0,0 q50,50 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-machine">
+			<!-- Adj rider at:0.5 pin:0.5,0 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>on load</text>
+			<text>run command</text>
+			<text>Adj.doDoc();</text>
+			<text>as defined in</text>
+			<text>script adj.js</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: add-on-save-back, 0.6, -0.05 to: subject-disk, 0.8, 1.2 -->
+		<path class="arrow" d="M0,0 q30,30 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-machine">
+			<!-- Adj rider at:0.3 pin:-0.05,1 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>can</text>
+			<text>save</text>
+			<text>back</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: subject-author, 0.9, -0.1 to: subject-editor, -0.07, 0.4 -->
+		<path class="arrow" d="M0,0 q50,-20 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-user">
+			<!-- Adj rider at:0.45 pin:1,1 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>edits,</text>
+			<text>Ctrl-S saves</text>
+			<text>repeatedly</text>
+		</g>
+	</g>
+	<g>
+		<!-- Adj connection from: subject-author, 0.7, 1.1 to: subject-firefox, 0.1, -0.03 -->
+		<path class="arrow" d="M0,0 q70,15 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<g class="workflow-user">
+			<!-- Adj rider at:0.45 pin:0.9,1 -->
+			<!-- Adj verticalList gap:1 -->
+			<text>opens once,</text>
+			<text>sees</text>
+			<text>automatic</text>
+			<text>updates</text>
+		</g>
+	</g>
+</svg>
