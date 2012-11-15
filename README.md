@@ -13,3 +13,6 @@ Start by reading the User Guide at user-docs/index.html.
 
 A readable copy of the User Guide should be
 [online here](http://www.nrvr.com/open/adj/adj-js/user-docs/).
+
+If you are here for the essential adj.js file, that is at js/adj.js,
+and more illustratively also at user-docs/.adj-js/adj.js.
