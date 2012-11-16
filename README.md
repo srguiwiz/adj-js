@@ -12,11 +12,10 @@ Because of its general nature, other uses may be possible.
 Start by reading the User Guide at user-docs/index.html.
 
 A readable copy of the User Guide should be
-[online here](http://srguiwiz.github.com/adj-js/user-docs/index.html).
+[online here](http://srguiwiz.github.com/adj-js/user-docs/).
 
 If you are here for the essential adj.js file, that is at js/adj.js,
 and more illustratively also at user-docs/.adj-js/adj.js.
 
 A copy of the essential adj.js file should be
-[online here](http://srguiwiz.github.com/adj-js/js/adj.js)
-and also [here](http://srguiwiz.github.com/adj-js/user-docs/.adj-js/adj.js).
+[online here](http://srguiwiz.github.com/adj-js/js/adj.js).
