@@ -21,3 +21,5 @@ and more illustratively also at user-docs/.adj-js/adj.js.
 
 A copy of the essential adj.js file should be
 [online here](http://srguiwiz.github.com/adj-js/js/adj.js).
+
+A fledgling Wiki is [online here](https://github.com/srguiwiz/adj-js/wiki).
