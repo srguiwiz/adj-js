@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="574" height="558">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" width="574" height="558">
 	<title>HTTP Protocol</title>
 	<!-- Sample drawing idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
 	<style type="text/css"><![CDATA[
@@ -32,24 +31,24 @@
 		</marker>
 	</defs>
 	<g>
-		<!-- Adj horizontalList makeGrid:true hAlign:left vAlign:middle maxPerRow:1 gap:0 -->
+		<adj:horizontalList makeGrid="true" hAlign="left" vAlign="middle" maxPerRow="1" gap="0"/>
 		<text style="fill:gray" transform="translate(1,9)">Sample drawing only, not a real system design.</text>
 		<g transform="translate(0,12)">
-			<!-- Adj horizontalList gap:5, centerGap:40, maxPerRow:3, makeGrid:true, hAlign:'center', vAlign:'middle' -->
-			<!-- //Adj explain -->
+			<adj:horizontalList gap="5" centerGap="40" maxPerRow="3" makeGrid="true" hAlign="center" vAlign="middle"/>
+			<!-- adj:explain/ if you want to better understand -->
 			<g>
-				<!-- Adj connection from: client1, 0, 0.7, to: server1, 1, 0.3 -->
-				<path id="request1path" class="arrow" d="M531,20.4Q275.471,43.008 48,161.6" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="client1, 0, 0.7" to="server1, 1, 0.3"/>
+				<path id="request1path" class="arrow" d="M531,20.4q-255.53,22.609 -483,141.2" stroke-width="3" marker-end="url(#arrowhead)"/>
 				<g transform="translate(456.309,18.404)">
-					<!-- Adj rider adjust: near, gap: 20, pin: 1, 1 -->
+					<adj:rider adjust="near" gap="20" pin="1, 1"/>
 					<text>HTTP Request</text>
 				</g>
 			</g>
 			<g>
-				<!-- Adj connection from: server1, 1, 0.7, to: client2, 0, 0.3 -->
-				<path id="response1path" class="arrow" d="M48,170.4Q271.429,310.622 531,357.6" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="server1, 1, 0.7" to="client2, 0, 0.3"/>
+				<path id="response1path" class="arrow" d="M48,170.4q223.431,140.221 483,187.2" stroke-width="3" marker-end="url(#arrowhead)"/>
 				<g transform="translate(21.296,206.06)">
-					<!-- Adj rider adjust: near, gap: 20, pin: 1, 0 -->
+					<adj:rider adjust="near" gap="20" pin="1, 0"/>
 					<text>HTTP Response</text>
 				</g>
 			</g>
@@ -58,27 +57,27 @@
 			<g transform="translate(290,16)">
 		</g>
 			<g id="client1" transform="translate(531,5)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect class="client" width="36" height="20" stroke-width="2" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(6,14)">Client</text>
 			</g>
 			<g transform="translate(27,91)">
 		</g>
 			<g id="request1" transform="translate(88,32)">
-				<!-- Adj verticalList gap:5, middleGap:0 -->
+				<adj:verticalList gap="5" middleGap="0"/>
 				<rect class="request" width="401" height="116" rx="3" ry="3" stroke-width="2" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj horizontalList gap:3, bottomGap:0 -->
+					<adj:horizontalList gap="3" bottomGap="0"/>
 					<text transform="translate(4,12)">GET</text>
 					<text transform="translate(31,12)">/</text>
 					<text transform="translate(42,12)">HTTP/1.1</text>
 				</g>
 				<g transform="translate(5,20)">
-					<!-- Adj horizontalList gap:3, maxPerRow:2, makeGrid:true -->
+					<adj:horizontalList gap="3" maxPerRow="2" makeGrid="true"/>
 					<text transform="translate(4,12)">Host:</text>
 					<text transform="translate(88,12)">www.example.com</text>
 					<text transform="translate(4,27)">User-Agent:</text>
@@ -96,9 +95,9 @@
 			<g transform="translate(550,91)">
 		</g>
 			<g id="server1" transform="translate(5,155)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect class="server" width="41" height="20" stroke-width="2" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(6,14)">Server</text>
 			</g>
@@ -109,18 +108,18 @@
 			<g transform="translate(27,362)">
 		</g>
 			<g id="response1" transform="translate(171,182)">
-				<!-- Adj verticalList gap:5, middleGap:0 -->
+				<adj:verticalList gap="5" middleGap="0"/>
 				<rect class="request" width="236" height="357" rx="3" ry="3" stroke-width="2" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj horizontalList gap:3, bottomGap:0 -->
+					<adj:horizontalList gap="3" bottomGap="0"/>
 					<text transform="translate(4,12)">HTTP/1.1</text>
 					<text transform="translate(50,12)">200</text>
 					<text transform="translate(72,12)">OK</text>
 				</g>
 				<g transform="translate(5,20)">
-					<!-- Adj horizontalList gap:3, bottomGap:0, maxPerRow:2, makeGrid:true -->
+					<adj:horizontalList gap="3" bottomGap="0" maxPerRow="2" makeGrid="true"/>
 					<text transform="translate(4,12)">Date:</text>
 					<text transform="translate(79,12)">Sun, 26 Feb 2012 19:46:42 GMT</text>
 					<text transform="translate(4,27)">Server:</text>
@@ -140,8 +139,8 @@
 					<text transform="translate(4,132)"> </text>
 				</g>
 				<g transform="translate(5,155)">
-					<!-- Adj textBreaks -->
-					<!-- Adj verticalList gap:3 -->
+					<adj:textBreaks/>
+					<adj:verticalList gap="3"/>
 					<text transform="translate(4,12)">&lt;!DOCTYPE html&gt;</text>
 					<text transform="translate(4,27)">&lt;html&gt;</text>
 					<text transform="translate(4,42)">&lt;head&gt;</text>
@@ -162,9 +161,9 @@
 				</g>
 			</g>
 			<g id="client2" transform="translate(531,351)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect class="client" width="36" height="20" stroke-width="2" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(6,14)">Client</text>
 			</g>

@@ -40,20 +40,25 @@
 // Public repository - https://github.com/srguiwiz/adj-js
 //
 
-// invoke Adj by doing Adj.processAdjComments(document);
-// e.g. <svg onload="Adj.processAdjComments(document);">
-// optionally try{Adj.processAdjComments(document);}catch(e){};
+// invoke Adj by doing Adj.processAdjElements(document);
+// e.g. <svg onload="Adj.processAdjElements(document);">
+// optionally try{Adj.processAdjElements(document);}catch(e){};
 //
 // newer shortcut is Adj.doDoc();
 
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
+	Adj.version = { major:2 };
 	Adj.algorithms = {};
 }
 
+// constants
+Adj.SvgNamespace = "http://www.w3.org/2000/svg"
+Adj.AdjNamespace = "http://www.nrvr.com/2012/adj";
+
 // complete processing of all phases
-Adj.processAdjComments = function processAdjComments(documentNodeOrRootElement) {
+Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) {
 	var rootElement;
 	if (documentNodeOrRootElement.documentElement) {
 		rootElement = documentNodeOrRootElement.documentElement;
@@ -74,8 +79,8 @@ Adj.processAdjComments = function processAdjComments(documentNodeOrRootElement) 
 			}
 		 });
 		//
-		// read comments and make or update phase handlers
-		Adj.commentsToPhaseHandlers(rootElement);
+		// read Adj elements and make or update phase handlers
+		Adj.adjElementsToPhaseHandlers(rootElement);
 		//
 		// then process
 		Adj.processSvgElement(rootElement);
@@ -87,7 +92,7 @@ Adj.processAdjComments = function processAdjComments(documentNodeOrRootElement) 
 
 // shortcut
 Adj.doDoc = function doDoc() {
-	Adj.processAdjComments(document);
+	Adj.processAdjElements(document);
 }
 
 // generic installer
@@ -120,82 +125,50 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 }
 
 // constants
-// decide whether comment text starts with "Adj."
-Adj.whetherToEvalCommentRegexp = /^\s*Adj\./;
-// decide whether comment text starts with "Adj "
-Adj.whetherToEvalShorthandCommentRegexp = /^\s*Adj\s+['"]?([^\s'"]+)['"]?(?:\s+([\s\S]*))?$/;
-// identify characters not safe as name
-Adj.notNameCharacterRegexp = /[^a-zA-Z0-9\-_]/;
-// accept name:value pairs in a comma separated list
-Adj.nameColonValaueRegexp = /\s*,?\s*([^\s:,]+?)\s*:\s*(.+?)(?=\s*$|\s*,?\s*[^\s:,]+\s*:)/g;
 // recognize a boolean or decimal
 Adj.booleanOrDecimalRegexp = /^\s*(true|false|[+-]?(?:[0-9]*\.)?[0-9]+)\s*$/;
-// find content of quoted string or plain text
-Adj.quotedContentRegexp = /^\s*['"]?(.*?)['"]?\s*$/;
-// decide whether comment text starts with "//Adj." or also "//Adj "
-Adj.whetherToSkipCommentRegexp = /^\s*\/\/\s*Adj[.\s]/;
 
 // recursive walking of the tree
-Adj.commentsToPhaseHandlers = function commentsToPhaseHandlers (node) {
+Adj.adjElementsToPhaseHandlers = function adjElementsToPhaseHandlers (node) {
 	// first clear adjFields for a new start
 	node.adjFields = {};
 	// then walk
-	var possiblyCommentToEval = true;
 	for (var child = node.firstChild; child; child = child.nextSibling) {
-		if (possiblyCommentToEval) { // first comment only
-			if (child instanceof Comment) { // if an XML #comment
-				var commentContent = child.textContent;
-				var matches;
-				var toEval;
-				if (Adj.whetherToEvalCommentRegexp.test(commentContent)) { // must start with "Adj."
-					toEval = commentContent;
-				} else if (matches = Adj.whetherToEvalShorthandCommentRegexp.exec(commentContent)) { // must start with "Adj "
-					var algorithmName = matches[1].replace(Adj.notNameCharacterRegexp, "?");
-					var parameters = matches[2];
-					var parametersToEval = "";
-					if (parameters) {
-						Adj.nameColonValaueRegexp.lastIndex = 0;
-						var parameterMatches = Adj.nameColonValaueRegexp.exec(parameters);
-						while (parameterMatches != null) {
-							var name = parameterMatches[1].replace(Adj.notNameCharacterRegexp, "?");
-							var value = parameterMatches[2];
-							var numberMatch;
-							if (numberMatch = Adj.booleanOrDecimalRegexp.exec(value)) { // !isNaN(value) would miss boolean
-								// keep booleans and decimal and integer numbers as is
-								value = numberMatch[1];
-							} else {
-								// single quotes around anything else
-								var valueMatch = Adj.quotedContentRegexp.exec(value);
-								value = "'" + valueMatch[1].replace("'","?") + "'"; // also replace any ' with ?
+		if (child instanceof Element) { // if an XML element, e.g. not an XML #text
+			if (child.namespaceURI == Adj.AdjNamespace) { // if an Adj element
+				var algorithmName = child.localName;
+				var parameters = {};
+				var attributes = child.attributes;
+				var numberOfAttributes = attributes.length;
+				for (var i = 0; i < numberOfAttributes; i++) {
+					var attribute = attributes[i];
+					if (!attribute.namespaceURI || attribute.namespaceURI == Adj.AdjNamespace) {
+						var value = attribute.value;
+						var numberMatch;
+						if (numberMatch = Adj.booleanOrDecimalRegexp.exec(value)) { // !isNaN(value) would miss boolean
+							// keep booleans and decimal and integer numbers as is
+							value = numberMatch[1];
+							switch (value) {
+								case "true":
+									value = true;
+									break;
+								case "false":
+									value = false;
+									break;
+								default:
+									value = Number(value);
 							}
-							var nameColonValue = name + ":" + value;
-							if (parametersToEval) {
-								parametersToEval = parametersToEval + "," + nameColonValue;
-							} else {
-								parametersToEval = nameColonValue;
-							}
-							parameterMatches = Adj.nameColonValaueRegexp.exec(parameters);
 						}
+						parameters[attribute.localName] = value;
 					}
-					toEval = "Adj.setAlgorithm(this,'" + algorithmName + "',{" + parametersToEval + "});";
-				} else if (Adj.whetherToSkipCommentRegexp.test(commentContent)) { // must start with "//Adj." or "//Adj "
-					// prefix // in front of Adj means to comment out, ignore it
-					continue;
-				} else {
-					possiblyCommentToEval = false; // only eval leading comments or else don't
-					continue;
 				}
-				// special technique to eval so that "this" is the current node
-				node.thisEval = function(textToEval) { eval(textToEval) };
-				node.thisEval(toEval);
+				Adj.setAlgorithm(node, algorithmName, parameters);
 				continue;
 			}
 		}
-		if (!(child instanceof SVGElement)) {
-			continue; // skip if not an SVGElement, e.g. an XML #text
-		}
-		possiblyCommentToEval = false; // only eval comment if before SVG elements or else don't
-		Adj.commentsToPhaseHandlers(child); // recursion
+		if (child instanceof SVGElement) {
+			Adj.adjElementsToPhaseHandlers(child); // recursion
+		} // else skip if not an SVGElement, e.g. an XML #text
 	}
 }
 
@@ -312,9 +285,6 @@ Adj.modifyMaybeRemoveChildren = function modifyMaybeRemoveChildren (node, modify
 	}
 }
 
-// constant
-Adj.SVGnamespace = "http://www.w3.org/2000/svg"
-
 // constants
 Adj.leftCenterRight = { left:0, center:0.5, right:1 };
 Adj.topMiddleBottom = { top:0, middle:0.5, bottom:1 };
@@ -380,7 +350,7 @@ Adj.algorithms.verticalList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = document.createElementNS(Adj.SVGnamespace, "rect");
+				hiddenRect = document.createElementNS(Adj.SvgNamespace, "rect");
 				hiddenRect.adjFields = {placementArtifact:true};
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
@@ -520,7 +490,7 @@ Adj.algorithms.verticalList = {
 		// explain
 		if (element.adjFields.explain) {
 			if (hiddenRect) {
-				var explainElement = document.createElementNS(Adj.SVGnamespace, "rect");
+				var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
 				explainElement.adjFields = {explanationArtifact:true};
 				explainElement.setAttribute("display", "none"); // try being cleverer ?
 				explainElement.setAttribute("x", 0);
@@ -538,7 +508,7 @@ Adj.algorithms.verticalList = {
 				var childRecord = childRecords[childRecordIndex];
 				var explainPathData = childRecord.explainPathData;
 				if (explainPathData) {
-					var explainElement = document.createElementNS(Adj.SVGnamespace, "path");
+					var explainElement = document.createElementNS(Adj.SvgNamespace, "path");
 					explainElement.adjFields = {explanationArtifact:true};
 					explainElement.setAttribute("display", "none"); // try being cleverer ?
 					explainElement.setAttribute("d", explainPathData);
@@ -586,7 +556,7 @@ Adj.algorithms.horizontalList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = document.createElementNS(Adj.SVGnamespace, "rect");
+				hiddenRect = document.createElementNS(Adj.SvgNamespace, "rect");
 				hiddenRect.adjFields = {placementArtifact:true};
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
@@ -726,7 +696,7 @@ Adj.algorithms.horizontalList = {
 		// explain
 		if (element.adjFields.explain) {
 			if (hiddenRect) {
-				var explainElement = document.createElementNS(Adj.SVGnamespace, "rect");
+				var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
 				explainElement.adjFields = {explanationArtifact:true};
 				explainElement.setAttribute("display", "none"); // try being cleverer ?
 				explainElement.setAttribute("x", 0);
@@ -744,7 +714,7 @@ Adj.algorithms.horizontalList = {
 				var childRecord = childRecords[childRecordIndex];
 				var explainPathData = childRecord.explainPathData;
 				if (explainPathData) {
-					var explainElement = document.createElementNS(Adj.SVGnamespace, "path");
+					var explainElement = document.createElementNS(Adj.SvgNamespace, "path");
 					explainElement.adjFields = {explanationArtifact:true};
 					explainElement.setAttribute("display", "none"); // try being cleverer ?
 					explainElement.setAttribute("d", explainPathData);
@@ -1197,7 +1167,7 @@ Adj.algorithms.connection = {
 		// explain
 		if (element.adjFields.explain) {
 			var parent = element.parentNode;
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "rect");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("x", fromBoundingBox.x);
@@ -1211,7 +1181,7 @@ Adj.algorithms.connection = {
 			explainElement.setAttribute("stroke-width", "1");
 			explainElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("cx", fromPoint.x);
@@ -1221,7 +1191,7 @@ Adj.algorithms.connection = {
 			explainElement.setAttribute("fill-opacity", "0.2");
 			explainElement.setAttribute("stroke", "none");
 			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "rect");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("x", toBoundingBox.x);
@@ -1235,7 +1205,7 @@ Adj.algorithms.connection = {
 			explainElement.setAttribute("stroke-width", "1");
 			explainElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("cx", toPoint.x);
@@ -1684,7 +1654,7 @@ Adj.algorithms.rider = {
 			if (considerElementsToAvoid) {
 				for (var oneRelativeBoundingBoxIndex in relativeBoundingBoxes) {
 					var oneRelativeBoundingBox = relativeBoundingBoxes[oneRelativeBoundingBoxIndex];
-					var explainElement = document.createElementNS(Adj.SVGnamespace, "rect");
+					var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
 					explainElement.adjFields = {explanationArtifact:true};
 					explainElement.setAttribute("display", "none"); // try being cleverer ?
 					explainElement.setAttribute("x", oneRelativeBoundingBox.x);
@@ -1699,7 +1669,7 @@ Adj.algorithms.rider = {
 					parent.appendChild(explainElement);
 				}
 			}
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "rect");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("x", boundingBox.x);
@@ -1713,7 +1683,7 @@ Adj.algorithms.rider = {
 			explainElement.setAttribute("stroke-width", "1");
 			explainElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("cx", pinX);
@@ -1726,7 +1696,7 @@ Adj.algorithms.rider = {
 			parent.appendChild(explainElement);
 			if (considerElementsToAvoid) {
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit);
-				var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+				var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 				explainElement.adjFields = {explanationArtifact:true};
 				explainElement.setAttribute("display", "none"); // try being cleverer ?
 				explainElement.setAttribute("cx", pathFractionPoint.x);
@@ -1737,7 +1707,7 @@ Adj.algorithms.rider = {
 				explainElement.setAttribute("stroke", "none");
 				parent.appendChild(explainElement);
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit2);
-				var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+				var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 				explainElement.adjFields = {explanationArtifact:true};
 				explainElement.setAttribute("display", "none"); // try being cleverer ?
 				explainElement.setAttribute("cx", pathFractionPoint.x);
@@ -2067,7 +2037,7 @@ Adj.algorithms.circularList = {
 		//
 		// explain
 		if (element.adjFields.explain) {
-			var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 			explainElement.adjFields = {explanationArtifact:true};
 			explainElement.setAttribute("display", "none"); // try being cleverer ?
 			explainElement.setAttribute("cx", Adj.decimal(treeCenterX - topLeftAlignmentFixX));
@@ -2082,7 +2052,7 @@ Adj.algorithms.circularList = {
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
 				var explainCircle = childRecord.explainCircle;
-				var explainElement = document.createElementNS(Adj.SVGnamespace, "circle");
+				var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
 				explainElement.adjFields = {explanationArtifact:true};
 				explainElement.setAttribute("display", "none"); // try being cleverer ?
 				explainElement.setAttribute("cx", Adj.decimal(explainCircle.cx - topLeftAlignmentFixX));
@@ -2109,10 +2079,10 @@ Adj.displayException = function displayException (exception, svgElement) {
 		child.setAttribute("display", "none"); // make invisible but don't delete
 	}
 	var exceptionString = exception.toString();
-	var exceptionElement = document.createElementNS(Adj.SVGnamespace, "g");
+	var exceptionElement = document.createElementNS(Adj.SvgNamespace, "g");
 	exceptionElement.adjFields = {explanationArtifact:true};
 	rootElement.appendChild(exceptionElement);
-	var exceptionTextElement = document.createElementNS(Adj.SVGnamespace, "text");
+	var exceptionTextElement = document.createElementNS(Adj.SvgNamespace, "text");
 	exceptionTextElement.adjFields = {explanationArtifact:true};
 	exceptionTextElement.appendChild(document.createTextNode(exceptionString));
 	exceptionTextElement.setAttribute("fill", "red");
