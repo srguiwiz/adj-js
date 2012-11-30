@@ -35,7 +35,6 @@
 		<text style="fill:gray" transform="translate(1,9)">Sample drawing only, not a real system design.</text>
 		<g transform="translate(0,12)">
 			<adj:horizontalList gap="5" centerGap="40" maxPerRow="3" makeGrid="true" hAlign="center" vAlign="middle"/>
-			<!-- adj:explain/ if you want to better understand -->
 			<g>
 				<adj:connection from="client1, 0, 0.7" to="server1, 1, 0.3"/>
 				<path id="request1path" class="arrow" d="M531,20.4q-255.53,22.609 -483,141.2" stroke-width="3" marker-end="url(#arrowhead)"/>

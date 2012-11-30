@@ -71,11 +71,10 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		Adj.modifyMaybeRemoveChildren
 		(rootElement,
 		 function(node,child) {
-			var adjFields = child.adjFields;
-			if (adjFields) {  // adjFields exists from an earlier run
-				if (adjFields.explanationArtifact) {
-					adjFields.removeElement = true;
-				}
+			var adjFields = child.adjFields || (child.adjFields = {}); // ensure there is an adjFields object
+			if (adjFields.explanationArtifact || child.getAttributeNS(Adj.AdjNamespace, "explanation")) {
+				adjFields.explanationArtifact = true;
+				adjFields.removeElement = true;
 			}
 		 });
 		//
@@ -100,6 +99,11 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	parametersObject = parametersObject || {}; // if no parametersObject given then empty object
 	element = element || target; // if no element given then same as target, element == target is normal
 	var algorithm = Adj.algorithms[algorithmName];
+	if (!algorithm) {
+		// tolerate, for now
+		console.log("Adj skipping unknown algorithm name " + algorithmName);
+		return;
+	}
 	var phaseHandler = { // stuff everything needed into one phaseHandler object
 		element: element,
 		algorithm: algorithm,
@@ -184,15 +188,13 @@ Adj.processSvgElement = function processSvgElement(svgElement) {
 	(svgElement,
 	 function(node,child) {
 		var adjFields = child.adjFields;
-		if (adjFields) {  // adjFields exists
-			if (adjFields.placementArtifact) {
-				// remove certain nodes that have been created for use during processing
-				adjFields.removeElement = true;
-				return;
-			}
-			if (adjFields.explanationArtifact) {
-				child.removeAttribute("display"); // try being cleverer ?
-			}
+		if (adjFields.placementArtifact) {
+			// remove certain nodes that have been created for use during processing
+			adjFields.removeElement = true;
+			return;
+		}
+		if (adjFields.explanationArtifact) {
+			child.removeAttribute("display"); // try being cleverer ?
 		}
 	 });
 }
@@ -318,6 +320,23 @@ Adj.decimal = function decimal (number, decimalDigits) {
 	return Math.round(number * factor) / factor;
 }
 
+// utility
+Adj.createSVGElement = function createSVGElement (name, adjFields) {
+	var svgElement = document.createElementNS(Adj.SvgNamespace, name);
+	svgElement.adjFields = adjFields || {}; // ensure there is an adjFields object
+	return svgElement;
+}
+
+// utility
+Adj.createExplanationElement = function createExplanationElement (name, dontDisplayNone) {
+	var explanationElement = Adj.createSVGElement(name, {explanationArtifact:true});
+	explanationElement.setAttributeNS(Adj.AdjNamespace, "explanation", "true");
+	if (!dontDisplayNone) {
+		explanationElement.setAttribute("display", "none"); // try being cleverer ?
+	}
+	return explanationElement;
+}
+
 // a specific algorithm
 Adj.algorithms.verticalList = {
 	phaseHandlerName: "adjPhase1Up",
@@ -350,8 +369,7 @@ Adj.algorithms.verticalList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = document.createElementNS(Adj.SvgNamespace, "rect");
-				hiddenRect.adjFields = {placementArtifact:true};
+				hiddenRect = Adj.createSVGElement("rect", {placementArtifact:true});
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
 				hiddenRect.setAttribute("visibility", "hidden");
@@ -490,34 +508,30 @@ Adj.algorithms.verticalList = {
 		// explain
 		if (element.adjFields.explain) {
 			if (hiddenRect) {
-				var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
-				explainElement.adjFields = {explanationArtifact:true};
-				explainElement.setAttribute("display", "none"); // try being cleverer ?
-				explainElement.setAttribute("x", 0);
-				explainElement.setAttribute("y", 0);
-				explainElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
-				explainElement.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
-				explainElement.setAttribute("fill", "white");
-				explainElement.setAttribute("fill-opacity", "0.1");
-				explainElement.setAttribute("stroke", "blue");
-				explainElement.setAttribute("stroke-width", "1");
-				explainElement.setAttribute("stroke-opacity", "0.2");
-				element.appendChild(explainElement);
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", 0);
+				explanationElement.setAttribute("y", 0);
+				explanationElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
+				explanationElement.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
+				explanationElement.setAttribute("fill", "white");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				element.appendChild(explanationElement);
 			}
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
 				var explainPathData = childRecord.explainPathData;
 				if (explainPathData) {
-					var explainElement = document.createElementNS(Adj.SvgNamespace, "path");
-					explainElement.adjFields = {explanationArtifact:true};
-					explainElement.setAttribute("display", "none"); // try being cleverer ?
-					explainElement.setAttribute("d", explainPathData);
-					explainElement.setAttribute("fill", "blue");
-					explainElement.setAttribute("fill-opacity", "0.1");
-					explainElement.setAttribute("stroke", "blue");
-					explainElement.setAttribute("stroke-width", "1");
-					explainElement.setAttribute("stroke-opacity", "0.1");
-					element.appendChild(explainElement);
+					var explanationElement = Adj.createExplanationElement("path");
+					explanationElement.setAttribute("d", explainPathData);
+					explanationElement.setAttribute("fill", "blue");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.1");
+					element.appendChild(explanationElement);
 				}
 			}
 		}
@@ -556,8 +570,7 @@ Adj.algorithms.horizontalList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = document.createElementNS(Adj.SvgNamespace, "rect");
-				hiddenRect.adjFields = {placementArtifact:true};
+				hiddenRect = Adj.createSVGElement("rect", {placementArtifact:true});
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
 				hiddenRect.setAttribute("visibility", "hidden");
@@ -696,34 +709,30 @@ Adj.algorithms.horizontalList = {
 		// explain
 		if (element.adjFields.explain) {
 			if (hiddenRect) {
-				var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
-				explainElement.adjFields = {explanationArtifact:true};
-				explainElement.setAttribute("display", "none"); // try being cleverer ?
-				explainElement.setAttribute("x", 0);
-				explainElement.setAttribute("y", 0);
-				explainElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
-				explainElement.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
-				explainElement.setAttribute("fill", "white");
-				explainElement.setAttribute("fill-opacity", "0.1");
-				explainElement.setAttribute("stroke", "blue");
-				explainElement.setAttribute("stroke-width", "1");
-				explainElement.setAttribute("stroke-opacity", "0.2");
-				element.appendChild(explainElement);
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", 0);
+				explanationElement.setAttribute("y", 0);
+				explanationElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
+				explanationElement.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
+				explanationElement.setAttribute("fill", "white");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				element.appendChild(explanationElement);
 			}
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
 				var explainPathData = childRecord.explainPathData;
 				if (explainPathData) {
-					var explainElement = document.createElementNS(Adj.SvgNamespace, "path");
-					explainElement.adjFields = {explanationArtifact:true};
-					explainElement.setAttribute("display", "none"); // try being cleverer ?
-					explainElement.setAttribute("d", explainPathData);
-					explainElement.setAttribute("fill", "blue");
-					explainElement.setAttribute("fill-opacity", "0.1");
-					explainElement.setAttribute("stroke", "blue");
-					explainElement.setAttribute("stroke-width", "1");
-					explainElement.setAttribute("stroke-opacity", "0.1");
-					element.appendChild(explainElement);
+					var explanationElement = Adj.createExplanationElement("path");
+					explanationElement.setAttribute("d", explainPathData);
+					explanationElement.setAttribute("fill", "blue");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.1");
+					element.appendChild(explanationElement);
 				}
 			}
 		}
@@ -1167,54 +1176,46 @@ Adj.algorithms.connection = {
 		// explain
 		if (element.adjFields.explain) {
 			var parent = element.parentNode;
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("x", fromBoundingBox.x);
-			explainElement.setAttribute("y", fromBoundingBox.y);
-			explainElement.setAttribute("width", fromBoundingBox.width);
-			explainElement.setAttribute("height", fromBoundingBox.height);
-			explainElement.transform.baseVal.initialize(document.documentElement.createSVGTransformFromMatrix(matrixFromFromElement));
-			explainElement.setAttribute("fill", "green");
-			explainElement.setAttribute("fill-opacity", "0.1");
-			explainElement.setAttribute("stroke", "green");
-			explainElement.setAttribute("stroke-width", "1");
-			explainElement.setAttribute("stroke-opacity", "0.2");
-			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("cx", fromPoint.x);
-			explainElement.setAttribute("cy", fromPoint.y);
-			explainElement.setAttribute("r", 3);
-			explainElement.setAttribute("fill", "green");
-			explainElement.setAttribute("fill-opacity", "0.2");
-			explainElement.setAttribute("stroke", "none");
-			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("x", toBoundingBox.x);
-			explainElement.setAttribute("y", toBoundingBox.y);
-			explainElement.setAttribute("width", toBoundingBox.width);
-			explainElement.setAttribute("height", toBoundingBox.height);
-			explainElement.transform.baseVal.initialize(document.documentElement.createSVGTransformFromMatrix(matrixFromToElement));
-			explainElement.setAttribute("fill", "red");
-			explainElement.setAttribute("fill-opacity", "0.1");
-			explainElement.setAttribute("stroke", "red");
-			explainElement.setAttribute("stroke-width", "1");
-			explainElement.setAttribute("stroke-opacity", "0.2");
-			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("cx", toPoint.x);
-			explainElement.setAttribute("cy", toPoint.y);
-			explainElement.setAttribute("r", 3);
-			explainElement.setAttribute("fill", "red");
-			explainElement.setAttribute("fill-opacity", "0.2");
-			explainElement.setAttribute("stroke", "none");
-			parent.appendChild(explainElement);
+			var explanationElement = Adj.createExplanationElement("rect");
+			explanationElement.setAttribute("x", fromBoundingBox.x);
+			explanationElement.setAttribute("y", fromBoundingBox.y);
+			explanationElement.setAttribute("width", fromBoundingBox.width);
+			explanationElement.setAttribute("height", fromBoundingBox.height);
+			explanationElement.transform.baseVal.initialize(document.documentElement.createSVGTransformFromMatrix(matrixFromFromElement));
+			explanationElement.setAttribute("fill", "green");
+			explanationElement.setAttribute("fill-opacity", "0.1");
+			explanationElement.setAttribute("stroke", "green");
+			explanationElement.setAttribute("stroke-width", "1");
+			explanationElement.setAttribute("stroke-opacity", "0.2");
+			parent.appendChild(explanationElement);
+			var explanationElement = Adj.createExplanationElement("circle");
+			explanationElement.setAttribute("cx", fromPoint.x);
+			explanationElement.setAttribute("cy", fromPoint.y);
+			explanationElement.setAttribute("r", 3);
+			explanationElement.setAttribute("fill", "green");
+			explanationElement.setAttribute("fill-opacity", "0.2");
+			explanationElement.setAttribute("stroke", "none");
+			parent.appendChild(explanationElement);
+			var explanationElement = Adj.createExplanationElement("rect");
+			explanationElement.setAttribute("x", toBoundingBox.x);
+			explanationElement.setAttribute("y", toBoundingBox.y);
+			explanationElement.setAttribute("width", toBoundingBox.width);
+			explanationElement.setAttribute("height", toBoundingBox.height);
+			explanationElement.transform.baseVal.initialize(document.documentElement.createSVGTransformFromMatrix(matrixFromToElement));
+			explanationElement.setAttribute("fill", "red");
+			explanationElement.setAttribute("fill-opacity", "0.1");
+			explanationElement.setAttribute("stroke", "red");
+			explanationElement.setAttribute("stroke-width", "1");
+			explanationElement.setAttribute("stroke-opacity", "0.2");
+			parent.appendChild(explanationElement);
+			var explanationElement = Adj.createExplanationElement("circle");
+			explanationElement.setAttribute("cx", toPoint.x);
+			explanationElement.setAttribute("cy", toPoint.y);
+			explanationElement.setAttribute("r", 3);
+			explanationElement.setAttribute("fill", "red");
+			explanationElement.setAttribute("fill-opacity", "0.2");
+			explanationElement.setAttribute("stroke", "none");
+			parent.appendChild(explanationElement);
 		}
 	}
 }
@@ -1317,16 +1318,14 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (element, avoidList) {
 			continue; // don't avoid self
 		}
 		var adjFields = sibling.adjFields;
-		if (adjFields) {  // adjFields exists
-			if (adjFields.placementArtifact) {
-				continue;
-			}
-			if (adjFields.explanationArtifact) {
-				continue;
-			}
-			if (adjFields.notAnOrder1Element) {
-				continue;
-			}
+		if (adjFields.placementArtifact) {
+			continue;
+		}
+		if (adjFields.notAnOrder1Element) {
+			continue;
+		}
+		if (adjFields.explanationArtifact) {
+			continue;
 		}
 		avoidList.push(sibling);
 	}
@@ -1654,69 +1653,59 @@ Adj.algorithms.rider = {
 			if (considerElementsToAvoid) {
 				for (var oneRelativeBoundingBoxIndex in relativeBoundingBoxes) {
 					var oneRelativeBoundingBox = relativeBoundingBoxes[oneRelativeBoundingBoxIndex];
-					var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
-					explainElement.adjFields = {explanationArtifact:true};
-					explainElement.setAttribute("display", "none"); // try being cleverer ?
-					explainElement.setAttribute("x", oneRelativeBoundingBox.x);
-					explainElement.setAttribute("y", oneRelativeBoundingBox.y);
-					explainElement.setAttribute("width", oneRelativeBoundingBox.width);
-					explainElement.setAttribute("height", oneRelativeBoundingBox.height);
-					explainElement.setAttribute("fill", "orange");
-					explainElement.setAttribute("fill-opacity", "0.1");
-					explainElement.setAttribute("stroke", "orange");
-					explainElement.setAttribute("stroke-width", "1");
-					explainElement.setAttribute("stroke-opacity", "0.2");
-					parent.appendChild(explainElement);
+					var explanationElement = Adj.createExplanationElement("rect");
+					explanationElement.setAttribute("x", oneRelativeBoundingBox.x);
+					explanationElement.setAttribute("y", oneRelativeBoundingBox.y);
+					explanationElement.setAttribute("width", oneRelativeBoundingBox.width);
+					explanationElement.setAttribute("height", oneRelativeBoundingBox.height);
+					explanationElement.setAttribute("fill", "orange");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "orange");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.2");
+					parent.appendChild(explanationElement);
 				}
 			}
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "rect");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("x", boundingBox.x);
-			explainElement.setAttribute("y", boundingBox.y);
-			explainElement.setAttribute("width", boundingBox.width);
-			explainElement.setAttribute("height", boundingBox.height);
-			explainElement.setAttribute("transform", elementTransformAttribute);
-			explainElement.setAttribute("fill", "blue");
-			explainElement.setAttribute("fill-opacity", "0.1");
-			explainElement.setAttribute("stroke", "blue");
-			explainElement.setAttribute("stroke-width", "1");
-			explainElement.setAttribute("stroke-opacity", "0.2");
-			parent.appendChild(explainElement);
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("cx", pinX);
-			explainElement.setAttribute("cy", pinY);
-			explainElement.setAttribute("r", 3);
-			explainElement.setAttribute("transform", elementTransformAttribute);
-			explainElement.setAttribute("fill", "blue");
-			explainElement.setAttribute("fill-opacity", "0.2");
-			explainElement.setAttribute("stroke", "none");
-			parent.appendChild(explainElement);
+			var explanationElement = Adj.createExplanationElement("rect");
+			explanationElement.setAttribute("x", boundingBox.x);
+			explanationElement.setAttribute("y", boundingBox.y);
+			explanationElement.setAttribute("width", boundingBox.width);
+			explanationElement.setAttribute("height", boundingBox.height);
+			explanationElement.setAttribute("transform", elementTransformAttribute);
+			explanationElement.setAttribute("fill", "blue");
+			explanationElement.setAttribute("fill-opacity", "0.1");
+			explanationElement.setAttribute("stroke", "blue");
+			explanationElement.setAttribute("stroke-width", "1");
+			explanationElement.setAttribute("stroke-opacity", "0.2");
+			parent.appendChild(explanationElement);
+			var explanationElement = Adj.createExplanationElement("circle");
+			explanationElement.setAttribute("cx", pinX);
+			explanationElement.setAttribute("cy", pinY);
+			explanationElement.setAttribute("r", 3);
+			explanationElement.setAttribute("transform", elementTransformAttribute);
+			explanationElement.setAttribute("fill", "blue");
+			explanationElement.setAttribute("fill-opacity", "0.2");
+			explanationElement.setAttribute("stroke", "none");
+			parent.appendChild(explanationElement);
 			if (considerElementsToAvoid) {
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit);
-				var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-				explainElement.adjFields = {explanationArtifact:true};
-				explainElement.setAttribute("display", "none"); // try being cleverer ?
-				explainElement.setAttribute("cx", pathFractionPoint.x);
-				explainElement.setAttribute("cy", pathFractionPoint.y);
-				explainElement.setAttribute("r", 3);
-				explainElement.setAttribute("fill", "green");
-				explainElement.setAttribute("fill-opacity", "0.2");
-				explainElement.setAttribute("stroke", "none");
-				parent.appendChild(explainElement);
+				var explanationElement = Adj.createExplanationElement("circle");
+				explanationElement.setAttribute("cx", pathFractionPoint.x);
+				explanationElement.setAttribute("cy", pathFractionPoint.y);
+				explanationElement.setAttribute("r", 3);
+				explanationElement.setAttribute("fill", "green");
+				explanationElement.setAttribute("fill-opacity", "0.2");
+				explanationElement.setAttribute("stroke", "none");
+				parent.appendChild(explanationElement);
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit2);
-				var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-				explainElement.adjFields = {explanationArtifact:true};
-				explainElement.setAttribute("display", "none"); // try being cleverer ?
-				explainElement.setAttribute("cx", pathFractionPoint.x);
-				explainElement.setAttribute("cy", pathFractionPoint.y);
-				explainElement.setAttribute("r", 3);
-				explainElement.setAttribute("fill", "red");
-				explainElement.setAttribute("fill-opacity", "0.2");
-				explainElement.setAttribute("stroke", "none");
-				parent.appendChild(explainElement);
+				var explanationElement = Adj.createExplanationElement("circle");
+				explanationElement.setAttribute("cx", pathFractionPoint.x);
+				explanationElement.setAttribute("cy", pathFractionPoint.y);
+				explanationElement.setAttribute("r", 3);
+				explanationElement.setAttribute("fill", "red");
+				explanationElement.setAttribute("fill-opacity", "0.2");
+				explanationElement.setAttribute("stroke", "none");
+				parent.appendChild(explanationElement);
 			}
 		}
 	}
@@ -2037,33 +2026,29 @@ Adj.algorithms.circularList = {
 		//
 		// explain
 		if (element.adjFields.explain) {
-			var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-			explainElement.adjFields = {explanationArtifact:true};
-			explainElement.setAttribute("display", "none"); // try being cleverer ?
-			explainElement.setAttribute("cx", Adj.decimal(treeCenterX - topLeftAlignmentFixX));
-			explainElement.setAttribute("cy", Adj.decimal(treeCenterY - topLeftAlignmentFixY));
-			explainElement.setAttribute("r", Adj.decimal(treeRadius + maxBranchRadius));
-			explainElement.setAttribute("fill", "white");
-			explainElement.setAttribute("fill-opacity", "0.1");
-			explainElement.setAttribute("stroke", "blue");
-			explainElement.setAttribute("stroke-width", "1");
-			explainElement.setAttribute("stroke-opacity", "0.2");
-			element.appendChild(explainElement);
+			var explanationElement = Adj.createExplanationElement("circle");
+			explanationElement.setAttribute("cx", Adj.decimal(treeCenterX - topLeftAlignmentFixX));
+			explanationElement.setAttribute("cy", Adj.decimal(treeCenterY - topLeftAlignmentFixY));
+			explanationElement.setAttribute("r", Adj.decimal(treeRadius + maxBranchRadius));
+			explanationElement.setAttribute("fill", "white");
+			explanationElement.setAttribute("fill-opacity", "0.1");
+			explanationElement.setAttribute("stroke", "blue");
+			explanationElement.setAttribute("stroke-width", "1");
+			explanationElement.setAttribute("stroke-opacity", "0.2");
+			element.appendChild(explanationElement);
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
 				var explainCircle = childRecord.explainCircle;
-				var explainElement = document.createElementNS(Adj.SvgNamespace, "circle");
-				explainElement.adjFields = {explanationArtifact:true};
-				explainElement.setAttribute("display", "none"); // try being cleverer ?
-				explainElement.setAttribute("cx", Adj.decimal(explainCircle.cx - topLeftAlignmentFixX));
-				explainElement.setAttribute("cy", Adj.decimal(explainCircle.cy - topLeftAlignmentFixY));
-				explainElement.setAttribute("r", Adj.decimal(explainCircle.r));
-				explainElement.setAttribute("fill", "blue");
-				explainElement.setAttribute("fill-opacity", "0.1");
-				explainElement.setAttribute("stroke", "blue");
-				explainElement.setAttribute("stroke-width", "1");
-				explainElement.setAttribute("stroke-opacity", "0.1");
-				element.appendChild(explainElement);
+				var explanationElement = Adj.createExplanationElement("circle");
+				explanationElement.setAttribute("cx", Adj.decimal(explainCircle.cx - topLeftAlignmentFixX));
+				explanationElement.setAttribute("cy", Adj.decimal(explainCircle.cy - topLeftAlignmentFixY));
+				explanationElement.setAttribute("r", Adj.decimal(explainCircle.r));
+				explanationElement.setAttribute("fill", "blue");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.1");
+				element.appendChild(explanationElement);
 			}
 		}
 	}
@@ -2079,11 +2064,9 @@ Adj.displayException = function displayException (exception, svgElement) {
 		child.setAttribute("display", "none"); // make invisible but don't delete
 	}
 	var exceptionString = exception.toString();
-	var exceptionElement = document.createElementNS(Adj.SvgNamespace, "g");
-	exceptionElement.adjFields = {explanationArtifact:true};
+	var exceptionElement = Adj.createExplanationElement("g", true);
 	rootElement.appendChild(exceptionElement);
-	var exceptionTextElement = document.createElementNS(Adj.SvgNamespace, "text");
-	exceptionTextElement.adjFields = {explanationArtifact:true};
+	var exceptionTextElement = Adj.createSVGElement("text");
 	exceptionTextElement.appendChild(document.createTextNode(exceptionString));
 	exceptionTextElement.setAttribute("fill", "red");
 	exceptionElement.appendChild(exceptionTextElement);
