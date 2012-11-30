@@ -35,7 +35,7 @@
 		<text style="fill:gray">Sample drawing only, not a real system design.</text>
 		<g>
 			<adj:horizontalList gap="5" centerGap="40" maxPerRow="3" makeGrid="true" hAlign="center" vAlign="middle"/>
-			<!-- adj:explain/ if you want to better understand -->
+			<adj:explain/><!-- if you want to better understand -->
 			<g>
 				<adj:connection from="client1, 0, 0.7" to="server1, 1, 0.3"/>
 				<path id="request1path" class="arrow" d="M0,0 q50,50 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
@@ -52,10 +52,8 @@
 					<text>HTTP Response</text>
 				</g>
 			</g>
-			<g>
-		</g>
-			<g>
-		</g>
+			<g/>
+			<g/>
 			<g id="client1">
 				<adj:verticalList gap="5"/>
 				<rect class="client" width="36" height="20" stroke-width="2" x="1" y="1">
@@ -63,8 +61,7 @@
 				</rect>
 				<text>Client</text>
 			</g>
-			<g>
-		</g>
+			<g/>
 			<g id="request1">
 				<adj:verticalList gap="5" middleGap="0"/>
 				<rect class="request" width="401" height="116" rx="3" ry="3" stroke-width="2" x="1" y="1">
@@ -92,8 +89,7 @@
 					<text>keep-alive</text>
 				</g>
 			</g>
-			<g>
-		</g>
+			<g/>
 			<g id="server1">
 				<adj:verticalList gap="5"/>
 				<rect class="server" width="41" height="20" stroke-width="2" x="1" y="1">
@@ -101,12 +97,9 @@
 				</rect>
 				<text>Server</text>
 			</g>
-			<g>
-		</g>
-			<g>
-		</g>
-			<g>
-		</g>
+			<g/>
+			<g/>
+			<g/>
 			<g id="response1">
 				<adj:verticalList gap="5" middleGap="0"/>
 				<rect class="request" width="236" height="357" rx="3" ry="3" stroke-width="2" x="1" y="1">

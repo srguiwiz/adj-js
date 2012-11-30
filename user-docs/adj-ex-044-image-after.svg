@@ -52,10 +52,8 @@
 					<text>HTTP Response</text>
 				</g>
 			</g>
-			<g transform="translate(27,16)">
-		</g>
-			<g transform="translate(290,16)">
-		</g>
+			<g transform="translate(27,16)"/>
+			<g transform="translate(290,16)"/>
 			<g id="client1" transform="translate(531,5)">
 				<adj:verticalList gap="5"/>
 				<rect class="client" width="36" height="20" stroke-width="2" x="1" y="1">
@@ -63,8 +61,7 @@
 				</rect>
 				<text transform="translate(6,14)">Client</text>
 			</g>
-			<g transform="translate(27,91)">
-		</g>
+			<g transform="translate(27,91)"/>
 			<g id="request1" transform="translate(88,32)">
 				<adj:verticalList gap="5" middleGap="0"/>
 				<rect class="request" width="401" height="116" rx="3" ry="3" stroke-width="2" x="1" y="1">
@@ -92,8 +89,7 @@
 					<text transform="translate(88,87)">keep-alive</text>
 				</g>
 			</g>
-			<g transform="translate(550,91)">
-		</g>
+			<g transform="translate(550,91)"/>
 			<g id="server1" transform="translate(5,155)">
 				<adj:verticalList gap="5"/>
 				<rect class="server" width="41" height="20" stroke-width="2" x="1" y="1">
@@ -101,12 +97,9 @@
 				</rect>
 				<text transform="translate(6,14)">Server</text>
 			</g>
-			<g transform="translate(290,166)">
-		</g>
-			<g transform="translate(550,166)">
-		</g>
-			<g transform="translate(27,362)">
-		</g>
+			<g transform="translate(290,166)"/>
+			<g transform="translate(550,166)"/>
+			<g transform="translate(27,362)"/>
 			<g id="response1" transform="translate(171,182)">
 				<adj:verticalList gap="5" middleGap="0"/>
 				<rect class="request" width="236" height="357" rx="3" ry="3" stroke-width="2" x="1" y="1">
