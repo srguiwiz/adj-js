@@ -1057,6 +1057,34 @@ Adj.transformPath = function transformPath (pathElement, matrix) {
 	pathElement.setAttribute("d", d);
 }
 
+// utility
+Adj.restoreAndStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribute (element, name) {
+	var value;
+	value = element.getAttributeNS(Adj.AdjNamespace, name);
+	if (value) { // restore if any
+		element.setAttribute(name, value);
+	} else {
+		value = element.getAttribute(name);
+		if (value) { // store if any
+			element.setAttributeNS(Adj.AdjNamespace, name, value);
+		}
+	}
+}
+
+// utility
+Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordinates (element) {
+	if (element instanceof SVGLineElement) {
+		Adj.restoreAndStoreAuthoringAttribute(element, "x1");
+		Adj.restoreAndStoreAuthoringAttribute(element, "y1");
+		Adj.restoreAndStoreAuthoringAttribute(element, "x2");
+		Adj.restoreAndStoreAuthoringAttribute(element, "y2");
+	} else if (element instanceof SVGPathElement) {
+		Adj.restoreAndStoreAuthoringAttribute(element, "d");
+	} else {
+		// other types of elements not implemented at this time
+	}
+}
+
 // a specific algorithm
 // note: as implemented works for simplified cases line and path,
 // and for general case group containing one line (or path) as vector and any number of lines and paths as children of that group
@@ -1105,6 +1133,8 @@ Adj.algorithms.connection = {
 			element.setAttribute("y2", Adj.decimal(toPoint.y));
 		} else if (element instanceof SVGPathElement) {
 			// an SVG path
+			// restore if any
+			Adj.restoreAndStoreAuthoringCoordinates(element);
 			// end points
 			var pathEndPoints = Adj.endPoints(element);
 			var pathFromPoint = pathEndPoints.fromPoint;
@@ -1140,6 +1170,10 @@ Adj.algorithms.connection = {
 			}
 			if (!(vector instanceof SVGElement)) { // maybe childRecords.length == 0
 				return; // defensive exit
+			}
+			// restore if any
+			restoreLoop: for (var childRecordIndex in childRecords) {
+				Adj.restoreAndStoreAuthoringCoordinates(childRecords[childRecordIndex].node);
 			}
 			// end points
 			var vectorEndPoints = Adj.endPoints(vector);

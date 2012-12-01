@@ -784,12 +784,12 @@ source line two.&lt;/text&gt;
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-025-connection-vector1.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
   &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
   &lt;g&gt;
-    &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5 vector:1</span> --&gt;
+    <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5" vector="1"/&gt;</span>
     &lt;path d="M15,100 l-10,-10 20,0 5,5 135,0 0,-5 20,10 -20,10 0,-5 -135,0 -5,5 -20,0 z"
       stroke="#000" stroke-width="1" fill-opacity="0.5" fill="#888"/&gt;
     &lt;line x1="5" y1="100" x2="185" y2="100"/&gt;
