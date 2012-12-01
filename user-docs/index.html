@@ -268,10 +268,10 @@ JavaScript manipulation of SVG.</p>
   <tbody>
     <tr>
       <td>source</td>
-      <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;
   &lt;g&gt;
-    <span class="example-code">&lt;!-- Adj verticalList gap:5 --&gt;</span>
+    <span class="example-code">&lt;adj:verticalList gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -286,10 +286,10 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td>becomes</td>
-      <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;
   &lt;g&gt;
-    &lt;!-- Adj verticalList gap:5 --&gt;
+    &lt;adj:verticalList gap="5"/&gt;
     &lt;rect width="45" height="30" fill="#000"<span class="example-result"> transform="translate(5,5)"</span>/&gt;
     &lt;rect width="40" height="25" fill="#444"<span class="example-result"> transform="translate(5,40)"</span>/&gt;
     &lt;rect width="35" height="20" fill="#888"<span class="example-result"> transform="translate(5,70)"</span>/&gt;
@@ -313,10 +313,10 @@ JavaScript manipulation of SVG.</p>
   <tbody>
     <tr>
       <td><img alt="example" src="adj-ex-002-verticalList.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;!-- Adj <span class="example-code">verticalList gap:5</span> --&gt;
+    <span class="example-code">&lt;adj:verticalList gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -326,10 +326,10 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-003-horizontalList.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;!-- Adj <span class="example-code">horizontalList gap:5</span> --&gt;
+    <span class="example-code">&lt;adj:horizontalList gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -339,12 +339,12 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-004-frameForParent.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;!-- Adj horizontalList gap:5 --&gt;
+    &lt;adj:horizontalList gap="5"/&gt;
     &lt;rect fill="none" stroke="black" stroke-width="2" width="0" height="0"&gt;
-      &lt;!-- Adj <span class="example-code">frameForParent inset:1</span> --&gt;
+      <span class="example-code">&lt;adj:frameForParent inset="1"/&gt;</span>
     &lt;/rect&gt;
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
@@ -355,15 +355,15 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-005-textBreaks.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g font-size="12"&gt;
-    &lt;!-- Adj <span class="example-code">textBreaks wordBreaks:true</span> --&gt;
-    &lt;!-- Adj <span class="example-code">horizontalList maxWidth:170 gap:5 centerGap:3 topGap:10 leftGap:10</span> --&gt;
+    <span class="example-code">&lt;adj:textBreaks wordBreaks="true"/&gt;</span>
+    <span class="example-code">&lt;adj:horizontalList maxWidth="170" gap="5" centerGap="3" topGap="10" leftGap="10"/&gt;</span>
     &lt;text&gt;This is a sentence of text that will wrap.&lt;/text&gt;
     &lt;text&gt;Here is more.&lt;/text&gt;
     &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
-      &lt;!-- Adj frameForParent inset:1 --&gt;
+      &lt;adj:frameForParent inset="1"/&gt;
     &lt;/rect&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -371,12 +371,12 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-006-connection.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
   &lt;rect id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
   &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
-    &lt;!-- Adj <span class="example-code">connection from: one, 1, 0.5 to: other, 0, 0.5</span> --&gt;
+    <span class="example-code">&lt;adj:connection from="one, 1, 0.5" to="other, 0, 0.5"/&gt;</span>
   &lt;/path&gt;
   <span class="deemphasize-code">&lt;path d="M5,100 q40,10 80,0 t80,0" stroke="lightgray" stroke-width="2" fill="none" /&gt;
 &lt;/svg&gt;</span></pre>
@@ -384,15 +384,15 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-007-rider.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
   &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
   &lt;g&gt;
-    &lt;!-- Adj connection from:one,1,0.5 to:other,0,0.5 --&gt;
+    &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
     &lt;rect width="30" height="20" fill="#444"&gt;
-      &lt;!-- Adj <span class="example-code">rider at:0.5</span> --&gt;
+      <span class="example-code">&lt;adj:rider at="0.5"/&gt;</span>
     &lt;/rect&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -400,12 +400,12 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-008-circleForParent.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
     &lt;circle r="5" stroke="gray" fill="gray" fill-opacity="0.2"&gt;
-      &lt;!-- Adj <span class="example-code">circleForParent</span> --&gt;
+      <span class="example-code">&lt;adj:circleForParent/&gt;</span>
     &lt;/circle&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -413,12 +413,12 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-009-ellipseForParent.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
     &lt;ellipse rx="5" ry="5" stroke="gray" fill="gray" fill-opacity="0.2"&gt;
-      &lt;!-- Adj <span class="example-code">ellipseForParent</span> --&gt;
+      <span class="example-code">&lt;adj:ellipseForParent/&gt;</span>
     &lt;/ellipse&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -426,10 +426,10 @@ JavaScript manipulation of SVG.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-010-circularList.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;!-- Adj <span class="example-code">circularList gap:5</span> --&gt;
+    <span class="example-code">&lt;adj:circularList gap="5"/&gt;</span>
     &lt;circle r="10" fill="#000"/&gt;
     &lt;rect width="30" height="20" fill="#222"/&gt;
     &lt;rect width="30" height="20" fill="#444"/&gt;
@@ -457,7 +457,7 @@ JavaScript manipulation of SVG.</p>
   <tbody>
     <tr>
       <td><img alt="example" src="adj-ex-011-horizontalList.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList gap:5</span> --&gt;
@@ -474,7 +474,7 @@ JavaScript manipulation of SVG.</p>
     <tr>
       <td><img alt="example"
         src="adj-ex-012-horizontalList-maxPerRow.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:3 gap:5</span> --&gt;
@@ -493,7 +493,7 @@ JavaScript manipulation of SVG.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-013-horizontalList-maxWidth.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="150" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList maxWidth:120 gap:5</span> --&gt;
@@ -512,7 +512,7 @@ JavaScript manipulation of SVG.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-014-horizontalList-makeGrid.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList makeGrid:true maxPerRow:3 gap:5</span> --&gt;
@@ -531,7 +531,7 @@ JavaScript manipulation of SVG.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-015-horizontalList-hAlign.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList makeGrid:true hAlign:center vAlign:middle maxPerRow:3 gap:5</span> --&gt;
@@ -550,7 +550,7 @@ JavaScript manipulation of SVG.</p>
     <tr>
       <td><img alt="example"
         src="adj-ex-016-horizontalList-horizontalGap.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:4 horizontalGap:15 verticalGap:3</span> --&gt;
@@ -574,7 +574,7 @@ JavaScript manipulation of SVG.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-017-horizontalList-leftGap.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList maxPerRow:4 leftGap:20 centerGap:5 rightGap:12 topGap:10 middleGap:3 bottomGap:7</span> --&gt;
@@ -652,7 +652,7 @@ class="deemphasize">(instead of <code>maxWidth</code>, duh)</span> and
     <tr>
       <td><img alt="example"
         src="adj-ex-018-frameForParent-horizontalInset.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj horizontalList gap:10 --&gt;
@@ -672,7 +672,7 @@ class="deemphasize">(instead of <code>maxWidth</code>, duh)</span> and
     <tr>
       <td><img alt="example"
         src="adj-ex-019-frameForParent-leftInset.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj horizontalList gap:10 --&gt;
@@ -701,7 +701,7 @@ class="deemphasize">(instead of <code>maxWidth</code>, duh)</span> and
     <tr>
       <td><img alt="example"
       src="adj-ex-020-textBreaks-wordBreaks.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g font-size="12"&gt;
     &lt;!-- Adj <span class="example-code">textBreaks wordBreaks:true</span> --&gt;
@@ -719,7 +719,7 @@ source line two.&lt;/text&gt;
     <tr>
       <td><img alt="example"
       src="adj-ex-021-textBreaks-lineBreaks.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g font-size="12"&gt;
     &lt;!-- Adj <span class="example-code">textBreaks lineBreaks:true</span> --&gt;
@@ -745,7 +745,7 @@ source line two.&lt;/text&gt;
   <tbody>
     <tr>
       <td><img alt="example" src="adj-ex-022-connection-from.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
   &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
@@ -757,7 +757,7 @@ source line two.&lt;/text&gt;
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-023-connection-fromXY.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
   &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
@@ -769,7 +769,7 @@ source line two.&lt;/text&gt;
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-024-connection-vector0.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
   &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
@@ -818,7 +818,7 @@ paths as children of that group.</p>
   <tbody>
     <tr>
       <td><img alt="example" src="adj-ex-026-rider.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -836,7 +836,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-027-rider-at.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
   &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
@@ -852,7 +852,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-028-rider-at2.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -870,7 +870,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-029-rider-adjust-near.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -888,7 +888,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-030-rider-adjust-clear.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -908,7 +908,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-031-rider-gap.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -928,7 +928,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-032-rider-pin.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -946,7 +946,7 @@ paths as children of that group.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-033-rider-path.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
@@ -1017,7 +1017,7 @@ final resolution of adjusting coordinates.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-034-circleForParent-inset.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
@@ -1040,7 +1040,7 @@ final resolution of adjusting coordinates.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-035-ellipseForParent-inset.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
@@ -1054,7 +1054,7 @@ final resolution of adjusting coordinates.</p>
     <tr>
       <td><img alt="example"
         src="adj-ex-036-ellipseForParent-horizontalInset.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
@@ -1076,7 +1076,7 @@ final resolution of adjusting coordinates.</p>
   <tbody>
     <tr>
       <td><img alt="example" src="adj-ex-037-circularList-gap.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">circularList gap:5</span> --&gt;
@@ -1094,7 +1094,7 @@ final resolution of adjusting coordinates.</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-038-circularList-rGap.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">circularList rGap:5 cGap:15</span> --&gt;
@@ -1113,7 +1113,7 @@ final resolution of adjusting coordinates.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-039-circularList-fromAngle.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">circularList fromAngle:225 toAngle:315 cGap:5</span> --&gt;
@@ -1133,7 +1133,7 @@ final resolution of adjusting coordinates.</p>
     <tr>
       <td><img alt="example"
       src="adj-ex-040-circularList-rAlign.svg"></img></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">circularList rAlign:inside gap:2</span> --&gt;
@@ -1190,7 +1190,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
   <tbody>
     <tr>
       <td><img alt="example" src="adj-ex-041-workflow-explained.png" /></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="sans-serif"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" font-size="12" font-family="sans-serif"&gt;
   …</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">horizontalList makeGrid:true gap:5 maxPerRow:3 hAlign:center</span> --&gt;
@@ -1209,18 +1209,18 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       </td>
     </tr>
     <tr>
-      <td><img alt="example" src="adj-ex-007-rider-explained.png" /></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><img alt="example" src="adj-ex-007-rider-explained.svg" /></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
   &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#ccc"/&gt;
   &lt;g&gt;
-    &lt;!-- Adj <span class="example-code">connection from:one,1,0.5 to:other,0,0.5</span> --&gt;
-    &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+    <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;</span>
+    <span class="example-code">&lt;adj:explain/&gt;</span>
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#666" stroke-width="2" fill="none"/&gt;
     &lt;rect width="30" height="20" fill="#aaa"&gt;
-      &lt;!-- Adj <span class="example-code">rider at:0.5</span> --&gt;
-      &lt;!-- Adj <span class="example-code">explain</span> --&gt;
+      <span class="example-code">&lt;adj:rider at="0.5"/&gt;</span>
+      <span class="example-code">&lt;adj:explain/&gt;</span>
     &lt;/rect&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -1228,7 +1228,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
     </tr>
     <tr>
       <td><img alt="example" src="adj-ex-031-rider-gap-explained.png" /></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
@@ -1251,7 +1251,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
     <tr>
       <td><img alt="example" src="adj-ex-040-circularList-rAlign-explained.png"
         /></td>
-      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;!-- Adj <span class="example-code">circularList rAlign:inside gap:2</span> --&gt;
@@ -1372,8 +1372,8 @@ is to use <span class="deemphasize">and to set up</span></span></p>
 <p>At first, Adj had to be invoked explicitly, e.g. like</p>
 <pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd"&gt;
-&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" <span class="example-code">onload="Adj.doDoc();"</span>&gt;
-  <span class="example-code">&lt;script type="text/ecmascript" xlink:href="adj.js"/&gt;</span>
+&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" <span class="example-code">onload="Adj.doDoc();"</span>&gt;
+  <span class="example-code">&lt;script type="text/javascript" xlink:href="adj.js"/&gt;</span>
   &lt;g&gt;…</pre>
 
 <p>Obviously, there must be a correct reference (path) to a copy of <span
@@ -1535,7 +1535,7 @@ href="adj-ex-041-workflow-version-after.svg">older version</a> of <a
 href="#example-workflow">above</a> diagram of the example workflow:</p>
 <pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd"&gt;
-&lt;svg xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="sans-serif"&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" font-size="12" font-family="sans-serif"&gt;
     &lt;style type="text/css"&gt;&lt;![CDATA[
     .subject {
         fill: lightgray;
