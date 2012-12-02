@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="100">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<rect width="200" height="100" fill="linen"/>
 	<g font-size="12">
-		<!-- Adj textBreaks lineBreaks:true -->
-		<!-- Adj horizontalList maxPerRow:1 gap:5 topGap:10 leftGap:10 -->
-		<text transform="translate(12,22)">Source line one,</text><text transform="translate(12,42)">source line two.</text>
+		<adj:textBreaks lineBreaks="true"/>
+		<adj:horizontalList maxPerRow="1" gap="5" topGap="10" leftGap="10"/>
+		<text transform="translate(12,22)">Source line one,</text>
+		<text transform="translate(12,42)">source line two.</text>
 		<text transform="translate(12,62)">And source line three.</text>
 		<rect fill="none" stroke="lightgray" stroke-width="2" width="123" height="68" x="1" y="1">
-			<!-- Adj frameForParent inset:1 -->
+			<adj:frameForParent inset="1"/>
 		</rect>
 	</g>
 </svg>

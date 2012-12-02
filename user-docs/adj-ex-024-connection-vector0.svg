@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="100">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<rect width="200" height="100" fill="linen"/>
 	<rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/>
 	<rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/>
 	<g>
-		<!-- Adj connection from:one,1,0.5 to:other,0,0.5 -->
-		<line x1="45" y1="20" x2="145" y2="70"/>
-		<path d="M50.556,22.778l-1.083,-11.722l11.111,5.556l0.542,5.861l75,37.5l2.236,-4.472l6.639,14.5l-15.583,3.389l2.236,-4.472l-75,-37.5l-5.014,3.083l-11.111,-5.556z" stroke="#000" stroke-width="1" fill-opacity="0.5" fill="#888"/>
+		<adj:connection from="one,1,0.5" to="other,0,0.5"/>
+		<line x1="45" y1="20" x2="145" y2="70" adj:x1="5" adj:y1="100" adj:x2="185" adj:y2="100"/>
+		<path d="M50.556,22.778l-1.083,-11.722l11.111,5.556l0.542,5.861l75,37.5l2.236,-4.472l6.639,14.5l-15.583,3.389l2.236,-4.472l-75,-37.5l-5.014,3.083l-11.111,-5.556z" stroke="#000" stroke-width="1" fill-opacity="0.5" fill="#888" adj:d="M15,100 l-10,-10 20,0 5,5 135,0 0,-5 20,10 -20,10 0,-5 -135,0 -5,5 -20,0 z"/>
 	</g>
 </svg>
