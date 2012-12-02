@@ -1341,8 +1341,12 @@ Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
 }
 
 // utility
-Adj.addSiblingsToAvoid = function addSiblingsToAvoid (element, avoidList) {
-	avoidList = avoidList ? avoidList : [];
+Adj.addElementToAvoid = function addElementToAvoid (avoidList, element) {
+	avoidList.push(element);
+}
+
+// utility
+Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 	var parent = element.parentNode;
 	for (var sibling = parent.firstChild, index = 0; sibling; sibling = sibling.nextSibling) {
 		if (!(sibling instanceof SVGElement)) {
@@ -1363,14 +1367,6 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (element, avoidList) {
 		}
 		avoidList.push(sibling);
 	}
-	return avoidList;
-}
-
-// utility
-Adj.addElementToAvoid = function addElementToAvoid (element, avoidList) {
-	avoidList = avoidList ? avoidList : [];
-	avoidList.push(element);
-	return avoidList;
 }
 
 // utility
@@ -1509,13 +1505,13 @@ Adj.algorithms.rider = {
 		}
 		//
 		var path;
-		var avoidList;
+		var avoidList = [];
 		if (pathId) { // path id given
 			// general case
 			path = document.getElementById(pathId);
 			//
 			if (considerElementsToAvoid) {
-				avoidList = Adj.addSiblingsToAvoid(path, avoidList);
+				Adj.addSiblingsToAvoid(avoidList, element);
 			}
 		} else { // no path id given
 			// simplified case
@@ -1531,7 +1527,7 @@ Adj.algorithms.rider = {
 			}
 			//
 			if (considerElementsToAvoid) {
-				avoidList = Adj.addSiblingsToAvoid(parent, avoidList);
+				Adj.addSiblingsToAvoid(avoidList, parent);
 			}
 		}
 		//

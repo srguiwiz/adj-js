@@ -1001,8 +1001,9 @@ defaults from 0.0 to 1.0 and <code>adjust</code> defaults to
 numbers. With values commonly between 0.0 and 1.0 they also could be outside
 that range.</p>
 
-<p>As implemented, <code>rider</code> tries to stay clear of siblings of the
-path.</p>
+<p>As implemented, <code>rider</code> tries to stay clear of its group's
+siblings, or to stay clear of its own siblings if given a <code>path</code>
+attribute.</p>
 
 <p>Parameter <code>steps</code> should not be set in most circumstances. It
 accepts an integer number and defaults to 10. It does not correspond to the
