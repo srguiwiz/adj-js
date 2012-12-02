@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="816" height="1480">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="816" height="1480">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<title>CompanyMobile First Login Logic</title>
 	<!-- Sample drawing idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
 	<style type="text/css"><![CDATA[
@@ -39,59 +39,59 @@
 		</marker>
 	</defs>
 	<g>
-		<!-- Adj horizontalList makeGrid:true hAlign:left vAlign:middle maxPerRow:1 gap:0 -->
+		<adj:horizontalList makeGrid="true" hAlign="left" vAlign="middle" maxPerRow="1" gap="0"/>
 		<rect fill="snow" stroke="none" width="815" height="1479" x="0.5" y="0.5">
-			<!-- Adj frameForParent -->
+			<adj:frameForParent/>
 		</rect>
 		<text style="fill:gray" transform="translate(2,12)">Sample drawing only, not a real system design.</text>
 		<g transform="translate(0,15)">
-			<!-- Adj horizontalList makeGrid:true hAlign:center vAlign:middle maxPerRow:3 gap:5 centerGap:40 -->
+			<adj:horizontalList makeGrid="true" hAlign="center" vAlign="middle" maxPerRow="3" gap="5" centerGap="40"/>
 			<g transform="translate(130,13)"/>
 			<text transform="translate(391,17)">The Actors</text>
 			<g transform="translate(697,13)"/>
 			<g id="ipad001" class="client" transform="translate(72,25)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="113" height="203" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">iPad</text>
 				<g transform="translate(5,25)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="72" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">UIWebView</text>
 				</g>
 				<g transform="translate(5,55)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="103" height="143" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">Settings</text>
 					<g transform="translate(5,25)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="71" height="23" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Server URL</text>
 					</g>
 					<g transform="translate(5,55)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="93" height="83" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Credentials</text>
 						<g transform="translate(5,25)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="83" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Email Address</text>
 						</g>
 						<g transform="translate(5,55)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="61" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Password</text>
 						</g>
@@ -100,29 +100,29 @@
 			</g>
 			<g transform="translate(419,128)"/>
 			<g id="cloud001" class="server" transform="translate(583,70)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="226" height="113" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">Company Cloud</text>
 				<g transform="translate(5,25)">
-					<!-- Adj horizontalList gap:5 -->
+					<adj:horizontalList gap="5"/>
 					<rect stroke-width="2" width="100" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">First Login Server</text>
 				</g>
 				<g transform="translate(5,55)">
-					<!-- Adj horizontalList gap:5 -->
+					<adj:horizontalList gap="5"/>
 					<rect stroke-width="2" width="216" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">client.company.com Client Specific Server</text>
 				</g>
 				<g transform="translate(5,85)">
-					<!-- Adj horizontalList gap:5 -->
+					<adj:horizontalList gap="5"/>
 					<rect stroke-width="2" width="194" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">otherclient.com Client Specific Server</text>
 				</g>
@@ -136,51 +136,51 @@
 			</g>
 			<g transform="translate(697,265)"/>
 			<g id="ipad002" class="client" transform="translate(11,280)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="236" height="203" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">iPad - <tspan font-weight="bold">CompanyMobile app newly installed</tspan>
 				</text>
 				<g transform="translate(5,25)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="72" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">UIWebView</text>
 				</g>
 				<g transform="translate(5,55)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="209" height="143" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">Settings</text>
 					<g transform="translate(5,25)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="199" height="23" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Server URL: <tspan font-weight="bold">First Login Server URL</tspan>
 						</text>
 					</g>
 					<g transform="translate(5,55)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="125" height="83" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Credentials</text>
 						<g transform="translate(5,25)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="115" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Email Address: <tspan font-weight="bold">none</tspan>
 							</text>
 						</g>
 						<g transform="translate(5,55)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="92" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Password: <tspan font-weight="bold">none</tspan>
 							</text>
@@ -189,16 +189,16 @@
 				</g>
 			</g>
 			<g id="connection003">
-				<!-- Adj connection from: ipad002, 1, 0.3 to: cloud004, 0.3, 0 -->
-				<path class="arrow" d="M249,341.5q219.389,55.366 425.6,148.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="ipad002, 1, 0.3" to="cloud004, 0.3, 0"/>
+				<path class="arrow" d="M249,341.5q219.389,55.366 425.6,148.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-20 80,0"/>
 			</g>
 			<g id="request003" class="request" transform="translate(343,345)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="150" height="73" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Request</text>
 					<text transform="translate(7,37)">URL: <tspan font-weight="bold">First Login Server</tspan>
 					</text>
@@ -209,82 +209,82 @@
 			<g transform="translate(697,383)"/>
 			<g transform="translate(130,518)"/>
 			<g id="connection005">
-				<!-- Adj connection from: cloud004, 0, 0.3 to: ipad006, 0.7, 0 -->
-				<path class="arrow" d="M641,506.5q-232.726,1.838 -461.7,43.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="cloud004, 0, 0.3" to="ipad006, 0.7, 0"/>
+				<path class="arrow" d="M641,506.5q-232.726,1.838 -461.7,43.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 			</g>
 			<g id="response005" class="response" transform="translate(317,490)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="201" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Response</text>
 					<text transform="translate(7,37)">HTML: <tspan font-weight="bold">First Login Welcome Page</tspan>
 					</text>
 				</g>
 			</g>
 			<g id="cloud004" class="server" transform="translate(641,490)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="110" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">Company Cloud</text>
 				<g transform="translate(5,25)">
-					<!-- Adj horizontalList gap:5 -->
+					<adj:horizontalList gap="5"/>
 					<rect stroke-width="2" width="100" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">First Login Server</text>
 				</g>
 			</g>
 			<g id="ipad006" class="client" transform="translate(5,550)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="247" height="223" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">iPad</text>
 				<g transform="translate(5,25)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="237" height="193" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">UIWebView</text>
 					<g transform="translate(5,25)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="227" height="163" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">First Login Welcome Page</text>
 						<text transform="translate(7,37)">Form</text>
 						<g transform="translate(5,45)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="201" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Email Address: <tspan font-weight="bold">someone@client.com</tspan>
 							</text>
 						</g>
 						<g transform="translate(5,75)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="182" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Button: <tspan font-weight="bold">Sign Me Up</tspan> if you're new
 						</text>
 						</g>
 						<g transform="translate(5,105)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="208" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Password: <tspan font-weight="bold">secret</tspan> if you have an account
 						</text>
 						</g>
 						<g transform="translate(5,135)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="217" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Button: <tspan font-weight="bold">Log Me In</tspan> if you have an account
 						</text>
@@ -293,32 +293,32 @@
 				</g>
 			</g>
 			<g id="connection007">
-				<!-- Adj connection from: ipad006, 1, 0.3 to: cloud008, 0.3, 0 -->
-				<path class="arrow" d="M254,617.5q217.508,62.594 420.6,162.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="ipad006, 1, 0.3" to="cloud008, 0.3, 0"/>
+				<path class="arrow" d="M254,617.5q217.508,62.594 420.6,162.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-20 80,0"/>
 			</g>
 			<g id="request007" class="request" transform="translate(294,625)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="247" height="73" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Request</text>
 					<text transform="translate(7,37)">Form Submission of First Login Welcome Page</text>
 					<text transform="translate(7,57)">Credentials: in form submission, if any</text>
 				</g>
 			</g>
 			<g id="connection005e">
-				<!-- Adj connection from: cloud008, 0.7, 0 to: response005, 1, 0.9 -->
-				<path class="arrow" d="M719.4,780q-84.304,-133.015 -199.4,-240.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="cloud008, 0.7, 0" to="response005, 1, 0.9"/>
+				<path class="arrow" d="M719.4,780q-84.304,-133.015 -199.4,-240.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 				<g id="response005e" class="response" transform="translate(611.098,672.026)">
-					<!-- Adj rider -->
-					<!-- Adj verticalList gap:2 -->
+					<adj:rider/>
+					<adj:verticalList gap="2"/>
 					<rect stroke-width="2" rx="3" ry="3" width="91" height="38" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<g transform="translate(2,2)">
-						<!-- Adj verticalList gap:2 -->
+						<adj:verticalList gap="2"/>
 						<text transform="translate(4,14)">if problem</text>
 						<text transform="translate(4,31)">with submission</text>
 					</g>
@@ -327,16 +327,16 @@
 			<g transform="translate(697,663)"/>
 			<g transform="translate(130,808)"/>
 			<g id="connection009">
-				<!-- Adj connection from: cloud008, 0, 0.3 to: ipad010, 0.7, 0 -->
-				<path class="arrow" d="M641,796.5q-234.71,1.837 -465.7,43.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="cloud008, 0, 0.3" to="ipad010, 0.7, 0"/>
+				<path class="arrow" d="M641,796.5q-234.71,1.837 -465.7,43.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 			</g>
 			<g id="response009" class="response" transform="translate(321,780)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="193" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Response <tspan font-weight="bold">if new</tspan>
 					</text>
 					<text transform="translate(7,37)">HTML: <tspan font-weight="bold">Signup In Progress Page</tspan>
@@ -344,41 +344,41 @@
 				</g>
 			</g>
 			<g id="cloud008" class="server" transform="translate(641,780)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="110" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">Company Cloud</text>
 				<g transform="translate(5,25)">
-					<!-- Adj horizontalList gap:5 -->
+					<adj:horizontalList gap="5"/>
 					<rect stroke-width="2" width="100" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">First Login Server</text>
 				</g>
 			</g>
 			<g id="ipad010" class="client" transform="translate(15,840)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="227" height="158" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">iPad</text>
 				<g transform="translate(5,25)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="217" height="128" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">UIWebView</text>
 					<g transform="translate(5,25)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="207" height="98" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Signup In Progress Page</text>
 						<text transform="translate(7,37)">informative text, e.g. expected wait time</text>
 						<text transform="translate(7,57)">auto refreshes, e.g. every 5 minutes</text>
 						<g transform="translate(5,65)">
-							<!-- Adj verticalList gap:0 -->
+							<adj:verticalList gap="0"/>
 							<text transform="translate(2,12)">a link back to First Login Welcome Page,</text>
 							<text transform="translate(2,27)">in case user wants to try different email</text>
 						</g>
@@ -386,16 +386,16 @@
 				</g>
 			</g>
 			<g id="connection011">
-				<!-- Adj connection from: ipad010, 1, 0.5 to: cloud008, 0, 0.5 -->
-				<path class="arrow" d="M244,920q214.858,1.477 397,-112.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="ipad010, 1, 0.5" to="cloud008, 0, 0.5"/>
+				<path class="arrow" d="M244,920q214.858,1.477 397,-112.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,60 80,0"/>
 			</g>
 			<g id="request011" class="request" transform="translate(387,893)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="62" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Request</text>
 					<text transform="translate(7,37)">refresh</text>
 				</g>
@@ -403,16 +403,16 @@
 			<g transform="translate(697,920)"/>
 			<g transform="translate(130,1043)"/>
 			<g id="connection012">
-				<!-- Adj connection from: cloud008, 0, 0.7 to: ipad013, 0.7, 0 -->
-				<path class="arrow" d="M641,818.5q-171.398,237.23 -462.6,266.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="cloud008, 0, 0.7" to="ipad013, 0.7, 0"/>
+				<path class="arrow" d="M641,818.5q-171.398,237.23 -462.6,266.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-120 80,0"/>
 			</g>
 			<g id="response012" class="response" transform="translate(328,1005)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="179" height="73" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Response <tspan font-weight="bold">if has account</tspan>
 					</text>
 					<text transform="translate(7,37)">indicate acceptance</text>
@@ -421,51 +421,51 @@
 			</g>
 			<g transform="translate(697,1043)"/>
 			<g id="ipad013" class="client" transform="translate(9,1085)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="240" height="223" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">iPad</text>
 				<g transform="translate(5,25)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="208" height="43" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">UIWebView</text>
 					<text transform="translate(7,37)">follows redirect to Client Specific Server</text>
 				</g>
 				<g transform="translate(5,75)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="230" height="143" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">Settings</text>
 					<g transform="translate(5,25)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="220" height="23" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Server URL: <tspan font-weight="bold">Client Specific Server URL</tspan>
 						</text>
 					</g>
 					<g transform="translate(5,55)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="211" height="83" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">Credentials</text>
 						<g transform="translate(5,25)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="201" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Email Address: <tspan font-weight="bold">someone@client.com</tspan>
 							</text>
 						</g>
 						<g transform="translate(5,55)">
-							<!-- Adj verticalList gap:5 -->
+							<adj:verticalList gap="5"/>
 							<rect stroke-width="2" width="98" height="23" x="1" y="1">
-								<!-- Adj frameForParent inset:1 -->
+								<adj:frameForParent inset="1"/>
 							</rect>
 							<text transform="translate(7,17)">Password: <tspan font-weight="bold">secret</tspan>
 							</text>
@@ -474,16 +474,16 @@
 				</g>
 			</g>
 			<g id="connection014">
-				<!-- Adj connection from: ipad013, 1, 0.3 to: cloud015, 0.3, 0 -->
-				<path class="arrow" d="M251,1152.5q217.556,62.593 420.7,162.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="ipad013, 1, 0.3" to="cloud015, 0.3, 0"/>
+				<path class="arrow" d="M251,1152.5q217.556,62.593 420.7,162.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-20 80,0"/>
 			</g>
 			<g id="request014" class="request" transform="translate(302,1160)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="232" height="73" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Request</text>
 					<text transform="translate(7,37)">URL: <tspan font-weight="bold">Client Specific Server</tspan>
 					</text>
@@ -494,50 +494,50 @@
 			<g transform="translate(697,1198)"/>
 			<g transform="translate(130,1343)"/>
 			<g id="connection016">
-				<!-- Adj connection from: cloud015, 0, 0.3 to: ipad017, 0.7, 0 -->
-				<path class="arrow" d="M633,1331.5q-236.297,1.835 -468.9,43.5" stroke-width="3" marker-end="url(#arrowhead)"/>
+				<adj:connection from="cloud015, 0, 0.3" to="ipad017, 0.7, 0"/>
+				<path class="arrow" d="M633,1331.5q-236.297,1.835 -468.9,43.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 			</g>
 			<g id="response016" class="response" transform="translate(316,1315)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="203" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<g transform="translate(5,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<text transform="translate(7,17)">Response</text>
 					<text transform="translate(7,37)">HTML: whatever client specific page</text>
 				</g>
 			</g>
 			<g id="cloud015" class="server" transform="translate(633,1315)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="127" height="53" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">Company Cloud</text>
 				<g transform="translate(5,25)">
-					<!-- Adj horizontalList gap:5 -->
+					<adj:horizontalList gap="5"/>
 					<rect stroke-width="2" width="117" height="23" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">Client Specific Server</text>
 				</g>
 			</g>
 			<g id="ipad017" class="client" transform="translate(43,1375)">
-				<!-- Adj verticalList gap:5 -->
+				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="171" height="83" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<text transform="translate(7,17)">iPad</text>
 				<g transform="translate(5,25)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect stroke-width="2" width="161" height="53" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(7,17)">UIWebView</text>
 					<g transform="translate(5,25)">
-						<!-- Adj verticalList gap:5 -->
+						<adj:verticalList gap="5"/>
 						<rect stroke-width="2" width="151" height="23" x="1" y="1">
-							<!-- Adj frameForParent inset:1 -->
+							<adj:frameForParent inset="1"/>
 						</rect>
 						<text transform="translate(7,17)">whatever client specific page</text>
 					</g>

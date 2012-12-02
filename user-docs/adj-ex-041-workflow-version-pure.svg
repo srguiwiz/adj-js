@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="120">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<title>Example Workflow</title>
 	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
 	<style type="text/css"><![CDATA[
+	svg {
+		font-size: 12px;
+		font-family: sans-serif;
+	}
 	.subject {
 		fill: lightgray;
 		opacity: 0.5;
@@ -20,11 +24,11 @@
 		</marker>
 	</defs>
 	<g>
-		<!-- Adj horizontalList makeGrid:true gap:5 maxPerRow:3 hAlign:center -->
+		<adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center"/>
 		<g id="subject-editor">
-			<!-- Adj horizontalList gap:10 -->
+			<adj:horizontalList gap="10"/>
 			<rect width="0" height="0" class="subject">
-				<!-- Adj frameForParent inset:1 -->
+				<adj:frameForParent inset="1"/>
 			</rect>
 			<text>XML editor</text>
 		</g>
@@ -36,17 +40,17 @@
 		</g>
 		<g/>
 		<g id="subject-disk">
-			<!-- Adj horizontalList gap:10 -->
+			<adj:horizontalList gap="10"/>
 			<rect width="0" height="0" class="subject">
-				<!-- Adj frameForParent inset:1 -->
+				<adj:frameForParent inset="1"/>
 			</rect>
 			<text>disk</text>
 		</g>
 		<g/>
 		<g id="subject-author">
-			<!-- Adj horizontalList gap:10 -->
+			<adj:horizontalList gap="10"/>
 			<rect width="0" height="0" class="subject">
-				<!-- Adj frameForParent inset:1 -->
+				<adj:frameForParent inset="1"/>
 			</rect>
 			<text>author</text>
 		</g>
@@ -56,34 +60,34 @@
 		</g>
 		<g/>
 		<g id="subject-firefox">
-			<!-- Adj horizontalList gap:10 -->
+			<adj:horizontalList gap="10"/>
 			<rect width="0" height="0" class="subject">
-				<!-- Adj frameForParent inset:1 -->
+				<adj:frameForParent inset="1"/>
 			</rect>
 			<text>Firefox</text>
 			<g>
-				<!-- Adj horizontalList gap:5 -->
+				<adj:horizontalList gap="10"/>
 				<g id="add-on-auto-reload">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect width="0" height="0" class="subject">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text>Auto Reload</text>
 					<text>add-on</text>
 				</g>
 				<g id="add-on-onload-script">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect width="0" height="0" class="subject">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text>Onload Script</text>
 					<text>Document Files</text>
 					<text>add-on</text>
 				</g>
 				<g id="add-on-save-back">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect width="0" height="0" class="subject">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text>Save Back to File</text>
 					<text>from DOM</text>
@@ -92,70 +96,70 @@
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: subject-editor, 0.2, 1.2 to: subject-disk, 0.2, -0.2 -->
+			<adj:connection from="subject-editor, 0.2, 1.2" to="subject-disk, 0.2, -0.2"/>
 			<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.4 pin:1.1,0.5 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.4" pin="1.1,0.5"/>
+				<adj:verticalList gap="1"/>
 				<text>saves</text>
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: subject-disk, 0.2, 1.2 to: subject-firefox, 0.1, -0.2 -->
+			<adj:connection from="subject-disk, 0.2, 1.2" to="subject-firefox, 0.1, -0.2"/>
 			<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.4 pin:1,1 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.4" pin="1,1"/>
+				<adj:verticalList gap="1"/>
 				<text>first time</text>
 				<text>opens</text>
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: subject-disk, 0.4, 1.2 to: add-on-auto-reload, 0.6, -0.1 -->
+			<adj:connection from="subject-disk, 0.4, 1.2" to="add-on-auto-reload, 0.6, -0.1"/>
 			<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.9 pin:1,1 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.9" pin="1,1"/>
+				<adj:verticalList gap="1"/>
 				<text>auto</text>
 				<text>reloads</text>
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: add-on-onload-script, 0.2, -0.05 to: add-on-onload-script, 0.8, -0.05 -->
+			<adj:connection from="add-on-onload-script, 0.2, -0.05" to="add-on-onload-script, 0.8, -0.05"/>
 			<path class="arrow" d="M0,0 q50,-50 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.5 pin:0.5,1 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.5" pin="0.5,1"/>
+				<adj:verticalList gap="1"/>
 				<text>on load</text>
 				<text>runs script</text>
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: add-on-save-back, 0.6, -0.05 to: subject-disk, 0.6, 1.2 -->
+			<adj:connection from="add-on-save-back, 0.6, -0.05" to="subject-disk, 0.6, 1.2"/>
 			<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.1 pin:0,1 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.1" pin="0,1"/>
+				<adj:verticalList gap="1"/>
 				<text>can</text>
 				<text>save</text>
 				<text>back</text>
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: subject-author, 0.0, -0.2 to: subject-editor, 1.2, 1.0 -->
+			<adj:connection from="subject-author, 0.0, -0.2" to="subject-editor, 1.2, 1.0"/>
 			<path class="arrow" d="M0,0 q50,10 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.4 pin:0,1.1 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.4" pin="0,1.1"/>
+				<adj:verticalList gap="1"/>
 				<text>edits</text>
 			</g>
 		</g>
 		<g>
-			<!-- Adj connection from: subject-author, 0.0, 1.2 to: subject-firefox, 1.05, 0.0 -->
+			<adj:connection from="subject-author, 0.0, 1.2" to="subject-firefox, 1.05, 0.0"/>
 			<path class="arrow" d="M0,0 q70,-30 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
 			<g>
-				<!-- Adj rider at:0.4 pin:-0.1,0 -->
-				<!-- Adj verticalList gap:1 -->
+				<adj:rider at="0.4" pin="-0.1,0"/>
+				<adj:verticalList gap="1"/>
 				<text>views</text>
 			</g>
 		</g>

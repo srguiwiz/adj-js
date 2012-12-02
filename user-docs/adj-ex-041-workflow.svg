@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" font-size="12" font-family="sans-serif" width="635" height="799">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="635" height="799">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<title>Example Workflow</title>
 	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
 	<style type="text/css"><![CDATA[
+	svg {
+		font-size: 12px;
+		font-family: sans-serif;
+	}
 	.subject {
 		fill: lightgray;
 		opacity: 0.5;
@@ -29,16 +33,16 @@
 		</marker>
 	</defs>
 	<g>
-		<!-- Adj verticalList gap:5 hAlign:center vAlign:middle -->
+		<adj:verticalList gap="5" hAlign="center" vAlign="middle"/>
 		<g transform="translate(38,5)">
-			<!-- Adj horizontalList gap:5 hAlign:center vAlign:middle -->
+			<adj:horizontalList gap="5" hAlign="center" vAlign="middle"/>
 			<g transform="translate(5,233)">
 				<rect width="20" height="50" fill="none"/>
 			</g>
 			<g id="subject-author" transform="translate(30,203)">
-				<!-- Adj verticalList gap:10 -->
+				<adj:verticalList gap="10"/>
 				<rect width="82" height="107" class="subject" x="1" y="1">
-					<!-- Adj frameForParent inset:1 -->
+					<adj:frameForParent inset="1"/>
 				</rect>
 				<image xlink:href="adj-ex-041-author.png" width="64" height="64" transform="translate(10,10)"/>
 				<text transform="translate(11,96)">author</text>
@@ -47,11 +51,11 @@
 				<rect width="100" height="50" fill="none"/>
 			</g>
 			<g transform="translate(224,5)">
-				<!-- Adj verticalList gap:5 hAlign:center vAlign:middle -->
+				<adj:verticalList gap="5" hAlign="center" vAlign="middle"/>
 				<g id="subject-editor" transform="translate(5,5)">
-					<!-- Adj verticalList gap:10 -->
+					<adj:verticalList gap="10"/>
 					<rect width="318" height="263" class="subject" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<image xlink:href="adj-ex-041-komodo.png" width="300" height="220" transform="translate(10,10)"/>
 					<text transform="translate(12,252)">
@@ -62,9 +66,9 @@
 					<rect width="50" height="70" fill="none"/>
 				</g>
 				<g id="subject-disk" transform="translate(141,350)">
-					<!-- Adj horizontalList gap:10 -->
+					<adj:horizontalList gap="10"/>
 					<rect width="46" height="33" class="subject" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<text transform="translate(11,22)">disk</text>
 				</g>
@@ -74,20 +78,20 @@
 			</g>
 		</g>
 		<g id="subject-firefox" transform="translate(5,525)">
-			<!-- Adj verticalList gap:10 -->
+			<adj:verticalList gap="10"/>
 			<rect width="623" height="267" class="subject" x="1" y="1">
-				<!-- Adj frameForParent inset:1 -->
+				<adj:frameForParent inset="1"/>
 			</rect>
 			<text transform="translate(11,22)">
 				<a xlink:href="https://www.mozilla.org/firefox/#desktop" style="fill:blue">Firefox</a>
 			</text>
 			<g transform="translate(10,35)">
-				<!-- Adj horizontalList gap:5 -->
+				<adj:horizontalList gap="5"/>
 				<image xlink:href="adj-ex-041-firefox.png" width="290" height="214" transform="translate(5,5)"/>
 				<g id="add-on-auto-reload" transform="translate(300,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect width="80" height="80" class="subject" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<image xlink:href="adj-ex-041-add-on.png" width="32" height="32" transform="translate(5,5)"/>
 					<text transform="translate(7,54)">Auto Reload</text>
@@ -96,9 +100,9 @@
 					</text>
 				</g>
 				<g id="add-on-onload-script" transform="translate(387,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect width="99" height="100" class="subject" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<image xlink:href="adj-ex-041-add-on.png" width="32" height="32" transform="translate(5,5)"/>
 					<text transform="translate(6,54)">Onload Script</text>
@@ -108,9 +112,9 @@
 					</text>
 				</g>
 				<g id="add-on-save-back" transform="translate(493,5)">
-					<!-- Adj verticalList gap:5 -->
+					<adj:verticalList gap="5"/>
 					<rect width="105" height="100" class="subject" x="1" y="1">
-						<!-- Adj frameForParent inset:1 -->
+						<adj:frameForParent inset="1"/>
 					</rect>
 					<image xlink:href="adj-ex-041-add-on.png" width="32" height="32" transform="translate(5,5)"/>
 					<text transform="translate(6,54)">Save Back to File</text>
@@ -123,51 +127,51 @@
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: subject-editor, 0.2, 1.05 to: subject-disk, 0.1, -0.2 -->
-		<path class="arrow" d="M331,293.25q32.26,37.768 76.8,59.75" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="subject-editor, 0.2, 1.05" to="subject-disk, 0.1, -0.2"/>
+		<path class="arrow" d="M331,293.25q32.26,37.768 76.8,59.75" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
 		<g class="workflow-machine" transform="translate(319.387,314.402)">
-			<!-- Adj rider at:0.3 pin:1,0 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.3" pin="1,0"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(2,13)">save</text>
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: subject-disk, 0.9, -0.2 to: subject-editor, 0.8, 1.05 -->
-		<path class="arrow" d="M446.2,353q44.54,-21.982 76.8,-59.75" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="subject-disk, 0.9, -0.2" to="subject-editor, 0.8, 1.05"/>
+		<path class="arrow" d="M446.2,353q44.54,-21.982 76.8,-59.75" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
 		<g class="workflow-machine" transform="translate(502.606,314.395)">
-			<!-- Adj rider at:0.7 pin:0,0 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.7" pin="0,0"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(2,13)">optionally reload</text>
 			<text transform="translate(2,29)">if changed</text>
 			<text transform="translate(3,45)">from saving back</text>
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: subject-disk, 0.1, 1.2 to: subject-firefox, 0.3, 0.05 -->
-		<path class="arrow" d="M407.8,402q-166.769,70.175 -215.3,136.45" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="subject-disk, 0.1, 1.2" to="subject-firefox, 0.3, 0.05"/>
+		<path class="arrow" d="M407.8,402q-166.769,70.175 -215.3,136.45" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q70,30 100,0"/>
 		<g class="workflow-machine" transform="translate(238.103,425.256)">
-			<!-- Adj rider at:0.5 pin:1,1 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.5" pin="1,1"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(3,13)">first time</text>
 			<text transform="translate(2,29)">open</text>
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: subject-disk, 0.4, 1.2 to: add-on-auto-reload, 0.6, -0.1 -->
-		<path class="arrow" d="M422.2,402q-10.271,84.417 -58,154.8" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="subject-disk, 0.4, 1.2" to="add-on-auto-reload, 0.6, -0.1"/>
+		<path class="arrow" d="M422.2,402q-10.271,84.417 -58,154.8" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,-20 100,0"/>
 		<g class="workflow-machine" transform="translate(402.558,482.907)">
-			<!-- Adj rider at:0.5 pin:0,0 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.5" pin="0,0"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(2,13)">auto</text>
 			<text transform="translate(2,29)">reload</text>
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: add-on-onload-script, 0.2, 1.05 to: add-on-onload-script, 0.8, 1.05 -->
-		<path class="arrow" d="M422.2,672.1q30.3,50 60.6,0" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="add-on-onload-script, 0.2, 1.05" to="add-on-onload-script, 0.8, 1.05"/>
+		<path class="arrow" d="M422.2,672.1q30.3,50 60.6,0" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,50 100,0"/>
 		<g class="workflow-machine" transform="translate(410.496,697.098)">
-			<!-- Adj rider at:0.5 pin:0.5,0 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.5" pin="0.5,0"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(2,13)">on load</text>
 			<text transform="translate(2,29)">run command</text>
 			<text transform="translate(3,45)">Adj.doDoc();</text>
@@ -176,33 +180,33 @@
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: add-on-save-back, 0.6, -0.05 to: subject-disk, 0.8, 1.2 -->
-		<path class="arrow" d="M572.2,559.9q-16.137,-66.508 -130.8,-157.9" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="add-on-save-back, 0.6, -0.05" to="subject-disk, 0.8, 1.2"/>
+		<path class="arrow" d="M572.2,559.9q-16.137,-66.508 -130.8,-157.9" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q30,30 100,0"/>
 		<g class="workflow-machine" transform="translate(546.6,455.285)">
-			<!-- Adj rider at:0.3 pin:-0.05,1 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.3" pin="-0.05,1"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(2,13)">can</text>
 			<text transform="translate(2,29)">save</text>
 			<text transform="translate(2,45)">back</text>
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: subject-author, 0.9, -0.1 to: subject-editor, -0.07, 0.4 -->
-		<path class="arrow" d="M143.6,197.1q38.465,-54.023 101,-76.1" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="subject-author, 0.9, -0.1" to="subject-editor, -0.07, 0.4"/>
+		<path class="arrow" d="M143.6,197.1q38.465,-54.023 101,-76.1" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,-20 100,0"/>
 		<g class="workflow-user" transform="translate(107.022,106.024)">
-			<!-- Adj rider at:0.45 pin:1,1 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.45" pin="1,1"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(3,13)">edits,</text>
 			<text transform="translate(3,29)">Ctrl-S saves</text>
 			<text transform="translate(3,45)">repeatedly</text>
 		</g>
 	</g>
 	<g>
-		<!-- Adj connection from: subject-author, 0.7, 1.1 to: subject-firefox, 0.1, -0.03 -->
-		<path class="arrow" d="M126.8,327.9q-55.822,127.831 -59.3,189.03" stroke-width="3" marker-end="url(#arrowhead)"/>
+		<adj:connection from="subject-author, 0.7, 1.1" to="subject-firefox, 0.1, -0.03"/>
+		<path class="arrow" d="M126.8,327.9q-55.822,127.831 -59.3,189.03" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q70,15 100,0"/>
 		<g class="workflow-user" transform="translate(25.517,345.988)">
-			<!-- Adj rider at:0.45 pin:0.9,1 -->
-			<!-- Adj verticalList gap:1 -->
+			<adj:rider at="0.45" pin="0.9,1"/>
+			<adj:verticalList gap="1"/>
 			<text transform="translate(3,13)">opens once,</text>
 			<text transform="translate(3,29)">sees</text>
 			<text transform="translate(3,45)">automatic</text>

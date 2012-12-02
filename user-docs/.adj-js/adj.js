@@ -94,6 +94,15 @@ Adj.doDoc = function doDoc() {
 	Adj.processAdjElements(document);
 }
 
+// shortcut
+Adj.doSvg = function doSvg(svgElement) {
+	if (!(svgElement instanceof SVGSVGElement)) {
+		console.log("Adj.doSvg skipping because invoked with something other than required SVGSVGElement");
+		return;
+	}
+	Adj.processAdjElements(svgElement);
+}
+
 // generic installer
 Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObject, element) {
 	parametersObject = parametersObject || {}; // if no parametersObject given then empty object

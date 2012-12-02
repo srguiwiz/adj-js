@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="531" height="405">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
+	<title>Example Workflow</title>
+	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+	svg {
+		font-size: 12px;
+		font-family: sans-serif;
+	}
+	.subject {
+		fill: lightgray;
+		opacity: 0.5;
+		stroke: gray;
+	}
+	.arrow {
+		stroke: grey;
+		fill: none;
+	}
+]]></style>
+	<defs>
+		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
+			<path d="M -3 1 L 0 0 L -3 -1"/>
+		</marker>
+	</defs>
+	<g>
+		<adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center"/>
+		<g id="subject-editor" transform="translate(164,5)">
+			<adj:horizontalList gap="10"/>
+			<rect width="81" height="33" class="subject" x="1" y="1">
+				<adj:frameForParent inset="1"/>
+			</rect>
+			<text transform="translate(12,22)">XML editor</text>
+		</g>
+		<g transform="translate(436,5)"/>
+		<g transform="translate(496,5)"/>
+		<g transform="translate(206,45)"/>
+		<g transform="translate(411,45)">
+			<rect width="50" height="50" fill="none"/>
+		</g>
+		<g transform="translate(496,45)"/>
+		<g id="subject-disk" transform="translate(182,100)">
+			<adj:horizontalList gap="10"/>
+			<rect width="46" height="33" class="subject" x="1" y="1">
+				<adj:frameForParent inset="1"/>
+			</rect>
+			<text transform="translate(11,22)">disk</text>
+		</g>
+		<g transform="translate(436,100)"/>
+		<g id="subject-author" transform="translate(466,100)">
+			<adj:horizontalList gap="10"/>
+			<rect width="58" height="33" class="subject" x="1" y="1">
+				<adj:frameForParent inset="1"/>
+			</rect>
+			<text transform="translate(11,22)">author</text>
+		</g>
+		<g transform="translate(206,140)"/>
+		<g transform="translate(411,140)">
+			<rect width="50" height="150" fill="none"/>
+		</g>
+		<g transform="translate(496,140)"/>
+		<g id="subject-firefox" transform="translate(5,295)">
+			<adj:horizontalList gap="10"/>
+			<rect width="399" height="103" class="subject" x="1" y="1">
+				<adj:frameForParent inset="1"/>
+			</rect>
+			<text transform="translate(11,22)">Firefox</text>
+			<g transform="translate(61,10)">
+				<adj:horizontalList gap="10"/>
+				<g id="add-on-auto-reload" transform="translate(10,10)">
+					<adj:verticalList gap="5"/>
+					<rect width="80" height="43" class="subject" x="1" y="1">
+						<adj:frameForParent inset="1"/>
+					</rect>
+					<text transform="translate(7,17)">Auto Reload</text>
+					<text transform="translate(6,37)">add-on</text>
+				</g>
+				<g id="add-on-onload-script" transform="translate(102,10)">
+					<adj:verticalList gap="5"/>
+					<rect width="99" height="63" class="subject" x="1" y="1">
+						<adj:frameForParent inset="1"/>
+					</rect>
+					<text transform="translate(6,17)">Onload Script</text>
+					<text transform="translate(6,37)">Document Files</text>
+					<text transform="translate(6,57)">add-on</text>
+				</g>
+				<g id="add-on-save-back" transform="translate(213,10)">
+					<adj:verticalList gap="5"/>
+					<rect width="105" height="63" class="subject" x="1" y="1">
+						<adj:frameForParent inset="1"/>
+					</rect>
+					<text transform="translate(6,17)">Save Back to File</text>
+					<text transform="translate(7,37)">from DOM</text>
+					<text transform="translate(6,57)">add-on</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="subject-editor, 0.2, 1.2" to="subject-disk, 0.2, -0.2"/>
+			<path class="arrow" d="M180.6,47q-4.226,25.326 11,46" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
+			<g transform="translate(137.321,57.385)">
+				<adj:rider at="0.4" pin="1.1,0.5"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(2,13)">saves</text>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="subject-disk, 0.2, 1.2" to="subject-firefox, 0.1, -0.2"/>
+			<path class="arrow" d="M191.6,142q-79.944,58.571 -146.5,132" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
+			<g transform="translate(75.818,158.218)">
+				<adj:rider at="0.4" pin="1,1"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(3,13)">first time</text>
+				<text transform="translate(2,29)">opens</text>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="subject-disk, 0.4, 1.2" to="add-on-auto-reload, 0.6, -0.1"/>
+			<path class="arrow" d="M201.2,142q-47.116,80.138 -76,168.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
+			<g transform="translate(83.153,259.963)">
+				<adj:rider at="0.9" pin="1,1"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(2,13)">auto</text>
+				<text transform="translate(2,29)">reloads</text>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="add-on-onload-script, 0.2, -0.05" to="add-on-onload-script, 0.8, -0.05"/>
+			<path class="arrow" d="M188.2,311.75q30.3,-50 60.6,0" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,-50 100,0"/>
+			<g transform="translate(185.496,253.75)">
+				<adj:rider at="0.5" pin="0.5,1"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(2,13)">on load</text>
+				<text transform="translate(2,29)">runs script</text>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="add-on-save-back, 0.6, -0.05" to="subject-disk, 0.6, 1.2"/>
+			<path class="arrow" d="M343.2,311.75q-58.315,-91.025 -132.4,-169.75" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
+			<g transform="translate(331.386,244.717)">
+				<adj:rider at="0.1" pin="0,1"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(2,13)">can</text>
+				<text transform="translate(2,29)">save</text>
+				<text transform="translate(2,45)">back</text>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="subject-author, 0.0, -0.2" to="subject-editor, 1.2, 1.0"/>
+			<path class="arrow" d="M466,93q-98.667,-36.174 -202.4,-53" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
+			<g transform="translate(386.282,48.179)">
+				<adj:rider at="0.4" pin="0,1.1"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(2,13)">edits</text>
+			</g>
+		</g>
+		<g>
+			<adj:connection from="subject-author, 0.0, 1.2" to="subject-firefox, 1.05, 0.0"/>
+			<path class="arrow" d="M466,142q1.062,114.679 -39.95,153" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q70,-30 100,0"/>
+			<g transform="translate(466.47,206.719)">
+				<adj:rider at="0.4" pin="-0.1,0"/>
+				<adj:verticalList gap="1"/>
+				<text transform="translate(3,13)">views</text>
+			</g>
+		</g>
+	</g>
+</svg>
