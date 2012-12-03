@@ -49,13 +49,23 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:2 };
+	Adj.version = { major:2, minor:0, revision:1 };
 	Adj.algorithms = {};
 }
 
 // constants
 Adj.SvgNamespace = "http://www.w3.org/2000/svg"
 Adj.AdjNamespace = "http://www.nrvr.com/2012/adj";
+
+// shortcut
+Adj.doDoc = function doDoc() {
+	Adj.processAdjElements(document);
+}
+
+// shortcut
+Adj.doSvg = function doSvg(svgElement) {
+	Adj.processAdjElements(svgElement);
+}
 
 // complete processing of all phases
 Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) {
@@ -64,6 +74,10 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		rootElement = documentNodeOrRootElement.documentElement;
 	} else {
 		rootElement = documentNodeOrRootElement;
+	}
+	if (!(rootElement instanceof SVGSVGElement)) {
+		console.log("Adj skipping because invoked with something other than required SVGSVGElement");
+		return;
 	}
 	try {
 		//
@@ -87,20 +101,6 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		Adj.displayException(exception, rootElement);
 		throw exception;
 	}
-}
-
-// shortcut
-Adj.doDoc = function doDoc() {
-	Adj.processAdjElements(document);
-}
-
-// shortcut
-Adj.doSvg = function doSvg(svgElement) {
-	if (!(svgElement instanceof SVGSVGElement)) {
-		console.log("Adj.doSvg skipping because invoked with something other than required SVGSVGElement");
-		return;
-	}
-	Adj.processAdjElements(svgElement);
 }
 
 // generic installer
