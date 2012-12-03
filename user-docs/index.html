@@ -76,7 +76,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
 
 <div class="toc">
 <ul>
-  <li><a href="#L7142">1. User Guide</a> 
+  <li><a href="#L7142">1. User Guide</a>
     <ul>
       <li><a href="#L4238">1.1. Modified BSD License</a></li>
       <li><a href="#L4276">1.2. Contributors</a></li>
@@ -88,7 +88,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
       <li><a href="#L25990">1.8. Implementation Rationale</a></li>
       <li><a href="#L7144">1.9. Modifying SVG</a></li>
       <li><a href="#L7202">1.10. Command Overview</a></li>
-      <li><a href="#L7353">1.11. Command Options</a> 
+      <li><a href="#L7353">1.11. Command Options</a>
         <ul>
           <li><a href="#L7357">1.11.1. Command horizontalList Options</a></li>
           <li><a href="#L7545">1.11.2. Command verticalList Options</a></li>
@@ -101,14 +101,14 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
         </ul>
       </li>
-      <li><a href="#L7600">1.12. Auxiliary Commands</a> 
+      <li><a href="#L7600">1.12. Auxiliary Commands</a>
         <ul>
           <li><a href="#L7602">1.12.1. Command explain</a></li>
           <li><a href="#L7627">1.12.2. Command relativate</a></li>
         </ul>
       </li>
       <li><a href="#L6319">1.13. Complete Authoring Workflow</a></li>
-      <li><a href="#L6329">1.14. Invocation</a> 
+      <li><a href="#L6329">1.14. Invocation</a>
         <ul>
           <li><a href="#L6331">1.14.1. Explicit Invocation</a></li>
           <li><a href="#L6345">1.14.2. Implicit Invocation</a></li>
@@ -117,32 +117,34 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
         </ul>
       </li>
       <li><a href="#L6360">1.15. Alternate Syntax</a></li>
-      <li><a href="#L86788">1.16. More Details</a> 
+      <li><a href="#L86788">1.16. More Details</a>
         <ul>
           <li><a href="#L123304">1.16.1. Using SVG Group Element g</a></li>
           <li><a href="#L123314">1.16.2. Overwriting Preexisting Transform
             Attributes</a></li>
-          <li><a href="#L123334">1.16.3. Transforming An SVG Path</a> 
+          <li><a href="#L123334">1.16.3. Transforming An SVG Path</a>
             <ul>
               <li><a href="#L123341">1.16.3.1. Changing Points</a></li>
-              <li><a href="#L123364">1.16.3.2. Arcs Not Supported</a></li>
+              <li><a href="#L6338">1.16.3.2. Storing Away Authoring
+                Coordinates</a></li>
+              <li><a href="#L123364">1.16.3.3. Arcs Not Supported</a></li>
             </ul>
           </li>
           <li><a href="#L4599">1.16.4. Exception Handling</a></li>
         </ul>
       </li>
-      <li><a href="#L4606">1.17. Helpful Hints</a> 
+      <li><a href="#L4606">1.17. Helpful Hints</a>
         <ul>
           <li><a href="#L4608">1.17.1. Defining An SVG rect Element</a></li>
           <li><a href="#L4638">1.17.2. Considerations For Nesting</a></li>
         </ul>
       </li>
-      <li><a href="#L123374">1.18. Implementation Details</a> 
+      <li><a href="#L123374">1.18. Implementation Details</a>
         <ul>
           <li><a href="#L123378">1.18.1. Execution Path</a></li>
         </ul>
       </li>
-      <li><a href="#L1688">1.19. Example Files</a> 
+      <li><a href="#L1688">1.19. Example Files</a>
         <ul>
           <li><a href="#L5397">1.19.1. Example File 001 Source Code</a></li>
           <li><a href="#L5412">1.19.2. Example File 002</a></li>
@@ -303,7 +305,7 @@ JavaScript manipulation of SVG.</p>
   </tbody>
 </table>
 
-<p>With some modifications, authoring coordinates a stored away for reuse by
+<p>With some modifications, authoring coordinates are stored away for reuse by
 authors and algorithms:</p>
 
 <table border="1">
@@ -984,7 +986,7 @@ paths as children of that group.</p>
     &lt;path id="connect" d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
     &lt;/path&gt;
-    &lt;rect width="30" height="20" fill="#444" transform="translate(80.002,45.001)"&gt;
+    &lt;rect width="30" height="20" fill="#444"&gt;
       <span class="example-code">&lt;adj:rider path="connect"/&gt;</span>
     &lt;/rect&gt;
   &lt;/g&gt;
@@ -1272,7 +1274,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;</span>
       <span class="example-code">&lt;adj:explain/&gt;</span>
       &lt;path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none"/&gt;
-      &lt;rect width="30" height="20" fill="#aaa" transform="translate(86.118,47.073)"&gt;
+      &lt;rect width="30" height="20" fill="#aaa"&gt;
         <span class="example-code">&lt;adj:rider at="0.2,0.7" adjust="near" gap="2"/&gt;</span>
         <span class="example-code">&lt;adj:explain/&gt;</span>
       &lt;/rect&gt;
@@ -1456,13 +1458,16 @@ the Adj JavaScript library as needed, partially or wholly.</p>
 <p>One entry point could be explicit invocation with
 <code>Adj.doDoc();</code>.</p>
 
+<p>Similarly, an entry point could be explicit invocation with
+<code>Adj.doSvg(svgElement);</code>.</p>
+
 <p>Another kind of entry point could be the setting of algorithms to be applied
 to an element. E.g. the concise form Adj command</p>
-<pre class="example-listing">&lt;!-- Adj horizontalList makeGrid:true hAlign:center vAlign:middle maxPerRow:3 gap:5 --&gt;</pre>
+<pre class="example-listing">&lt;adj:horizontalList makeGrid="true" hAlign="center" vAlign="middle" maxPerRow="3" gap="5"/&gt;</pre>
 
 <p>actually gets converted into, could have been written as, and gets
 interpreted as JavaScript</p>
-<pre class="example-listing">&lt;!-- Adj.setAlgorithm(this, 'horizontalList', {makeGrid:true, hAlign:'center', vAlign:'middle', maxPerRow:3, gap:5}); --&gt;</pre>
+<pre class="example-listing">Adj.setAlgorithm(this, 'horizontalList', {makeGrid:true, hAlign:'center', vAlign:'middle', maxPerRow:3, gap:5});</pre>
 
 <p>Some details of the syntax of Adj may still change depending on user
 feedback, at least after early distributions.</p>
@@ -1509,7 +1514,16 @@ stroke width, which is undesirable. <span class="deemphasize">The issue of
 scaling and stroke width has been discussed for SVG version 2, which is far
 out.</span></p>
 
-<h5 id="L123364">1.16.3.2. Arcs Not Supported</h5>
+<h5 id="L6338">1.16.3.2. Storing Away Authoring Coordinates</h5>
+
+<p>Essential authoring coordinates are stored away in Adj namespace attributes,
+for reuse by authors and algorithms.</p>
+
+<p>Algorithms which store away authoring coordinates also look for authoring
+coordinates in Adj namespace attributes, and if present use the values of Adj
+namespace attributes rather than equivalent SVG attributes.</p>
+
+<h5 id="L123364">1.16.3.3. Arcs Not Supported</h5>
 
 <p>As implemented, other than straight lines and curves, arcs in an SVG
 <code>path</code> element in a <code>connection</code> don't get handled
