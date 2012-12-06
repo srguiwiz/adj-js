@@ -3,30 +3,25 @@
 	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<rect width="200" height="120" fill="linen"/>
 	<g>
-		<rect id="one" x="5" y="5" width="40" height="30" fill="#888"/>
-		<rect x="85" y="15" width="40" height="30" fill="#777"/>
-		<rect x="25" y="45" width="40" height="30" fill="#777"/>
-		<rect id="other" x="145" y="75" width="40" height="30" fill="#666"/>
+		<rect id="one" x="5" y="5" width="40" height="30" fill="#ddd"/>
+		<rect x="85" y="15" width="40" height="30" fill="#ccc"/>
+		<rect x="25" y="45" width="40" height="30" fill="#ccc"/>
+		<rect id="other" x="145" y="75" width="40" height="30" fill="#bbb"/>
 		<g>
 			<adj:connection from="one,1,0.5" to="other,0,0.5"/>
-			<adj:explain/>
 			<path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none" adj:d="M5,100 q40,10 80,0 t80,0"/>
 			<rect width="30" height="20" fill="#aaa" transform="translate(86.118,47.073)">
 				<adj:rider at="0.2,0.7" adjust="near" gap="2"/>
 				<adj:explain/>
 			</rect>
-			<rect adj:explanation="true" x="5" y="5" width="40" height="30" fill="orange" fill-opacity="0.1" stroke="orange" stroke-width="1" stroke-opacity="0.2"/>
-			<rect adj:explanation="true" x="85" y="15" width="40" height="30" fill="orange" fill-opacity="0.1" stroke="orange" stroke-width="1" stroke-opacity="0.2"/>
-			<rect adj:explanation="true" x="25" y="45" width="40" height="30" fill="orange" fill-opacity="0.1" stroke="orange" stroke-width="1" stroke-opacity="0.2"/>
-			<rect adj:explanation="true" x="145" y="75" width="40" height="30" fill="orange" fill-opacity="0.1" stroke="orange" stroke-width="1" stroke-opacity="0.2"/>
+			<rect adj:explanation="true" x="5" y="5" width="40" height="30" fill="pink" fill-opacity="0.2" stroke="pink" stroke-width="1" stroke-opacity="0.2"/>
+			<rect adj:explanation="true" x="85" y="15" width="40" height="30" fill="pink" fill-opacity="0.2" stroke="pink" stroke-width="1" stroke-opacity="0.2"/>
+			<rect adj:explanation="true" x="25" y="45" width="40" height="30" fill="pink" fill-opacity="0.2" stroke="pink" stroke-width="1" stroke-opacity="0.2"/>
+			<rect adj:explanation="true" x="145" y="75" width="40" height="30" fill="pink" fill-opacity="0.2" stroke="pink" stroke-width="1" stroke-opacity="0.2"/>
 			<rect adj:explanation="true" x="0" y="0" width="30" height="20" transform="translate(86.118,47.073)" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
 			<circle adj:explanation="true" cx="15" cy="10" r="3" transform="translate(86.118,47.073)" fill="blue" fill-opacity="0.2" stroke="none"/>
 			<circle adj:explanation="true" cx="62.178916931152344" cy="37.85444259643555" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
 			<circle adj:explanation="true" cx="117.65643310546875" cy="65.02898406982422" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
 		</g>
-		<rect adj:explanation="true" x="5" y="5" width="40" height="30" transform="matrix(1, 0, 0, 1, 0, 0)" fill="green" fill-opacity="0.1" stroke="green" stroke-width="1" stroke-opacity="0.2"/>
-		<circle adj:explanation="true" cx="45" cy="20" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
-		<rect adj:explanation="true" x="145" y="75" width="40" height="30" transform="matrix(1, 0, 0, 1, 0, 0)" fill="red" fill-opacity="0.1" stroke="red" stroke-width="1" stroke-opacity="0.2"/>
-		<circle adj:explanation="true" cx="145" cy="90" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
 	</g>
 </svg>

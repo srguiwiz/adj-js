@@ -1697,9 +1697,9 @@ Adj.algorithms.rider = {
 					explanationElement.setAttribute("y", oneRelativeBoundingBox.y);
 					explanationElement.setAttribute("width", oneRelativeBoundingBox.width);
 					explanationElement.setAttribute("height", oneRelativeBoundingBox.height);
-					explanationElement.setAttribute("fill", "orange");
-					explanationElement.setAttribute("fill-opacity", "0.1");
-					explanationElement.setAttribute("stroke", "orange");
+					explanationElement.setAttribute("fill", "pink");
+					explanationElement.setAttribute("fill-opacity", "0.2");
+					explanationElement.setAttribute("stroke", "pink");
 					explanationElement.setAttribute("stroke-width", "1");
 					explanationElement.setAttribute("stroke-opacity", "0.2");
 					parent.appendChild(explanationElement);
