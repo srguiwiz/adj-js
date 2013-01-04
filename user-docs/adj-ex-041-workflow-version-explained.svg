@@ -24,8 +24,7 @@
 		</marker>
 	</defs>
 	<g>
-		<adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center"/>
-		<adj:explain/>
+		<adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center" explain="true"/>
 		<g id="subject-editor" transform="translate(164,5)">
 			<adj:horizontalList gap="10"/>
 			<rect width="81" height="33" class="subject" x="1" y="1">
@@ -164,5 +163,19 @@
 				<text transform="translate(3,13)">views</text>
 			</g>
 		</g>
-	<rect adj:explanation="true" x="0" y="0" width="531" height="405" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/><path adj:explanation="true" d="m5,5 401,0 0,35 -401,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m411,5 50,0 0,35 -50,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m466,5 60,0 0,35 -60,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m5,45 401,0 0,50 -401,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m411,45 50,0 0,50 -50,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m466,45 60,0 0,50 -60,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m5,100 401,0 0,35 -401,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m411,100 50,0 0,35 -50,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m466,100 60,0 0,35 -60,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m5,140 401,0 0,150 -401,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m411,140 50,0 0,150 -50,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m466,140 60,0 0,150 -60,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/><path adj:explanation="true" d="m5,295 401,0 0,105 -401,0 0,-105 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/></g>
+		<rect adj:explanation="true" x="0" y="0" width="531" height="405" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<path adj:explanation="true" d="m5,5 401,0 0,35 -401,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m411,5 50,0 0,35 -50,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m466,5 60,0 0,35 -60,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m5,45 401,0 0,50 -401,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m411,45 50,0 0,50 -50,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m466,45 60,0 0,50 -60,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m5,100 401,0 0,35 -401,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m411,100 50,0 0,35 -50,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m466,100 60,0 0,35 -60,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m5,140 401,0 0,150 -401,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m411,140 50,0 0,150 -50,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m466,140 60,0 0,150 -60,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<path adj:explanation="true" d="m5,295 401,0 0,105 -401,0 0,-105 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+	</g>
 </svg>

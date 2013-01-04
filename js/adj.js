@@ -366,6 +366,7 @@ Adj.algorithms.verticalList = {
 		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["left"]; }; // default hAlign left
 		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
 		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -470,7 +471,7 @@ Adj.algorithms.verticalList = {
 				var translationY = currentChildY - childBoundingBox.y + Adj.fraction(0, heightToUse - currentChildHeight, vAlign);
 				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
 				// explain
-				if (element.adjFields.explain) {
+				if (explain) {
 					var explainPathData = "m" +
 						Adj.decimal(currentChildX) + "," + Adj.decimal(currentChildY) + " " +
 						Adj.decimal(widthToUse) + "," + Adj.decimal(0) + " " +
@@ -515,7 +516,7 @@ Adj.algorithms.verticalList = {
 		}
 		//
 		// explain
-		if (element.adjFields.explain) {
+		if (explain) {
 			if (hiddenRect) {
 				var explanationElement = Adj.createExplanationElement("rect");
 				explanationElement.setAttribute("x", 0);
@@ -567,6 +568,7 @@ Adj.algorithms.horizontalList = {
 		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["left"]; }; // default hAlign left
 		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
 		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -671,7 +673,7 @@ Adj.algorithms.horizontalList = {
 				var translationY = currentChildY - childBoundingBox.y + Adj.fraction(0, heightToUse - currentChildHeight, vAlign);
 				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
 				// explain
-				if (element.adjFields.explain) {
+				if (explain) {
 					var explainPathData = "m" +
 						Adj.decimal(currentChildX) + "," + Adj.decimal(currentChildY) + " " +
 						Adj.decimal(widthToUse) + "," + Adj.decimal(0) + " " +
@@ -716,7 +718,7 @@ Adj.algorithms.horizontalList = {
 		}
 		//
 		// explain
-		if (element.adjFields.explain) {
+		if (explain) {
 			if (hiddenRect) {
 				var explanationElement = Adj.createExplanationElement("rect");
 				explanationElement.setAttribute("x", 0);
@@ -767,15 +769,6 @@ Adj.algorithms.frameForParent = {
 		element.setAttribute("width", Adj.decimal(parentBoundingBox.width - leftInset - rightInset));
 		element.setAttribute("height", Adj.decimal(parentBoundingBox.height - topInset - bottomInset));
 		element.removeAttribute("display"); // try being cleverer ?
-	}
-}
-
-// utility
-// a specific algorithm
-Adj.algorithms.explain = {
-	phaseHandlerName: "adjPhase1Down",
-	method: function explain (element, parametersObject) {
-		element.adjFields.explain = true;
 	}
 }
 
@@ -1110,6 +1103,7 @@ Adj.algorithms.connection = {
 		var toX = toMatch[2] ? parseFloat(toMatch[2]) : 0.5; // default toX = 0.5
 		var toY = toMatch[3] ? parseFloat(toMatch[3]) : 0.5; // default toY = 0.5
 		var vector = !isNaN(parametersObject.vector) ? parametersObject.vector : 0; // default vector = 0
+		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		element.removeAttribute("display"); // try being cleverer ?
 		//
@@ -1217,7 +1211,7 @@ Adj.algorithms.connection = {
 		}
 		//
 		// explain
-		if (element.adjFields.explain) {
+		if (explain) {
 			var parent = element.parentNode;
 			var explanationElement = Adj.createExplanationElement("rect");
 			explanationElement.setAttribute("x", fromBoundingBox.x);
@@ -1502,6 +1496,7 @@ Adj.algorithms.rider = {
 		if (numberOfSamples < 4) { // sanity check
 			numberOfSamples = 4;
 		}
+		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		var considerElementsToAvoid;
 		switch (adjust) {
@@ -1686,7 +1681,7 @@ Adj.algorithms.rider = {
 		}
 		//
 		// explain
-		if (element.adjFields.explain) {
+		if (explain) {
 			var parent = element.parentNode;
 			var elementTransformAttribute = element.getAttribute("transform");
 			if (considerElementsToAvoid) {
@@ -1946,6 +1941,7 @@ Adj.algorithms.circularList = {
 		var toAngle = !isNaN(parametersObject.toAngle) ? parametersObject.toAngle : fromAngle + 360; // larger than fromAngle is clockwise, default toAngle = fromAngle + 360 means full circle clockwise
 		var rAlign = !isNaN(parametersObject.rAlign) ? parametersObject.rAlign : Adj.insideMedianOutside[parametersObject.rAlign]; // rAlign could be a number
 		if (rAlign == undefined) { rAlign = Adj.insideMedianOutside["median"]; }; // default rAlign median
+		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -2043,7 +2039,7 @@ Adj.algorithms.circularList = {
 				minPlacedChildBoundingCircleY = placedChildBoundingCircleY;
 			}
 			// explain
-			if (element.adjFields.explain) {
+			if (explain) {
 				childRecord.explainCircle = {
 					cx: placedChildCx,
 					cy: placedChildCy,
@@ -2064,7 +2060,7 @@ Adj.algorithms.circularList = {
 		}
 		//
 		// explain
-		if (element.adjFields.explain) {
+		if (explain) {
 			var explanationElement = Adj.createExplanationElement("circle");
 			explanationElement.setAttribute("cx", Adj.decimal(treeCenterX - topLeftAlignmentFixX));
 			explanationElement.setAttribute("cy", Adj.decimal(treeCenterY - topLeftAlignmentFixY));

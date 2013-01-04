@@ -5,12 +5,10 @@
 	<rect id="one" x="5" y="5" width="40" height="30" fill="#888"/>
 	<rect id="other" x="145" y="75" width="40" height="30" fill="#ccc"/>
 	<g>
-		<adj:connection from="one,1,0.5" to="other,0,0.5"/>
-		<adj:explain/>
+		<adj:connection from="one,1,0.5" to="other,0,0.5" explain="true"/>
 		<path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none" adj:d="M5,100 q40,10 80,0 t80,0"/>
 		<rect width="30" height="20" fill="#aaa" transform="translate(80.002,45.001)">
-			<adj:rider at="0.5"/>
-			<adj:explain/>
+			<adj:rider at="0.5" explain="true"/>
 		</rect>
 		<rect adj:explanation="true" x="0" y="0" width="30" height="20" transform="translate(80.002,45.001)" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
 		<circle adj:explanation="true" cx="15" cy="10" r="3" transform="translate(80.002,45.001)" fill="blue" fill-opacity="0.2" stroke="none"/>

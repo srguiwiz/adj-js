@@ -3,8 +3,7 @@
 	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<rect width="200" height="120" fill="linen"/>
 	<g>
-		<adj:circularList rAlign="inside" gap="2"/>
-		<adj:explain/>
+		<adj:circularList rAlign="inside" gap="2" explain="true"/>
 		<circle r="20" fill="#000" transform="translate(47.448,54.662)"/>
 		<rect width="3" height="3" fill="#222" transform="translate(78.354,53.162)"/>
 		<rect width="6" height="6" fill="#444" transform="translate(65.975,78.656)"/>

@@ -76,7 +76,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
 
 <div class="toc">
 <ul>
-  <li><a href="#L7142">1. User Guide</a> 
+  <li><a href="#L7142">1. User Guide</a>
     <ul>
       <li><a href="#L4238">1.1. Modified BSD License</a></li>
       <li><a href="#L4276">1.2. Contributors</a></li>
@@ -88,7 +88,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
       <li><a href="#L25990">1.8. Implementation Rationale</a></li>
       <li><a href="#L7144">1.9. Modifying SVG</a></li>
       <li><a href="#L7202">1.10. Command Overview</a></li>
-      <li><a href="#L7353">1.11. Command Options</a> 
+      <li><a href="#L7353">1.11. Command Options</a>
         <ul>
           <li><a href="#L7357">1.11.1. Command horizontalList Options</a></li>
           <li><a href="#L7545">1.11.2. Command verticalList Options</a></li>
@@ -101,14 +101,14 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
         </ul>
       </li>
-      <li><a href="#L7600">1.12. Auxiliary Commands</a> 
+      <li><a href="#L7600">1.12. Auxiliary Commands</a>
         <ul>
-          <li><a href="#L7602">1.12.1. Command explain</a></li>
+          <li><a href="#L7602">1.12.1. Option explain</a></li>
           <li><a href="#L7627">1.12.2. Command relativate</a></li>
         </ul>
       </li>
       <li><a href="#L6319">1.13. Complete Authoring Workflow</a></li>
-      <li><a href="#L6329">1.14. Invocation</a> 
+      <li><a href="#L6329">1.14. Invocation</a>
         <ul>
           <li><a href="#L6331">1.14.1. Explicit Invocation</a></li>
           <li><a href="#L6345">1.14.2. Implicit Invocation</a></li>
@@ -117,12 +117,12 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
         </ul>
       </li>
       <li><a href="#L6360">1.15. Alternate Syntax</a></li>
-      <li><a href="#L86788">1.16. More Details</a> 
+      <li><a href="#L86788">1.16. More Details</a>
         <ul>
           <li><a href="#L123304">1.16.1. Using SVG Group Element g</a></li>
           <li><a href="#L123314">1.16.2. Overwriting Preexisting Transform
             Attributes</a></li>
-          <li><a href="#L123334">1.16.3. Transforming An SVG Path</a> 
+          <li><a href="#L123334">1.16.3. Transforming An SVG Path</a>
             <ul>
               <li><a href="#L123341">1.16.3.1. Changing Points</a></li>
               <li><a href="#L6338">1.16.3.2. Storing Away Authoring
@@ -133,18 +133,18 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L4599">1.16.4. Exception Handling</a></li>
         </ul>
       </li>
-      <li><a href="#L4606">1.17. Helpful Hints</a> 
+      <li><a href="#L4606">1.17. Helpful Hints</a>
         <ul>
           <li><a href="#L4608">1.17.1. Defining An SVG rect Element</a></li>
           <li><a href="#L4638">1.17.2. Considerations For Nesting</a></li>
         </ul>
       </li>
-      <li><a href="#L123374">1.18. Implementation Details</a> 
+      <li><a href="#L123374">1.18. Implementation Details</a>
         <ul>
           <li><a href="#L123378">1.18.1. Execution Path</a></li>
         </ul>
       </li>
-      <li><a href="#L1688">1.19. Example Files</a> 
+      <li><a href="#L1688">1.19. Example Files</a>
         <ul>
           <li><a href="#L5397">1.19.1. Example File 001 Source Code</a></li>
           <li><a href="#L5412">1.19.2. Example File 002</a></li>
@@ -1212,9 +1212,9 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
 
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
-<h4 id="L7602">1.12.1. Command explain</h4>
+<h4 id="L7602">1.12.1. Option explain</h4>
 
-<p>Command <code>explain</code> inserts explanatory elements.</p>
+<p>The optional parameter <code>explain</code> inserts explanatory elements.</p>
 
 <p>As implemented, <code>explain</code> inserts explanatory elements for
 <code>verticalList</code>, <code>horizontalList</code>,
@@ -1228,8 +1228,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   …</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center"/&gt;</span>
-     <span class="example-code">&lt;adj:explain/&gt;</span>
+    &lt;adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center" <span class="example-code">explain="true"</span>/&gt;
     &lt;g id="subject-editor"&gt;
     &lt;adj:horizontalList gap="10"/&gt;
       &lt;rect width="0" height="0" class="subject"&gt;
@@ -1250,12 +1249,10 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
   &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
   &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#ccc"/&gt;
   &lt;g&gt;
-    <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;</span>
-    <span class="example-code">&lt;adj:explain/&gt;</span>
+    &lt;adj:connection from="one,1,0.5" to="other,0,0.5" <span class="example-code">explain="true"</span>/&gt;
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#666" stroke-width="2" fill="none"/&gt;
     &lt;rect width="30" height="20" fill="#aaa"&gt;
-      <span class="example-code">&lt;adj:rider at="0.5"/&gt;</span>
-      <span class="example-code">&lt;adj:explain/&gt;</span>
+      &lt;adj:rider at="0.5" <span class="example-code">explain="true"</span>/&gt;
     &lt;/rect&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -1275,8 +1272,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none"/&gt;
       &lt;rect width="30" height="20" fill="#aaa"&gt;
-        <span class="example-code">&lt;adj:rider at="0.2,0.7" adjust="near" gap="2"/&gt;</span>
-        <span class="example-code">&lt;adj:explain/&gt;</span>
+        &lt;adj:rider at="0.2,0.7" adjust="near" gap="2" <span class="example-code">explain="true"</span>/&gt;
       &lt;/rect&gt;
     &lt;/g&gt;
   &lt;/g&gt;
@@ -1289,8 +1285,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:circularList rAlign="inside" gap="2"/&gt;</span>
-    <span class="example-code">&lt;adj:explain/&gt;</span>
+    &lt;adj:circularList rAlign="inside" gap="2" <span class="example-code">explain="true"</span>/&gt;
     &lt;circle r="20" fill="#000"/&gt;
     &lt;rect width="3" height="3" fill="#222"/&gt;
     &lt;rect width="6" height="6" fill="#444"/&gt;

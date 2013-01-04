@@ -11,8 +11,7 @@
 			<adj:connection from="one,1,0.5" to="other,0,0.5"/>
 			<path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none" adj:d="M5,100 q40,10 80,0 t80,0"/>
 			<rect width="30" height="20" fill="#aaa" transform="translate(86.118,47.073)">
-				<adj:rider at="0.2,0.7" adjust="near" gap="2"/>
-				<adj:explain/>
+				<adj:rider at="0.2,0.7" adjust="near" gap="2" explain="true"/>
 			</rect>
 			<rect adj:explanation="true" x="5" y="5" width="40" height="30" fill="pink" fill-opacity="0.2" stroke="pink" stroke-width="1" stroke-opacity="0.2"/>
 			<rect adj:explanation="true" x="85" y="15" width="40" height="30" fill="pink" fill-opacity="0.2" stroke="pink" stroke-width="1" stroke-opacity="0.2"/>
