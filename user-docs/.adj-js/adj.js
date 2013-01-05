@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2002-2012, Nirvana Research
+// Copyright (c) 2002-2013, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -96,7 +96,7 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		Adj.adjElementsToPhaseHandlers(rootElement);
 		//
 		// then process
-		Adj.processSvgElement(rootElement);
+		Adj.processSvgElementWithHandlers(rootElement);
 	} catch (exception) {
 		Adj.displayException(exception, rootElement);
 		throw exception;
@@ -186,8 +186,8 @@ Adj.adjElementsToPhaseHandlers = function adjElementsToPhaseHandlers (node) {
 }
 
 // complete processing of all phases
-Adj.processSvgElement = function processSvgElement(svgElement) {
-	Adj.processElement(svgElement);
+Adj.processSvgElementWithHandlers = function processSvgElementWithHandlers(svgElement) {
+	Adj.processElementWithHandlers(svgElement);
 	// a singleton
 	var svgElementBoundingBox = svgElement.getBBox();
 	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.x + svgElementBoundingBox.width));
@@ -209,7 +209,7 @@ Adj.processSvgElement = function processSvgElement(svgElement) {
 }
 
 // complete processing of all phases
-Adj.processElement = function processElement(element, level, thisTimeFullyProcessSubtree) {
+Adj.processElementWithHandlers = function processElementWithHandlers(element, level, thisTimeFullyProcessSubtree) {
 	Adj.walkNodes(element, "adjPhase1", level, thisTimeFullyProcessSubtree);
 	Adj.walkNodes(element, "adjPhase2", level, thisTimeFullyProcessSubtree);
 	Adj.walkNodes(element, "adjPhase3", level, thisTimeFullyProcessSubtree);
@@ -1536,7 +1536,7 @@ Adj.algorithms.rider = {
 		}
 		//
 		element.removeAttribute("display"); // try being cleverer ?
-		Adj.processElement(element, level, true); // process subtree separately, i.e. now
+		Adj.processElementWithHandlers(element, level, true); // process subtree separately, i.e. now
 		//
 		// where on path to put it
 		var boundingBox = element.getBBox();
