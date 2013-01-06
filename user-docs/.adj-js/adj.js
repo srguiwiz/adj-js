@@ -209,15 +209,15 @@ Adj.processSvgElementWithHandlers = function processSvgElementWithHandlers(svgEl
 }
 
 // complete processing of all phases
-Adj.processElementWithHandlers = function processElementWithHandlers(element, level, thisTimeFullyProcessSubtree) {
-	Adj.walkNodes(element, "adjPhase1", level, thisTimeFullyProcessSubtree);
-	Adj.walkNodes(element, "adjPhase2", level, thisTimeFullyProcessSubtree);
-	Adj.walkNodes(element, "adjPhase3", level, thisTimeFullyProcessSubtree);
+Adj.processElementWithHandlers = function processElementWithHandlers(element, thisTimeFullyProcessSubtree, level) {
+	Adj.walkNodes(element, "adjPhase1", thisTimeFullyProcessSubtree, level);
+	Adj.walkNodes(element, "adjPhase2", thisTimeFullyProcessSubtree, level);
+	Adj.walkNodes(element, "adjPhase3", thisTimeFullyProcessSubtree, level);
 }
 
 // recursive walking of the tree
-Adj.walkNodes = function walkNodes (node, phaseName, level, thisTimeFullyProcessSubtree) {
-	level = level || 0; // if no level given then 0
+Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree, level) {
+	level = level || 1; // if no level given then 1
 	//console.log("phase " + phaseName + " level " + level + " going into " + node.nodeName);
 	//
 	var phaseHandlers = node.adjFields.phaseHandlers;
@@ -259,7 +259,7 @@ Adj.walkNodes = function walkNodes (node, phaseName, level, thisTimeFullyProcess
 		if (!(child instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
 		}
-		Adj.walkNodes(child, phaseName, level + 1); // recursion
+		Adj.walkNodes(child, phaseName, false, level + 1); // recursion
 	}
 	//
 	if (phaseHandlers) {
@@ -814,6 +814,163 @@ Adj.algorithms.textBreaks = {
 	}
 }
 
+// utility
+Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, level) {
+	if (idsDictionary == undefined) { idsDictionary = []; }; // ensure there is an idsDictionary
+	level = level || 1; // if no level given then 1
+	// chose to implement to recognize more than one kind of id
+	var ids = [];
+	var adjId = element.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+	if (adjId) {
+		ids[adjId] = true;
+	}
+	var plainId = element.getAttribute("id"); // second check for acceptable attribute id
+	if (plainId) {
+		ids[plainId] = true;
+	}
+	for (var id in ids) { // could be more than one
+		var elementsWithThisId = idsDictionary[id] || [];
+		elementsWithThisId.push(element); // could be more than one
+		idsDictionary[id] = elementsWithThisId;
+	}
+	element.adjLevel = level;
+	// then walk
+	for (var child = element.firstChild; child; child = child.nextSibling) {
+		if (child instanceof SVGElement) {
+			Adj.buildIdsDictionary(child, idsDictionary, level + 1); // recursion
+		} // else skip if not an SVGElement, e.g. an XML #text
+	}
+	return idsDictionary;
+}
+
+// utility
+// this specific function builds on invocation even if a dictionary exists already,
+// could be useful to call more than once if new ids have been created by code running or
+// if document structure has changed in a way that would affect outcomes,
+// could be expensive for a huge document, hence while itself O(n) nevertheless to avoid O(n^2) call sparingly
+Adj.buildIdsDictionaryForDocument = function buildIdsDictionaryForDocument(documentNodeOrRootElement) {
+	var rootElement;
+	if (documentNodeOrRootElement.documentElement) {
+		rootElement = documentNodeOrRootElement.documentElement;
+	} else {
+		rootElement = documentNodeOrRootElement;
+	}
+	return rootElement.adjIdsDictionary = Adj.buildIdsDictionary(rootElement);
+}
+
+// utility
+Adj.elementLevel = function elementLevel(element) {
+	var level = element.adjLevel;
+	if (!level) {
+		level = 1;
+		var parent = element.parentNode;
+		while (parent.nodeType == Node.ELEMENT_NODE) {
+			level++;
+			parent = parent.parentNode;
+		}
+		element.adjLevel = level;
+	}
+	return level;
+}
+
+// utility
+Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
+	// note: any change in implementation still should keep intact deterministic behavior
+	var ownerDocumentElement = startingElement.ownerDocument.documentElement;
+	var adjIdsDictionary = ownerDocumentElement.adjIdsDictionary || Adj.buildIdsDictionaryForDocument(ownerDocumentElement); // ensure there is an adjIdsDictionary
+	var elementsWithThisId = adjIdsDictionary[id];
+	if (!elementsWithThisId) {
+		return null;
+	}
+	var numberOfElementsWithThisId = elementsWithThisId.length;
+	if (!numberOfElementsWithThisId) {
+		return null;
+	}
+	if (numberOfElementsWithThisId == 1) { // if only one then that is the one
+		return elementsWithThisId[0];
+	}
+	// getting here means at least two to pick from
+	var descendants = [];
+	var otherRelations = [];
+	var startingElementLevel = Adj.elementLevel(startingElement);
+	elementsWithThisIdLoop: for (var i = 0; i < numberOfElementsWithThisId; i++) {
+		var elementWithThisId = elementsWithThisId[i];
+		if (elementWithThisId == startingElement) { // self is nearest possible
+			return elementWithThisId;
+		}
+		var elementWithThisIdLevel = Adj.elementLevel(elementWithThisId);
+		var element2Ancestor = elementWithThisId;
+		var ancestorLevel = elementWithThisIdLevel;
+		while (ancestorLevel > startingElementLevel) {
+			// go up until startingElementLevel
+			element2Ancestor = element2Ancestor.parentNode;
+			ancestorLevel--;
+			if (element2Ancestor == startingElement) { // elementWithThisId is a descendant of startingElement
+				descendants.push( { element:elementWithThisId, level:elementWithThisIdLevel } );
+				continue elementsWithThisIdLoop;
+			}
+		}
+		if (descendants.length) {
+			// chose to implement to prefer a descendant, if any then no need to check other relations
+			continue elementsWithThisIdLoop;
+		}
+		var element1Ancestor = startingElement;
+		while (element1Ancestor != element2Ancestor) {
+			// go up until reaching common ancestor
+			element1Ancestor = element1Ancestor.parentNode;
+			element2Ancestor = element2Ancestor.parentNode;
+			ancestorLevel--;
+			if (!element1Ancestor || !element2Ancestor) { // for stability, a defensive check rather than risk an exception
+				continue elementsWithThisIdLoop;
+			}
+		}
+		otherRelations.push( { element:elementWithThisId, level:elementWithThisIdLevel, commonAncestorLevel: ancestorLevel } );
+	}
+	var numberOfDescendants = descendants.length;
+	if (numberOfDescendants) {
+		// chose to implement to prefer a descendant, if any then no need to check other relations
+		var descendantToReturn = descendants[0];
+		var descendantToReturnLevel = descendantToReturn.level;
+		for (var i = 1; i < numberOfDescendants; i++) {
+			var descendant = descendants[i];
+			if (descendant.level < descendantToReturnLevel) { // closer to startingElement
+				descendantToReturn = descendant;
+				descendantToReturnLevel = descendantToReturn.level;
+			}
+		}
+		return descendantToReturn.element;
+	}
+	var numberOfOtherRelations = otherRelations.length;
+	if (numberOfOtherRelations) {
+		var otherToReturn = otherRelations[0];
+		var othersToReturn = [ otherToReturn ];
+		var otherToReturnCommonAncestorLevel = otherToReturn.commonAncestorLevel;
+		for (var i = 1; i < numberOfOtherRelations; i++) {
+			var otherRelation = otherRelations[i];
+			var otherRelationCommonAncestorLevel = otherRelation.commonAncestorLevel;
+			if (otherRelationCommonAncestorLevel > otherToReturnCommonAncestorLevel) { // closer to startingElement
+				othersToReturn = [ otherRelation ];
+				otherToReturnCommonAncestorLevel = otherRelationCommonAncestorLevel;
+			} else if (otherRelationCommonAncestorLevel == otherToReturnCommonAncestorLevel) { // same distance to startingElement
+				othersToReturn.push(otherRelation);
+			}
+		}
+		//
+		var numberOfOthersToReturn = othersToReturn.length;
+		var otherToReturn = othersToReturn[0];
+		var otherToReturnLevel = otherToReturn.level;
+		for (var i = 1; i < numberOfOthersToReturn; i++) {
+			var otherRelation = othersToReturn[i];
+			if (otherRelation.level < otherToReturnLevel) { // closer to startingElement
+				otherToReturn = otherRelation;
+				otherToReturnLevel = otherToReturn.level;
+			}
+		}
+		return otherToReturn.element;
+	}
+	return null; // failed to find any
+}
+
 // constants
 // parse an id and optionally two more parameters, e.g. full "obj1, 0.5, 1" or less specific "obj2"
 // note: as implemented tolerates extra paremeters
@@ -1108,7 +1265,7 @@ Adj.algorithms.connection = {
 		element.removeAttribute("display"); // try being cleverer ?
 		//
 		// what to connect
-		var fromElement = document.getElementById(fromId);
+		var fromElement = Adj.getElementByIdNearby(fromId, element);
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
 		var fromPoint = document.documentElement.createSVGPoint();
@@ -1116,7 +1273,7 @@ Adj.algorithms.connection = {
 		fromPoint.y = fromBoundingBox.y + fromBoundingBox.height * fromY;
 		fromPoint = fromPoint.matrixTransform(matrixFromFromElement);
 		//
-		var toElement = document.getElementById(toId);
+		var toElement = Adj.getElementByIdNearby(toId, element);
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
 		var toPoint = document.documentElement.createSVGPoint();
@@ -1512,7 +1669,7 @@ Adj.algorithms.rider = {
 		var avoidList = [];
 		if (pathId) { // path id given
 			// general case
-			path = document.getElementById(pathId);
+			path = Adj.getElementByIdNearby(pathId, element);
 			//
 			if (considerElementsToAvoid) {
 				Adj.addSiblingsToAvoid(avoidList, element);
@@ -1536,7 +1693,7 @@ Adj.algorithms.rider = {
 		}
 		//
 		element.removeAttribute("display"); // try being cleverer ?
-		Adj.processElementWithHandlers(element, level, true); // process subtree separately, i.e. now
+		Adj.processElementWithHandlers(element, true, level); // process subtree separately, i.e. now
 		//
 		// where on path to put it
 		var boundingBox = element.getBBox();
