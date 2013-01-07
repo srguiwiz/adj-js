@@ -3,10 +3,10 @@
 	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
 	<rect width="200" height="120" fill="linen"/>
 	<g>
-		<rect id="one" x="5" y="5" width="40" height="30" fill="#ddd"/>
+		<rect adj:id="one" x="5" y="5" width="40" height="30" fill="#ddd"/>
 		<rect x="85" y="15" width="40" height="30" fill="#ccc"/>
 		<rect x="25" y="45" width="40" height="30" fill="#ccc"/>
-		<rect id="other" x="145" y="75" width="40" height="30" fill="#bbb"/>
+		<rect adj:id="other" x="145" y="75" width="40" height="30" fill="#bbb"/>
 		<g>
 			<adj:connection from="one,1,0.5" to="other,0,0.5"/>
 			<path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none" adj:d="M5,100 q40,10 80,0 t80,0"/>

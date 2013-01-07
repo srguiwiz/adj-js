@@ -39,7 +39,7 @@
 			<g transform="translate(5,233)">
 				<rect width="20" height="50" fill="none"/>
 			</g>
-			<g id="subject-author" transform="translate(30,203)">
+			<g adj:id="subject-author" transform="translate(30,203)">
 				<adj:verticalList gap="10"/>
 				<rect width="82" height="107" class="subject" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -52,7 +52,7 @@
 			</g>
 			<g transform="translate(224,5)">
 				<adj:verticalList gap="5" hAlign="center" vAlign="middle"/>
-				<g id="subject-editor" transform="translate(5,5)">
+				<g adj:id="subject-editor" transform="translate(5,5)">
 					<adj:verticalList gap="10"/>
 					<rect width="318" height="263" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>
@@ -65,7 +65,7 @@
 				<g transform="translate(140,275)">
 					<rect width="50" height="70" fill="none"/>
 				</g>
-				<g id="subject-disk" transform="translate(141,350)">
+				<g adj:id="subject-disk" transform="translate(141,350)">
 					<adj:horizontalList gap="10"/>
 					<rect width="46" height="33" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>
@@ -77,7 +77,7 @@
 				</g>
 			</g>
 		</g>
-		<g id="subject-firefox" transform="translate(5,525)">
+		<g adj:id="subject-firefox" transform="translate(5,525)">
 			<adj:verticalList gap="10"/>
 			<rect width="623" height="267" class="subject" x="1" y="1">
 				<adj:frameForParent inset="1"/>
@@ -88,7 +88,7 @@
 			<g transform="translate(10,35)">
 				<adj:horizontalList gap="5"/>
 				<image xlink:href="adj-ex-041-firefox.png" width="290" height="214" transform="translate(5,5)"/>
-				<g id="add-on-auto-reload" transform="translate(300,5)">
+				<g adj:id="add-on-auto-reload" transform="translate(300,5)">
 					<adj:verticalList gap="5"/>
 					<rect width="80" height="80" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>
@@ -99,7 +99,7 @@
 						<a xlink:href="https://addons.mozilla.org/en-US/firefox/addon/auto-reload/" style="fill:blue">add-on</a>
 					</text>
 				</g>
-				<g id="add-on-onload-script" transform="translate(387,5)">
+				<g adj:id="add-on-onload-script" transform="translate(387,5)">
 					<adj:verticalList gap="5"/>
 					<rect width="99" height="100" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>
@@ -111,7 +111,7 @@
 						<a xlink:href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/" style="fill:blue">add-on</a>
 					</text>
 				</g>
-				<g id="add-on-save-back" transform="translate(493,5)">
+				<g adj:id="add-on-save-back" transform="translate(493,5)">
 					<adj:verticalList gap="5"/>
 					<rect width="105" height="100" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>

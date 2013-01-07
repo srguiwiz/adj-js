@@ -25,7 +25,7 @@
 	</defs>
 	<g>
 		<adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center" explain="true"/>
-		<g id="subject-editor" transform="translate(164,5)">
+		<g adj:id="subject-editor" transform="translate(164,5)">
 			<adj:horizontalList gap="10"/>
 			<rect width="81" height="33" class="subject" x="1" y="1">
 				<adj:frameForParent inset="1"/>
@@ -39,7 +39,7 @@
 			<rect width="50" height="50" fill="none"/>
 		</g>
 		<g transform="translate(496,45)"/>
-		<g id="subject-disk" transform="translate(182,100)">
+		<g adj:id="subject-disk" transform="translate(182,100)">
 			<adj:horizontalList gap="10"/>
 			<rect width="46" height="33" class="subject" x="1" y="1">
 				<adj:frameForParent inset="1"/>
@@ -47,7 +47,7 @@
 			<text transform="translate(11,22)">disk</text>
 		</g>
 		<g transform="translate(436,100)"/>
-		<g id="subject-author" transform="translate(466,100)">
+		<g adj:id="subject-author" transform="translate(466,100)">
 			<adj:horizontalList gap="10"/>
 			<rect width="58" height="33" class="subject" x="1" y="1">
 				<adj:frameForParent inset="1"/>
@@ -59,7 +59,7 @@
 			<rect width="50" height="150" fill="none"/>
 		</g>
 		<g transform="translate(496,140)"/>
-		<g id="subject-firefox" transform="translate(5,295)">
+		<g adj:id="subject-firefox" transform="translate(5,295)">
 			<adj:horizontalList gap="10"/>
 			<rect width="399" height="103" class="subject" x="1" y="1">
 				<adj:frameForParent inset="1"/>
@@ -67,7 +67,7 @@
 			<text transform="translate(11,22)">Firefox</text>
 			<g transform="translate(61,10)">
 				<adj:horizontalList gap="10"/>
-				<g id="add-on-auto-reload" transform="translate(10,10)">
+				<g adj:id="add-on-auto-reload" transform="translate(10,10)">
 					<adj:verticalList gap="5"/>
 					<rect width="80" height="43" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>
@@ -75,7 +75,7 @@
 					<text transform="translate(7,17)">Auto Reload</text>
 					<text transform="translate(6,37)">add-on</text>
 				</g>
-				<g id="add-on-onload-script" transform="translate(102,10)">
+				<g adj:id="add-on-onload-script" transform="translate(102,10)">
 					<adj:verticalList gap="5"/>
 					<rect width="99" height="63" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>
@@ -84,7 +84,7 @@
 					<text transform="translate(6,37)">Document Files</text>
 					<text transform="translate(6,57)">add-on</text>
 				</g>
-				<g id="add-on-save-back" transform="translate(213,10)">
+				<g adj:id="add-on-save-back" transform="translate(213,10)">
 					<adj:verticalList gap="5"/>
 					<rect width="105" height="63" class="subject" x="1" y="1">
 						<adj:frameForParent inset="1"/>

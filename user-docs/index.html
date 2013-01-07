@@ -315,8 +315,8 @@ authors and algorithms:</p>
       <td>source</td>
       <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;
-  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
-  &lt;rect id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
+  &lt;rect adj:id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
   &lt;path <span class="example-code">d="M5,100 q40,10 80,0 t80,0"</span> stroke="#777" stroke-width="2" fill="none"&gt;
     <span class="example-code">&lt;adj:connection from="one, 1, 0.5" to="other, 0, 0.5"/&gt;</span>
   &lt;/path&gt;
@@ -327,8 +327,8 @@ authors and algorithms:</p>
       <td>becomes</td>
       <td><pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;
-  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
-  &lt;rect id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
+  &lt;rect adj:id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
   &lt;path <span class="example-result">d="M45,20q22.127,17.078 50,15t50,15"</span> stroke="#777" stroke-width="2" fill="none"<span class="example-result"> adj:d="M5,100 q40,10 80,0 t80,0"</span>&gt;
     &lt;adj:connection from="one, 1, 0.5" to="other, 0, 0.5"/&gt;
   &lt;/path&gt;
@@ -406,8 +406,8 @@ authors and algorithms:</p>
       <td><img alt="example" src="adj-ex-006-connection.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
-  &lt;rect id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
+  &lt;rect adj:id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
   &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
     <span class="example-code">&lt;adj:connection from="one, 1, 0.5" to="other, 0, 0.5"/&gt;</span>
   &lt;/path&gt;
@@ -419,8 +419,8 @@ authors and algorithms:</p>
       <td><img alt="example" src="adj-ex-007-rider.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-  &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+  &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
   &lt;g&gt;
     &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -780,8 +780,8 @@ source line two.&lt;/text&gt;
       <td><img alt="example" src="adj-ex-022-connection-from.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
-  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect adj:id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
   &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#000" stroke-width="2" fill="none"&gt;
     <span class="example-code">&lt;adj:connection from="one" to="other"/&gt;</span>
   &lt;/path&gt;
@@ -792,8 +792,8 @@ source line two.&lt;/text&gt;
       <td><img alt="example" src="adj-ex-023-connection-fromXY.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
-  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect adj:id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
   &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#000" stroke-width="2" fill="none"&gt;
     <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;</span>
   &lt;/path&gt;
@@ -804,8 +804,8 @@ source line two.&lt;/text&gt;
       <td><img alt="example" src="adj-ex-024-connection-vector0.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
-  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect adj:id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
   &lt;g&gt;
     <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;</span>
     &lt;line x1="5" y1="100" x2="185" y2="100"/&gt;
@@ -819,8 +819,8 @@ source line two.&lt;/text&gt;
       <td><img alt="example" src="adj-ex-025-connection-vector1.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
-  &lt;rect id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/&gt;
+  &lt;rect adj:id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/&gt;
   &lt;g&gt;
     <span class="example-code">&lt;adj:connection from="one,1,0.5" to="other,0,0.5" vector="1"/&gt;</span>
     &lt;path d="M15,100 l-10,-10 20,0 5,5 135,0 0,-5 20,10 -20,10 0,-5 -135,0 -5,5 -20,0 z"
@@ -854,8 +854,8 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -871,8 +871,8 @@ paths as children of that group.</p>
       <td><img alt="example" src="adj-ex-027-rider-at.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-  &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+  &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
   &lt;g&gt;
     &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -888,8 +888,8 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -906,8 +906,8 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -924,10 +924,10 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
     &lt;rect x="85" y="15" width="40" height="30" fill="#666"/&gt;
     &lt;rect x="25" y="45" width="40" height="30" fill="#888"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -944,10 +944,10 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
     &lt;rect x="85" y="15" width="40" height="30" fill="#666"/&gt;
     &lt;rect x="25" y="45" width="40" height="30" fill="#888"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -964,8 +964,8 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
@@ -982,9 +982,9 @@ paths as children of that group.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
-    &lt;path id="connect" d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#aaa"/&gt;
+    &lt;path adj:id="connect" d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
     &lt;/path&gt;
     &lt;rect width="30" height="20" fill="#444"&gt;
@@ -1229,7 +1229,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
   …</span>
   &lt;g&gt;
     &lt;adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center" <span class="example-code">explain="true"</span>/&gt;
-    &lt;g id="subject-editor"&gt;
+    &lt;g adj:id="subject-editor"&gt;
     &lt;adj:horizontalList gap="10"/&gt;
       &lt;rect width="0" height="0" class="subject"&gt;
         &lt;adj:frameForParent inset="1"/&gt;
@@ -1246,8 +1246,8 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       <td><img alt="example" src="adj-ex-007-rider-explained.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
-  &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
-  &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#ccc"/&gt;
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
+  &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#ccc"/&gt;
   &lt;g&gt;
     &lt;adj:connection from="one,1,0.5" to="other,0,0.5" <span class="example-code">explain="true"</span>/&gt;
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#666" stroke-width="2" fill="none"/&gt;
@@ -1264,10 +1264,10 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;rect id="one" x="5" y="5" width="40" height="30" fill="#ddd"/&gt;
+    &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#ddd"/&gt;
     &lt;rect x="85" y="15" width="40" height="30" fill="#ccc"/&gt;
     &lt;rect x="25" y="45" width="40" height="30" fill="#ccc"/&gt;
-    &lt;rect id="other" x="145" y="75" width="40" height="30" fill="#bbb"/&gt;
+    &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#bbb"/&gt;
     &lt;g&gt;
       &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
       &lt;path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none"/&gt;
@@ -1596,7 +1596,7 @@ version</p>
     &lt;/defs&gt;
     &lt;g&gt;
         &lt;adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center"/&gt;
-        &lt;g id="subject-editor"&gt;
+        &lt;g adj:id="subject-editor"&gt;
             &lt;adj:horizontalList gap="10"/&gt;
             &lt;rect width="0" height="0" class="subject"&gt;
                 &lt;adj:frameForParent inset="1"/&gt;
@@ -1610,7 +1610,7 @@ version</p>
             &lt;rect width="50" height="50" fill="none"/&gt;
         &lt;/g&gt;
         &lt;g/&gt;
-        &lt;g id="subject-disk"&gt;
+        &lt;g adj:id="subject-disk"&gt;
             &lt;adj:horizontalList gap="10"/&gt;
             &lt;rect width="0" height="0" class="subject"&gt;
                 &lt;adj:frameForParent inset="1"/&gt;
@@ -1618,7 +1618,7 @@ version</p>
             &lt;text&gt;disk&lt;/text&gt;
         &lt;/g&gt;
         &lt;g/&gt;
-        &lt;g id="subject-author"&gt;
+        &lt;g adj:id="subject-author"&gt;
             &lt;adj:horizontalList gap="10"/&gt;
             &lt;rect width="0" height="0" class="subject"&gt;
                 &lt;adj:frameForParent inset="1"/&gt;
@@ -1630,7 +1630,7 @@ version</p>
             &lt;rect width="50" height="150" fill="none"/&gt;
         &lt;/g&gt;
         &lt;g/&gt;
-        &lt;g id="subject-firefox"&gt;
+        &lt;g adj:id="subject-firefox"&gt;
             &lt;adj:horizontalList gap="10"/&gt;
             &lt;rect width="0" height="0" class="subject"&gt;
                 &lt;adj:frameForParent inset="1"/&gt;
@@ -1638,7 +1638,7 @@ version</p>
             &lt;text&gt;Firefox&lt;/text&gt;
             &lt;g&gt;
                 &lt;adj:horizontalList gap="10"/&gt;
-                &lt;g id="add-on-auto-reload"&gt;
+                &lt;g adj:id="add-on-auto-reload"&gt;
                     &lt;adj:verticalList gap="5"/&gt;
                     &lt;rect width="0" height="0" class="subject"&gt;
                         &lt;adj:frameForParent inset="1"/&gt;
@@ -1646,7 +1646,7 @@ version</p>
                     &lt;text&gt;Auto Reload&lt;/text&gt;
                     &lt;text&gt;add-on&lt;/text&gt;
                 &lt;/g&gt;
-                &lt;g id="add-on-onload-script"&gt;
+                &lt;g adj:id="add-on-onload-script"&gt;
                     &lt;adj:verticalList gap="5"/&gt;
                     &lt;rect width="0" height="0" class="subject"&gt;
                         &lt;adj:frameForParent inset="1"/&gt;
@@ -1655,7 +1655,7 @@ version</p>
                     &lt;text&gt;Document Files&lt;/text&gt;
                     &lt;text&gt;add-on&lt;/text&gt;
                 &lt;/g&gt;
-                &lt;g id="add-on-save-back"&gt;
+                &lt;g adj:id="add-on-save-back"&gt;
                     &lt;adj:verticalList gap="5"/&gt;
                     &lt;rect width="0" height="0" class="subject"&gt;
                         &lt;adj:frameForParent inset="1"/&gt;

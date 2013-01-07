@@ -49,7 +49,7 @@
 			<g transform="translate(130,13)"/>
 			<text transform="translate(391,17)">The Actors</text>
 			<g transform="translate(697,13)"/>
-			<g id="ipad001" class="client" transform="translate(72,25)">
+			<g adj:id="ipad001" class="client" transform="translate(72,25)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="113" height="203" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -99,7 +99,7 @@
 				</g>
 			</g>
 			<g transform="translate(419,128)"/>
-			<g id="cloud001" class="server" transform="translate(583,70)">
+			<g adj:id="cloud001" class="server" transform="translate(583,70)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="226" height="113" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -135,7 +135,7 @@
 				<rect width="50" height="20"/>
 			</g>
 			<g transform="translate(697,265)"/>
-			<g id="ipad002" class="client" transform="translate(11,280)">
+			<g adj:id="ipad002" class="client" transform="translate(11,280)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="236" height="203" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -188,11 +188,11 @@
 					</g>
 				</g>
 			</g>
-			<g id="connection003">
+			<g adj:id="connection003">
 				<adj:connection from="ipad002, 1, 0.3" to="cloud004, 0.3, 0"/>
 				<path class="arrow" d="M249,341.5q219.389,55.366 425.6,148.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-20 80,0"/>
 			</g>
-			<g id="request003" class="request" transform="translate(343,345)">
+			<g adj:id="request003" class="request" transform="translate(343,345)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="150" height="73" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -208,11 +208,11 @@
 			</g>
 			<g transform="translate(697,383)"/>
 			<g transform="translate(130,518)"/>
-			<g id="connection005">
+			<g adj:id="connection005">
 				<adj:connection from="cloud004, 0, 0.3" to="ipad006, 0.7, 0"/>
 				<path class="arrow" d="M641,506.5q-232.726,1.838 -461.7,43.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 			</g>
-			<g id="response005" class="response" transform="translate(317,490)">
+			<g adj:id="response005" class="response" transform="translate(317,490)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="201" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -224,7 +224,7 @@
 					</text>
 				</g>
 			</g>
-			<g id="cloud004" class="server" transform="translate(641,490)">
+			<g adj:id="cloud004" class="server" transform="translate(641,490)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="110" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -238,7 +238,7 @@
 					<text transform="translate(7,17)">First Login Server</text>
 				</g>
 			</g>
-			<g id="ipad006" class="client" transform="translate(5,550)">
+			<g adj:id="ipad006" class="client" transform="translate(5,550)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="247" height="223" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -292,11 +292,11 @@
 					</g>
 				</g>
 			</g>
-			<g id="connection007">
+			<g adj:id="connection007">
 				<adj:connection from="ipad006, 1, 0.3" to="cloud008, 0.3, 0"/>
 				<path class="arrow" d="M254,617.5q217.508,62.594 420.6,162.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-20 80,0"/>
 			</g>
-			<g id="request007" class="request" transform="translate(294,625)">
+			<g adj:id="request007" class="request" transform="translate(294,625)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="247" height="73" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -308,10 +308,10 @@
 					<text transform="translate(7,57)">Credentials: in form submission, if any</text>
 				</g>
 			</g>
-			<g id="connection005e">
+			<g adj:id="connection005e">
 				<adj:connection from="cloud008, 0.7, 0" to="response005, 1, 0.9"/>
 				<path class="arrow" d="M719.4,780q-84.304,-133.015 -199.4,-240.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
-				<g id="response005e" class="response" transform="translate(611.098,672.026)">
+				<g adj:id="response005e" class="response" transform="translate(611.098,672.026)">
 					<adj:rider/>
 					<adj:verticalList gap="2"/>
 					<rect stroke-width="2" rx="3" ry="3" width="91" height="38" x="1" y="1">
@@ -326,11 +326,11 @@
 			</g>
 			<g transform="translate(697,663)"/>
 			<g transform="translate(130,808)"/>
-			<g id="connection009">
+			<g adj:id="connection009">
 				<adj:connection from="cloud008, 0, 0.3" to="ipad010, 0.7, 0"/>
 				<path class="arrow" d="M641,796.5q-234.71,1.837 -465.7,43.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 			</g>
-			<g id="response009" class="response" transform="translate(321,780)">
+			<g adj:id="response009" class="response" transform="translate(321,780)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="193" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -343,7 +343,7 @@
 					</text>
 				</g>
 			</g>
-			<g id="cloud008" class="server" transform="translate(641,780)">
+			<g adj:id="cloud008" class="server" transform="translate(641,780)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="110" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -357,7 +357,7 @@
 					<text transform="translate(7,17)">First Login Server</text>
 				</g>
 			</g>
-			<g id="ipad010" class="client" transform="translate(15,840)">
+			<g adj:id="ipad010" class="client" transform="translate(15,840)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="227" height="158" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -385,11 +385,11 @@
 					</g>
 				</g>
 			</g>
-			<g id="connection011">
+			<g adj:id="connection011">
 				<adj:connection from="ipad010, 1, 0.5" to="cloud008, 0, 0.5"/>
 				<path class="arrow" d="M244,920q214.858,1.477 397,-112.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,60 80,0"/>
 			</g>
-			<g id="request011" class="request" transform="translate(387,893)">
+			<g adj:id="request011" class="request" transform="translate(387,893)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="62" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -402,11 +402,11 @@
 			</g>
 			<g transform="translate(697,920)"/>
 			<g transform="translate(130,1043)"/>
-			<g id="connection012">
+			<g adj:id="connection012">
 				<adj:connection from="cloud008, 0, 0.7" to="ipad013, 0.7, 0"/>
 				<path class="arrow" d="M641,818.5q-171.398,237.23 -462.6,266.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-120 80,0"/>
 			</g>
-			<g id="response012" class="response" transform="translate(328,1005)">
+			<g adj:id="response012" class="response" transform="translate(328,1005)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="179" height="73" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -420,7 +420,7 @@
 				</g>
 			</g>
 			<g transform="translate(697,1043)"/>
-			<g id="ipad013" class="client" transform="translate(9,1085)">
+			<g adj:id="ipad013" class="client" transform="translate(9,1085)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="240" height="223" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -473,11 +473,11 @@
 					</g>
 				</g>
 			</g>
-			<g id="connection014">
+			<g adj:id="connection014">
 				<adj:connection from="ipad013, 1, 0.3" to="cloud015, 0.3, 0"/>
 				<path class="arrow" d="M251,1152.5q217.556,62.593 420.7,162.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,-20 80,0"/>
 			</g>
-			<g id="request014" class="request" transform="translate(302,1160)">
+			<g adj:id="request014" class="request" transform="translate(302,1160)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="232" height="73" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -493,11 +493,11 @@
 			</g>
 			<g transform="translate(697,1198)"/>
 			<g transform="translate(130,1343)"/>
-			<g id="connection016">
+			<g adj:id="connection016">
 				<adj:connection from="cloud015, 0, 0.3" to="ipad017, 0.7, 0"/>
 				<path class="arrow" d="M633,1331.5q-236.297,1.835 -468.9,43.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q40,20 80,0"/>
 			</g>
-			<g id="response016" class="response" transform="translate(316,1315)">
+			<g adj:id="response016" class="response" transform="translate(316,1315)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" rx="3" ry="3" width="203" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -508,7 +508,7 @@
 					<text transform="translate(7,37)">HTML: whatever client specific page</text>
 				</g>
 			</g>
-			<g id="cloud015" class="server" transform="translate(633,1315)">
+			<g adj:id="cloud015" class="server" transform="translate(633,1315)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="127" height="53" x="1" y="1">
 					<adj:frameForParent inset="1"/>
@@ -522,7 +522,7 @@
 					<text transform="translate(7,17)">Client Specific Server</text>
 				</g>
 			</g>
-			<g id="ipad017" class="client" transform="translate(43,1375)">
+			<g adj:id="ipad017" class="client" transform="translate(43,1375)">
 				<adj:verticalList gap="5"/>
 				<rect stroke-width="2" width="171" height="83" x="1" y="1">
 					<adj:frameForParent inset="1"/>
