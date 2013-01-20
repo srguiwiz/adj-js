@@ -320,7 +320,7 @@ Adj.noneClearNear = { none:"none", clear:"clear", near:"near" };
 Adj.fraction = function fraction (one, other, fraction, roundNoCloser, roundIfIntegers) {
 	roundNoCloser = roundNoCloser != undefined ? roundNoCloser : 0; // default roundNoCloser = 0
 	roundIfIntegers = roundIfIntegers != undefined ? roundIfIntegers : true; // default roundIfInteger = true
-	var fraction = one + (other - one) * fraction;
+	fraction = one + (other - one) * fraction;
 	if (roundIfIntegers) {
 		if (one % 1 == 0 && other % 1 == 0) { // both are integers
 			if (Math.abs(other - one) >= roundNoCloser) { // exactly or further apart than roundNoCloser
@@ -1388,10 +1388,10 @@ Adj.algorithms.connection = {
 		if (explain) {
 			var parent = element.parentNode;
 			var explanationElement = Adj.createExplanationElement("rect");
-			explanationElement.setAttribute("x", fromBoundingBox.x);
-			explanationElement.setAttribute("y", fromBoundingBox.y);
-			explanationElement.setAttribute("width", fromBoundingBox.width);
-			explanationElement.setAttribute("height", fromBoundingBox.height);
+			explanationElement.setAttribute("x", Adj.decimal(fromBoundingBox.x));
+			explanationElement.setAttribute("y", Adj.decimal(fromBoundingBox.y));
+			explanationElement.setAttribute("width", Adj.decimal(fromBoundingBox.width));
+			explanationElement.setAttribute("height", Adj.decimal(fromBoundingBox.height));
 			explanationElement.transform.baseVal.initialize(document.documentElement.createSVGTransformFromMatrix(matrixFromFromElement));
 			explanationElement.setAttribute("fill", "green");
 			explanationElement.setAttribute("fill-opacity", "0.1");
@@ -1400,18 +1400,18 @@ Adj.algorithms.connection = {
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
 			var explanationElement = Adj.createExplanationElement("circle");
-			explanationElement.setAttribute("cx", fromPoint.x);
-			explanationElement.setAttribute("cy", fromPoint.y);
+			explanationElement.setAttribute("cx", Adj.decimal(fromPoint.x));
+			explanationElement.setAttribute("cy", Adj.decimal(fromPoint.y));
 			explanationElement.setAttribute("r", 3);
 			explanationElement.setAttribute("fill", "green");
 			explanationElement.setAttribute("fill-opacity", "0.2");
 			explanationElement.setAttribute("stroke", "none");
 			parent.appendChild(explanationElement);
 			var explanationElement = Adj.createExplanationElement("rect");
-			explanationElement.setAttribute("x", toBoundingBox.x);
-			explanationElement.setAttribute("y", toBoundingBox.y);
-			explanationElement.setAttribute("width", toBoundingBox.width);
-			explanationElement.setAttribute("height", toBoundingBox.height);
+			explanationElement.setAttribute("x", Adj.decimal(toBoundingBox.x));
+			explanationElement.setAttribute("y", Adj.decimal(toBoundingBox.y));
+			explanationElement.setAttribute("width", Adj.decimal(toBoundingBox.width));
+			explanationElement.setAttribute("height", Adj.decimal(toBoundingBox.height));
 			explanationElement.transform.baseVal.initialize(document.documentElement.createSVGTransformFromMatrix(matrixFromToElement));
 			explanationElement.setAttribute("fill", "red");
 			explanationElement.setAttribute("fill-opacity", "0.1");
@@ -1420,8 +1420,8 @@ Adj.algorithms.connection = {
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
 			var explanationElement = Adj.createExplanationElement("circle");
-			explanationElement.setAttribute("cx", toPoint.x);
-			explanationElement.setAttribute("cy", toPoint.y);
+			explanationElement.setAttribute("cx", Adj.decimal(toPoint.x));
+			explanationElement.setAttribute("cy", Adj.decimal(toPoint.y));
 			explanationElement.setAttribute("r", 3);
 			explanationElement.setAttribute("fill", "red");
 			explanationElement.setAttribute("fill-opacity", "0.2");
@@ -1861,10 +1861,10 @@ Adj.algorithms.rider = {
 				for (var oneRelativeBoundingBoxIndex in relativeBoundingBoxes) {
 					var oneRelativeBoundingBox = relativeBoundingBoxes[oneRelativeBoundingBoxIndex];
 					var explanationElement = Adj.createExplanationElement("rect");
-					explanationElement.setAttribute("x", oneRelativeBoundingBox.x);
-					explanationElement.setAttribute("y", oneRelativeBoundingBox.y);
-					explanationElement.setAttribute("width", oneRelativeBoundingBox.width);
-					explanationElement.setAttribute("height", oneRelativeBoundingBox.height);
+					explanationElement.setAttribute("x", Adj.decimal(oneRelativeBoundingBox.x));
+					explanationElement.setAttribute("y", Adj.decimal(oneRelativeBoundingBox.y));
+					explanationElement.setAttribute("width", Adj.decimal(oneRelativeBoundingBox.width));
+					explanationElement.setAttribute("height", Adj.decimal(oneRelativeBoundingBox.height));
 					explanationElement.setAttribute("fill", "pink");
 					explanationElement.setAttribute("fill-opacity", "0.2");
 					explanationElement.setAttribute("stroke", "pink");
@@ -1874,10 +1874,10 @@ Adj.algorithms.rider = {
 				}
 			}
 			var explanationElement = Adj.createExplanationElement("rect");
-			explanationElement.setAttribute("x", boundingBox.x);
-			explanationElement.setAttribute("y", boundingBox.y);
-			explanationElement.setAttribute("width", boundingBox.width);
-			explanationElement.setAttribute("height", boundingBox.height);
+			explanationElement.setAttribute("x", Adj.decimal(boundingBox.x));
+			explanationElement.setAttribute("y", Adj.decimal(boundingBox.y));
+			explanationElement.setAttribute("width", Adj.decimal(boundingBox.width));
+			explanationElement.setAttribute("height", Adj.decimal(boundingBox.height));
 			explanationElement.setAttribute("transform", elementTransformAttribute);
 			explanationElement.setAttribute("fill", "blue");
 			explanationElement.setAttribute("fill-opacity", "0.1");
@@ -1886,8 +1886,8 @@ Adj.algorithms.rider = {
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
 			var explanationElement = Adj.createExplanationElement("circle");
-			explanationElement.setAttribute("cx", pinX);
-			explanationElement.setAttribute("cy", pinY);
+			explanationElement.setAttribute("cx", Adj.decimal(pinX));
+			explanationElement.setAttribute("cy", Adj.decimal(pinY));
 			explanationElement.setAttribute("r", 3);
 			explanationElement.setAttribute("transform", elementTransformAttribute);
 			explanationElement.setAttribute("fill", "blue");
@@ -1897,8 +1897,8 @@ Adj.algorithms.rider = {
 			if (considerElementsToAvoid) {
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit);
 				var explanationElement = Adj.createExplanationElement("circle");
-				explanationElement.setAttribute("cx", pathFractionPoint.x);
-				explanationElement.setAttribute("cy", pathFractionPoint.y);
+				explanationElement.setAttribute("cx", Adj.decimal(pathFractionPoint.x));
+				explanationElement.setAttribute("cy", Adj.decimal(pathFractionPoint.y));
 				explanationElement.setAttribute("r", 3);
 				explanationElement.setAttribute("fill", "green");
 				explanationElement.setAttribute("fill-opacity", "0.2");
@@ -1906,8 +1906,8 @@ Adj.algorithms.rider = {
 				parent.appendChild(explanationElement);
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit2);
 				var explanationElement = Adj.createExplanationElement("circle");
-				explanationElement.setAttribute("cx", pathFractionPoint.x);
-				explanationElement.setAttribute("cy", pathFractionPoint.y);
+				explanationElement.setAttribute("cx", Adj.decimal(pathFractionPoint.x));
+				explanationElement.setAttribute("cy", Adj.decimal(pathFractionPoint.y));
 				explanationElement.setAttribute("r", 3);
 				explanationElement.setAttribute("fill", "red");
 				explanationElement.setAttribute("fill-opacity", "0.2");
@@ -2282,6 +2282,6 @@ Adj.displayException = function displayException (exception, svgElement) {
 	Adj.algorithms.textBreaks.method(exceptionElement,{lineBreaks:true});
 	Adj.algorithms.verticalList.method(exceptionElement,{});
 	var svgElementBoundingBox = svgElement.getBBox();
-	svgElement.setAttribute("width", svgElementBoundingBox.width);
-	svgElement.setAttribute("height", svgElementBoundingBox.height);
+	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
+	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
 }
