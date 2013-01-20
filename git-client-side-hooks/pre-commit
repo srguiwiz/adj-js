@@ -5,6 +5,7 @@
 #
 # Let's hope developers notice if so, and don't lose work.
 #
+
 if ! diff -q "js/adj.js" "user-docs/.adj-js/adj.js" > /dev/null
 then
     echo "WILL NOT COMMIT MISMATCHED js/adj.js VERSUS user-docs/.adj-js/adj.js'"
@@ -12,4 +13,4 @@ then
     exit 1
 fi
 
-exit
+exit 0
