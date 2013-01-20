@@ -2267,6 +2267,408 @@ Adj.algorithms.circularList = {
 	}
 }
 
+// a specific algorithm
+Adj.algorithms.verticalTree = {
+	phaseHandlerName: "adjPhase1Up",
+	method: function verticalTree (element, parametersObject) {
+		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
+		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
+		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
+		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
+		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (leftGap + rightGap) / 2;
+		var childlessGap = !isNaN(parametersObject.childlessGap) ? parametersObject.childlessGap : centerGap; // default childlessGap = centerGap
+		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
+		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
+		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
+		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (topGap + bottomGap) / 2;
+		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
+		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
+		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["center"]; }; // default hAlign center
+		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
+		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		var explain = parametersObject.explain ? true : false; // default explain = false
+		//
+		// determine which nodes to process,
+		// children that are instances of SVGElement rather than every DOM node,
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
+		var childRecords = [];
+		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
+			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			var childBoundingBox = child.getBBox();
+			childRecords.push({
+				boundingBox: childBoundingBox,
+				node: child,
+				treeChildRecords: [],
+				positioningBox: { // x and y relative to enclosing familyBox, at first
+					x: 0,
+					y: 0,
+					width: childBoundingBox.width,
+					height: childBoundingBox.height
+				}
+			});
+		}
+		//
+		// determine tree structure
+		var idsDictionary = [];
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var child = childRecord.node;
+			var adjId = child.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+			if (adjId && !idsDictionary[adjId]) { // new
+				idsDictionary[adjId] = childRecord;
+			}
+			var plainId = child.getAttribute("id"); // second check for acceptable attribute id
+			if (plainId && !idsDictionary[plainId]) { // new
+				idsDictionary[plainId] = childRecord;
+			}
+		}
+		var rootRecords = [];
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var child = childRecord.node;
+			var treeParentId = child.getAttributeNS(Adj.AdjNamespace, "treeParent");
+			if (treeParentId) {
+				var treeParent = idsDictionary[treeParentId];
+				if (treeParent) { // an element found with an id matching attribute adj:treeParent, as expected
+					treeParent.treeChildRecords.push(childRecord);
+					childRecord.treeParentRecord = treeParent;
+				} else { // no element found with an id matching attribute adj:treeParent, e.g. author error
+					rootRecords.push(childRecord);
+				}
+			} else { // no attribute adj:treeParent, e.g. author intended root
+				rootRecords.push(childRecord);
+			}
+		}
+		if (!rootRecords.length && childRecords.length) { // unusual case of loop without root, e.g. author error
+			rootRecords.push(childRecords[0]);
+		}
+		//
+		// walk tree structure
+		// tree walking variables
+		var currentSiblingRecords = rootRecords;
+		var currentSiblingRecordIndex = 0;
+		var stack = [];
+		var onWayBack = false;
+		// coordinate calculating variables
+		var rowRecords = [];
+		var totalWidth = leftGap; // adds up
+		// walk
+		console.log("TREE starting");
+		walkTreeLoop1: while (true) {
+			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
+			var treeChildRecords = currentChildRecord.treeChildRecords;
+			var numberOfTreeChildren = treeChildRecords.length;
+			//
+			var indexOfRow = stack.length;
+			var rowRecord = rowRecords[indexOfRow];
+			if (!rowRecord) {
+				rowRecord = rowRecords[indexOfRow] = {
+					nodeRecords: [],
+					maxHeight: 0 // largest in this row
+				};
+			}
+			//
+			if (!onWayBack) {
+				if (currentSiblingRecordIndex == 0) {
+					console.log("TREE before first of siblings at level " + (stack.length + 1));
+				}
+				console.log("TREE on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
+				//
+				currentChildRecord.indexAsSibling = currentSiblingRecordIndex;
+				var nodeRecords = rowRecord.nodeRecords;
+				var indexInRow = nodeRecords.length;
+				currentChildRecord.indexInRow = indexInRow;
+				currentChildRecord.indexOfRow = indexOfRow;
+				nodeRecords.push(currentChildRecord);
+				//
+				if (numberOfTreeChildren) {
+					console.log("TREE on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					stack.push( { siblingRecords: currentSiblingRecords, index: currentSiblingRecordIndex } );
+					currentSiblingRecords = treeChildRecords;
+					currentSiblingRecordIndex = 0;
+					continue walkTreeLoop1;
+				} else { // childless node, aka leaf
+					console.log("TREE at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
+					//
+					currentChildRecord.furtherDepth = 0;
+					var boundingBox = currentChildRecord.boundingBox;
+					currentChildRecord.familyBox = { // x and y relative to enclosing familyBox, at first
+						x: 0,
+						y: 0,
+						width: boundingBox.width,
+						height: boundingBox.height
+					}
+				}
+			} else { // onWayBack
+				console.log("TREE on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
+				onWayBack = false;
+				//
+				// note furtherDepth
+				var maxFurtherDepth = 0;
+				var maxHeight = 0;
+				for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
+					var treeChildRecord = treeChildRecords[treeChildIndex];
+					var treeChildFurtherDepth = treeChildRecord.furtherDepth;
+					if (treeChildFurtherDepth >= maxFurtherDepth) {
+						maxFurtherDepth = treeChildFurtherDepth + 1;
+					}
+					var treeChildHeight = treeChildRecord.familyBox.height;
+					if (treeChildHeight > maxHeight) {
+						maxHeight = treeChildHeight;
+					}
+				}
+				currentChildRecord.furtherDepth = maxFurtherDepth;
+				//
+				// place all children's familyBox (horizontally) once knowing all their respective familyBox.width
+				var gapBetweenSiblings;
+				if (maxFurtherDepth > 1) {
+					gapBetweenSiblings = centerGap;
+				} else {
+					gapBetweenSiblings = childlessGap;
+				}
+				var familyBoxWidth = 0;
+				for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
+					if (treeChildIndex > 0) {
+						familyBoxWidth += gapBetweenSiblings;
+					}
+					var treeChildFamilyBox = treeChildRecords[treeChildIndex].familyBox;
+					treeChildFamilyBox.x = familyBoxWidth; // current value
+					familyBoxWidth += treeChildFamilyBox.width;
+				}
+				var positioningBox = currentChildRecord.positioningBox;
+				currentChildRecord.familyBox = { // x and y relative to enclosing familyBox, at first
+					x: 0,
+					y: 0,
+					width: familyBoxWidth,
+					height: positioningBox.height + middleGap + maxHeight
+				}
+				//
+				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBox.width, hAlign);
+			}
+			console.log("TREE finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
+			//
+			if (indexOfRow == 0) {
+				if (indexInRow > 0) {
+					rowRecord.maxRight += centerGap;
+				}
+				var currentChildRecordFamilyBox = currentChildRecord.familyBox;
+				currentChildRecordFamilyBox.x = rowRecord.maxRight;
+				rowRecord.maxRight += currentChildRecordFamilyBox.width;
+			}
+			var currentChildRecordHeight = currentChildRecord.positioningBox.height;
+			if (currentChildRecordHeight > rowRecord.maxHeight) {
+				rowRecord.maxHeight = currentChildRecordHeight;
+			}
+			//
+			currentSiblingRecordIndex += 1;
+			if (currentSiblingRecordIndex < currentSiblingRecords.length) {
+				continue walkTreeLoop1;
+			} else { // no more sibling
+				console.log("TREE after last of siblings at level " + (stack.length + 1));
+				if (stack.length > 0) {
+					console.log("TREE on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					var stackedPosition = stack.pop();
+					currentSiblingRecords = stackedPosition.siblingRecords;
+					currentSiblingRecordIndex = stackedPosition.index;
+					onWayBack = true;
+					continue walkTreeLoop1;
+				} else { // stack.length == 0
+					console.log("TREE done");
+					//
+					// place each root's familyBox horizontally once knowing all their respective familyBox.width
+					var numberOfRoots = rootRecords.length;
+					for (var rootIndex = 0; rootIndex < numberOfRoots; rootIndex++) {
+						if (rootIndex > 0) {
+							totalWidth += centerGap;
+						}
+						var rootFamilyBox = rootRecords[rootIndex].familyBox;
+						rootFamilyBox.x = totalWidth; // current value
+						totalWidth += rootFamilyBox.width;
+					}
+					//
+					break walkTreeLoop1;
+				}
+			}
+		}
+		totalWidth += rightGap;
+		//
+		// place each familyBox vertically once knowing each row's maxHeight
+		var totalHeight = topGap; // adds up with each row
+		var familyBoxY; // relative
+		var numberOfRows = rowRecords.length;
+		for (var rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+			var rowRecord = rowRecords[rowIndex];
+			var rowMaxHeight = rowRecord.maxHeight;
+			if (rowIndex == 0) { // roots row
+				familyBoxY = topGap;
+			} else { // rowIndex > 0
+				totalHeight += middleGap;
+			}
+			var nodeRecords = rowRecord.nodeRecords;
+			var numberOfNodes = nodeRecords.length;
+			for (var nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
+				var nodeRecord = nodeRecords[nodeIndex];
+				nodeRecord.familyBox.y = familyBoxY;
+				//
+				var positioningBox = nodeRecord.positioningBox;
+				positioningBox.y = Adj.fraction(0, rowMaxHeight - positioningBox.height, vAlign);
+			}
+			familyBoxY = rowMaxHeight + middleGap; // for next row
+			totalHeight += rowMaxHeight;
+		}
+		totalHeight += bottomGap;
+		//
+		// walk tree structure again
+		// tree walking variables
+		var currentSiblingRecords = rootRecords;
+		var currentSiblingRecordIndex = 0;
+		var stack = [];
+		var onWayBack = false;
+		// walk
+		console.log("TREE starting");
+		walkTreeLoop2: while (true) {
+			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
+			var treeChildRecords = currentChildRecord.treeChildRecords;
+			var numberOfTreeChildren = treeChildRecords.length;
+			//
+			var indexOfRow = stack.length;
+			var rowRecord = rowRecords[indexOfRow];
+			//
+			if (!onWayBack) {
+				if (currentSiblingRecordIndex == 0) {
+					console.log("TREE before first of siblings at level " + (stack.length + 1));
+				}
+				console.log("TREE on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
+				//
+				var currentChildFamilyBox = currentChildRecord.familyBox;
+				if (indexOfRow > 0) { // any row except roots
+					var treeParentFamilyBox = currentChildRecord.treeParentRecord.familyBox;
+					// make familyBox.x and familyBox.y from relative to absolute
+					currentChildFamilyBox.x += treeParentFamilyBox.x;
+					currentChildFamilyBox.y += treeParentFamilyBox.y;
+				}
+				//
+				var currentChildPositioningBox = currentChildRecord.positioningBox;
+				// make positioningBox.x and positioningBox.y from relative to absolute
+				currentChildPositioningBox.x += currentChildFamilyBox.x;
+				currentChildPositioningBox.y += currentChildFamilyBox.y;
+				//
+				var currentChildBoundingBox = currentChildRecord.boundingBox;
+				var translationX = currentChildPositioningBox.x - currentChildBoundingBox.x;
+				var translationY = currentChildPositioningBox.y - currentChildBoundingBox.y;
+				currentChildRecord.node.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+				//
+				if (numberOfTreeChildren) {
+					console.log("TREE on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					stack.push( { siblingRecords: currentSiblingRecords, index: currentSiblingRecordIndex } );
+					currentSiblingRecords = treeChildRecords;
+					currentSiblingRecordIndex = 0;
+					continue walkTreeLoop2;
+				} else { // childless node, aka leaf
+					console.log("TREE at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
+				}
+			} else { // onWayBack
+				console.log("TREE on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
+				onWayBack = false;
+			}
+			console.log("TREE finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
+			currentSiblingRecordIndex += 1;
+			if (currentSiblingRecordIndex < currentSiblingRecords.length) {
+				continue walkTreeLoop2;
+			} else { // no more sibling
+				console.log("TREE after last of siblings at level " + (stack.length + 1));
+				if (stack.length > 0) {
+					console.log("TREE on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					var stackedPosition = stack.pop();
+					currentSiblingRecords = stackedPosition.siblingRecords;
+					currentSiblingRecordIndex = stackedPosition.index;
+					onWayBack = true;
+					continue walkTreeLoop2;
+				} else { // stack.length == 0
+					console.log("TREE done");
+					break walkTreeLoop2;
+				}
+			}
+		}
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		if (hiddenRect) {
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", Adj.decimal(totalWidth));
+			hiddenRect.setAttribute("height", Adj.decimal(totalHeight));
+		}
+		//
+		// explain
+		if (explain) {
+			if (hiddenRect) {
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", 0);
+				explanationElement.setAttribute("y", 0);
+				explanationElement.setAttribute("width", Adj.decimal(totalWidth));
+				explanationElement.setAttribute("height", Adj.decimal(totalHeight));
+				explanationElement.setAttribute("fill", "white");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				element.appendChild(explanationElement);
+			}
+			var numberOfRows = rowRecords.length;
+			for (var rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+				var rowRecord = rowRecords[rowIndex];
+				var nodeRecords = rowRecord.nodeRecords;
+				var numberOfNodes = nodeRecords.length;
+				for (var nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
+					var nodeRecord = nodeRecords[nodeIndex];
+					//
+					var familyBox = nodeRecord.familyBox;
+					var explanationElement = Adj.createExplanationElement("rect");
+					explanationElement.setAttribute("x", Adj.decimal(familyBox.x));
+					explanationElement.setAttribute("y", Adj.decimal(familyBox.y));
+					explanationElement.setAttribute("width", Adj.decimal(familyBox.width));
+					explanationElement.setAttribute("height", Adj.decimal(familyBox.height));
+					explanationElement.setAttribute("fill", "white");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.2");
+					element.appendChild(explanationElement);
+					//
+					var positioningBox = nodeRecord.positioningBox;
+					var explanationElement = Adj.createExplanationElement("rect");
+					explanationElement.setAttribute("x", Adj.decimal(positioningBox.x));
+					explanationElement.setAttribute("y", Adj.decimal(positioningBox.y));
+					explanationElement.setAttribute("width", Adj.decimal(positioningBox.width));
+					explanationElement.setAttribute("height", Adj.decimal(positioningBox.height));
+					explanationElement.setAttribute("fill", "blue");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.2");
+					element.appendChild(explanationElement);
+				}
+				familyBoxY = rowMaxHeight + middleGap; // for next row
+				totalHeight += rowMaxHeight;
+			}
+		}
+	}
+}
+
 // visual exception display
 Adj.displayException = function displayException (exception, svgElement) {
 	var rootElement = document.documentElement;
