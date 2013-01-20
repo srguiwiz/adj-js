@@ -882,6 +882,11 @@ Adj.elementLevel = function elementLevel(element) {
 		level = 1;
 		var parent = element.parentNode;
 		while (parent.nodeType == Node.ELEMENT_NODE) {
+			var parentLevel = parent.adjLevel;
+			if (parentLevel) {
+				level += parentLevel;
+				break;
+			}
 			level++;
 			parent = parent.parentNode;
 		}
