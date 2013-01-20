@@ -85,18 +85,17 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		Adj.modifyMaybeRemoveChildren
 		(rootElement,
 		 function(node,child) {
-			var adjFields = child.adjFields || (child.adjFields = {}); // ensure there is an adjFields object
-			if (adjFields.explanationArtifact || child.getAttributeNS(Adj.AdjNamespace, "explanation")) {
-				adjFields.explanationArtifact = true;
-				adjFields.removeElement = true;
+			if (child.adjExplanationArtifact || child.getAttributeNS(Adj.AdjNamespace, "explanation")) {
+				child.adjExplanationArtifact = true;
+				child.adjRemoveElement = true;
 			}
 		 });
 		//
 		// read Adj elements and make or update phase handlers
-		Adj.adjElementsToPhaseHandlers(rootElement);
+		Adj.parseSvgElementForAdjElements(rootElement);
 		//
 		// then process
-		Adj.processSvgElementWithHandlers(rootElement);
+		Adj.processSvgElementWithPhaseHandlers(rootElement);
 	} catch (exception) {
 		Adj.displayException(exception, rootElement);
 		throw exception;
@@ -121,19 +120,19 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	var phaseHandlerName = algorithm.phaseHandlerName;
 	//console.log("a " + element.nodeName + " element gets a " + phaseHandlerName + " handler with a " + algorithmName + " algorithm");
 	// phaseHandlers is an associative array object which for a phaseHandlerName key as value has an array of phaseHandler, if there is any
-	var phaseHandlers = target.adjFields.phaseHandlers;
+	var phaseHandlers = target.adjPhaseHandlers;
 	phaseHandlers = phaseHandlers || {}; // if no phaseHandlers yet then new associative array object
 	var phaseHandlersForThisName = phaseHandlers[phaseHandlerName];
 	phaseHandlersForThisName = phaseHandlersForThisName || []; // if no phaseHandlersForThisName yet then new array
 	phaseHandlersForThisName.push(phaseHandler);
 	phaseHandlers[phaseHandlerName] = phaseHandlersForThisName;
-	target.adjFields.phaseHandlers = phaseHandlers;
+	target.adjPhaseHandlers = phaseHandlers;
 	if (algorithm.notAnOrder1Element) {
-		element.adjFields.notAnOrder1Element = true;
+		element.adjNotAnOrder1Element = true;
 		element.setAttribute("display", "none"); // try being cleverer ?
 	}
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
-		element.adjFields.processSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
+		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
 	}
 }
 
@@ -141,10 +140,28 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 // recognize a boolean or decimal
 Adj.booleanOrDecimalRegexp = /^\s*(true|false|[+-]?(?:[0-9]*\.)?[0-9]+)\s*$/;
 
+// read Adj elements and make or update phase handlers,
+// entry point
+Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgElement) {
+	// first clear svgElement.adjSomething properties for a new start
+	delete svgElement.adjIdsDictionary;
+	//
+	// then walk
+	Adj.parseAdjElementsToPhaseHandlers(svgElement);
+}
+
+// read Adj elements and make or update phase handlers,
 // recursive walking of the tree
-Adj.adjElementsToPhaseHandlers = function adjElementsToPhaseHandlers (node) {
-	// first clear adjFields for a new start
-	node.adjFields = {};
+Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (node) {
+	// first clear node.adjSomething properties for a new start
+	delete node.adjPhaseHandlers;
+	delete node.adjProcessSubtreeOnlyInPhaseHandler;
+	//delete node.adjPlacementArtifact; // probably safe not to delete, element should be gone
+	delete node.adjNotAnOrder1Element;
+	delete node.adjExplanationArtifact;
+	//delete node.adjRemoveElement; // probably safe not to delete, element should be gone
+	delete node.adjLevel;
+	//
 	// then walk
 	for (var child = node.firstChild; child; child = child.nextSibling) {
 		if (child instanceof Element) { // if an XML element, e.g. not an XML #text
@@ -180,14 +197,14 @@ Adj.adjElementsToPhaseHandlers = function adjElementsToPhaseHandlers (node) {
 			}
 		}
 		if (child instanceof SVGElement) {
-			Adj.adjElementsToPhaseHandlers(child); // recursion
+			Adj.parseAdjElementsToPhaseHandlers(child); // recursion
 		} // else skip if not an SVGElement, e.g. an XML #text
 	}
 }
 
 // complete processing of all phases
-Adj.processSvgElementWithHandlers = function processSvgElementWithHandlers(svgElement) {
-	Adj.processElementWithHandlers(svgElement);
+Adj.processSvgElementWithPhaseHandlers = function processSvgElementWithPhaseHandlers(svgElement) {
+	Adj.processElementWithPhaseHandlers(svgElement);
 	// a singleton
 	var svgElementBoundingBox = svgElement.getBBox();
 	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.x + svgElementBoundingBox.width));
@@ -196,20 +213,19 @@ Adj.processSvgElementWithHandlers = function processSvgElementWithHandlers(svgEl
 	Adj.modifyMaybeRemoveChildren
 	(svgElement,
 	 function(node,child) {
-		var adjFields = child.adjFields;
-		if (adjFields.placementArtifact) {
+		if (child.adjPlacementArtifact) {
 			// remove certain nodes that have been created for use during processing
-			adjFields.removeElement = true;
+			child.adjRemoveElement = true;
 			return;
 		}
-		if (adjFields.explanationArtifact) {
+		if (child.adjExplanationArtifact) {
 			child.removeAttribute("display"); // try being cleverer ?
 		}
 	 });
 }
 
 // complete processing of all phases
-Adj.processElementWithHandlers = function processElementWithHandlers(element, thisTimeFullyProcessSubtree, level) {
+Adj.processElementWithPhaseHandlers = function processElementWithPhaseHandlers(element, thisTimeFullyProcessSubtree, level) {
 	Adj.walkNodes(element, "adjPhase1", thisTimeFullyProcessSubtree, level);
 	Adj.walkNodes(element, "adjPhase2", thisTimeFullyProcessSubtree, level);
 	Adj.walkNodes(element, "adjPhase3", thisTimeFullyProcessSubtree, level);
@@ -220,9 +236,9 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 	level = level || 1; // if no level given then 1
 	//console.log("phase " + phaseName + " level " + level + " going into " + node.nodeName);
 	//
-	var phaseHandlers = node.adjFields.phaseHandlers;
+	var phaseHandlers = node.adjPhaseHandlers;
 	//
-	var processSubtreeOnlyInPhaseHandler = node.adjFields.processSubtreeOnlyInPhaseHandler;
+	var processSubtreeOnlyInPhaseHandler = node.adjProcessSubtreeOnlyInPhaseHandler;
 	if (processSubtreeOnlyInPhaseHandler) { // e.g. a rider
 		if (!thisTimeFullyProcessSubtree) { // first time getting here
 			if (processSubtreeOnlyInPhaseHandler != phaseName) {
@@ -283,9 +299,7 @@ Adj.modifyMaybeRemoveChildren = function modifyMaybeRemoveChildren (node, modify
 			continue; // skip if not an SVGElement, e.g. an XML #text
 		}
 		var conditionValue = modifyMaybeMarkFunctionOfNodeAndChild(node,child);
-		var adjFields = child.adjFields;
-		if (adjFields // adjFields exists
-			&& adjFields.removeElement) {
+		if (child.adjRemoveElement) {
 			var childToRemove = child;
 			child = child.nextSibling;
 			node.removeChild(childToRemove);
@@ -330,15 +344,19 @@ Adj.decimal = function decimal (number, decimalDigits) {
 }
 
 // utility
-Adj.createSVGElement = function createSVGElement (name, adjFields) {
+Adj.createSVGElement = function createSVGElement (name, additionalProperties) {
 	var svgElement = document.createElementNS(Adj.SvgNamespace, name);
-	svgElement.adjFields = adjFields || {}; // ensure there is an adjFields object
+	if (additionalProperties) {
+		for (name in additionalProperties) {
+			svgElement[name] = additionalProperties[name];
+		}
+	}
 	return svgElement;
 }
 
 // utility
 Adj.createExplanationElement = function createExplanationElement (name, dontDisplayNone) {
-	var explanationElement = Adj.createSVGElement(name, {explanationArtifact:true});
+	var explanationElement = Adj.createSVGElement(name, {adjExplanationArtifact:true});
 	explanationElement.setAttributeNS(Adj.AdjNamespace, "explanation", "true");
 	if (!dontDisplayNone) {
 		explanationElement.setAttribute("display", "none"); // try being cleverer ?
@@ -379,13 +397,13 @@ Adj.algorithms.verticalList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = Adj.createSVGElement("rect", {placementArtifact:true});
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
 				hiddenRect.setAttribute("visibility", "hidden");
 				element.insertBefore(hiddenRect, child);
 			}
-			if (child.adjFields.notAnOrder1Element) {
+			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
 			childRecords.push({
@@ -581,13 +599,13 @@ Adj.algorithms.horizontalList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = Adj.createSVGElement("rect", {placementArtifact:true});
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
 				hiddenRect.setAttribute("visibility", "hidden");
 				element.insertBefore(hiddenRect, child);
 			}
-			if (child.adjFields.notAnOrder1Element) {
+			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
 			childRecords.push({
@@ -803,7 +821,6 @@ Adj.algorithms.textBreaks = {
 				if (broken.length) {
 					while (broken.length > 1) { // needs new elements
 						var newSibling = child.cloneNode(false);
-						newSibling.adjFields = {};
 						newSibling.textContent = broken.shift();
 						element.insertBefore(newSibling, child);
 					}
@@ -1317,7 +1334,7 @@ Adj.algorithms.connection = {
 				if (!(child instanceof SVGElement)) {
 					continue; // skip if not an SVGElement, e.g. an XML #text
 				}
-				if (child.adjFields.notAnOrder1Element) { // e.g. a rider
+				if (child.adjNotAnOrder1Element) { // e.g. a rider
 					continue;
 				}
 				if (index == vector) {
@@ -1515,14 +1532,13 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 		if (sibling == element) {
 			continue; // don't avoid self
 		}
-		var adjFields = sibling.adjFields;
-		if (adjFields.placementArtifact) {
+		if (sibling.adjPlacementArtifact) {
 			continue;
 		}
-		if (adjFields.notAnOrder1Element) {
+		if (sibling.adjNotAnOrder1Element) {
 			continue;
 		}
-		if (adjFields.explanationArtifact) {
+		if (sibling.adjExplanationArtifact) {
 			continue;
 		}
 		avoidList.push(sibling);
@@ -1693,7 +1709,7 @@ Adj.algorithms.rider = {
 		}
 		//
 		element.removeAttribute("display"); // try being cleverer ?
-		Adj.processElementWithHandlers(element, true, level); // process subtree separately, i.e. now
+		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
 		// where on path to put it
 		var boundingBox = element.getBBox();
@@ -2110,7 +2126,7 @@ Adj.algorithms.circularList = {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
 			}
-			if (child.adjFields.notAnOrder1Element) {
+			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
 			var boundingBox = child.getBBox();
