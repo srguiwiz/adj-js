@@ -2277,15 +2277,17 @@ Adj.algorithms.verticalTree = {
 		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
 		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (leftGap + rightGap) / 2;
 		var childlessGap = !isNaN(parametersObject.childlessGap) ? parametersObject.childlessGap : centerGap; // default childlessGap = centerGap
+		var earGap = !isNaN(parametersObject.earGap) ? parametersObject.earGap : centerGap; // default earGap = centerGap
 		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
 		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
 		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
 		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (topGap + bottomGap) / 2;
-		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
 		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
 		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["center"]; }; // default hAlign center
 		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
 		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
+		if (parametersObject.autoParrots == undefined && !isNaN(parametersObject.earGap)) { autoParrots = true; }; // earGap means autoParrots
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
@@ -2419,19 +2421,15 @@ Adj.algorithms.verticalTree = {
 				//
 				// note furtherDepth
 				var maxFurtherDepth = 0;
-				var maxHeight = 0;
 				for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
 					var treeChildRecord = treeChildRecords[treeChildIndex];
 					var treeChildFurtherDepth = treeChildRecord.furtherDepth;
 					if (treeChildFurtherDepth >= maxFurtherDepth) {
 						maxFurtherDepth = treeChildFurtherDepth + 1;
 					}
-					var treeChildHeight = treeChildRecord.familyBox.height;
-					if (treeChildHeight > maxHeight) {
-						maxHeight = treeChildHeight;
-					}
 				}
 				currentChildRecord.furtherDepth = maxFurtherDepth;
+				// note: cannot reckon maxHeight yet, descendants not enough, further nodes on same rows could have more height
 				//
 				// place all children's familyBox (horizontally) once knowing all their respective familyBox.width
 				var gapBetweenSiblings;
@@ -2441,20 +2439,94 @@ Adj.algorithms.verticalTree = {
 					gapBetweenSiblings = childlessGap;
 				}
 				var familyBoxWidth = 0;
-				for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
-					if (treeChildIndex > 0) {
-						familyBoxWidth += gapBetweenSiblings;
+				if (!autoParrots || maxFurtherDepth == 0) { // avoid more complicated algorithm
+					for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
+						if (treeChildIndex > 0) {
+							familyBoxWidth += gapBetweenSiblings;
+						}
+						var treeChildFamilyBox = treeChildRecords[treeChildIndex].familyBox;
+						treeChildFamilyBox.x = familyBoxWidth; // current value
+						familyBoxWidth += treeChildFamilyBox.width;
 					}
-					var treeChildFamilyBox = treeChildRecords[treeChildIndex].familyBox;
-					treeChildFamilyBox.x = familyBoxWidth; // current value
-					familyBoxWidth += treeChildFamilyBox.width;
+				} else { // autoParrots
+					// a parrot sits next to a head on a shoulder
+					var mostAdvancedHead = 0;
+					var mostAdvancedBody = 0;
+					var anyHeadAndBodyYet = false;
+					var previousTreeChildRecord;
+					for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
+						var treeChildRecord = treeChildRecords[treeChildIndex];
+						var treeChildFurtherDepth = treeChildRecord.furtherDepth;
+						var parrotToHead = false;
+						var parrotToParrot = false;
+						var headToParrot = false;
+						var headToHead = false;
+						if (treeChildIndex > 0) {
+							var previousTreeChildFurtherDepth = previousTreeChildRecord.furtherDepth;
+							if (previousTreeChildFurtherDepth == 0) {
+								if (treeChildFurtherDepth > 0) {
+									parrotToHead = true;
+								} else {
+									parrotToParrot = true;
+								}
+							} else {
+								if (treeChildFurtherDepth == 0) {
+									headToParrot = true;
+								} else {
+									headToHead = true;
+								}
+							}
+						}
+						var treeChildFamilyBox = treeChildRecord.familyBox;
+						var treeChildPositioningBox = treeChildRecord.positioningBox;
+						if (parrotToHead) {
+							var treeChildFamilyBoxXByHead = mostAdvancedHead + earGap - treeChildPositioningBox.x;
+							var treeChildFamilyBoxXByBody = mostAdvancedBody;
+							if (anyHeadAndBodyYet) {
+								treeChildFamilyBoxXByBody += gapBetweenSiblings;
+							}
+							if (treeChildFamilyBoxXByBody > treeChildFamilyBoxXByHead) {
+								treeChildFamilyBox.x = treeChildFamilyBoxXByBody;
+								if (!anyHeadAndBodyYet) {
+									var parrotsMoveOver = treeChildFamilyBoxXByBody - treeChildFamilyBoxXByHead;
+									for (var parrotIndex = 0; parrotIndex < treeChildIndex; parrotIndex++) {
+										var parrotRecord = treeChildRecords[parrotIndex];
+										parrotRecord.familyBox.x += parrotsMoveOver;
+									}
+								}
+							} else {
+								treeChildFamilyBox.x = treeChildFamilyBoxXByHead;
+							}
+							anyHeadAndBodyYet = true;
+						} else if (parrotToParrot) {
+							treeChildFamilyBox.x = mostAdvancedHead + gapBetweenSiblings;
+						} else if (headToParrot) {
+							treeChildFamilyBox.x = mostAdvancedHead + earGap;
+						} else if (headToHead) {
+							var treeChildFamilyBoxX = mostAdvancedBody > mostAdvancedHead ? mostAdvancedBody : mostAdvancedHead;
+							treeChildFamilyBoxX += gapBetweenSiblings;
+							treeChildFamilyBox.x = treeChildFamilyBoxX;
+							anyHeadAndBodyYet = true;
+						} else { // treeChildIndex == 0
+							treeChildFamilyBox.x = 0;
+							if (treeChildFurtherDepth > 0) {
+								anyHeadAndBodyYet = true;
+							}
+						}
+						mostAdvancedHead = treeChildFamilyBox.x + treeChildPositioningBox.x + treeChildPositioningBox.width;
+						if (treeChildRecord.furtherDepth > 0) { // a head
+							mostAdvancedBody = treeChildFamilyBox.x + treeChildFamilyBox.width;
+						}
+						previousTreeChildRecord = treeChildRecord;
+					}
+					familyBoxWidth = mostAdvancedBody > mostAdvancedHead ? mostAdvancedBody : mostAdvancedHead;
 				}
 				var positioningBox = currentChildRecord.positioningBox;
 				currentChildRecord.familyBox = { // x and y relative to enclosing familyBox, at first
 					x: 0,
 					y: 0,
 					width: familyBoxWidth,
-					height: positioningBox.height + middleGap + maxHeight
+					height: 0 // cannot reckon height yet, descendants not enough, further nodes on same rows could have more height
 				}
 				//
 				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBox.width, hAlign);
@@ -2528,6 +2600,7 @@ Adj.algorithms.verticalTree = {
 				positioningBox.y = Adj.fraction(0, rowMaxHeight - positioningBox.height, vAlign);
 			}
 			familyBoxY = rowMaxHeight + middleGap; // for next row
+			rowRecord.y = totalHeight;
 			totalHeight += rowMaxHeight;
 		}
 		totalHeight += bottomGap;
@@ -2561,6 +2634,9 @@ Adj.algorithms.verticalTree = {
 					currentChildFamilyBox.x += treeParentFamilyBox.x;
 					currentChildFamilyBox.y += treeParentFamilyBox.y;
 				}
+				// correction, possibly only needed if (explain)
+				var deepestTreeDescendantRowRecord = rowRecords[indexOfRow + currentChildRecord.furtherDepth];
+				currentChildFamilyBox.height = deepestTreeDescendantRowRecord.y + deepestTreeDescendantRowRecord.maxHeight - rowRecord.y;
 				//
 				var currentChildPositioningBox = currentChildRecord.positioningBox;
 				// make positioningBox.x and positioningBox.y from relative to absolute
@@ -2631,25 +2707,49 @@ Adj.algorithms.verticalTree = {
 			var numberOfRows = rowRecords.length;
 			for (var rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
 				var rowRecord = rowRecords[rowIndex];
+				var rowY = rowRecord.y;
+				var rowMaxHeight = rowRecord.maxHeight;
+				var rowHeadBottom = rowY + rowMaxHeight;
+				var rowShoulderTop = rowHeadBottom + middleGap; // rowRecords[rowIndex + 1].y
 				var nodeRecords = rowRecord.nodeRecords;
 				var numberOfNodes = nodeRecords.length;
 				for (var nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
 					var nodeRecord = nodeRecords[nodeIndex];
 					//
 					var familyBox = nodeRecord.familyBox;
-					var explanationElement = Adj.createExplanationElement("rect");
-					explanationElement.setAttribute("x", Adj.decimal(familyBox.x));
-					explanationElement.setAttribute("y", Adj.decimal(familyBox.y));
-					explanationElement.setAttribute("width", Adj.decimal(familyBox.width));
-					explanationElement.setAttribute("height", Adj.decimal(familyBox.height));
-					explanationElement.setAttribute("fill", "white");
-					explanationElement.setAttribute("fill-opacity", "0.1");
-					explanationElement.setAttribute("stroke", "blue");
-					explanationElement.setAttribute("stroke-width", "1");
-					explanationElement.setAttribute("stroke-opacity", "0.2");
-					element.appendChild(explanationElement);
-					//
 					var positioningBox = nodeRecord.positioningBox;
+					if (nodeRecord.furtherDepth > 0) { // a head
+						var explainPathData = "m" +
+							Adj.decimal(positioningBox.x) + "," + Adj.decimal(familyBox.y) + " " +
+							Adj.decimal(positioningBox.width) + "," + Adj.decimal(0) + " L" +
+							Adj.decimal(positioningBox.x + positioningBox.width) + "," + Adj.decimal(rowHeadBottom) + " " +
+							Adj.decimal(familyBox.x + familyBox.width) + "," + Adj.decimal(rowShoulderTop) + " " +
+							Adj.decimal(familyBox.x + familyBox.width) + "," + Adj.decimal(familyBox.y + familyBox.height) + " l" +
+							Adj.decimal(-familyBox.width) + "," + Adj.decimal(0) + " L" +
+							Adj.decimal(familyBox.x) + "," + Adj.decimal(rowShoulderTop) + " " +
+							Adj.decimal(positioningBox.x) + "," + Adj.decimal(rowHeadBottom) + " z";
+						var explanationElement = Adj.createExplanationElement("path");
+						explanationElement.setAttribute("d", explainPathData);
+						explanationElement.setAttribute("fill", "white");
+						explanationElement.setAttribute("fill-opacity", "0.1");
+						explanationElement.setAttribute("stroke", "blue");
+						explanationElement.setAttribute("stroke-width", "1");
+						explanationElement.setAttribute("stroke-opacity", "0.2");
+						element.appendChild(explanationElement);
+					} else {
+						var explanationElement = Adj.createExplanationElement("rect");
+						explanationElement.setAttribute("x", Adj.decimal(familyBox.x));
+						explanationElement.setAttribute("y", Adj.decimal(familyBox.y));
+						explanationElement.setAttribute("width", Adj.decimal(familyBox.width));
+						explanationElement.setAttribute("height", Adj.decimal(familyBox.height));
+						explanationElement.setAttribute("fill", "white");
+						explanationElement.setAttribute("fill-opacity", "0.1");
+						explanationElement.setAttribute("stroke", "blue");
+						explanationElement.setAttribute("stroke-width", "1");
+						explanationElement.setAttribute("stroke-opacity", "0.2");
+						element.appendChild(explanationElement);
+					}
+					//
 					var explanationElement = Adj.createExplanationElement("rect");
 					explanationElement.setAttribute("x", Adj.decimal(positioningBox.x));
 					explanationElement.setAttribute("y", Adj.decimal(positioningBox.y));
