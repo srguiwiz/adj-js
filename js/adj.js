@@ -2369,7 +2369,7 @@ Adj.algorithms.verticalTree = {
 		var rowRecords = [];
 		var totalWidth = leftGap; // adds up
 		// walk
-		console.log("TREE starting");
+		//console.log("walkTreeLoop1 starting");
 		walkTreeLoop1: while (true) {
 			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
 			var treeChildRecords = currentChildRecord.treeChildRecords;
@@ -2386,9 +2386,9 @@ Adj.algorithms.verticalTree = {
 			//
 			if (!onWayBack) {
 				if (currentSiblingRecordIndex == 0) {
-					console.log("TREE before first of siblings at level " + (stack.length + 1));
+					//console.log("walkTreeLoop1 before first of siblings at level " + (stack.length + 1));
 				}
-				console.log("TREE on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
+				//console.log("walkTreeLoop1 on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
 				//
 				currentChildRecord.indexAsSibling = currentSiblingRecordIndex;
 				var nodeRecords = rowRecord.nodeRecords;
@@ -2398,13 +2398,13 @@ Adj.algorithms.verticalTree = {
 				nodeRecords.push(currentChildRecord);
 				//
 				if (numberOfTreeChildren) {
-					console.log("TREE on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					//console.log("walkTreeLoop1 on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
 					stack.push( { siblingRecords: currentSiblingRecords, index: currentSiblingRecordIndex } );
 					currentSiblingRecords = treeChildRecords;
 					currentSiblingRecordIndex = 0;
 					continue walkTreeLoop1;
 				} else { // childless node, aka leaf
-					console.log("TREE at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
+					//console.log("walkTreeLoop1 at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
 					//
 					currentChildRecord.furtherDepth = 0;
 					var boundingBox = currentChildRecord.boundingBox;
@@ -2416,7 +2416,7 @@ Adj.algorithms.verticalTree = {
 					}
 				}
 			} else { // onWayBack
-				console.log("TREE on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
+				//console.log("walkTreeLoop1 on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
 				onWayBack = false;
 				//
 				// note furtherDepth
@@ -2531,7 +2531,7 @@ Adj.algorithms.verticalTree = {
 				//
 				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBox.width, hAlign);
 			}
-			console.log("TREE finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
+			//console.log("walkTreeLoop1 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
 			//
 			if (indexOfRow == 0) {
 				if (indexInRow > 0) {
@@ -2550,16 +2550,16 @@ Adj.algorithms.verticalTree = {
 			if (currentSiblingRecordIndex < currentSiblingRecords.length) {
 				continue walkTreeLoop1;
 			} else { // no more sibling
-				console.log("TREE after last of siblings at level " + (stack.length + 1));
+				//console.log("walkTreeLoop1 after last of siblings at level " + (stack.length + 1));
 				if (stack.length > 0) {
-					console.log("TREE on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					//console.log("walkTreeLoop1 on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
 					var stackedPosition = stack.pop();
 					currentSiblingRecords = stackedPosition.siblingRecords;
 					currentSiblingRecordIndex = stackedPosition.index;
 					onWayBack = true;
 					continue walkTreeLoop1;
 				} else { // stack.length == 0
-					console.log("TREE done");
+					//console.log("walkTreeLoop1 done");
 					//
 					// place each root's familyBox horizontally once knowing all their respective familyBox.width
 					var numberOfRoots = rootRecords.length;
@@ -2612,7 +2612,7 @@ Adj.algorithms.verticalTree = {
 		var stack = [];
 		var onWayBack = false;
 		// walk
-		console.log("TREE starting");
+		//console.log("walkTreeLoop2 starting");
 		walkTreeLoop2: while (true) {
 			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
 			var treeChildRecords = currentChildRecord.treeChildRecords;
@@ -2623,9 +2623,9 @@ Adj.algorithms.verticalTree = {
 			//
 			if (!onWayBack) {
 				if (currentSiblingRecordIndex == 0) {
-					console.log("TREE before first of siblings at level " + (stack.length + 1));
+					//console.log("walkTreeLoop2 before first of siblings at level " + (stack.length + 1));
 				}
-				console.log("TREE on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
+				//console.log("walkTreeLoop2 on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
 				//
 				var currentChildFamilyBox = currentChildRecord.familyBox;
 				if (indexOfRow > 0) { // any row except roots
@@ -2649,33 +2649,33 @@ Adj.algorithms.verticalTree = {
 				currentChildRecord.node.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
 				//
 				if (numberOfTreeChildren) {
-					console.log("TREE on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					//console.log("walkTreeLoop2 on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
 					stack.push( { siblingRecords: currentSiblingRecords, index: currentSiblingRecordIndex } );
 					currentSiblingRecords = treeChildRecords;
 					currentSiblingRecordIndex = 0;
 					continue walkTreeLoop2;
 				} else { // childless node, aka leaf
-					console.log("TREE at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
+					//console.log("walkTreeLoop2 at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
 				}
 			} else { // onWayBack
-				console.log("TREE on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
+				//console.log("walkTreeLoop2 on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
 				onWayBack = false;
 			}
-			console.log("TREE finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
+			//console.log("walkTreeLoop2 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
 			currentSiblingRecordIndex += 1;
 			if (currentSiblingRecordIndex < currentSiblingRecords.length) {
 				continue walkTreeLoop2;
 			} else { // no more sibling
-				console.log("TREE after last of siblings at level " + (stack.length + 1));
+				//console.log("walkTreeLoop2 after last of siblings at level " + (stack.length + 1));
 				if (stack.length > 0) {
-					console.log("TREE on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					//console.log("walkTreeLoop2 on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
 					var stackedPosition = stack.pop();
 					currentSiblingRecords = stackedPosition.siblingRecords;
 					currentSiblingRecordIndex = stackedPosition.index;
 					onWayBack = true;
 					continue walkTreeLoop2;
 				} else { // stack.length == 0
-					console.log("TREE done");
+					//console.log("walkTreeLoop2 done");
 					break walkTreeLoop2;
 				}
 			}
