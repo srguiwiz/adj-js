@@ -2271,7 +2271,7 @@ Adj.algorithms.circularList = {
 Adj.algorithms.verticalTree = {
 	phaseHandlerName: "adjPhase1Up",
 	method: function verticalTree (element, parametersObject) {
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
+		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 10; // default gap = 10
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
 		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
 		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
@@ -2285,7 +2285,7 @@ Adj.algorithms.verticalTree = {
 		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
 		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["center"]; }; // default hAlign center
 		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
-		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["middle"]; }; // default vAlign middle
 		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
 		if (parametersObject.autoParrots == undefined && !isNaN(parametersObject.earGap)) { autoParrots = true; }; // earGap means autoParrots
 		var explain = parametersObject.explain ? true : false; // default explain = false
