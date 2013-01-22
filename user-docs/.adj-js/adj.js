@@ -2538,6 +2538,15 @@ Adj.algorithms.verticalTree = {
 					familyBoxWidth = mostAdvancedBody > mostAdvancedHead ? mostAdvancedBody : mostAdvancedHead;
 				}
 				var positioningBox = currentChildRecord.positioningBox;
+				var positioningBoxWidth = positioningBox.width;
+				if (familyBoxWidth < positioningBoxWidth) {
+					var treeChildrenMoveOver = Adj.fraction(0, positioningBoxWidth - familyBoxWidth, hAlign);
+					for (var treeChildIndex = 0; treeChildIndex < numberOfTreeChildren; treeChildIndex++) {
+						var treeChildRecord = treeChildRecords[treeChildIndex];
+						treeChildRecord.familyBox.x += treeChildrenMoveOver;
+					}
+					familyBoxWidth = positioningBoxWidth;
+				}
 				currentChildRecord.familyBox = { // x and y relative to enclosing familyBox, at first
 					x: 0,
 					y: 0,
@@ -2545,7 +2554,7 @@ Adj.algorithms.verticalTree = {
 					height: 0 // cannot reckon height yet, descendants not enough, further nodes on same rows could have more height
 				}
 				//
-				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBox.width, hAlign);
+				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBoxWidth, hAlign);
 				//
 				if (currentChildRecord == superRootRecord) {
 					//console.log("walkTreeLoop1 done");
