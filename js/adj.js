@@ -2339,6 +2339,21 @@ Adj.algorithms.verticalTree = {
 			}
 		}
 		var rootRecords = [];
+		var superRootRecord = {
+			boundingBox: {
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0
+			},
+			treeChildRecords: rootRecords,
+			positioningBox: {
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0
+			}
+		}
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
@@ -2350,9 +2365,11 @@ Adj.algorithms.verticalTree = {
 					childRecord.treeParentRecord = treeParent;
 				} else { // no element found with an id matching attribute adj:treeParent, e.g. author error
 					rootRecords.push(childRecord);
+					childRecord.treeParentRecord = superRootRecord;
 				}
 			} else { // no attribute adj:treeParent, e.g. author intended root
 				rootRecords.push(childRecord);
+				childRecord.treeParentRecord = superRootRecord;
 			}
 		}
 		if (!rootRecords.length && childRecords.length) { // unusual case of loop without root, e.g. author error
@@ -2367,7 +2384,6 @@ Adj.algorithms.verticalTree = {
 		var onWayBack = false;
 		// coordinate calculating variables
 		var rowRecords = [];
-		var totalWidth = leftGap; // adds up
 		// walk
 		//console.log("walkTreeLoop1 starting");
 		walkTreeLoop1: while (true) {
@@ -2530,17 +2546,18 @@ Adj.algorithms.verticalTree = {
 				}
 				//
 				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBox.width, hAlign);
+				//
+				if (currentChildRecord == superRootRecord) {
+					//console.log("walkTreeLoop1 done");
+					//
+					currentChildRecord.familyBox.x = leftGap;
+					currentChildRecord.familyBox.y = topGap;
+					//
+					break walkTreeLoop1;
+				}
 			}
 			//console.log("walkTreeLoop1 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
 			//
-			if (indexOfRow == 0) {
-				if (indexInRow > 0) {
-					rowRecord.maxRight += centerGap;
-				}
-				var currentChildRecordFamilyBox = currentChildRecord.familyBox;
-				currentChildRecordFamilyBox.x = rowRecord.maxRight;
-				rowRecord.maxRight += currentChildRecordFamilyBox.width;
-			}
 			var currentChildRecordHeight = currentChildRecord.positioningBox.height;
 			if (currentChildRecordHeight > rowRecord.maxHeight) {
 				rowRecord.maxHeight = currentChildRecordHeight;
@@ -2559,24 +2576,16 @@ Adj.algorithms.verticalTree = {
 					onWayBack = true;
 					continue walkTreeLoop1;
 				} else { // stack.length == 0
-					//console.log("walkTreeLoop1 done");
-					//
-					// place each root's familyBox horizontally once knowing all their respective familyBox.width
-					var numberOfRoots = rootRecords.length;
-					for (var rootIndex = 0; rootIndex < numberOfRoots; rootIndex++) {
-						if (rootIndex > 0) {
-							totalWidth += centerGap;
-						}
-						var rootFamilyBox = rootRecords[rootIndex].familyBox;
-						rootFamilyBox.x = totalWidth; // current value
-						totalWidth += rootFamilyBox.width;
-					}
-					//
-					break walkTreeLoop1;
+					//console.log("walkTreeLoop1 almost done");
+					currentSiblingRecords = [superRootRecord];
+					currentSiblingRecordIndex = 0;
+					onWayBack = true;
+					continue walkTreeLoop1;
 				}
 			}
 		}
-		totalWidth += rightGap;
+		//
+		var totalWidth = leftGap + superRootRecord.familyBox.width + rightGap;
 		//
 		// place each familyBox vertically once knowing each row's maxHeight
 		var totalHeight = topGap; // adds up with each row
@@ -2586,7 +2595,7 @@ Adj.algorithms.verticalTree = {
 			var rowRecord = rowRecords[rowIndex];
 			var rowMaxHeight = rowRecord.maxHeight;
 			if (rowIndex == 0) { // roots row
-				familyBoxY = topGap;
+				familyBoxY = 0;
 			} else { // rowIndex > 0
 				totalHeight += middleGap;
 			}
@@ -2628,12 +2637,10 @@ Adj.algorithms.verticalTree = {
 				//console.log("walkTreeLoop2 on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
 				//
 				var currentChildFamilyBox = currentChildRecord.familyBox;
-				if (indexOfRow > 0) { // any row except roots
-					var treeParentFamilyBox = currentChildRecord.treeParentRecord.familyBox;
-					// make familyBox.x and familyBox.y from relative to absolute
-					currentChildFamilyBox.x += treeParentFamilyBox.x;
-					currentChildFamilyBox.y += treeParentFamilyBox.y;
-				}
+				var treeParentFamilyBox = currentChildRecord.treeParentRecord.familyBox;
+				// make familyBox.x and familyBox.y from relative to absolute
+				currentChildFamilyBox.x += treeParentFamilyBox.x;
+				currentChildFamilyBox.y += treeParentFamilyBox.y;
 				// correction, possibly only needed if (explain)
 				var deepestTreeDescendantRowRecord = rowRecords[indexOfRow + currentChildRecord.furtherDepth];
 				currentChildFamilyBox.height = deepestTreeDescendantRowRecord.y + deepestTreeDescendantRowRecord.maxHeight - rowRecord.y;
