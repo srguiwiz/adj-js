@@ -371,12 +371,12 @@ Adj.algorithms.verticalList = {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
 		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
+		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
 		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (leftGap + rightGap) / 2;
 		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
 		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
+		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
 		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (topGap + bottomGap) / 2;
 		var maxHeight = !isNaN(parametersObject.maxHeight) ? parametersObject.maxHeight : null; // allowed, default maxHeight = null means no limit
 		var maxPerColumn = !isNaN(parametersObject.maxPerColumn) ? parametersObject.maxPerColumn : null; // allowed, default maxPerColumn = null means no limit
 		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
@@ -573,12 +573,12 @@ Adj.algorithms.horizontalList = {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
 		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
+		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
 		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (leftGap + rightGap) / 2;
 		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
 		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
+		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
 		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (topGap + bottomGap) / 2;
 		var maxWidth = !isNaN(parametersObject.maxWidth) ? parametersObject.maxWidth : null; // allowed, default maxWidth = null means no limit
 		var maxPerRow = !isNaN(parametersObject.maxPerRow) ? parametersObject.maxPerRow : null; // allowed, default maxPerRow = null means no limit
 		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
@@ -2274,14 +2274,14 @@ Adj.algorithms.verticalTree = {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 10; // default gap = 10
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
 		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
+		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
 		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (leftGap + rightGap) / 2;
 		var childlessGap = !isNaN(parametersObject.childlessGap) ? parametersObject.childlessGap : centerGap; // default childlessGap = centerGap
 		var earGap = !isNaN(parametersObject.earGap) ? parametersObject.earGap : centerGap; // default earGap = centerGap
 		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
 		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
+		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
 		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : !isNaN(parametersObject.gap) ? parametersObject.gap : (topGap + bottomGap) / 2;
 		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
 		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["center"]; }; // default hAlign center
 		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
