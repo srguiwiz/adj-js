@@ -76,7 +76,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
 
 <div class="toc">
 <ul>
-  <li><a href="#L7142">1. User Guide</a> 
+  <li><a href="#L7142">1. User Guide</a>
     <ul>
       <li><a href="#L4238">1.1. Modified BSD License</a></li>
       <li><a href="#L4276">1.2. Contributors</a></li>
@@ -88,7 +88,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
       <li><a href="#L25990">1.8. Implementation Rationale</a></li>
       <li><a href="#L7144">1.9. Modifying SVG</a></li>
       <li><a href="#L7202">1.10. Command Overview</a></li>
-      <li><a href="#L7353">1.11. Command Options</a> 
+      <li><a href="#L7353">1.11. Command Options</a>
         <ul>
           <li><a href="#L7357">1.11.1. Command horizontalList Options</a></li>
           <li><a href="#L7545">1.11.2. Command verticalList Options</a></li>
@@ -99,16 +99,17 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L9691">1.11.7. Command circleForParent Options</a></li>
           <li><a href="#L9743">1.11.8. Command ellipseForParent Options</a></li>
           <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
+          <li><a href="#L8469">1.11.10. Command verticalTree Options</a></li>
         </ul>
       </li>
-      <li><a href="#L7600">1.12. Auxiliary Commands</a> 
+      <li><a href="#L7600">1.12. Auxiliary Commands</a>
         <ul>
           <li><a href="#L7602">1.12.1. Option explain</a></li>
           <li><a href="#L7627">1.12.2. Command relativate</a></li>
         </ul>
       </li>
       <li><a href="#L6319">1.13. Complete Authoring Workflow</a></li>
-      <li><a href="#L6329">1.14. Invocation</a> 
+      <li><a href="#L6329">1.14. Invocation</a>
         <ul>
           <li><a href="#L6331">1.14.1. Explicit Invocation</a></li>
           <li><a href="#L6345">1.14.2. Implicit Invocation</a></li>
@@ -117,12 +118,12 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
         </ul>
       </li>
       <li><a href="#L6360">1.15. Alternate Syntax</a></li>
-      <li><a href="#L86788">1.16. More Details</a> 
+      <li><a href="#L86788">1.16. More Details</a>
         <ul>
           <li><a href="#L123304">1.16.1. Using SVG Group Element g</a></li>
           <li><a href="#L123314">1.16.2. Overwriting Preexisting Transform
             Attributes</a></li>
-          <li><a href="#L123334">1.16.3. Transforming An SVG Path</a> 
+          <li><a href="#L123334">1.16.3. Transforming An SVG Path</a>
             <ul>
               <li><a href="#L123341">1.16.3.1. Changing Points</a></li>
               <li><a href="#L6338">1.16.3.2. Storing Away Authoring
@@ -133,18 +134,18 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L4599">1.16.4. Exception Handling</a></li>
         </ul>
       </li>
-      <li><a href="#L4606">1.17. Helpful Hints</a> 
+      <li><a href="#L4606">1.17. Helpful Hints</a>
         <ul>
           <li><a href="#L4608">1.17.1. Defining An SVG rect Element</a></li>
           <li><a href="#L4638">1.17.2. Considerations For Nesting</a></li>
         </ul>
       </li>
-      <li><a href="#L123374">1.18. Implementation Details</a> 
+      <li><a href="#L123374">1.18. Implementation Details</a>
         <ul>
           <li><a href="#L123378">1.18.1. Execution Path</a></li>
         </ul>
       </li>
-      <li><a href="#L1688">1.19. Example Files</a> 
+      <li><a href="#L1688">1.19. Example Files</a>
         <ul>
           <li><a href="#L5397">1.19.1. Example File 001 Source Code</a></li>
           <li><a href="#L5412">1.19.2. Example File 002</a></li>
@@ -471,6 +472,28 @@ authors and algorithms:</p>
     &lt;rect width="30" height="20" fill="#aaa"/&gt;
     &lt;rect width="30" height="20" fill="#bbb"/&gt;
     &lt;rect width="30" height="20" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-045-verticalTree.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="130" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    <span class="example-code">&lt;adj:verticalTree/&gt;</span>
+    &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
+    &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1,0.2,1" to="l-1-1,0.8,0"/&gt;
+    &lt;/line&gt;
+    …
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -1210,6 +1233,152 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
   </tbody>
 </table>
 
+<h4 id="L8469">1.11.10. Command verticalTree Options</h4>
+
+<p>The optional parameters of <code>verticalTree</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-046-verticalTree-autoParrots.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="130" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    <span class="example-code">&lt;adj:verticalTree autoParrots="true"/&gt;</span>
+    &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
+    &lt;text adj:id="l-1-1" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1"&gt;L1213&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-2-3" adj:treeParent="n-1-2"&gt;L123&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1,0.2,1" to="l-1-1,0.8,0"/&gt;
+    &lt;/line&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-047-verticalTree-hAlign.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    <span class="example-code">&lt;adj:verticalTree autoParrots="true" hAlign="left" vAlign="0.2" gap="12"/&gt;</span>
+    &lt;text adj:id="r-1" font-size="20"&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
+    &lt;text adj:id="l-1-1" font-size="20" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" font-size="15" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" font-size="12" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1"&gt;L1213&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-2-3" adj:treeParent="n-1-2"&gt;L123&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1,0.2,1" to="l-1-1,0.2,0"/&gt;
+    &lt;/line&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-048-verticalTree-horizontalGap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="210" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    <span class="example-code">&lt;adj:verticalTree autoParrots="true" horizontalGap="15" verticalGap="30"/&gt;</span>
+    &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
+    &lt;text adj:id="l-1-1" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1"&gt;L1213&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-2-3" adj:treeParent="n-1-2"&gt;L123&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1,0.2,1" to="l-1-1,0.8,0"/&gt;
+    &lt;/line&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-049-verticalTree-earGap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="210" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    <span class="example-code">&lt;adj:verticalTree autoParrots="true" leftGap="5" centerGap="20" rightGap="5" topGap="5" middleGap="40" bottomGap="5" childlessGap="10" earGap="30"/&gt;</span>
+    &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
+    &lt;text adj:id="l-1-1" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1"&gt;L1213&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-2-3" adj:treeParent="n-1-2"&gt;L123&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1,0.2,1" to="l-1-1,0.8,0"/&gt;
+    &lt;/line&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Only layout is provided. This allows the most freedom for illustrating
+anything. Examples provided here use instances of command
+<code>connection</code> to indicate relationships.</p>
+
+<p>Relationships in <code>verticalTree</code> are defined by
+<code>adj:treeParent</code> attributes pointing at <code>adj:id</code>
+attributes.</p>
+
+<p>Nodes intentionally are elements at the same level in SVG. To be clear:
+There <span class="emphasize">isn't</span> SVG element nesting corresponding to
+the tree structure.</p>
+
+<p>Multiple roots are possible.</p>
+
+<p>Several optional parameters of <code>verticalTree</code> are similar to
+optional parameters of <code>horizontalList</code>. These include
+<code>gap</code>, <code>horizontalGap</code>, <code>leftGap</code>,
+<code>centerGap</code>, <code>rightGap</code>, <code>verticalGap</code>,
+<code>topGap</code>, <code>middleGap</code>, <code>bottomGap</code>, and
+<code>vAlign</code>.</p>
+
+<p>Parameter <code>hAlign</code> aligns a node relative to its children.</p>
+
+<p>Parameter <code>autoParrots</code> lets siblings that have no child sit on
+the shoulders of subtrees headed by siblings that do have children.</p>
+
+<p>Parameter <code>earGap</code> is in effect instead of <code>centerGap</code>
+between the head of a subtree and its adjacent siblings if they sit on its
+shoulders.</p>
+
+<p>Parameter <code>childlessGap</code> is in effect instead of
+<code>centerGap</code> when all siblings have no child.</p>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -1218,7 +1387,8 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
 
 <p>As implemented, <code>explain</code> inserts explanatory elements for
 <code>verticalList</code>, <code>horizontalList</code>,
-<code>connection</code>, <code>rider</code>, and <code>circularList</code>.</p>
+<code>connection</code>, <code>rider</code>, <code>circularList</code>, and
+<code>verticalTree</code>.</p>
 
 <table border="1">
   <tbody>
@@ -1294,6 +1464,28 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
     &lt;rect width="15" height="15" fill="#aaa"/&gt;
     &lt;rect width="18" height="18" fill="#bbb"/&gt;
     &lt;rect width="21" height="21" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-047-verticalTree-hAlign-explained.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    &lt;adj:verticalTree autoParrots="true" hAlign="0.1" vAlign="0.2" gap="12" <span class="example-code">explain="true"</span>/&gt;
+    &lt;text adj:id="r-1" font-size="20"&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
+    &lt;text adj:id="l-1-1" font-size="20" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" font-size="15" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" font-size="12" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1"&gt;L1213&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-2-3" adj:treeParent="n-1-2"&gt;L123&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>

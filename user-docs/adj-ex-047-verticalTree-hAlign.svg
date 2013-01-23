@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="150">
+	<script type="text/javascript" xlink:href=".adj-js/adj.js"/>
+	<rect width="200" height="150" fill="linen"/>
+	<g font-size="10">
+		<adj:verticalTree autoParrots="true" hAlign="left" vAlign="0.2" gap="12"/>
+		<text adj:id="r-1" font-size="20" transform="translate(14,29)">R1</text>
+		<text adj:id="r-2" transform="translate(53,24)">R2</text>
+		<text adj:id="l-1-1" font-size="20" adj:treeParent="r-1" transform="translate(14,63)">L11</text>
+		<text adj:id="n-1-2" font-size="15" adj:treeParent="r-1" transform="translate(61,60)">N12</text>
+		<text adj:id="n-1-2-1" font-size="12" adj:treeParent="n-1-2" transform="translate(62,92)">N121</text>
+		<text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1" transform="translate(61,117)">L1211</text>
+		<text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1" transform="translate(104,117)">L1212</text>
+		<text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1" transform="translate(147,117)">L1213</text>
+		<text adj:id="l-1-2-2" adj:treeParent="n-1-2" transform="translate(105,91)">L122</text>
+		<text adj:id="l-1-2-3" adj:treeParent="n-1-2" transform="translate(143,91)">L123</text>
+		<text adj:id="l-1-3" adj:treeParent="r-1" transform="translate(103,58)">L13</text>
+		<line stroke="#666" x1="17.4" y1="34" x2="19" y2="46">
+			<adj:connection from="r-1,0.2,1" to="l-1-1,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="25.5" y1="34" x2="65" y2="47">
+			<adj:connection from="r-1,0.5,1" to="n-1-2,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="33.6" y1="34" x2="105.2" y2="48">
+			<adj:connection from="r-1,0.8,1" to="l-1-3,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="68" y1="64" x2="65.4" y2="80">
+			<adj:connection from="n-1-2,0.3,1" to="n-1-2-1,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="74" y1="64" x2="108.2" y2="81">
+			<adj:connection from="n-1-2,0.5,1" to="l-1-2-2,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="80" y1="64" x2="146.2" y2="81">
+			<adj:connection from="n-1-2,0.7,1" to="l-1-2-3,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="68.6" y1="95" x2="65.2" y2="107">
+			<adj:connection from="n-1-2-1,0.3,1" to="l-1-2-1-1,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="75" y1="95" x2="108.2" y2="107">
+			<adj:connection from="n-1-2-1,0.5,1" to="l-1-2-1-2,0.2,0"/>
+		</line>
+		<line stroke="#666" x1="81.4" y1="95" x2="151.2" y2="107">
+			<adj:connection from="n-1-2-1,0.7,1" to="l-1-2-1-3,0.2,0"/>
+		</line>
+	</g>
+</svg>
