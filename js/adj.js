@@ -2287,7 +2287,6 @@ Adj.algorithms.verticalTree = {
 		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
 		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["middle"]; }; // default vAlign middle
 		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
-		if (parametersObject.autoParrots == undefined && !isNaN(parametersObject.earGap)) { autoParrots = true; }; // earGap means autoParrots
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
