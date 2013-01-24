@@ -2411,6 +2411,7 @@ Adj.algorithms.verticalTree = {
 				}
 				//console.log("walkTreeLoop1 on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
 				//
+				currentChildRecord.reachable = true;
 				currentChildRecord.indexAsSibling = currentSiblingRecordIndex;
 				var nodeRecords = rowRecord.nodeRecords;
 				var indexInRow = nodeRecords.length;
@@ -2596,6 +2597,22 @@ Adj.algorithms.verticalTree = {
 					onWayBack = true;
 					continue walkTreeLoop1;
 				}
+			}
+		}
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			if (!childRecord.reachable) {
+				// only way to get here should be because of an attribute adj:treeParent loop
+				var unreachableParentRecords = [];
+				while (childRecord && !unreachableParentRecords[childRecord]) {
+					unreachableParentRecords[childRecord] = true;
+					childRecord = childRecord.treeParentRecord;
+				}
+				var suspectChild = childRecord.node;
+				// first check for preferred attribute adj:id
+				// second check for acceptable attribute id
+				var suspectId = suspectChild.getAttributeNS(Adj.AdjNamespace, "id") || suspectChild.getAttribute("id");
+				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent in a loop with a verticalTree unreachable element";
 			}
 		}
 		//
