@@ -129,7 +129,7 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	target.adjPhaseHandlers = phaseHandlers;
 	if (algorithm.notAnOrder1Element) {
 		element.adjNotAnOrder1Element = true;
-		element.setAttribute("display", "none"); // try being cleverer ?
+		Adj.hideByDisplayAttribute(element);
 	}
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
 		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
@@ -160,6 +160,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjNotAnOrder1Element;
 	delete node.adjExplanationArtifact;
 	//delete node.adjRemoveElement; // probably safe not to delete, element should be gone
+	Adj.unhideByDisplayAttribute(node, true); // does delete node.adjOriginalDisplay
 	delete node.adjLevel;
 	//
 	// then walk
@@ -219,7 +220,7 @@ Adj.processSvgElementWithPhaseHandlers = function processSvgElementWithPhaseHand
 			return;
 		}
 		if (child.adjExplanationArtifact) {
-			child.removeAttribute("display"); // try being cleverer ?
+			Adj.unhideByDisplayAttribute(child);
 		}
 	 });
 }
@@ -355,11 +356,43 @@ Adj.createSVGElement = function createSVGElement (name, additionalProperties) {
 }
 
 // utility
+Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
+	var originalDisplay = element.getAttribute("display");
+	if (!originalDisplay) {
+		originalDisplay = "-"; // encode the fact there wasn't any
+	}
+	if (!element.adjOriginalDisplay) {
+		element.adjOriginalDisplay = originalDisplay;
+		element.setAttributeNS(Adj.AdjNamespace, "originalDisplay", element.adjOriginalDisplay);
+	}
+	element.setAttribute("display", "none");
+}
+
+// utility
+Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, onlyIfOriginalDisplay) {
+	var originalDisplay = element.adjOriginalDisplay;
+	if (!originalDisplay) {
+		originalDisplay = element.getAttributeNS(Adj.AdjNamespace, "originalDisplay");
+	}
+	if (originalDisplay) {
+		if (originalDisplay != "-") {
+			element.setAttribute("display", originalDisplay);
+		} else { // == "-" is code for the fact there wasn't any
+			element.removeAttribute("display");
+		}
+	} else if (!onlyIfOriginalDisplay) {
+		element.removeAttribute("display");
+	}
+	delete element.adjOriginalDisplay;
+	element.removeAttributeNS(Adj.AdjNamespace, "originalDisplay");
+}
+
+// utility
 Adj.createExplanationElement = function createExplanationElement (name, dontDisplayNone) {
 	var explanationElement = Adj.createSVGElement(name, {adjExplanationArtifact:true});
 	explanationElement.setAttributeNS(Adj.AdjNamespace, "explanation", "true");
 	if (!dontDisplayNone) {
-		explanationElement.setAttribute("display", "none"); // try being cleverer ?
+		Adj.hideByDisplayAttribute(explanationElement);
 	}
 	return explanationElement;
 }
@@ -786,7 +819,7 @@ Adj.algorithms.frameForParent = {
 		element.setAttribute("y", Adj.decimal(parentBoundingBox.y + topInset));
 		element.setAttribute("width", Adj.decimal(parentBoundingBox.width - leftInset - rightInset));
 		element.setAttribute("height", Adj.decimal(parentBoundingBox.height - topInset - bottomInset));
-		element.removeAttribute("display"); // try being cleverer ?
+		Adj.unhideByDisplayAttribute(element);
 	}
 }
 
@@ -1284,7 +1317,7 @@ Adj.algorithms.connection = {
 		var vector = !isNaN(parametersObject.vector) ? parametersObject.vector : 0; // default vector = 0
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
-		element.removeAttribute("display"); // try being cleverer ?
+		Adj.unhideByDisplayAttribute(element);
 		//
 		// what to connect
 		var fromElement = Adj.getElementByIdNearby(fromId, element);
@@ -1713,7 +1746,7 @@ Adj.algorithms.rider = {
 			}
 		}
 		//
-		element.removeAttribute("display"); // try being cleverer ?
+		Adj.unhideByDisplayAttribute(element);
 		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
 		// where on path to put it
@@ -2084,7 +2117,7 @@ Adj.algorithms.circleForParent = {
 		element.setAttribute("cx", Adj.decimal(parentBoundingCircle.cx));
 		element.setAttribute("cy", Adj.decimal(parentBoundingCircle.cy));
 		element.setAttribute("r", Adj.decimal(parentBoundingCircle.r - inset));
-		element.removeAttribute("display"); // try being cleverer ?
+		Adj.unhideByDisplayAttribute(element);
 	}
 }
 
@@ -2103,7 +2136,7 @@ Adj.algorithms.ellipseForParent = {
 		element.setAttribute("cy", Adj.decimal(parentBoundingEllipse.cy));
 		element.setAttribute("rx", Adj.decimal(parentBoundingEllipse.rx - horizontalInset));
 		element.setAttribute("ry", Adj.decimal(parentBoundingEllipse.ry - verticalInset));
-		element.removeAttribute("display"); // try being cleverer ?
+		Adj.unhideByDisplayAttribute(element);
 	}
 }
 
@@ -2814,7 +2847,7 @@ Adj.displayException = function displayException (exception, svgElement) {
 		if (!(child instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
 		}
-		child.setAttribute("display", "none"); // make invisible but don't delete
+		Adj.hideByDisplayAttribute(child); // make invisible but don't delete
 	}
 	var exceptionString = exception.toString();
 	var exceptionElement = Adj.createExplanationElement("g", true);
