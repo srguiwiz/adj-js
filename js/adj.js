@@ -2351,6 +2351,12 @@ Adj.algorithms.verticalTree = {
 				y: 0,
 				width: 0,
 				height: 0
+			},
+			familyBox: {
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0
 			}
 		}
 		for (var childRecordIndex in childRecords) {
@@ -2385,7 +2391,7 @@ Adj.algorithms.verticalTree = {
 		var rowRecords = [];
 		// walk
 		//console.log("walkTreeLoop1 starting");
-		walkTreeLoop1: while (true) {
+		walkTreeLoop1: while (currentSiblingRecordIndex < currentSiblingRecords.length) {
 			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
 			var treeChildRecords = currentChildRecord.treeChildRecords;
 			var numberOfTreeChildren = treeChildRecords.length;
@@ -2630,7 +2636,7 @@ Adj.algorithms.verticalTree = {
 		var onWayBack = false;
 		// walk
 		//console.log("walkTreeLoop2 starting");
-		walkTreeLoop2: while (true) {
+		walkTreeLoop2: while (currentSiblingRecordIndex < currentSiblingRecords.length) {
 			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
 			var treeChildRecords = currentChildRecord.treeChildRecords;
 			var numberOfTreeChildren = treeChildRecords.length;
