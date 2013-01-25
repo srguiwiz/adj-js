@@ -86,7 +86,12 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
       <li><a href="#L26102">1.6. Introduction</a></li>
       <li><a href="#L25888">1.7. Purpose</a></li>
       <li><a href="#L25990">1.8. Implementation Rationale</a></li>
-      <li><a href="#L7144">1.9. Modifying SVG</a></li>
+      <li><a href="#L7144">1.9. Modifying SVG</a> 
+        <ul>
+          <li><a href="#L378">1.9.1. Applying Transformations</a></li>
+          <li><a href="#L443">1.9.2. Storing Away Authoring Coordinates</a></li>
+        </ul>
+      </li>
       <li><a href="#L7202">1.10. Command Overview</a></li>
       <li><a href="#L7353">1.11. Command Options</a> 
         <ul>
@@ -155,12 +160,20 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
         </ul>
       </li>
       <li><a href="#L2289">1.20. Extending SVG With The Adj Namespace</a></li>
-      <li><a href="#L1688">1.21. Example Files</a> 
+      <li><a href="#L2357">1.21. Automated Testing</a></li>
+      <li><a href="#L2374">1.22. Compatibility Issues</a> 
         <ul>
-          <li><a href="#L5397">1.21.1. Example File 001 Source Code</a></li>
-          <li><a href="#L5412">1.21.2. Example File 002</a></li>
-          <li><a href="#L1730">1.21.3. Example File 003</a></li>
-          <li><a href="#L5916">1.21.4. Example File 004</a></li>
+          <li><a href="#L2433">1.22.1. Internet Explorer 8 And Earlier</a></li>
+          <li><a href="#L2437">1.22.2. Internet Explorer 9</a></li>
+          <li><a href="#L2480">1.22.3. Internet Explorer 10</a></li>
+        </ul>
+      </li>
+      <li><a href="#L1688">1.23. Example Files</a> 
+        <ul>
+          <li><a href="#L5397">1.23.1. Example File 001 Source Code</a></li>
+          <li><a href="#L5412">1.23.2. Example File 002</a></li>
+          <li><a href="#L1730">1.23.3. Example File 003</a></li>
+          <li><a href="#L5916">1.23.4. Example File 004</a></li>
         </ul>
       </li>
     </ul>
@@ -273,7 +286,9 @@ JavaScript manipulation of SVG.</p>
 
 <h3 id="L7144">1.9. Modifying SVG</h3>
 
-<p>Adj commands modify SVG:</p>
+<h4 id="L378">1.9.1. Applying Transformations</h4>
+
+<p>Adj commands <a href="#L123314">modify</a> SVG:</p>
 
 <table border="1">
   <tbody>
@@ -315,10 +330,11 @@ JavaScript manipulation of SVG.</p>
     </tr>
   </tbody>
 </table>
-<a name="stored-away-example"></a> 
 
-<p>With some modifications, authoring coordinates are stored away for reuse by
-authors and algorithms:</p>
+<h4 id="L443">1.9.2. Storing Away Authoring Coordinates</h4>
+
+<p>With <a href="#L123334">some</a> modifications, authoring coordinates are
+stored away for reuse by authors and algorithms:</p>
 
 <table border="1">
   <tbody>
@@ -360,7 +376,7 @@ authors and algorithms:</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:verticalList gap="5"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L7545">verticalList</a> gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -373,7 +389,7 @@ authors and algorithms:</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:horizontalList gap="5"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L7357">horizontalList</a> gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -388,7 +404,7 @@ authors and algorithms:</p>
   &lt;g&gt;
     &lt;adj:horizontalList gap="5"/&gt;
     &lt;rect fill="none" stroke="black" stroke-width="2" width="0" height="0"&gt;
-      <span class="example-code">&lt;adj:frameForParent inset="1"/&gt;</span>
+      <span class="example-code">&lt;adj:<a href="#L12321">frameForParent</a> inset="1"/&gt;</span>
     &lt;/rect&gt;
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
@@ -402,7 +418,7 @@ authors and algorithms:</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g font-size="12"&gt;
-    <span class="example-code">&lt;adj:textBreaks wordBreaks="true"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L2589">textBreaks</a> wordBreaks="true"/&gt;</span>
     <span class="example-code">&lt;adj:horizontalList maxWidth="170" gap="5" centerGap="3" topGap="10" leftGap="10"/&gt;</span>
     &lt;text&gt;This is a sentence of text that will wrap.&lt;/text&gt;
     &lt;text&gt;Here is more.&lt;/text&gt;
@@ -420,7 +436,7 @@ authors and algorithms:</p>
   &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#444"/&gt;
   &lt;rect adj:id="other" x="145" y="35" width="40" height="30" fill="#aaa"/&gt;
   &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"&gt;
-    <span class="example-code">&lt;adj:connection from="one, 1, 0.5" to="other, 0, 0.5"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L1740">connection</a> from="one, 1, 0.5" to="other, 0, 0.5"/&gt;</span>
   &lt;/path&gt;
   <span class="deemphasize-code">&lt;path d="M5,100 q40,10 80,0 t80,0" stroke="lightgray" stroke-width="2" fill="none" /&gt;
 &lt;/svg&gt;</span></pre>
@@ -436,7 +452,7 @@ authors and algorithms:</p>
     &lt;adj:connection from="one,1,0.5" to="other,0,0.5"/&gt;
     &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#777" stroke-width="2" fill="none"/&gt;
     &lt;rect width="30" height="20" fill="#444"&gt;
-      <span class="example-code">&lt;adj:rider at="0.5"/&gt;</span>
+      <span class="example-code">&lt;adj:<a href="#L8701">rider</a> at="0.5"/&gt;</span>
     &lt;/rect&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -449,7 +465,7 @@ authors and algorithms:</p>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
     &lt;circle r="5" stroke="gray" fill="gray" fill-opacity="0.2"&gt;
-      <span class="example-code">&lt;adj:circleForParent/&gt;</span>
+      <span class="example-code">&lt;adj:<a href="#L9691">circleForParent</a>/&gt;</span>
     &lt;/circle&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -462,7 +478,7 @@ authors and algorithms:</p>
   &lt;g&gt;
     &lt;rect x="30" y="30" width="50" height="20" fill="#000"/&gt;
     &lt;ellipse rx="5" ry="5" stroke="gray" fill="gray" fill-opacity="0.2"&gt;
-      <span class="example-code">&lt;adj:ellipseForParent/&gt;</span>
+      <span class="example-code">&lt;adj:<a href="#L9743">ellipseForParent</a>/&gt;</span>
     &lt;/ellipse&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -473,7 +489,7 @@ authors and algorithms:</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:circularList gap="5"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L20521">circularList</a> gap="5"/&gt;</span>
     &lt;circle r="10" fill="#000"/&gt;
     &lt;rect width="30" height="20" fill="#222"/&gt;
     &lt;rect width="30" height="20" fill="#444"/&gt;
@@ -491,7 +507,7 @@ authors and algorithms:</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="130" fill="linen"/&gt;</span>
   &lt;g font-size="10"&gt;
-    <span class="example-code">&lt;adj:verticalTree/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L8469">verticalTree</a>/&gt;</span>
     &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
     &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
     &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
@@ -702,7 +718,7 @@ JavaScript).</p>
 <h4 id="L7545">1.11.2. Command verticalList Options</h4>
 
 <p>The optional parameters of <code>verticalList</code> are very similar to the
-optional parameters of <code>horizontalList</code>.</p>
+optional parameters of <code><a href="#L7357">horizontalList</a></code>.</p>
 
 <p>Notably different, there is <code>maxHeight</code> <span
 class="deemphasize">(instead of <code>maxWidth</code>, duh)</span> and
@@ -1782,8 +1798,8 @@ out.</span></p>
 
 <h5 id="L6338">1.17.3.2. Storing Away Authoring Coordinates</h5>
 
-<p>Essential authoring coordinates are <a href="#stored-away-example">stored
-away</a> in Adj namespace attributes, for reuse by authors and algorithms.</p>
+<p>Essential authoring coordinates are <a href="#L443">stored away</a> in Adj
+namespace attributes, for reuse by authors and algorithms.</p>
 
 <p>Algorithms which store away authoring coordinates also look for authoring
 coordinates in Adj namespace attributes, and if present use the values of Adj
@@ -1837,9 +1853,88 @@ href="http://www.w3.org/TR/REC-xml-names/">XML namespace</a>
 <code>adj</code>, as declared in
 <code>xmlns:adj="http://www.nrvr.com/2012/adj"</code>.</p>
 
-<h3 id="L1688">1.21. Example Files</h3>
+<h3 id="L2357">1.21. Automated Testing</h3>
 
-<h4 id="L5397">1.21.1. Example File 001 Source Code</h4>
+<p>To ensure compatibility both while Adj moves forward in development as well
+as while browser are moving forward to newer versions, automated testing should
+be implemented.</p>
+
+<p>For automated testing, it should be possible for given documents to compare
+the result of Adj processing with expected results.</p>
+
+<p>For automated testing, images that are made from graphic elements without
+text, hence not using fonts, should produce exactly the same results each time
+in each browser.</p>
+
+<p>For automated testing, hopefully an explicitly provided font could be used
+to achieve exactly the same results for images that are made at least in part
+from text, hence using a font.</p>
+
+<p>For automated testing, it would be beneficial if it were possible to
+automate processing of a set of documents, making use of JavaScript to invoke
+Adj for each document, to compare the result for each document, and to proceed
+to consecutive documents.</p>
+
+<p>For contributing to implementing such automated testing, please use contact
+and/or repository info provided <a href="#L4276">above</a>.</p>
+
+<h3 id="L2374">1.22. Compatibility Issues</h3>
+
+<p>At the time of the writing of this section, for the release of Adj version
+3.0, there are compatibility problems with Internet Explorer.</p>
+
+<p>Not all is lost though, Internet Explorer appears to be moving into the
+right direction.</p>
+
+<p>Hence, for now, good results can be achieved with Firefox, Chrome, and
+Safari, while improvements in Internet Explorer are expected but cannot be
+predicted.</p>
+
+<h4 id="L2433">1.22.1. Internet Explorer 8 And Earlier</h4>
+
+<p>No go before Internet Explorer 9.</p>
+
+<h4 id="L2437">1.22.2. Internet Explorer 9</h4>
+
+<p>Probably since Adj version 2.0 in Internet Explorer 9, correctness appears
+broken when using a <code>line</code> or a <code>path</code> in a
+<code>connection</code> that has <a href="#L1888">saved back</a> different
+values for the coordinates in attributes <code>x1</code>, <code>y1</code>,
+<code>x2</code>, <code>y2</code>, or <code>d</code> than what has been <a
+href="#L443">stored away</a> as <a href="#L123334">authoring coordinates</a>.
+The problem appears to be around use of <code>setAttributeNS</code>, possibly
+<code>getAttributeNS</code> and related functions. Apparently Internet Explorer
+10 no longer has this problem.</p>
+
+<h4 id="L2480">1.22.3. Internet Explorer 10</h4>
+
+<p>Apparently in at least one pre-release of Internet Explorer 10, correctness
+is broken when using a <code>line</code> or a <code>path</code> in a
+<code>connection</code> that uses markers such as <code>marker-start</code>,
+<code>marker-mid</code>, or <code>marker-end</code>, for example for an
+arrowhead. Others also have <a
+href="http://social.msdn.microsoft.com/Forums/en-US/iewebdevelopment/thread/f772aab3-5ce3-4367-8eec-4fe58ad94b14">found
+a defect</a> where Internet Explorer 10 doesn't move markers when changing
+coordinates of a <code>line</code>. If you have a moment, please comment <a
+href="http://social.msdn.microsoft.com/Forums/en-US/iewebdevelopment/thread/f772aab3-5ce3-4367-8eec-4fe58ad94b14">there</a>
+(or even better in an actual defect reporting system at Microsoft if you know
+where that would be) in support of that defect being fixed. Someone tries to
+take that forum discussion the direction of "this isn't a problem", while not
+even using a marker in counterarguments.</p>
+
+<p>There is at least one <a href="adj-ex-041-workflow-version.svg">example
+file</a> which should show some or all of these problems. To see problems,
+because of security settings of some Internet Explorer versions, one may have
+to explicitly click to approve the Adj JavaScript library to run.</p>
+
+<p>These issues must not be showstoppers.</p>
+
+<p>There is no going back. Older versions of Adj are no longer compatible with
+more recent development.</p>
+
+<h3 id="L1688">1.23. Example Files</h3>
+
+<h4 id="L5397">1.23.1. Example File 001 Source Code</h4>
 
 <p>The source code, before <a
 href="adj-ex-041-workflow-version-pure.svg">processing</a>, of this older
@@ -2017,19 +2112,19 @@ version</p>
     &lt;/g&gt;
 &lt;/svg&gt;</pre>
 
-<h4 id="L5412">1.21.2. Example File 002</h4>
+<h4 id="L5412">1.23.2. Example File 002</h4>
 
 <p>An example:</p>
 <img alt="example image 002" src="adj-ex-042-image.svg"
 style="max-width:95%;max-height:auto;"></img> 
 
-<h4 id="L1730">1.21.3. Example File 003</h4>
+<h4 id="L1730">1.23.3. Example File 003</h4>
 
 <p>An example:</p>
 <img alt="example image 003" src="adj-ex-043-image.svg"
 style="max-width:95%;max-height:auto;"></img> 
 
-<h4 id="L5916">1.21.4. Example File 004</h4>
+<h4 id="L5916">1.23.4. Example File 004</h4>
 
 <p>An example:</p>
 <img alt="example image 004" src="adj-ex-044-image.svg"
