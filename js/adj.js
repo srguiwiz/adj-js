@@ -1321,6 +1321,9 @@ Adj.algorithms.connection = {
 		//
 		// what to connect
 		var fromElement = Adj.getElementByIdNearby(fromId, element);
+		if (!fromElement) {
+			throw "nonresolving id \"" + fromId + "\" used as attribute from= for an adj:connection element";
+		}
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
 		var fromPoint = document.documentElement.createSVGPoint();
@@ -1329,6 +1332,9 @@ Adj.algorithms.connection = {
 		fromPoint = fromPoint.matrixTransform(matrixFromFromElement);
 		//
 		var toElement = Adj.getElementByIdNearby(toId, element);
+		if (!toElement) {
+			throw "nonresolving id \"" + toId + "\" used as attribute to= for an adj:connection element";
+		}
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
 		var toPoint = document.documentElement.createSVGPoint();
@@ -1724,6 +1730,9 @@ Adj.algorithms.rider = {
 		if (pathId) { // path id given
 			// general case
 			path = Adj.getElementByIdNearby(pathId, element);
+			if (!path) {
+				throw "nonresolving id \"" + pathId + "\" used as attribute path= for an adj:rider element";
+			}
 			//
 			if (considerElementsToAvoid) {
 				Adj.addSiblingsToAvoid(avoidList, element);
@@ -2645,7 +2654,7 @@ Adj.algorithms.verticalTree = {
 				// first check for preferred attribute adj:id
 				// second check for acceptable attribute id
 				var suspectId = suspectChild.getAttributeNS(Adj.AdjNamespace, "id") || suspectChild.getAttribute("id");
-				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent in a loop with a verticalTree unreachable element";
+				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with an adj:verticalTree unreachable element";
 			}
 		}
 		//
@@ -2855,6 +2864,7 @@ Adj.displayException = function displayException (exception, svgElement) {
 	var exceptionTextElement = Adj.createSVGElement("text");
 	exceptionTextElement.appendChild(document.createTextNode(exceptionString));
 	exceptionTextElement.setAttribute("fill", "red");
+	exceptionTextElement.setAttribute("style", "fill:red;");
 	exceptionElement.appendChild(exceptionTextElement);
 	// fix up
 	Adj.algorithms.textBreaks.method(exceptionElement,{lineBreaks:true});
