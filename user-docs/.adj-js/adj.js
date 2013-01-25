@@ -2352,7 +2352,8 @@ Adj.algorithms.verticalTree = {
 					y: 0,
 					width: childBoundingBox.width,
 					height: childBoundingBox.height
-				}
+				},
+				localSerialNumber: childRecords.length
 			});
 		}
 		//
@@ -2409,9 +2410,6 @@ Adj.algorithms.verticalTree = {
 				rootRecords.push(childRecord);
 				childRecord.treeParentRecord = superRootRecord;
 			}
-		}
-		if (!rootRecords.length && childRecords.length) { // unusual case of loop without root, e.g. author error
-			rootRecords.push(childRecords[0]);
 		}
 		//
 		// walk tree structure
@@ -2637,9 +2635,11 @@ Adj.algorithms.verticalTree = {
 			if (!childRecord.reachable) {
 				// only way to get here should be because of an attribute adj:treeParent loop
 				var unreachableParentRecords = [];
-				while (childRecord && !unreachableParentRecords[childRecord]) {
-					unreachableParentRecords[childRecord] = true;
+				var localSerialNumber = childRecord.localSerialNumber;
+				while (!unreachableParentRecords[localSerialNumber]) {
+					unreachableParentRecords[localSerialNumber] = true;
 					childRecord = childRecord.treeParentRecord;
+					localSerialNumber = childRecord.localSerialNumber;
 				}
 				var suspectChild = childRecord.node;
 				// first check for preferred attribute adj:id
