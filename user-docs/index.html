@@ -105,6 +105,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L9743">1.11.8. Command ellipseForParent Options</a></li>
           <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
           <li><a href="#L8469">1.11.10. Command verticalTree Options</a></li>
+          <li><a href="#L1773">1.11.11. Command horizontalTree Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -518,6 +519,28 @@ stored away for reuse by authors and algorithms:</p>
     &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
     &lt;line stroke="#666"&gt;
       &lt;adj:connection from="r-1,0.2,1" to="l-1-1,0.8,0"/&gt;
+    &lt;/line&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-051-horizontalTree.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g font-size="10"&gt;
+    <span class="example-code">&lt;adj:<a href="#L8469">horizontalTree</a>/&gt;</span>
+    &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
+    &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1,1,0.2" to="l-1-1,0,0.8"/&gt;
     &lt;/line&gt;
     …
   &lt;/g&gt;
@@ -1404,6 +1427,11 @@ shoulders.</p>
 
 <p>Parameter <code>childlessGap</code> is in effect instead of
 <code>centerGap</code> when all siblings have no child.</p>
+
+<h4 id="L1773">1.11.11. Command horizontalTree Options</h4>
+
+<p>The optional parameters of <code>horizontalTree</code> are very similar to
+the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
 
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
