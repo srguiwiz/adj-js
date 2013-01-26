@@ -16,10 +16,11 @@ Start by reading the User Guide at user-docs/index.html.
 A readable copy of the User Guide should be
 [online here](http://srguiwiz.github.com/adj-js/user-docs/).
 
-If you are here for the essential adj.js file, it is at js/adj.js,
-and more illustratively also at user-docs/.adj-js/adj.js.
+If you are here for the essential adj.js file, it is at
+
+user-docs/js/adj.js
 
 A copy of the essential adj.js file should be
-[online here](http://srguiwiz.github.com/adj-js/js/adj.js).
+[online here](http://srguiwiz.github.com/adj-js/user-docs/js/adj.js).
 
 A fledgling Wiki is [online here](https://github.com/srguiwiz/adj-js/wiki).
