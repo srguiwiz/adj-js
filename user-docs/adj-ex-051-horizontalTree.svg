@@ -5,7 +5,7 @@
 	@font-face {
 		font-family: Liberation Serif;
 		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
-			url(fonts/LiberationSerif-Regular.ttf);
+			url(fonts/Liberation/LiberationSerif-Regular.ttf);
 		font-weight: normal;
 		font-style: normal;
 	}

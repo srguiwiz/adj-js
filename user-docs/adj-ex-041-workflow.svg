@@ -7,13 +7,13 @@
 	@font-face {
 		font-family: Liberation Sans;
 		src: local("Liberation Sans"), local("Liberation Sans Regular"), local("LiberationSans-Regular"),
-			url(fonts/LiberationSans-Regular.ttf);
+			url(fonts/Liberation/LiberationSans-Regular.ttf);
 		font-weight: normal;
 		font-style: normal;
 	}
 	@font-face {
 		font-family: Liberation Sans;
-		src: local("Liberation Sans Bold"), local("LiberationSans-Bold"), url(fonts/LiberationSans-Bold.ttf);
+		src: local("Liberation Sans Bold"), local("LiberationSans-Bold"), url(fonts/Liberation/LiberationSans-Bold.ttf);
 		font-weight: bold;
 		font-style: normal;
 	}
