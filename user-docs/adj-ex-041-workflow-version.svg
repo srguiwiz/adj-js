@@ -4,9 +4,16 @@
 	<title>Example Workflow</title>
 	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
 	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Sans;
+		src: local("Liberation Sans"), local("Liberation Sans Regular"), local("LiberationSans-Regular"),
+			url(fonts/LiberationSans-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
 	svg {
+		font-family: "Liberation Sans","Arial";
 		font-size: 12px;
-		font-family: sans-serif;
 	}
 	.subject {
 		fill: lightgray;

@@ -4,35 +4,49 @@
 	<title>CompanyMobile First Login Logic</title>
 	<!-- Sample drawing idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
 	<style type="text/css"><![CDATA[
-		svg {
-			font-size: 12px;
-		}
-		text {
-			fill: black;
-			stroke: none;
-		}
-		.filler {
-			fill: none;
-			stroke: none;
-		}
-		.arrow {
-			stroke: grey;
-			fill: none;
-		}
-		.server {
-			fill: aliceblue;
-			stroke: lightgrey;
-		}
-		.client {
-			fill: whitesmoke;
-			stroke: lightgrey;
-		}
-		.request, .response {
-			fill: gainsboro;
-			stroke: lightgrey;
-			opacity: 0.9;
-		}
-		]]></style>
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(fonts/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif Bold"), local("LiberationSerif-Bold"), url(fonts/LiberationSerif-Bold.ttf);
+		font-weight: bold;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 12px;
+	}
+	text {
+		fill: black;
+		stroke: none;
+	}
+	.filler {
+		fill: none;
+		stroke: none;
+	}
+	.arrow {
+		stroke: grey;
+		fill: none;
+	}
+	.server {
+		fill: aliceblue;
+		stroke: lightgrey;
+	}
+	.client {
+		fill: whitesmoke;
+		stroke: lightgrey;
+	}
+	.request, .response {
+		fill: gainsboro;
+		stroke: lightgrey;
+		opacity: 0.9;
+	}
+	]]></style>
 	<defs>
 		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
 			<path d="M -3 1 L 0 0 L -3 -1"/>

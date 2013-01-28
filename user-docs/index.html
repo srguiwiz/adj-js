@@ -507,7 +507,7 @@ stored away for reuse by authors and algorithms:</p>
       <td><img alt="example" src="adj-ex-045-verticalTree.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="130" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;g&gt;
     <span class="example-code">&lt;adj:<a href="#L8469">verticalTree</a>/&gt;</span>
     &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
     &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
@@ -529,7 +529,7 @@ stored away for reuse by authors and algorithms:</p>
       <td><img alt="example" src="adj-ex-051-horizontalTree.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;g&gt;
     <span class="example-code">&lt;adj:<a href="#L8469">horizontalTree</a>/&gt;</span>
     &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
     &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
@@ -1293,7 +1293,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
         src="adj-ex-046-verticalTree-autoParrots.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="130" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;g&gt;
     <span class="example-code">&lt;adj:verticalTree autoParrots="true"/&gt;</span>
     &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
@@ -1318,10 +1318,10 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       <td><img alt="example"
       src="adj-ex-047-verticalTree-hAlign.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
-  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;rect width="200" height="160" fill="linen"/&gt;</span>
+  &lt;g&gt;
     <span class="example-code">&lt;adj:verticalTree autoParrots="true" hAlign="left" vAlign="0.2" gap="12"/&gt;</span>
-    &lt;text adj:id="r-1" font-size="20"&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-1" font-size="25"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
     &lt;text adj:id="l-1-1" font-size="20" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
     &lt;text adj:id="n-1-2" font-size="15" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
@@ -1345,7 +1345,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
         src="adj-ex-048-verticalTree-horizontalGap.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="210" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;g&gt;
     <span class="example-code">&lt;adj:verticalTree autoParrots="true" horizontalGap="15" verticalGap="30"/&gt;</span>
     &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
@@ -1371,7 +1371,7 @@ numbers, but it also recognize some symbols (strings in JavaScript).</p>
       src="adj-ex-049-verticalTree-earGap.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="210" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;g&gt;
     <span class="example-code">&lt;adj:verticalTree autoParrots="true" leftGap="5" centerGap="20" rightGap="5" topGap="5" middleGap="40" bottomGap="5" childlessGap="10" earGap="30"/&gt;</span>
     &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
@@ -1526,8 +1526,8 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
       <td><img alt="example"
         src="adj-ex-047-verticalTree-hAlign-explained.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
-  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
-  &lt;g font-size="10"&gt;
+  &lt;rect width="200" height="160" fill="linen"/&gt;</span>
+  &lt;g&gt;
     &lt;adj:verticalTree autoParrots="true" hAlign="0.1" vAlign="0.2" gap="12" <span class="example-code">explain="true"</span>/&gt;
     &lt;text adj:id="r-1" font-size="20"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;

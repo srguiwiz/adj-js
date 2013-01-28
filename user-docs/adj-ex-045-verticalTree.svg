@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="130">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(fonts/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 10px;
+	}
+	]]></style>
 	<rect width="200" height="130" fill="linen"/>
-	<g font-size="10">
+	<g>
 		<adj:verticalTree/>
 		<text adj:id="r-1" transform="translate(89,20)">R1</text>
 		<text adj:id="l-1-1" adj:treeParent="r-1" transform="translate(12,42)">L11</text>
