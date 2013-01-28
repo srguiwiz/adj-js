@@ -2161,11 +2161,19 @@ Adj.algorithms.circularList = {
 		var toAngle = !isNaN(parametersObject.toAngle) ? parametersObject.toAngle : fromAngle + 360; // larger than fromAngle is clockwise, default toAngle = fromAngle + 360 means full circle clockwise
 		var rAlign = !isNaN(parametersObject.rAlign) ? parametersObject.rAlign : Adj.insideMedianOutside[parametersObject.rAlign]; // rAlign could be a number
 		if (rAlign == undefined) { rAlign = Adj.insideMedianOutside["median"]; }; // default rAlign median
+		// outside gaps
+		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
+		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
+		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
+		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
+		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
+		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
-		// also skipping notAnOrder1Element
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
 		var trunkRecord;
 		var childRecords = [];
 		var maxBranchRadius = 0;
@@ -2173,12 +2181,21 @@ Adj.algorithms.circularList = {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
 			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
 			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
 			var boundingBox = child.getBBox();
 			var boundingCircle = Adj.circleAroundRect(boundingBox);
 			childRecords.push({
+				boundingBox: boundingBox,
 				boundingCircle: boundingCircle,
 				node: child
 			});
@@ -2226,8 +2243,10 @@ Adj.algorithms.circularList = {
 		var treeCenterX = treeRadius + maxBranchRadius;
 		var treeCenterY = treeRadius + maxBranchRadius;
 		var currentAngle = fromAngle;
-		var minPlacedChildBoundingCircleX = 2 * treeCenterX;
-		var minPlacedChildBoundingCircleY = 2 * treeCenterY;
+		var minPlacedChildBoundingBoxX = 2 * treeCenterX;
+		var minPlacedChildBoundingBoxY = 2 * treeCenterY;
+		var maxPlacedChildBoundingBoxX = 0;
+		var maxPlacedChildBoundingBoxY = 0;
 		// first determine the respective translations
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
@@ -2250,13 +2269,24 @@ Adj.algorithms.circularList = {
 			childRecord.translationX = placedChildCx - childBoundingCircle.cx;
 			childRecord.translationY = placedChildCy - childBoundingCircle.cy;
 			// figure how to fix up translations to be top left aligned
-			var placedChildBoundingCircleX = placedChildCx - childBoundingCircleR;
-			var placedChildBoundingCircleY = placedChildCy - childBoundingCircleR;
-			if (placedChildBoundingCircleX < minPlacedChildBoundingCircleX) {
-				minPlacedChildBoundingCircleX = placedChildBoundingCircleX;
+			var childBoundingBox = childRecord.boundingBox;
+			var childBoundingBoxWidth = childBoundingBox.width;
+			var childBoundingBoxHeight = childBoundingBox.height;
+			var placedChildBoundingBoxX = placedChildCx - childBoundingBoxWidth / 2;
+			var placedChildBoundingBoxY = placedChildCy - childBoundingBoxHeight / 2;
+			if (placedChildBoundingBoxX < minPlacedChildBoundingBoxX) {
+				minPlacedChildBoundingBoxX = placedChildBoundingBoxX;
 			}
-			if (placedChildBoundingCircleY < minPlacedChildBoundingCircleY) {
-				minPlacedChildBoundingCircleY = placedChildBoundingCircleY;
+			if (placedChildBoundingBoxY < minPlacedChildBoundingBoxY) {
+				minPlacedChildBoundingBoxY = placedChildBoundingBoxY;
+			}
+			var placedChildBoundingBoxXPlusWidth = placedChildBoundingBoxX + childBoundingBoxWidth;
+			var placedChildBoundingBoxYPlusHeight = placedChildBoundingBoxY + childBoundingBoxHeight;
+			if (placedChildBoundingBoxXPlusWidth > maxPlacedChildBoundingBoxX) {
+				maxPlacedChildBoundingBoxX = placedChildBoundingBoxXPlusWidth;
+			}
+			if (placedChildBoundingBoxYPlusHeight > maxPlacedChildBoundingBoxY) {
+				maxPlacedChildBoundingBoxY = placedChildBoundingBoxYPlusHeight;
 			}
 			// explain
 			if (explain) {
@@ -2268,8 +2298,8 @@ Adj.algorithms.circularList = {
 			}
 		}
 		// how to fix up translations to be top left aligned
-		var topLeftAlignmentFixX = minPlacedChildBoundingCircleX;
-		var topLeftAlignmentFixY = minPlacedChildBoundingCircleY;
+		var topLeftAlignmentFixX = minPlacedChildBoundingBoxX - leftGap;
+		var topLeftAlignmentFixY = minPlacedChildBoundingBoxY - topGap;
 		// then apply the respective translations, but fixed up translations to be top left aligned
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
@@ -2277,6 +2307,14 @@ Adj.algorithms.circularList = {
 			var translationX = childRecord.translationX - topLeftAlignmentFixX;
 			var translationY = childRecord.translationY - topLeftAlignmentFixY;
 			child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		}
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		if (hiddenRect) {
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", Adj.decimal(maxPlacedChildBoundingBoxX + rightGap - topLeftAlignmentFixX));
+			hiddenRect.setAttribute("height", Adj.decimal(maxPlacedChildBoundingBoxY + bottomGap - topLeftAlignmentFixY));
 		}
 		//
 		// explain

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="100">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200.547" height="163.824">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="100" fill="linen"/>
 	<g>
-		<adj:circularList fromAngle="225" toAngle="315" cGap="5"/>
-		<g transform="translate(93.381,126.931)"/>
-		<rect width="15" height="15" fill="#000" transform="translate(3.107,36.657)"/>
-		<rect width="15" height="15" fill="#222" transform="translate(23.601,20.313)"/>
-		<rect width="15" height="15" fill="#444" transform="translate(47.218,8.94)"/>
-		<rect width="15" height="15" fill="#666" transform="translate(72.774,3.107)"/>
-		<rect width="15" height="15" fill="#888" transform="translate(98.987,3.107)"/>
-		<rect width="15" height="15" fill="#aaa" transform="translate(124.543,8.94)"/>
-		<rect width="15" height="15" fill="#bbb" transform="translate(148.161,20.313)"/>
-		<rect width="15" height="15" fill="#ccc" transform="translate(168.655,36.657)"/>
+		<adj:circularList fromAngle="225" toAngle="315" cGap="5" horizontalGap="10" verticalGap="20"/>
+		<g transform="translate(100.274,143.824)"/>
+		<rect width="15" height="15" fill="#000" transform="translate(10,53.55)"/>
+		<rect width="15" height="15" fill="#222" transform="translate(30.494,37.206)"/>
+		<rect width="15" height="15" fill="#444" transform="translate(54.112,25.833)"/>
+		<rect width="15" height="15" fill="#666" transform="translate(79.668,20)"/>
+		<rect width="15" height="15" fill="#888" transform="translate(105.881,20)"/>
+		<rect width="15" height="15" fill="#aaa" transform="translate(131.437,25.833)"/>
+		<rect width="15" height="15" fill="#bbb" transform="translate(155.054,37.206)"/>
+		<rect width="15" height="15" fill="#ccc" transform="translate(175.548,53.55)"/>
 	</g>
 </svg>

@@ -3,14 +3,14 @@
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="120" fill="linen"/>
 	<g>
-		<adj:circularList rAlign="inside" gap="2"/>
-		<circle r="20" fill="#000" transform="translate(47.448,54.662)"/>
-		<rect width="3" height="3" fill="#222" transform="translate(78.354,53.162)"/>
-		<rect width="6" height="6" fill="#444" transform="translate(65.975,78.656)"/>
-		<rect width="9" height="9" fill="#666" transform="translate(34.793,85.891)"/>
-		<rect width="12" height="12" fill="#888" transform="translate(6.518,65.483)"/>
-		<rect width="15" height="15" fill="#aaa" transform="translate(3.107,29.42)"/>
-		<rect width="18" height="18" fill="#bbb" transform="translate(28.877,3.728)"/>
-		<rect width="21" height="21" fill="#ccc" transform="translate(65.088,8.875)"/>
+		<adj:circularList rAlign="inside" gap="2" leftGap="10" topGap="10" rightGap="5" bottomGap="5"/>
+		<circle r="20" fill="#000" transform="translate(54.341,60.934)"/>
+		<rect width="3" height="3" fill="#222" transform="translate(85.247,59.434)"/>
+		<rect width="6" height="6" fill="#444" transform="translate(72.869,84.928)"/>
+		<rect width="9" height="9" fill="#666" transform="translate(41.686,92.163)"/>
+		<rect width="12" height="12" fill="#888" transform="translate(13.411,71.755)"/>
+		<rect width="15" height="15" fill="#aaa" transform="translate(10,35.692)"/>
+		<rect width="18" height="18" fill="#bbb" transform="translate(35.77,10)"/>
+		<rect width="21" height="21" fill="#ccc" transform="translate(71.982,15.147)"/>
 	</g>
 </svg>

@@ -4,13 +4,13 @@
 	<rect width="200" height="140" fill="linen"/>
 	<g>
 		<adj:circularList gap="5"/>
-		<circle r="10" fill="#000" transform="translate(60.654,64.153)"/>
-		<rect width="30" height="20" fill="#222" transform="translate(92.966,54.153)"/>
-		<rect width="30" height="20" fill="#444" transform="translate(75.152,91.143)"/>
-		<rect width="30" height="20" fill="#666" transform="translate(35.126,100.279)"/>
-		<rect width="30" height="20" fill="#888" transform="translate(3.028,74.681)"/>
-		<rect width="30" height="20" fill="#aaa" transform="translate(3.028,33.625)"/>
-		<rect width="30" height="20" fill="#bbb" transform="translate(35.126,8.028)"/>
-		<rect width="30" height="20" fill="#ccc" transform="translate(75.152,17.163)"/>
+		<circle r="10" fill="#000" transform="translate(62.626,61.125)"/>
+		<rect width="30" height="20" fill="#222" transform="translate(94.938,51.125)"/>
+		<rect width="30" height="20" fill="#444" transform="translate(77.125,88.115)"/>
+		<rect width="30" height="20" fill="#666" transform="translate(37.098,97.251)"/>
+		<rect width="30" height="20" fill="#888" transform="translate(5,71.653)"/>
+		<rect width="30" height="20" fill="#aaa" transform="translate(5,30.598)"/>
+		<rect width="30" height="20" fill="#bbb" transform="translate(37.098,5)"/>
+		<rect width="30" height="20" fill="#ccc" transform="translate(77.125,14.136)"/>
 	</g>
 </svg>
