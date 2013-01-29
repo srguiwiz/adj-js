@@ -30,20 +30,20 @@
 		stroke: none;
 	}
 	.arrow {
-		stroke: grey;
+		stroke: gray;
 		fill: none;
 	}
 	.server {
 		fill: aliceblue;
-		stroke: lightgrey;
+		stroke: lightgray;
 	}
 	.client {
 		fill: whitesmoke;
-		stroke: lightgrey;
+		stroke: lightgray;
 	}
 	.request, .response {
 		fill: gainsboro;
-		stroke: lightgrey;
+		stroke: lightgray;
 		opacity: 0.9;
 	}
 	]]></style>

@@ -27,7 +27,7 @@
 		stroke: gray;
 	}
 	.arrow {
-		stroke: grey;
+		stroke: gray;
 		fill: none;
 	}
 	a {
@@ -37,7 +37,7 @@
 		font-weight: bolder;
 	}
 	.workflow-machine {
-		fill: grey;
+		fill: gray;
 	}
 	]]></style>
 	<defs>

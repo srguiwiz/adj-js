@@ -21,7 +21,7 @@
 		stroke: gray;
 	}
 	.arrow {
-		stroke: grey;
+		stroke: gray;
 		fill: none;
 	}
 ]]></style>

@@ -24,7 +24,7 @@
 		stroke: none;
 	}
 	.arrow {
-		stroke: grey;
+		stroke: gray;
 		fill: none;
 	}
 	.directory {

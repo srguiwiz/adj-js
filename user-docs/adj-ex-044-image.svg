@@ -16,21 +16,21 @@
 		font-size: 9px;
 	}
 	.request {
-		fill: lightgrey;
-		stroke: grey;
+		fill: lightgray;
+		stroke: gray;
 		opacity: 0.9;
 	}
 	.arrow {
-		stroke: grey;
+		stroke: gray;
 		fill: none;
 	}
 	.server {
 		fill: lightsteelblue;
-		stroke: grey;
+		stroke: gray;
 	}
 	.client {
 		fill: whitesmoke;
-		stroke: grey;
+		stroke: gray;
 	}
 	]]></style>
 	<defs>
