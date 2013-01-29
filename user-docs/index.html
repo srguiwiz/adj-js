@@ -155,12 +155,15 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L4638">1.18.2. Considerations For Nesting</a></li>
         </ul>
       </li>
-      <li><a href="#L123374">1.19. Implementation Details</a> 
+      <li><a href="#L2289">1.19. Extending SVG With The Adj Namespace</a></li>
+      <li><a href="#L123374">1.20. Implementation Details</a> 
         <ul>
-          <li><a href="#L123378">1.19.1. Execution Path</a></li>
+          <li><a href="#L2440">1.20.1. Need Driven</a></li>
+          <li><a href="#L2469">1.20.2. Sizing From Small Parts To Whole
+            Image</a></li>
+          <li><a href="#L123378">1.20.3. Execution Path</a></li>
         </ul>
       </li>
-      <li><a href="#L2289">1.20. Extending SVG With The Adj Namespace</a></li>
       <li><a href="#L2357">1.21. Automated Testing</a></li>
       <li><a href="#L2374">1.22. Compatibility Issues</a> 
         <ul>
@@ -1222,7 +1225,7 @@ final resolution of adjusting coordinates.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:circularList fromAngle="225" toAngle="315" cGap="5" horizontalGap=&quot;10&quot; verticalGap=&quot;20&quot;/&gt;</span>
+    <span class="example-code">&lt;adj:circularList fromAngle="225" toAngle="315" cGap="5" horizontalGap="10" verticalGap="20"/&gt;</span>
     &lt;g/&gt;
     &lt;rect width="15" height="15" fill="#000"/&gt;
     &lt;rect width="15" height="15" fill="#222"/&gt;
@@ -1242,7 +1245,7 @@ final resolution of adjusting coordinates.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:circularList rAlign="inside" gap="2" leftGap=&quot;10&quot; topGap=&quot;10&quot; rightGap=&quot;5&quot; bottomGap=&quot;5&quot;/&gt;</span>
+    <span class="example-code">&lt;adj:circularList rAlign="inside" gap="2" leftGap="10" topGap="10" rightGap="5" bottomGap="5"/&gt;</span>
     &lt;circle r="20" fill="#000"/&gt;
     &lt;rect width="3" height="3" fill="#222"/&gt;
     &lt;rect width="6" height="6" fill="#444"/&gt;
@@ -1562,10 +1565,10 @@ detail than you were hoping for.</p>
 <h4 id="L5174">1.13.1. Need</h4>
 
 <p>Some commands refer to elements by identifier. These include command
-<code>connection</code> parameters <code>from</code> and <code>to</code>,
-command <code>rider</code> parameter <code>path</code>, and command
-<code>verticalTree</code> child element attribute
-<code>adj:treeParent</code>.</p>
+<code><a href="#L1740">connection</a></code> parameters <code>from</code> and
+<code>to</code>, command <code><a href="#L8701">rider</a></code> parameter
+<code>path</code>, and command <code><a href="#L8469">verticalTree</a></code>
+child element attribute <code>adj:treeParent</code>.</p>
 
 <h4 id="L1807">1.13.2. Attribute adj:id</h4>
 
@@ -1605,9 +1608,9 @@ graphics structures with Adj commands referring to "nearby" elements within the
 same structure should remain intact, even when pasting another copy into the
 same document.</p>
 
-<p>Authors could be a little more worry free when creating large documents, by
-hand or from a script. Multiple uses of the same structure should not require
-fixing up identifiers that are used only within such structure.</p>
+<p>Authors could be less worried when creating large documents, by hand or from
+a script. Multiple copies of the same structure should not require fixing up
+identifiers that are used only within such structure.</p>
 
 <p>An illustration of function <code>Adj.getElementByIdNearby</code> finding
 instances of attribute <code>adj:id</code>:</p>
@@ -1862,17 +1865,7 @@ element needs neither an <code>x</code> nor a <code>y</code> attribute.</p>
 <p><span class="todo">TODO: describe special limitations or benefits, if
 any</span></p>
 
-<h3 id="L123374">1.19. Implementation Details</h3>
-
-<p>Maybe should have been a separate document, but might matter to some
-authors.</p>
-
-<h4 id="L123378">1.19.1. Execution Path</h4>
-
-<p><span class="todo">TODO: describe, possibly illustrate with an Adj
-drawing</span></p>
-
-<h3 id="L2289">1.20. Extending SVG With The Adj Namespace</h3>
+<h3 id="L2289">1.19. Extending SVG With The Adj Namespace</h3>
 
 <p>For standards compliant <a
 href="http://www.w3.org/TR/SVG/extend.html">extension of SVG</a>, Adj uses <a
@@ -1880,6 +1873,99 @@ href="http://www.w3.org/TR/REC-xml-names/">XML namespace</a>
 <code>http://www.nrvr.com/2012/adj</code> with preferred prefix
 <code>adj</code>, as declared in
 <code>xmlns:adj="http://www.nrvr.com/2012/adj"</code>.</p>
+
+<h3 id="L123374">1.20. Implementation Details</h3>
+
+<p>This may matter to some authors.</p>
+
+<h4 id="L2440">1.20.1. Need Driven</h4>
+
+<p>How Adj is implemented partially has been a function of what needs it was
+supposed to fulfill. Drawing, specifically in engineering, often has meant
+abstraction. Photographic realism has its place, but it is not a topic here.
+Available size of drawing surfaces often has been a limitation. Limitations of
+medium effect limitations of content represented. On large <a
+href="http://en.wikipedia.org/wiki/Drawing_board">drawing boards</a> of past
+centuries the area available often was an order of magnitude larger than on
+contemporary computer displays. Adj has been designed to facilitate creation
+and long-term maintenance of system diagrams, specifically for diagrams of
+large complexity. <span class="deemphasize">This is a different motivation and
+sets different priorities than what for nontechnical and technical users has
+been prevalent since the second half of the twentieth century: The low
+resolutions and small sizes of television screens, computer monitors, cell
+phones, and more recently mobile tablets. Arguably those screens combined with
+software such as PowerPoint have <a
+href="http://www.edwardtufte.com/tufte/books_pp">influenced</a> the thinking of
+many.</span></p>
+
+<p>Adj prioritizes the showing of <span class="emphasize">all</span> necessary
+information. Adj facilitates representation and communication of complexity.</p>
+
+<p>How to organize rich sets of relevant detail? In word processing, the
+metaphor is a sufficiently long scroll of paper, continuous for a webpage,
+paginated for printing: When more information gets inserted, the scroll gets
+longer, the webpage gets longer, more pages will be printed. In most
+presentation programs, detail must go on other slides, or might be rephrased to
+fit.</p>
+
+<p>In Adj the metaphor is a large sheet that expands as needed, when more
+information gets added. Expansion is in both dimensions, x and y.</p>
+
+<p>Change happens. Without Adj, large and complex diagrams, and large sets of
+diagrams, could become outdated too quickly. The cost of updating diagrams can
+become prohibitive. Editing change into a diagram too easily can destroy an
+appearance of perfection that has been achieved in a first version.</p>
+
+<p>To accommodate change, Adj facilitates diagrams being updated in ways that
+maintain perfect looks. Adj facilitates automated propagation of change, both
+change of content and change of appearance.</p>
+
+<p>Adj also may facilitate linking, scripting, and folding.</p>
+
+<p>Undeniably, while Adj users will enjoy using large and very large computer
+displays, large images for some users will require panning, zooming, and
+possibly folding.</p>
+
+<h4 id="L2469">1.20.2. Sizing From Small Parts To Whole Image</h4>
+
+<p>One of the first patterns implemented in Adj has been collections of
+graphics objects, such as <a href="#L7357">lists</a> in <a
+href="#L20521">different</a> shapes. As implemented, on purpose, these
+collections resize to accommodate the size, number, and desired relative
+positions of their contents elements.</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td>before</td>
+      <td><img alt="nested collections" src="adj-ex-052-nesting.svg"></img></td>
+    </tr>
+    <tr>
+      <td colspan="2">insertion</td>
+    </tr>
+    <tr>
+      <td>after</td>
+      <td><img alt="nested collections with additional contents"
+        src="adj-ex-052-nesting-larger.svg"></img></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Instead of "these collections resize" one could also think "these
+collections are resized". Whether one considers collections resizing themselves
+or being resized by Adj depends on the point of view of a person thinking about
+it, whether one focuses on the effect, a user's, a graphics author's, an SVG
+point of view (resize), versus whether one pays attention to details of how it
+is done, an implementer's, a programmer's, a JavaScript point of view (are
+resized).</p>
+
+<p><span class="todo">TODO: continue here writing how this is
+implemented</span></p>
+
+<h4 id="L123378">1.20.3. Execution Path</h4>
+
+<p><span class="todo">TODO: describe, possibly illustrate with an Adj
+drawing</span></p>
 
 <h3 id="L2357">1.21. Automated Testing</h3>
 
@@ -1895,8 +1981,7 @@ text, hence not using fonts, should produce exactly the same results each time
 in each browser.</p>
 
 <p>For automated testing, hopefully an explicitly provided font could be used
-to achieve exactly the same results for images that are made at least in part
-from text, hence using a font.</p>
+to achieve exactly the same results for images that are using a font.</p>
 
 <p>For automated testing, it would be beneficial if it were possible to
 automate processing of a set of documents, making use of JavaScript to invoke
@@ -1987,7 +2072,7 @@ version</p>
         stroke: gray;
     }
     .arrow {
-        stroke: grey;
+        stroke: gray;
         fill: none;
     }
 ]]&gt;&lt;/style&gt;

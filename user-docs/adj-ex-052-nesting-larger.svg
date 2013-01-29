@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="488.668" height="230.375">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(fonts/Liberation/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif Bold"), local("LiberationSerif-Bold"), url(fonts/LiberationSerif-Bold.ttf);
+		font-weight: bold;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 12px;
+	}
+	svg g rect {
+		fill: gray;
+		stroke: gray;
+		stroke-width="1";
+	}
+	svg g g rect {
+		fill: lightgray;
+		stroke: gray;
+		stroke-width="1";
+	}
+	svg g g g rect {
+		fill: white;
+		stroke: gray;
+		stroke-width="1";
+	}
+	]]></style>
+	<g>
+		<adj:horizontalList/>
+		<rect width="487.668" height="229.375" x="0.5" y="0.5">
+			<adj:frameForParent inset="0.5"/>
+		</rect>
+		<text transform="translate(5,15)">outer one</text>
+		<g transform="translate(56,3)">
+			<adj:circularList gap="3" rAlign="inside" fromAngle="270"/>
+			<rect width="241.668" height="223.375" x="0.5" y="0.5">
+				<adj:frameForParent inset="0.5"/>
+			</rect>
+			<g transform="translate(97.495,92.687)">
+				<adj:verticalList hAlign="center"/>
+				<text transform="translate(5,15)">intermediate</text>
+				<text transform="translate(26,33)">one</text>
+			</g>
+			<g transform="translate(102.995,3)">
+				<adj:verticalList hAlign="center"/>
+				<rect width="58" height="38" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost</text>
+				<text transform="translate(21,33)">one</text>
+			</g>
+			<g transform="translate(180.667,47.844)">
+				<adj:verticalList hAlign="center"/>
+				<rect width="58" height="38" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost</text>
+				<text transform="translate(20,33)">two</text>
+			</g>
+			<g transform="translate(180.667,137.531)">
+				<adj:verticalList hAlign="center"/>
+				<rect width="58" height="38" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost</text>
+				<text transform="translate(17,33)">three</text>
+			</g>
+			<g transform="translate(102.995,182.375)">
+				<adj:verticalList hAlign="center"/>
+				<rect width="58" height="38" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost</text>
+				<text transform="translate(19,33)">four</text>
+			</g>
+			<g font-size="16" transform="translate(3,130.512)">
+				<adj:verticalList hAlign="center"/>
+				<rect width="75" height="68" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(8,18)">innermost</text>
+				<text transform="translate(11,40)">five <tspan font-weight="bold">with</tspan>
+				</text>
+				<text transform="translate(5,62)">
+					<tspan font-weight="bold">more text</tspan>
+				</text>
+			</g>
+			<g font-size="16" transform="translate(7.016,38.758)">
+				<adj:verticalList hAlign="center"/>
+				<rect width="77" height="46" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,18)">
+					<tspan font-weight="bold">innermost</tspan>
+				</text>
+				<text transform="translate(7,40)">
+					<tspan font-weight="bold">one more</tspan>
+				</text>
+			</g>
+		</g>
+		<g transform="translate(301.668,3)">
+			<adj:verticalTree gap="3" middleGap="10"/>
+			<rect width="183" height="82" x="0.5" y="0.5">
+				<adj:frameForParent inset="0.5"/>
+			</rect>
+			<text adj:id="int2" transform="translate(51,15)">intermediate two</text>
+			<g adj:id="inn6" adj:treeParent="int2" transform="translate(10,28)">
+				<adj:verticalList/>
+				<rect width="75" height="20" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost six</text>
+			</g>
+			<g adj:treeParent="inn6" transform="translate(3,59)">
+				<adj:verticalList/>
+				<rect width="89" height="20" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost seven</text>
+			</g>
+			<g adj:id="inn8" adj:treeParent="int2" transform="translate(96,28)">
+				<adj:verticalList/>
+				<rect width="84" height="20" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost eight</text>
+			</g>
+			<g adj:treeParent="inn8" transform="translate(98,59)">
+				<adj:verticalList/>
+				<rect width="81" height="20" x="0.5" y="0.5">
+					<adj:frameForParent inset="0.5"/>
+				</rect>
+				<text transform="translate(5,15)">innermost nine</text>
+			</g>
+		</g>
+	</g>
+</svg>
