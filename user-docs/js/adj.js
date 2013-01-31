@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:0, revision:2 };
+	Adj.version = { major:3, minor:1, revision:0 };
 	Adj.algorithms = {};
 }
 
@@ -394,6 +394,31 @@ Adj.createExplanationElement = function createExplanationElement (name, dontDisp
 	if (!dontDisplayNone) {
 		Adj.hideByDisplayAttribute(explanationElement);
 	}
+	return explanationElement;
+}
+
+// utility
+Adj.createExplanationPointCircle = function createExplanationPointCircle (x, y, fill) {
+	var explanationElement = Adj.createExplanationElement("circle");
+	explanationElement.setAttribute("cx", Adj.decimal(x));
+	explanationElement.setAttribute("cy", Adj.decimal(y));
+	explanationElement.setAttribute("r", 3);
+	explanationElement.setAttribute("fill", fill);
+	explanationElement.setAttribute("fill-opacity", "0.2");
+	explanationElement.setAttribute("stroke", "none");
+	return explanationElement;
+}
+
+// utility
+Adj.createExplanationLine = function createExplanationLine (x1, y1, x2, y2, stroke) {
+	var explanationElement = Adj.createExplanationElement("line");
+	explanationElement.setAttribute("x1", Adj.decimal(x1));
+	explanationElement.setAttribute("y1", Adj.decimal(y1));
+	explanationElement.setAttribute("x2", Adj.decimal(x2));
+	explanationElement.setAttribute("y2", Adj.decimal(y2));
+	explanationElement.setAttribute("stroke", stroke);
+	explanationElement.setAttribute("stroke-width", "1");
+	explanationElement.setAttribute("stroke-opacity", "0.2");
 	return explanationElement;
 }
 
@@ -1027,7 +1052,7 @@ Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
 }
 
 // constants
-// parse an id and optionally two more parameters, e.g. full "obj1# 0.5, 1" or less specific "obj2"
+// parse an id and optionally two more parameters, e.g. full "obj1 # 0.5, 1" or less specific "obj2"
 // note: as implemented tolerates extra paremeters
 Adj.idXYRegexp = /^\s*([^#\s]+)\s*(?:#\s*([^,\s]+)\s*)?(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
 // parse one or two parameters, e.g. "0.5, 1" or only "0.3"
@@ -1273,8 +1298,7 @@ Adj.transformPath = function transformPath (pathElement, matrix) {
 
 // utility
 Adj.restoreAndStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribute (element, name) {
-	var value;
-	value = element.getAttributeNS(Adj.AdjNamespace, name);
+	var value = element.getAttributeNS(Adj.AdjNamespace, name);
 	if (value) { // restore if any
 		element.setAttribute(name, value);
 	} else {
@@ -1443,14 +1467,7 @@ Adj.algorithms.connection = {
 			explanationElement.setAttribute("stroke-width", "1");
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
-			var explanationElement = Adj.createExplanationElement("circle");
-			explanationElement.setAttribute("cx", Adj.decimal(fromPoint.x));
-			explanationElement.setAttribute("cy", Adj.decimal(fromPoint.y));
-			explanationElement.setAttribute("r", 3);
-			explanationElement.setAttribute("fill", "green");
-			explanationElement.setAttribute("fill-opacity", "0.2");
-			explanationElement.setAttribute("stroke", "none");
-			parent.appendChild(explanationElement);
+			parent.appendChild(Adj.createExplanationPointCircle(fromPoint.x, fromPoint.y, "green"));
 			var explanationElement = Adj.createExplanationElement("rect");
 			explanationElement.setAttribute("x", Adj.decimal(toBoundingBox.x));
 			explanationElement.setAttribute("y", Adj.decimal(toBoundingBox.y));
@@ -1463,14 +1480,7 @@ Adj.algorithms.connection = {
 			explanationElement.setAttribute("stroke-width", "1");
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
-			var explanationElement = Adj.createExplanationElement("circle");
-			explanationElement.setAttribute("cx", Adj.decimal(toPoint.x));
-			explanationElement.setAttribute("cy", Adj.decimal(toPoint.y));
-			explanationElement.setAttribute("r", 3);
-			explanationElement.setAttribute("fill", "red");
-			explanationElement.setAttribute("fill-opacity", "0.2");
-			explanationElement.setAttribute("stroke", "none");
-			parent.appendChild(explanationElement);
+			parent.appendChild(Adj.createExplanationPointCircle(toPoint.x, toPoint.y, "red"));
 		}
 	}
 }
@@ -1932,34 +1942,12 @@ Adj.algorithms.rider = {
 			explanationElement.setAttribute("stroke-width", "1");
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
-			var explanationElement = Adj.createExplanationElement("circle");
-			explanationElement.setAttribute("cx", Adj.decimal(pinX));
-			explanationElement.setAttribute("cy", Adj.decimal(pinY));
-			explanationElement.setAttribute("r", 3);
-			explanationElement.setAttribute("transform", elementTransformAttribute);
-			explanationElement.setAttribute("fill", "blue");
-			explanationElement.setAttribute("fill-opacity", "0.2");
-			explanationElement.setAttribute("stroke", "none");
-			parent.appendChild(explanationElement);
+			parent.appendChild(Adj.createExplanationPointCircle(pinX, pinY, "blue"));
 			if (considerElementsToAvoid) {
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit);
-				var explanationElement = Adj.createExplanationElement("circle");
-				explanationElement.setAttribute("cx", Adj.decimal(pathFractionPoint.x));
-				explanationElement.setAttribute("cy", Adj.decimal(pathFractionPoint.y));
-				explanationElement.setAttribute("r", 3);
-				explanationElement.setAttribute("fill", "green");
-				explanationElement.setAttribute("fill-opacity", "0.2");
-				explanationElement.setAttribute("stroke", "none");
-				parent.appendChild(explanationElement);
+				parent.appendChild(Adj.createExplanationPointCircle(pathFractionPoint.x, pathFractionPoint.y, "green"));
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit2);
-				var explanationElement = Adj.createExplanationElement("circle");
-				explanationElement.setAttribute("cx", Adj.decimal(pathFractionPoint.x));
-				explanationElement.setAttribute("cy", Adj.decimal(pathFractionPoint.y));
-				explanationElement.setAttribute("r", 3);
-				explanationElement.setAttribute("fill", "red");
-				explanationElement.setAttribute("fill-opacity", "0.2");
-				explanationElement.setAttribute("stroke", "none");
-				parent.appendChild(explanationElement);
+				parent.appendChild(Adj.createExplanationPointCircle(pathFractionPoint.x, pathFractionPoint.y, "red"));
 			}
 		}
 	}
@@ -3425,6 +3413,415 @@ Adj.algorithms.horizontalTree = {
 				}
 				familyBoxY = rowMaxWidth + centerGap; // for next row
 				totalWidth += rowMaxWidth;
+			}
+		}
+	}
+}
+
+// utility
+Adj.firstTimeStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribute (element, name) {
+	var value = element.getAttributeNS(Adj.AdjNamespace, name);
+	if (!value) { // not any yet
+		value = element.getAttribute(name);
+		if (value) { // store if any
+			element.setAttributeNS(Adj.AdjNamespace, name, value);
+		}
+	}
+}
+
+// utility
+Adj.firstTimeStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordinates (element) {
+	if (element instanceof SVGPathElement) {
+		Adj.firstTimeStoreAuthoringAttribute(element, "d");
+	} else {
+		// other types of elements not implemented at this time
+	}
+}
+
+// constants
+// parse a ~ prefix, an id, a #, a field, and optionally a % and one more parameter, e.g. full "~obj1#x%0.2" or less specific "~obj2#yh"
+Adj.idRelativeRegexp = /~\s*([^#\s]+)\s*#\s*([^%,+\-*)\s]+)(?:\s*%\s*(-?[0-9.]+))?/g;
+// match a simple arithmetic expression, allowing integer and decimal numbers, +, -, and *, e.g. "0.5 * 125 + 20"
+Adj.simpleArithmeticRegexp = /(-?\.?[0-9.]+(?:\s*[+\-*]\s*-?[0-9.]+)+)/g;
+Adj.simpleArithmeticNumberRegexp = /(-?\.?[0-9.]+)/g;
+Adj.simpleArithmeticOperatorRegexp = /([+\-*])/g;
+
+// a specific algorithm
+// note: as implemented works for path
+Adj.algorithms.relative = {
+	notAnOrder1Element: true,
+	phaseHandlerName: "adjPhase2Up",
+	method: function relative (element, parametersObject) {
+		var explain = parametersObject.explain ? true : false; // default explain = false
+		//
+		Adj.unhideByDisplayAttribute(element);
+		//
+		var relativeElementsById = [];
+		//
+		// differntiate simplified cases
+		if (element instanceof SVGPathElement) {
+			// an SVG path
+			// first time store if first time
+			Adj.firstTimeStoreAuthoringCoordinates(element);
+			//
+			var authoringD = element.getAttributeNS(Adj.AdjNamespace, "d");
+			if (!authoringD) {
+				authoringD = "";
+			}
+			var replacements = [];
+			Adj.idRelativeRegexp.lastIndex = 0; // be safe
+			var idRelativeMatch = Adj.idRelativeRegexp.exec(authoringD);
+			while (idRelativeMatch) {
+				var relativeId = idRelativeMatch[1];
+				var relativeElement = relativeElementsById[relativeId];
+				if (relativeElement == undefined) {
+					relativeElement = relativeElementsById[relativeId] = Adj.getElementByIdNearby(relativeId, element);
+				}
+				if (!relativeElement) {
+					throw "nonresolving ~ id \"" + relativeId + "\" used in an attribute adj:d= for a path element";
+				}
+				var relativeField = idRelativeMatch[2];
+				var relativeParameter = idRelativeMatch[3];
+				var isX = false;
+				var isY = false;
+				var needsParameter = false;
+				var relativeX;
+				var relativeY;
+				switch (relativeField) {
+					case "x":
+						isX = true;
+						if (isNaN(relativeParameter)) {
+							relativeX = 0;
+						} else {
+							needsParameter = true;
+							relativeX = relativeParameter;
+						}
+						break;
+					case "y":
+						isY = true;
+						if (isNaN(relativeParameter)) {
+							relativeY = 0;
+						} else {
+							needsParameter = true;
+							relativeY = relativeParameter;
+						}
+						break;
+					case "xw":
+						isX = true;
+						relativeX = 1;
+						break;
+					case "yh":
+						isY = true;
+						relativeY = 1;
+						break;
+					case "cx":
+						isX = true;
+						relativeX = 0.5;
+						break;
+					case "cy":
+						isY = true;
+						relativeY = 0.5;
+						break;
+					default:
+						throw "unknown # field \"" + relativeField + "\" used in an attribute adj:d= for a path element";
+				}
+				if (needsParameter) {
+					if (isNaN(relativeParameter)) {
+						throw "not a number % parameter \"" + relativeParameter + "\" used in an attribute adj:d= for a path element";
+					}
+				}
+				if (isNaN(relativeX)) { // unknown for now
+					relativeX = 0.5;
+				}
+				if (isNaN(relativeY)) { // unknown for now
+					relativeY = 0.5;
+				}
+				var relativeBoundingBox = relativeElement.getBBox();
+				var matrixFromRelativeElement = relativeElement.getTransformToElement(element);
+				var relativePoint = document.documentElement.createSVGPoint();
+				relativePoint.x = relativeBoundingBox.x + relativeBoundingBox.width * relativeX;
+				relativePoint.y = relativeBoundingBox.y + relativeBoundingBox.height * relativeY;
+				relativePoint = relativePoint.matrixTransform(matrixFromRelativeElement);
+				var relativeCoordinate;
+				if (isX) {
+					relativeCoordinate = relativePoint.x;
+				} else { // isY
+					relativeCoordinate = relativePoint.y;
+				}
+				relativeCoordinate = Adj.decimal(relativeCoordinate);
+				replacements.push({
+					index: idRelativeMatch.index,
+					lastIndex: Adj.idRelativeRegexp.lastIndex,
+					relativeCoordinate: relativeCoordinate
+				});
+				//
+				idRelativeMatch = Adj.idRelativeRegexp.exec(authoringD);
+			}
+			var replacementsLength = replacements.length;
+			var replacementSegments = [];
+			var previousIndex = 0;
+			for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
+				var replacement = replacements[replacementIndex];
+				replacementSegments.push(authoringD.substring(previousIndex, replacement.index));
+				replacementSegments.push(replacement.relativeCoordinate);
+				previousIndex = replacement.lastIndex;
+			}
+			replacementSegments.push(authoringD.substring(previousIndex, authoringD.length));
+			var idsResolvedD = replacementSegments.join("");
+			//
+			var replacements = [];
+			Adj.simpleArithmeticRegexp.lastIndex = 0; // be safe
+			var simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedD);
+			while (simpleArithmeticMatch) {
+				var arithmeticExpression = simpleArithmeticMatch[1];
+				var sumSoFar = 0; // start with 0
+				var currentAddend = 0; // start with 0
+				var simpleNumberMatch;
+				var simpleNumber;
+				var simpleOperatorMatch;
+				var simpleOperator = "+"; // start with 0 + 0
+				Adj.simpleArithmeticOperatorRegexp.lastIndex = 0;
+				do {
+					Adj.simpleArithmeticNumberRegexp.lastIndex = Adj.simpleArithmeticOperatorRegexp.lastIndex;
+					simpleNumberMatch = Adj.simpleArithmeticNumberRegexp.exec(arithmeticExpression);
+					simpleNumber = simpleNumberMatch[1];
+					if (isNaN(simpleNumber)) {
+						throw "not a number  \"" + simpleNumber + "\" used in an attribute adj:d= for a path element";
+					}
+					simpleNumber = parseFloat(simpleNumber);
+					switch (simpleOperator) {
+						case "*":
+							currentAddend *= simpleNumber;
+							break;
+						case "+":
+							currentAddend = simpleNumber;
+							break;
+						case "-":
+							currentAddend = -simpleNumber;
+							break;
+						default: // should never get here
+							break;
+					}
+					//
+					Adj.simpleArithmeticOperatorRegexp.lastIndex = Adj.simpleArithmeticNumberRegexp.lastIndex;
+					simpleOperatorMatch = Adj.simpleArithmeticOperatorRegexp.exec(arithmeticExpression);
+					if (simpleOperatorMatch) {
+						simpleOperator = simpleOperatorMatch[1];
+						switch (simpleOperator) {
+							case "*":
+								break;
+							case "+":
+							case "-":
+								sumSoFar += currentAddend;
+								break;
+							default: // should never get here
+								break;
+						}
+					} else { // should be end of arithmeticExpression
+						sumSoFar += currentAddend;
+					}
+				} while (simpleOperatorMatch);
+				replacements.push({
+					index: simpleArithmeticMatch.index,
+					lastIndex: Adj.simpleArithmeticRegexp.lastIndex,
+					arithmeticExpression: sumSoFar.toString()
+				});
+				//
+				simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedD);
+			}
+			var replacementsLength = replacements.length;
+			var replacementSegments = [];
+			var previousIndex = 0;
+			for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
+				var replacement = replacements[replacementIndex];
+				replacementSegments.push(idsResolvedD.substring(previousIndex, replacement.index));
+				replacementSegments.push(replacement.arithmeticExpression);
+				previousIndex = replacement.lastIndex;
+			}
+			replacementSegments.push(idsResolvedD.substring(previousIndex, idsResolvedD.length));
+			var dWithArithmeticResolved = replacementSegments.join("");
+			//
+			element.setAttribute("d", dWithArithmeticResolved);
+		} else { // not a known case, as implemented not transformed
+		}
+		//
+		// explain
+		if (explain) {
+			var parent = element.parentNode;
+			if (element instanceof SVGPathElement) {
+				// an SVG path
+				var explainPathData = dWithArithmeticResolved;
+				var explanationElement = Adj.createExplanationElement("path");
+				explanationElement.setAttribute("d", explainPathData);
+				explanationElement.setAttribute("fill", "none");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "3");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				parent.appendChild(explanationElement);
+				//
+				// get static base values as floating point values, before animation
+				var pathSegList = element.pathSegList;
+				var numberOfPathSegs = pathSegList.numberOfItems;
+				var numberOfLastPathSeg = numberOfPathSegs - 1;
+				var coordinates = document.documentElement.createSVGPoint();
+				var initialCoordinates = document.documentElement.createSVGPoint(); // per sub-path
+				var controlPoint = document.documentElement.createSVGPoint();
+				for (var index = 0; index < numberOfPathSegs; index++) {
+					var pathSeg = pathSegList.getItem(index);
+					var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
+					var pointCircleFill = index <= 0 ? "green" : index < numberOfLastPathSeg ? "blue" : "red";
+					switch (pathSegTypeAsLetter) {
+						case 'Z':  // closepath
+						case 'z':
+							coordinates.x = initialCoordinates.x;
+							coordinates.y = initialCoordinates.y;
+							break;
+						case 'M': // moveto, absolute
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							initialCoordinates.x = coordinates.x;
+							initialCoordinates.y = coordinates.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'm': // moveto, relative
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							initialCoordinates.x = coordinates.x;
+							initialCoordinates.y = coordinates.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'L': // lineto, absolute
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'l': // lineto, relative
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'H': // horizontal lineto, absolute
+							coordinates.x = pathSeg.x;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'h': // horizontal lineto, relative
+							coordinates.x += pathSeg.x;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'V': // vertical lineto, absolute
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'v': // vertical lineto, relative
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'C': // cubic Bézier curveto, absolute
+							controlPoint.x = pathSeg.x1;
+							controlPoint.y = pathSeg.y1;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							controlPoint.x = pathSeg.x2;
+							controlPoint.y = pathSeg.y2;
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'c': // cubic Bézier curveto, relative
+							controlPoint.x = coordinates.x + pathSeg.x1;
+							controlPoint.y = coordinates.y + pathSeg.y1;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							controlPoint.x = coordinates.x + pathSeg.x2;
+							controlPoint.y = coordinates.y + pathSeg.y2;
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'S': // smooth cubic curveto, absolute
+							controlPoint.x = 2 * coordinates.x - controlPoint.x;
+							controlPoint.y = 2 * coordinates.y - controlPoint.y;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							controlPoint.x = pathSeg.x2;
+							controlPoint.y = pathSeg.y2;
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 's': // smooth cubic curveto, relative
+							controlPoint.x = 2 * coordinates.x - controlPoint.x;
+							controlPoint.y = 2 * coordinates.y - controlPoint.y;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							controlPoint.x = coordinates.x + pathSeg.x2;
+							controlPoint.y = coordinates.y + pathSeg.y2;
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'Q': // quadratic Bézier curveto, absolute
+							controlPoint.x = pathSeg.x1;
+							controlPoint.y = pathSeg.y1;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'q': // quadratic Bézier curveto, relative
+							controlPoint.x = coordinates.x + pathSeg.x1;
+							controlPoint.y = coordinates.y + pathSeg.y1;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'T': // smooth quadratic curveto, absolute
+							controlPoint.x = 2 * coordinates.x - controlPoint.x;
+							controlPoint.y = 2 * coordinates.y - controlPoint.y;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 't': // smooth quadratic curveto, relative
+							controlPoint.x = 2 * coordinates.x - controlPoint.x;
+							controlPoint.y = 2 * coordinates.y - controlPoint.y;
+							parent.appendChild(Adj.createExplanationLine(coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(controlPoint.x, controlPoint.y, "blue"));
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationLine(controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'A': // elliptical arc, absolute
+							coordinates.x = pathSeg.x;
+							coordinates.y = pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						case 'a': // elliptical arc, relative
+							coordinates.x += pathSeg.x;
+							coordinates.y += pathSeg.y;
+							parent.appendChild(Adj.createExplanationPointCircle(coordinates.x, coordinates.y, pointCircleFill));
+							break;
+						default:
+					}
+				}
 			}
 		}
 	}
