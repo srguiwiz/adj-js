@@ -106,6 +106,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
           <li><a href="#L8469">1.11.10. Command verticalTree Options</a></li>
           <li><a href="#L1773">1.11.11. Command horizontalTree Options</a></li>
+          <li><a href="#L1796">1.11.12. Command relative Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -550,6 +551,33 @@ stored away for reuse by authors and algorithms:</p>
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-053-relative.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="180" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:verticalTree leftGap="20" centerGap="30" childlessGap="10" middleGap="40"/&gt;
+    &lt;rect adj:id="o1" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="o2" adj:treeParent="o1" width="30" height="20" fill="#666"/&gt;
+    &lt;rect adj:id="o3" adj:treeParent="o2" width="25" height="15" fill="#888"/&gt;
+    &lt;rect adj:id="o4" adj:treeParent="o2" width="25" height="15" fill="#aaa"/&gt;
+    &lt;rect adj:id="o5" adj:treeParent="o1" width="30" height="20" fill="#bbb"/&gt;
+    &lt;rect adj:id="o6" adj:treeParent="o5" width="25" height="15" fill="#ccc"/&gt;
+    &lt;rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd"/&gt;
+  &lt;/g&gt;
+  &lt;path d="M0,0" stroke="#777" stroke-width="2" fill="none" <span class="example-code">adj:d="M ~o1#x - 10, ~o1#yh</span>
+  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy
+  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy
+  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10
+  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10
+  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
+  C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, <span class="example-code">~o2#yh * 0.5 + ~o4#y * 0.5 + 10</span> ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
+  S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
+    <span class="example-code">&lt;adj:<a href="#L1796">relative</a>/&gt;</span>
+  &lt;/path&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -707,7 +735,7 @@ stored away for reuse by authors and algorithms:</p>
 </table>
 
 <p>The fractions in parameters <code>hAlign</code> and <code>vAlign</code>
-accept floating point numbers, but they also recognize some symbols (strings in
+accept decimal numbers, but they also recognize some symbols (strings in
 JavaScript).</p>
 
 <table border="1">
@@ -908,9 +936,12 @@ source line two.&lt;/text&gt;
   </tbody>
 </table>
 
-<p>The fraction pairs in parameters <code>from</code> and <code>to</code>
-accept floating point numbers. With values commonly between 0.0 and 1.0 they
-also could be outside that range.</p>
+<p>In parameters <code>from</code> and <code>to</code> an expression
+<code>identifier # decimal , decimal</code> means from the element <a
+href="#L1780">referenced by the identifier</a> determine coordinates with
+<code>0,0</code> being its bounding box <code>x,y</code> and <code>1,1</code>
+being its <code>x+width,y+height</code>. With decimal number values often
+between 0.0 and 1.0 they also can be outside that range.</p>
 
 <p>As implemented, <code>connection</code> works for simplified cases
 <code>line</code> and <code>path</code>, and for general case group
@@ -1072,9 +1103,9 @@ paths as children of that group.</p>
   </tbody>
 </table>
 
-<p>The fraction or fraction pair in parameter <code>at</code> accepts floating
-point numbers. With values commonly between 0.0 and 1.0 they also could be
-outside that range.</p>
+<p>The fraction or fraction pair in parameter <code>at</code> accepts decimal
+numbers. With values often between 0.0 and 1.0 they also can be outside that
+range.</p>
 
 <p>Parameter <code>adjust</code> accepts some symbols (strings in
 JavaScript).</p>
@@ -1099,15 +1130,14 @@ defaults from 0.0 to 1.0 and <code>adjust</code> defaults to
 <code>clear</code>. If given no <code>at</code> but <code>adjust</code> given
 <code>near</code> then <code>at</code> defaults from 0.0 to 0.5.</p>
 
-<p>If given one floating point number for <code>at</code> then
-<code>adjust</code> defaults to <code>none</code>.</p>
+<p>If given one decimal number for <code>at</code> then <code>adjust</code>
+defaults to <code>none</code>.</p>
 
-<p>If given two floating point numbers for <code>at</code> then
-<code>adjust</code> defaults to <code>clear</code>.</p>
+<p>If given two decimal numbers for <code>at</code> then <code>adjust</code>
+defaults to <code>clear</code>.</p>
 
-<p>The fraction pair in parameter <code>pin</code> accepts floating point
-numbers. With values commonly between 0.0 and 1.0 they also could be outside
-that range.</p>
+<p>The fraction pair in parameter <code>pin</code> accepts decimal numbers.
+With values often between 0.0 and 1.0 they also can be outside that range.</p>
 
 <p>As implemented, <code>rider</code> tries to stay clear of its group's
 siblings, or to stay clear of its own siblings if given a <code>path</code>
@@ -1264,8 +1294,8 @@ final resolution of adjusting coordinates.</p>
 <p>First element is trunk in the center, remaining elements are branches. First
 element could be an empty group.</p>
 
-<p>The fraction in parameter <code>rAlign</code> accepts floating point
-numbers, but it also recognize some symbols (strings in JavaScript).</p>
+<p>The fraction in parameter <code>rAlign</code> accepts decimal numbers, but
+it also recognize some symbols (strings in JavaScript).</p>
 
 <table border="1">
   <tbody>
@@ -1436,6 +1466,74 @@ shoulders.</p>
 <p>The optional parameters of <code>horizontalTree</code> are very similar to
 the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
 
+<h4 id="L1796">1.11.12. Command relative Options</h4>
+
+<p>As implemented, <code>relative</code> works for <code>path</code>.</p>
+
+<p>Command <code>relative</code> resolves simple arithmetic into plain decimal
+numbers.</p>
+
+<p>An expression <code>~ identifier # axis % decimal</code> means from the
+element <a href="#L1780">referenced by the identifier</a> determine a
+coordinate with <code>0.0</code> being its bounding box <code>x</code> or
+<code>y</code> and <code>1.0</code> being its <code>x+width</code> or
+<code>y+height</code>. With decimal number values often between 0.0 and 1.0
+they also can be outside that range.</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td rowspan="2">fine control</td>
+      <td><code>~ identifier # x % decimal</code></td>
+      <td><code>x + decimal * width</code></td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # y % decimal</code></td>
+      <td><code>y + decimal * height</code></td>
+    </tr>
+    <tr>
+      <td rowspan="6">shortcuts</td>
+      <td><code>~ identifier # x</code></td>
+      <td><code>#x%0</code>, left</td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # y</code></td>
+      <td><code>#y%0</code>, top</td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # xw</code></td>
+      <td><code>#x%1</code>, which would be <code>x+width</code>, right</td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # yh</code></td>
+      <td><code>#y%1</code>, which would be <code>y+height</code>, bottom</td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # cx</code></td>
+      <td><code>#x%.5</code>, same as <code>#x%0.5</code>, which would be
+        <code>x+width/2</code>, horizontal center</td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # cy</code></td>
+      <td><code>#y%.5</code>, same as <code>#y%0.5</code>, which would be
+        <code>y+height/2</code>, vertical center</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Linear polynomial expressions are evaluated with normal order of operations.
+Addition <code>+</code>, subtraction <code>-</code>, and multiplication
+<code>*</code> are supported.</p>
+
+<p>As an example, to get the horizontal coordinate exactly in the middle
+between the right edge of element <code>one</code> and the left edge of element
+<code>other</code>, a possible expression is
+<code>~one#xw*0.5+~other#x*0.5</code>. That would be the equivalent of
+<code>((one.x + one.width) + other.x) / 2</code>.</p>
+
+<p>Parentheses are <span class="emphasize">not</span> needed and parentheses
+are <span class="emphasize">not</span> supported.</p>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -1444,8 +1542,8 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
 
 <p>As implemented, <code>explain</code> inserts explanatory elements for
 <code>verticalList</code>, <code>horizontalList</code>,
-<code>connection</code>, <code>rider</code>, <code>circularList</code>, and
-<code>verticalTree</code>.</p>
+<code>connection</code>, <code>rider</code>, <code>circularList</code>,
+<code>verticalTree</code>, and <code>relative</code>.</p>
 
 <table border="1">
   <tbody>
@@ -1455,7 +1553,7 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   …</span>
   &lt;g&gt;
-    &lt;adj:horizontalList makeGrid="true" gap="5" maxPerRow="3" hAlign="center" <span class="example-code">explain="true"</span>/&gt;
+    &lt;adj:<a href="#L7357">horizontalList</a> makeGrid="true" gap="5" maxPerRow="3" hAlign="center" <span class="example-code">explain="true"</span>/&gt;
     &lt;g adj:id="subject-editor"&gt;
     &lt;adj:horizontalList gap="10"/&gt;
       &lt;rect width="0" height="0" class="subject"&gt;
@@ -1470,17 +1568,15 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
       </td>
     </tr>
     <tr>
-      <td><img alt="example" src="adj-ex-007-rider-explained.svg"></img></td>
+      <td><img alt="example"
+        src="adj-ex-023-connection-fromXY-explained.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
-  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
-  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#888"/&gt;
-  &lt;rect adj:id="other" x="145" y="75" width="40" height="30" fill="#ccc"/&gt;
-  &lt;g&gt;
-    &lt;adj:connection from="one#1,0.5" to="other#0,0.5" <span class="example-code">explain="true"</span>/&gt;
-    &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#666" stroke-width="2" fill="none"/&gt;
-    &lt;rect width="30" height="20" fill="#aaa"&gt;
-      &lt;adj:rider at="0.5" <span class="example-code">explain="true"</span>/&gt;
-    &lt;/rect&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect adj:id="one" x="5" y="5" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="other" x="145" y="55" width="40" height="30" fill="#ccc"/&gt;
+  &lt;path d="M5,100 q40,10 80,0 t80,0" stroke="#666" stroke-width="2" fill="none"&gt;
+    &lt;adj:<a href="#L1740">connection</a> from="one#1,0.5" to="other#0,0.5" <span class="example-code">explain="true"</span>/&gt;
+  &lt;/path&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -1499,7 +1595,7 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
       &lt;adj:connection from="one#1,0.5" to="other#0,0.5"/&gt;
       &lt;path d="M45,20q19.265,25.692 50,35t50,35" stroke="#666" stroke-width="2" fill="none"/&gt;
       &lt;rect width="30" height="20" fill="#aaa"&gt;
-        &lt;adj:rider at="0.2,0.7" adjust="near" gap="2" <span class="example-code">explain="true"</span>/&gt;
+        &lt;adj:<a href="#L8701">rider</a> at="0.2,0.7" adjust="near" gap="2" <span class="example-code">explain="true"</span>/&gt;
       &lt;/rect&gt;
     &lt;/g&gt;
   &lt;/g&gt;
@@ -1512,7 +1608,7 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;adj:circularList rAlign="inside" gap="2" <span class="example-code">explain="true"</span>/&gt;
+    &lt;adj:<a href="#L20521">circularList</a> rAlign="inside" gap="2" <span class="example-code">explain="true"</span>/&gt;
     &lt;circle r="20" fill="#000"/&gt;
     &lt;rect width="3" height="3" fill="#222"/&gt;
     &lt;rect width="6" height="6" fill="#444"/&gt;
@@ -1531,7 +1627,7 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="160" fill="linen"/&gt;</span>
   &lt;g&gt;
-    &lt;adj:verticalTree autoParrots="true" hAlign="0.1" vAlign="0.2" gap="12" <span class="example-code">explain="true"</span>/&gt;
+    &lt;adj:<a href="#L8469">verticalTree</a> autoParrots="true" hAlign="0.1" vAlign="0.2" gap="12" <span class="example-code">explain="true"</span>/&gt;
     &lt;text adj:id="r-1" font-size="20"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
     &lt;text adj:id="l-1-1" font-size="20" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
@@ -1544,6 +1640,33 @@ the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
     &lt;text adj:id="l-1-2-3" adj:treeParent="n-1-2"&gt;L123&lt;/text&gt;
     &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
   &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-053-relative-explained.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="180" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:verticalTree leftGap="20" centerGap="30" childlessGap="10" middleGap="40"/&gt;
+    &lt;rect adj:id="o1" width="40" height="30" fill="#000"/&gt;
+    &lt;rect adj:id="o2" adj:treeParent="o1" width="30" height="20" fill="#666"/&gt;
+    &lt;rect adj:id="o3" adj:treeParent="o2" width="25" height="15" fill="#888"/&gt;
+    &lt;rect adj:id="o4" adj:treeParent="o2" width="25" height="15" fill="#aaa"/&gt;
+    &lt;rect adj:id="o5" adj:treeParent="o1" width="30" height="20" fill="#bbb"/&gt;
+    &lt;rect adj:id="o6" adj:treeParent="o5" width="25" height="15" fill="#ccc"/&gt;
+    &lt;rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd"/&gt;
+  &lt;/g&gt;
+  &lt;path d="M0,0" stroke="#777" stroke-width="2" fill="none" adj:d="M ~o1#x - 10, ~o1#yh
+  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy
+  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy
+  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10
+  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10
+  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
+  C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5 + 10 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
+  S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
+    &lt;adj:<a href="#L1796">relative</a> <span class="example-code">explain="true"</span>/&gt;
+  &lt;/path&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -1567,8 +1690,10 @@ detail than you were hoping for.</p>
 <p>Some commands refer to elements by identifier. These include command
 <code><a href="#L1740">connection</a></code> parameters <code>from</code> and
 <code>to</code>, command <code><a href="#L8701">rider</a></code> parameter
-<code>path</code>, and command <code><a href="#L8469">verticalTree</a></code>
-child element attribute <code>adj:treeParent</code>.</p>
+<code>path</code>, command <code><a href="#L8469">verticalTree</a></code> child
+element attribute <code>adj:treeParent</code>, and command <code><a
+href="#L1796">relative</a></code> when resolving element attribute
+<code>adj:d</code>.</p>
 
 <h4 id="L1807">1.13.2. Attribute adj:id</h4>
 
@@ -1588,8 +1713,10 @@ attributes. Future versions of Adj may or may not recognize plain
 <h4 id="L1842">1.13.3. Function Adj.getElementByIdNearby</h4>
 
 <p>As implemented, command <code>connection</code> parameters <code>from</code>
-and <code>to</code>, and command <code>rider</code> parameter <code>path</code>
-are using JavaScript function <code>Adj.getElementByIdNearby</code>.</p>
+and <code>to</code>, command <code>rider</code> parameter <code>path</code>,
+and command <code>relative</code> when resolving element attribute
+<code>adj:d</code> are using JavaScript function
+<code>Adj.getElementByIdNearby</code>.</p>
 
 <p>Function <code>Adj.getElementByIdNearby</code> finds the element with a
 given identifier that is nearest to the referencing element, rather than
@@ -1806,7 +1933,7 @@ preexisting transformation has been the older version.</p>
 to be applying it as appropriate at a parent or child element, possibly at a
 dedicate group element <code>g</code>.</p>
 
-<p><span class="todo">TODO: a good example, if we can find any</span></p>
+<p><span class="todo">TODO: a good example</span></p>
 
 <h4 id="L123334">1.17.3. Transforming An SVG Path</h4>
 
@@ -1901,24 +2028,28 @@ many.</span></p>
 <p>Adj prioritizes the showing of <span class="emphasize">all</span> necessary
 information. Adj facilitates representation and communication of complexity.</p>
 
-<p>How to organize rich sets of relevant detail? In word processing, the
-metaphor is a sufficiently long scroll of paper, continuous for a webpage,
-paginated for printing: When more information gets inserted, the scroll gets
-longer, the webpage gets longer, more pages will be printed. In most
-presentation programs, detail must go on other slides, or might be rephrased to
-fit.</p>
+<p>How to organize rich sets of relevant detail?</p>
 
 <p>In Adj the metaphor is a large sheet that expands as needed, when more
 information gets added. Expansion is in both dimensions, x and y.</p>
 
-<p>Change happens. Without Adj, large and complex diagrams, and large sets of
-diagrams, could become outdated too quickly. The cost of updating diagrams can
-become prohibitive. Editing change into a diagram too easily can destroy an
-appearance of perfection that has been achieved in a first version.</p>
+<p class="deemphasize">In contrast, in word processing, the metaphor is a
+sufficiently long scroll of paper, continuous for a webpage, paginated for
+printing: When more information gets inserted, the scroll gets longer, the
+webpage gets longer, more pages will be printed. In most presentation programs,
+detail must go on other slides, or might be rephrased to fit.</p>
+
+<p>Change happens.</p>
 
 <p>To accommodate change, Adj facilitates diagrams being updated in ways that
 maintain perfect looks. Adj facilitates automated propagation of change, both
 change of content and change of appearance.</p>
+
+<p class="deemphasize">In contrast, without Adj, large and complex diagrams,
+and large sets of diagrams, could become outdated too quickly. The cost of
+updating diagrams can become prohibitive. Editing change into a diagram too
+easily can destroy an appearance of perfection that has been achieved in a
+first version.</p>
 
 <p>Adj also may facilitate linking, scripting, and folding.</p>
 

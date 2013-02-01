@@ -96,7 +96,7 @@
 		</g>
 		<g transform="translate(5,157)">
 			<adj:verticalList gap="0" middleGap="3"/>
-			<text style="fill:gray" transform="translate(2,12)">Sample drawing source with an illustration of function <tspan font-family="monospace">Adj.getElementByIdNearby</tspan> as designed</text>
+			<text style="fill:gray" transform="translate(2,12)">Sample drawing source with an illustration of function <tspan font-family="monospace">Adj.getElementByIdNearby</tspan> as implemented</text>
 			<text style="fill:gray" transform="translate(2,30)">finding different respective "nearby" instances of <tspan font-family="monospace">adj:id</tspan> that are <tspan class="emphasize">not</tspan> unique per document.</text>
 		</g>
 		<g transform="translate(5,210)">
