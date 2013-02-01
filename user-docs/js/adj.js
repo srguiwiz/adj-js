@@ -3440,7 +3440,7 @@ Adj.firstTimeStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordi
 
 // constants
 // parse a ~ prefix, an id, a #, a field, and optionally a % and one more parameter, e.g. full "~obj1#x%0.2" or less specific "~obj2#yh"
-Adj.idRelativeRegexp = /~\s*([^#\s]+)\s*#\s*([^%,+\-*)\s]+)(?:\s*%\s*(-?[0-9.]+))?/g;
+Adj.idArithmeticRegexp = /~\s*([^#\s]+)\s*#\s*([^%,+\-*)\s]+)(?:\s*%\s*(-?[0-9.]+))?/g;
 // match a simple arithmetic expression, allowing integer and decimal numbers, +, -, and *, e.g. "0.5 * 125 + 20"
 Adj.simpleArithmeticRegexp = /(-?\.?[0-9.]+(?:\s*[+\-*]\s*-?[0-9.]+)+)/g;
 Adj.simpleArithmeticNumberRegexp = /(-?\.?[0-9.]+)/g;
@@ -3448,15 +3448,15 @@ Adj.simpleArithmeticOperatorRegexp = /([+\-*])/g;
 
 // a specific algorithm
 // note: as implemented works for path
-Adj.algorithms.relative = {
+Adj.algorithms.arithmetic = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase2Up",
-	method: function relative (element, parametersObject) {
+	method: function arithmetic (element, parametersObject) {
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
-		var relativeElementsById = [];
+		var arithmeticElementRecordsById = [];
 		//
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
@@ -3469,93 +3469,121 @@ Adj.algorithms.relative = {
 				authoringD = "";
 			}
 			var replacements = [];
-			Adj.idRelativeRegexp.lastIndex = 0; // be safe
-			var idRelativeMatch = Adj.idRelativeRegexp.exec(authoringD);
-			while (idRelativeMatch) {
-				var relativeId = idRelativeMatch[1];
-				var relativeElement = relativeElementsById[relativeId];
-				if (relativeElement == undefined) {
-					relativeElement = relativeElementsById[relativeId] = Adj.getElementByIdNearby(relativeId, element);
+			Adj.idArithmeticRegexp.lastIndex = 0; // be safe
+			var idArithmeticMatch = Adj.idArithmeticRegexp.exec(authoringD);
+			while (idArithmeticMatch) {
+				var arithmeticId = idArithmeticMatch[1];
+				var arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId];
+				if (arithmeticElementRecord == undefined) {
+					var arithmeticElement = Adj.getElementByIdNearby(arithmeticId, element);
+					if (!arithmeticElement) {
+						throw "nonresolving ~ id \"" + arithmeticId + "\" used in an attribute adj:d= for a path element";
+					}
+					arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId] = {
+						boundingBox: arithmeticElement.getBBox(),
+						matrixFrom: arithmeticElement.getTransformToElement(element)
+					};
 				}
-				if (!relativeElement) {
-					throw "nonresolving ~ id \"" + relativeId + "\" used in an attribute adj:d= for a path element";
-				}
-				var relativeField = idRelativeMatch[2];
-				var relativeParameter = idRelativeMatch[3];
+				var arithmeticField = idArithmeticMatch[2];
+				var arithmeticParameter = idArithmeticMatch[3];
 				var isX = false;
 				var isY = false;
+				var withoutEF = false;
 				var needsParameter = false;
-				var relativeX;
-				var relativeY;
-				switch (relativeField) {
+				var arithmeticX;
+				var arithmeticY;
+				switch (arithmeticField) {
 					case "x":
 						isX = true;
-						if (isNaN(relativeParameter)) {
-							relativeX = 0;
+						if (isNaN(arithmeticParameter)) {
+							arithmeticX = 0;
 						} else {
 							needsParameter = true;
-							relativeX = relativeParameter;
+							arithmeticX = arithmeticParameter;
 						}
 						break;
 					case "y":
 						isY = true;
-						if (isNaN(relativeParameter)) {
-							relativeY = 0;
+						if (isNaN(arithmeticParameter)) {
+							arithmeticY = 0;
 						} else {
 							needsParameter = true;
-							relativeY = relativeParameter;
+							arithmeticY = arithmeticParameter;
 						}
 						break;
 					case "xw":
 						isX = true;
-						relativeX = 1;
+						arithmeticX = 1;
 						break;
 					case "yh":
 						isY = true;
-						relativeY = 1;
+						arithmeticY = 1;
 						break;
 					case "cx":
 						isX = true;
-						relativeX = 0.5;
+						arithmeticX = 0.5;
 						break;
 					case "cy":
 						isY = true;
-						relativeY = 0.5;
+						arithmeticY = 0.5;
+						break;
+					case "w":
+						isX = true;
+						withoutEF = true;
+						break;
+					case "h":
+						isY = true;
+						withoutEF = true;
 						break;
 					default:
-						throw "unknown # field \"" + relativeField + "\" used in an attribute adj:d= for a path element";
+						throw "unknown # field \"" + arithmeticField + "\" used in an attribute adj:d= for a path element";
 				}
 				if (needsParameter) {
-					if (isNaN(relativeParameter)) {
-						throw "not a number % parameter \"" + relativeParameter + "\" used in an attribute adj:d= for a path element";
+					if (isNaN(arithmeticParameter)) {
+						throw "not a number % parameter \"" + arithmeticParameter + "\" used in an attribute adj:d= for a path element";
 					}
 				}
-				if (isNaN(relativeX)) { // unknown for now
-					relativeX = 0.5;
+				var arithmeticBoundingBox = arithmeticElementRecord.boundingBox;
+				var matrixFromArithmeticElement = arithmeticElementRecord.matrixFrom;
+				var arithmeticPoint = document.documentElement.createSVGPoint();
+				if (!withoutEF) {
+					if (isNaN(arithmeticX)) { // unknown for now
+						arithmeticX = 0.5;
+					}
+					if (isNaN(arithmeticY)) { // unknown for now
+						arithmeticY = 0.5;
+					}
+					arithmeticPoint.x = arithmeticBoundingBox.x + arithmeticBoundingBox.width * arithmeticX;
+					arithmeticPoint.y = arithmeticBoundingBox.y + arithmeticBoundingBox.height * arithmeticY;
+					arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElement);
+				} else { // withoutEF
+					// relative coordinates must be transformed without translation's e and f
+					var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF;
+					if (matrixFromArithmeticElementWithoutEF == undefined) {
+						var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF = document.documentElement.createSVGMatrix();
+						matrixFromArithmeticElementWithoutEF.a = matrixFromArithmeticElement.a;
+						matrixFromArithmeticElementWithoutEF.b = matrixFromArithmeticElement.b;
+						matrixFromArithmeticElementWithoutEF.c = matrixFromArithmeticElement.c;
+						matrixFromArithmeticElementWithoutEF.d = matrixFromArithmeticElement.d;
+					}
+					arithmeticPoint.x = arithmeticBoundingBox.width;
+					arithmeticPoint.y = arithmeticBoundingBox.height;
+					arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElementWithoutEF);
 				}
-				if (isNaN(relativeY)) { // unknown for now
-					relativeY = 0.5;
-				}
-				var relativeBoundingBox = relativeElement.getBBox();
-				var matrixFromRelativeElement = relativeElement.getTransformToElement(element);
-				var relativePoint = document.documentElement.createSVGPoint();
-				relativePoint.x = relativeBoundingBox.x + relativeBoundingBox.width * relativeX;
-				relativePoint.y = relativeBoundingBox.y + relativeBoundingBox.height * relativeY;
-				relativePoint = relativePoint.matrixTransform(matrixFromRelativeElement);
-				var relativeCoordinate;
+				var arithmeticCoordinate;
 				if (isX) {
-					relativeCoordinate = relativePoint.x;
+					arithmeticCoordinate = arithmeticPoint.x;
 				} else { // isY
-					relativeCoordinate = relativePoint.y;
+					arithmeticCoordinate = arithmeticPoint.y;
 				}
-				relativeCoordinate = Adj.decimal(relativeCoordinate);
+				arithmeticCoordinate = Adj.decimal(arithmeticCoordinate);
 				replacements.push({
-					index: idRelativeMatch.index,
-					lastIndex: Adj.idRelativeRegexp.lastIndex,
-					relativeCoordinate: relativeCoordinate
+					index: idArithmeticMatch.index,
+					lastIndex: Adj.idArithmeticRegexp.lastIndex,
+					arithmeticCoordinate: arithmeticCoordinate
 				});
 				//
-				idRelativeMatch = Adj.idRelativeRegexp.exec(authoringD);
+				idArithmeticMatch = Adj.idArithmeticRegexp.exec(authoringD);
 			}
 			var replacementsLength = replacements.length;
 			var replacementSegments = [];
@@ -3563,7 +3591,7 @@ Adj.algorithms.relative = {
 			for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
 				var replacement = replacements[replacementIndex];
 				replacementSegments.push(authoringD.substring(previousIndex, replacement.index));
-				replacementSegments.push(replacement.relativeCoordinate);
+				replacementSegments.push(replacement.arithmeticCoordinate);
 				previousIndex = replacement.lastIndex;
 			}
 			replacementSegments.push(authoringD.substring(previousIndex, authoringD.length));

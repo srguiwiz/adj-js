@@ -106,7 +106,7 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
           <li><a href="#L8469">1.11.10. Command verticalTree Options</a></li>
           <li><a href="#L1773">1.11.11. Command horizontalTree Options</a></li>
-          <li><a href="#L1796">1.11.12. Command relative Options</a></li>
+          <li><a href="#L1796">1.11.12. Command arithmetic Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -552,7 +552,7 @@ stored away for reuse by authors and algorithms:</p>
       </td>
     </tr>
     <tr>
-      <td><img alt="example" src="adj-ex-053-relative.svg"></img></td>
+      <td><img alt="example" src="adj-ex-053-arithmetic.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="180" fill="linen"/&gt;</span>
   &lt;g&gt;
@@ -573,7 +573,7 @@ stored away for reuse by authors and algorithms:</p>
   S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
   C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, <span class="example-code">~o2#yh * 0.5 + ~o4#y * 0.5 + 10</span> ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
   S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
-    <span class="example-code">&lt;adj:<a href="#L1796">relative</a>/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L1796">arithmetic</a>/&gt;</span>
   &lt;/path&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -1466,12 +1466,12 @@ shoulders.</p>
 <p>The optional parameters of <code>horizontalTree</code> are very similar to
 the optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
 
-<h4 id="L1796">1.11.12. Command relative Options</h4>
+<h4 id="L1796">1.11.12. Command arithmetic Options</h4>
 
-<p>As implemented, <code>relative</code> works for <code>path</code>.</p>
+<p>As implemented, <code>arithmetic</code> works for <code>path</code>.</p>
 
-<p>Command <code>relative</code> resolves simple arithmetic into plain decimal
-numbers.</p>
+<p>Command <code>arithmetic</code> resolves simple arithmetic into plain
+decimal numbers.</p>
 
 <p>An expression <code>~ identifier # axis % decimal</code> means from the
 element <a href="#L1780">referenced by the identifier</a> determine a
@@ -1483,7 +1483,9 @@ they also can be outside that range.</p>
 <table border="1">
   <tbody>
     <tr>
-      <td rowspan="2">fine control</td>
+      <td rowspan="2" style="text-align:center">fine control,<br />
+        absolute<br />
+        x or y</td>
       <td><code>~ identifier # x % decimal</code></td>
       <td><code>x + decimal * width</code></td>
     </tr>
@@ -1492,7 +1494,9 @@ they also can be outside that range.</p>
       <td><code>y + decimal * height</code></td>
     </tr>
     <tr>
-      <td rowspan="6">shortcuts</td>
+      <td rowspan="6" style="text-align:center">shortcuts,<br />
+        absolute<br />
+        x or y</td>
       <td><code>~ identifier # x</code></td>
       <td><code>#x%0</code>, left</td>
     </tr>
@@ -1517,6 +1521,16 @@ they also can be outside that range.</p>
       <td><code>~ identifier # cy</code></td>
       <td><code>#y%.5</code>, same as <code>#y%0.5</code>, which would be
         <code>y+height/2</code>, vertical center</td>
+    </tr>
+    <tr>
+      <td rowspan="2" style="text-align:center">relative<br />
+        w or h</td>
+      <td><code>~ identifier # w</code></td>
+      <td><code>width</code></td>
+    </tr>
+    <tr>
+      <td><code>~ identifier # h</code></td>
+      <td><code>height</code></td>
     </tr>
   </tbody>
 </table>
@@ -1543,7 +1557,7 @@ are <span class="emphasize">not</span> supported.</p>
 <p>As implemented, <code>explain</code> inserts explanatory elements for
 <code>verticalList</code>, <code>horizontalList</code>,
 <code>connection</code>, <code>rider</code>, <code>circularList</code>,
-<code>verticalTree</code>, and <code>relative</code>.</p>
+<code>verticalTree</code>, and <code>arithmetic</code>.</p>
 
 <table border="1">
   <tbody>
@@ -1644,7 +1658,8 @@ are <span class="emphasize">not</span> supported.</p>
       </td>
     </tr>
     <tr>
-      <td><img alt="example" src="adj-ex-053-relative-explained.svg"></img></td>
+      <td><img alt="example"
+      src="adj-ex-053-arithmetic-explained.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="180" fill="linen"/&gt;</span>
   &lt;g&gt;
@@ -1665,7 +1680,7 @@ are <span class="emphasize">not</span> supported.</p>
   S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
   C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5 + 10 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
   S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
-    &lt;adj:<a href="#L1796">relative</a> <span class="example-code">explain="true"</span>/&gt;
+    &lt;adj:<a href="#L1796">arithmetic</a> <span class="example-code">explain="true"</span>/&gt;
   &lt;/path&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -1692,7 +1707,7 @@ detail than you were hoping for.</p>
 <code>to</code>, command <code><a href="#L8701">rider</a></code> parameter
 <code>path</code>, command <code><a href="#L8469">verticalTree</a></code> child
 element attribute <code>adj:treeParent</code>, and command <code><a
-href="#L1796">relative</a></code> when resolving element attribute
+href="#L1796">arithmetic</a></code> when resolving element attribute
 <code>adj:d</code>.</p>
 
 <h4 id="L1807">1.13.2. Attribute adj:id</h4>
@@ -1714,7 +1729,7 @@ attributes. Future versions of Adj may or may not recognize plain
 
 <p>As implemented, command <code>connection</code> parameters <code>from</code>
 and <code>to</code>, command <code>rider</code> parameter <code>path</code>,
-and command <code>relative</code> when resolving element attribute
+and command <code>arithmetic</code> when resolving element attribute
 <code>adj:d</code> are using JavaScript function
 <code>Adj.getElementByIdNearby</code>.</p>
 

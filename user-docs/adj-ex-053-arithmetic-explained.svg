@@ -13,7 +13,7 @@
 		<rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd" transform="translate(145,140)"/>
 	</g>
 	<path d="M 65, 40  C 65, 50 25, 74 25, 90  S 10, 135.5 10, 147.5  C 10, 165 20, 165 32.5, 165  S 55, 165 67.5, 165  S 90, 165 90, 147.5  C 90, 120 65, 130 65, 120  S 65, 110 95, 110" stroke="#777" stroke-width="2" fill="none" adj:d="M ~o1#x - 10, ~o1#yh  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy  C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5 + 10 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5  S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10">
-		<adj:relative explain="true"/>
+		<adj:arithmetic explain="true"/>
 	</path>
 	<path adj:explanation="true" d="M 65, 40  C 65, 50 25, 74 25, 90  S 10, 135.5 10, 147.5  C 10, 165 20, 165 32.5, 165  S 55, 165 67.5, 165  S 90, 165 90, 147.5  C 90, 120 65, 130 65, 120  S 65, 110 95, 110" fill="none" fill-opacity="0.1" stroke="blue" stroke-width="3" stroke-opacity="0.2"/>
 	<circle adj:explanation="true" cx="65" cy="40" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
