@@ -1058,6 +1058,9 @@ Adj.idXYRegexp = /^\s*([^#\s]+)\s*(?:#\s*([^,\s]+)\s*)?(?:,\s*([^,\s]+)\s*)?(?:,
 // parse one or two parameters, e.g. "0.5, 1" or only "0.3"
 // note: as implemented tolerates extra paremeters
 Adj.oneOrTwoRegexp = /^\s*([^,\s]+)\s*(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
+// parse two parameters, e.g. "0.5, 1"
+// note: as implemented tolerates extra paremeters
+Adj.twoRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
 
 // note: document.documentElement.createSVGPoint() used because createSVGPoint() only implemented in SVG element,
 // same for createSVGRect(), createSVGMatrix()
@@ -3446,6 +3449,221 @@ Adj.simpleArithmeticRegexp = /(-?\.?[0-9.]+(?:\s*[+\-*]\s*-?[0-9.]+)+)/g;
 Adj.simpleArithmeticNumberRegexp = /(-?\.?[0-9.]+)/g;
 Adj.simpleArithmeticOperatorRegexp = /([+\-*])/g;
 
+// essential
+// resolve ids and evaluate simple arithmetic
+Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpression, arithmeticElementRecordsById, usedHow) {
+	if (!arithmeticElementRecordsById) { // if not given one to reuse, make one for local use here
+		arithmeticElementRecordsById = [];
+	}
+	if (!usedHow) {
+		usedHow = "";
+	}
+	//
+	// firstly resolve ids
+	var replacements = [];
+	Adj.idArithmeticRegexp.lastIndex = 0; // be safe
+	var idArithmeticMatch = Adj.idArithmeticRegexp.exec(originalExpression);
+	while (idArithmeticMatch) {
+		var arithmeticId = idArithmeticMatch[1];
+		var arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId];
+		if (arithmeticElementRecord == undefined) {
+			var arithmeticElement = Adj.getElementByIdNearby(arithmeticId, element);
+			if (!arithmeticElement) {
+				throw "nonresolving ~ id \"" + arithmeticId + "\" " + usedHow;
+			}
+			arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId] = {
+				boundingBox: arithmeticElement.getBBox(),
+				matrixFrom: arithmeticElement.getTransformToElement(element)
+			};
+		}
+		var arithmeticField = idArithmeticMatch[2];
+		var arithmeticParameter = idArithmeticMatch[3];
+		var isX = false;
+		var isY = false;
+		var withoutEF = false;
+		var needsParameter = false;
+		var arithmeticX;
+		var arithmeticY;
+		switch (arithmeticField) {
+			case "x":
+				isX = true;
+				if (isNaN(arithmeticParameter)) {
+					arithmeticX = 0;
+				} else {
+					needsParameter = true;
+					arithmeticX = arithmeticParameter;
+				}
+				break;
+			case "y":
+				isY = true;
+				if (isNaN(arithmeticParameter)) {
+					arithmeticY = 0;
+				} else {
+					needsParameter = true;
+					arithmeticY = arithmeticParameter;
+				}
+				break;
+			case "xw":
+				isX = true;
+				arithmeticX = 1;
+				break;
+			case "yh":
+				isY = true;
+				arithmeticY = 1;
+				break;
+			case "cx":
+				isX = true;
+				arithmeticX = 0.5;
+				break;
+			case "cy":
+				isY = true;
+				arithmeticY = 0.5;
+				break;
+			case "w":
+				isX = true;
+				withoutEF = true;
+				break;
+			case "h":
+				isY = true;
+				withoutEF = true;
+				break;
+			default:
+				throw "unknown # field \"" + arithmeticField + "\" " + usedHow;
+		}
+		if (needsParameter) {
+			if (isNaN(arithmeticParameter)) {
+				throw "not a number % parameter \"" + arithmeticParameter + "\" " + usedHow;
+			}
+		}
+		var arithmeticBoundingBox = arithmeticElementRecord.boundingBox;
+		var matrixFromArithmeticElement = arithmeticElementRecord.matrixFrom;
+		var arithmeticPoint = document.documentElement.createSVGPoint();
+		if (!withoutEF) {
+			if (isNaN(arithmeticX)) { // unknown for now
+				arithmeticX = 0.5;
+			}
+			if (isNaN(arithmeticY)) { // unknown for now
+				arithmeticY = 0.5;
+			}
+			arithmeticPoint.x = arithmeticBoundingBox.x + arithmeticBoundingBox.width * arithmeticX;
+			arithmeticPoint.y = arithmeticBoundingBox.y + arithmeticBoundingBox.height * arithmeticY;
+			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElement);
+		} else { // withoutEF
+			// relative coordinates must be transformed without translation's e and f
+			var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF;
+			if (matrixFromArithmeticElementWithoutEF == undefined) {
+				var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF = document.documentElement.createSVGMatrix();
+				matrixFromArithmeticElementWithoutEF.a = matrixFromArithmeticElement.a;
+				matrixFromArithmeticElementWithoutEF.b = matrixFromArithmeticElement.b;
+				matrixFromArithmeticElementWithoutEF.c = matrixFromArithmeticElement.c;
+				matrixFromArithmeticElementWithoutEF.d = matrixFromArithmeticElement.d;
+			}
+			arithmeticPoint.x = arithmeticBoundingBox.width;
+			arithmeticPoint.y = arithmeticBoundingBox.height;
+			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElementWithoutEF);
+		}
+		var arithmeticCoordinate;
+		if (isX) {
+			arithmeticCoordinate = arithmeticPoint.x;
+		} else { // isY
+			arithmeticCoordinate = arithmeticPoint.y;
+		}
+		arithmeticCoordinate = Adj.decimal(arithmeticCoordinate);
+		replacements.push({
+			index: idArithmeticMatch.index,
+			lastIndex: Adj.idArithmeticRegexp.lastIndex,
+			arithmeticCoordinate: arithmeticCoordinate
+		});
+		//
+		idArithmeticMatch = Adj.idArithmeticRegexp.exec(originalExpression);
+	}
+	var replacementsLength = replacements.length;
+	var replacementSegments = [];
+	var previousIndex = 0;
+	for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
+		var replacement = replacements[replacementIndex];
+		replacementSegments.push(originalExpression.substring(previousIndex, replacement.index));
+		replacementSegments.push(replacement.arithmeticCoordinate);
+		previousIndex = replacement.lastIndex;
+	}
+	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
+	var idsResolvedExpression = replacementSegments.join("");
+	//
+	// secondly evaluate simple arithmetic
+	var replacements = [];
+	Adj.simpleArithmeticRegexp.lastIndex = 0; // be safe
+	var simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedExpression);
+	while (simpleArithmeticMatch) {
+		var arithmeticExpression = simpleArithmeticMatch[1];
+		var sumSoFar = 0; // start with 0
+		var currentAddend = 0; // start with 0
+		var simpleNumberMatch;
+		var simpleNumber;
+		var simpleOperatorMatch;
+		var simpleOperator = "+"; // start with 0 + 0
+		Adj.simpleArithmeticOperatorRegexp.lastIndex = 0;
+		do {
+			Adj.simpleArithmeticNumberRegexp.lastIndex = Adj.simpleArithmeticOperatorRegexp.lastIndex;
+			simpleNumberMatch = Adj.simpleArithmeticNumberRegexp.exec(arithmeticExpression);
+			simpleNumber = simpleNumberMatch[1];
+			if (isNaN(simpleNumber)) {
+				throw "not a number  \"" + simpleNumber + "\" " + usedHow;
+			}
+			simpleNumber = parseFloat(simpleNumber);
+			switch (simpleOperator) {
+				case "*":
+					currentAddend *= simpleNumber;
+					break;
+				case "+":
+					currentAddend = simpleNumber;
+					break;
+				case "-":
+					currentAddend = -simpleNumber;
+					break;
+				default: // should never get here
+					break;
+			}
+			//
+			Adj.simpleArithmeticOperatorRegexp.lastIndex = Adj.simpleArithmeticNumberRegexp.lastIndex;
+			simpleOperatorMatch = Adj.simpleArithmeticOperatorRegexp.exec(arithmeticExpression);
+			if (simpleOperatorMatch) {
+				simpleOperator = simpleOperatorMatch[1];
+				switch (simpleOperator) {
+					case "*":
+						break;
+					case "+":
+					case "-":
+						sumSoFar += currentAddend;
+						break;
+					default: // should never get here
+						break;
+				}
+			} else { // should be end of arithmeticExpression
+				sumSoFar += currentAddend;
+			}
+		} while (simpleOperatorMatch);
+		replacements.push({
+			index: simpleArithmeticMatch.index,
+			lastIndex: Adj.simpleArithmeticRegexp.lastIndex,
+			arithmeticExpression: sumSoFar.toString()
+		});
+		//
+		simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedExpression);
+	}
+	var replacementsLength = replacements.length;
+	var replacementSegments = [];
+	var previousIndex = 0;
+	for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
+		var replacement = replacements[replacementIndex];
+		replacementSegments.push(idsResolvedExpression.substring(previousIndex, replacement.index));
+		replacementSegments.push(replacement.arithmeticExpression);
+		previousIndex = replacement.lastIndex;
+	}
+	replacementSegments.push(idsResolvedExpression.substring(previousIndex, idsResolvedExpression.length));
+	var evaluatedExpression = replacementSegments.join("");
+	return evaluatedExpression;
+}
+
 // a specific algorithm
 // note: as implemented works for path
 Adj.algorithms.arithmetic = {
@@ -3468,208 +3686,9 @@ Adj.algorithms.arithmetic = {
 			if (!authoringD) {
 				authoringD = "";
 			}
-			var replacements = [];
-			Adj.idArithmeticRegexp.lastIndex = 0; // be safe
-			var idArithmeticMatch = Adj.idArithmeticRegexp.exec(authoringD);
-			while (idArithmeticMatch) {
-				var arithmeticId = idArithmeticMatch[1];
-				var arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId];
-				if (arithmeticElementRecord == undefined) {
-					var arithmeticElement = Adj.getElementByIdNearby(arithmeticId, element);
-					if (!arithmeticElement) {
-						throw "nonresolving ~ id \"" + arithmeticId + "\" used in an attribute adj:d= for a path element";
-					}
-					arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId] = {
-						boundingBox: arithmeticElement.getBBox(),
-						matrixFrom: arithmeticElement.getTransformToElement(element)
-					};
-				}
-				var arithmeticField = idArithmeticMatch[2];
-				var arithmeticParameter = idArithmeticMatch[3];
-				var isX = false;
-				var isY = false;
-				var withoutEF = false;
-				var needsParameter = false;
-				var arithmeticX;
-				var arithmeticY;
-				switch (arithmeticField) {
-					case "x":
-						isX = true;
-						if (isNaN(arithmeticParameter)) {
-							arithmeticX = 0;
-						} else {
-							needsParameter = true;
-							arithmeticX = arithmeticParameter;
-						}
-						break;
-					case "y":
-						isY = true;
-						if (isNaN(arithmeticParameter)) {
-							arithmeticY = 0;
-						} else {
-							needsParameter = true;
-							arithmeticY = arithmeticParameter;
-						}
-						break;
-					case "xw":
-						isX = true;
-						arithmeticX = 1;
-						break;
-					case "yh":
-						isY = true;
-						arithmeticY = 1;
-						break;
-					case "cx":
-						isX = true;
-						arithmeticX = 0.5;
-						break;
-					case "cy":
-						isY = true;
-						arithmeticY = 0.5;
-						break;
-					case "w":
-						isX = true;
-						withoutEF = true;
-						break;
-					case "h":
-						isY = true;
-						withoutEF = true;
-						break;
-					default:
-						throw "unknown # field \"" + arithmeticField + "\" used in an attribute adj:d= for a path element";
-				}
-				if (needsParameter) {
-					if (isNaN(arithmeticParameter)) {
-						throw "not a number % parameter \"" + arithmeticParameter + "\" used in an attribute adj:d= for a path element";
-					}
-				}
-				var arithmeticBoundingBox = arithmeticElementRecord.boundingBox;
-				var matrixFromArithmeticElement = arithmeticElementRecord.matrixFrom;
-				var arithmeticPoint = document.documentElement.createSVGPoint();
-				if (!withoutEF) {
-					if (isNaN(arithmeticX)) { // unknown for now
-						arithmeticX = 0.5;
-					}
-					if (isNaN(arithmeticY)) { // unknown for now
-						arithmeticY = 0.5;
-					}
-					arithmeticPoint.x = arithmeticBoundingBox.x + arithmeticBoundingBox.width * arithmeticX;
-					arithmeticPoint.y = arithmeticBoundingBox.y + arithmeticBoundingBox.height * arithmeticY;
-					arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElement);
-				} else { // withoutEF
-					// relative coordinates must be transformed without translation's e and f
-					var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF;
-					if (matrixFromArithmeticElementWithoutEF == undefined) {
-						var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF = document.documentElement.createSVGMatrix();
-						matrixFromArithmeticElementWithoutEF.a = matrixFromArithmeticElement.a;
-						matrixFromArithmeticElementWithoutEF.b = matrixFromArithmeticElement.b;
-						matrixFromArithmeticElementWithoutEF.c = matrixFromArithmeticElement.c;
-						matrixFromArithmeticElementWithoutEF.d = matrixFromArithmeticElement.d;
-					}
-					arithmeticPoint.x = arithmeticBoundingBox.width;
-					arithmeticPoint.y = arithmeticBoundingBox.height;
-					arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElementWithoutEF);
-				}
-				var arithmeticCoordinate;
-				if (isX) {
-					arithmeticCoordinate = arithmeticPoint.x;
-				} else { // isY
-					arithmeticCoordinate = arithmeticPoint.y;
-				}
-				arithmeticCoordinate = Adj.decimal(arithmeticCoordinate);
-				replacements.push({
-					index: idArithmeticMatch.index,
-					lastIndex: Adj.idArithmeticRegexp.lastIndex,
-					arithmeticCoordinate: arithmeticCoordinate
-				});
-				//
-				idArithmeticMatch = Adj.idArithmeticRegexp.exec(authoringD);
-			}
-			var replacementsLength = replacements.length;
-			var replacementSegments = [];
-			var previousIndex = 0;
-			for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
-				var replacement = replacements[replacementIndex];
-				replacementSegments.push(authoringD.substring(previousIndex, replacement.index));
-				replacementSegments.push(replacement.arithmeticCoordinate);
-				previousIndex = replacement.lastIndex;
-			}
-			replacementSegments.push(authoringD.substring(previousIndex, authoringD.length));
-			var idsResolvedD = replacementSegments.join("");
+			var dWithArithmeticEvaluated = Adj.evaluateArithmetic(element, authoringD, arithmeticElementRecordsById, "used in attribute adj:d= for a path element");
 			//
-			var replacements = [];
-			Adj.simpleArithmeticRegexp.lastIndex = 0; // be safe
-			var simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedD);
-			while (simpleArithmeticMatch) {
-				var arithmeticExpression = simpleArithmeticMatch[1];
-				var sumSoFar = 0; // start with 0
-				var currentAddend = 0; // start with 0
-				var simpleNumberMatch;
-				var simpleNumber;
-				var simpleOperatorMatch;
-				var simpleOperator = "+"; // start with 0 + 0
-				Adj.simpleArithmeticOperatorRegexp.lastIndex = 0;
-				do {
-					Adj.simpleArithmeticNumberRegexp.lastIndex = Adj.simpleArithmeticOperatorRegexp.lastIndex;
-					simpleNumberMatch = Adj.simpleArithmeticNumberRegexp.exec(arithmeticExpression);
-					simpleNumber = simpleNumberMatch[1];
-					if (isNaN(simpleNumber)) {
-						throw "not a number  \"" + simpleNumber + "\" used in an attribute adj:d= for a path element";
-					}
-					simpleNumber = parseFloat(simpleNumber);
-					switch (simpleOperator) {
-						case "*":
-							currentAddend *= simpleNumber;
-							break;
-						case "+":
-							currentAddend = simpleNumber;
-							break;
-						case "-":
-							currentAddend = -simpleNumber;
-							break;
-						default: // should never get here
-							break;
-					}
-					//
-					Adj.simpleArithmeticOperatorRegexp.lastIndex = Adj.simpleArithmeticNumberRegexp.lastIndex;
-					simpleOperatorMatch = Adj.simpleArithmeticOperatorRegexp.exec(arithmeticExpression);
-					if (simpleOperatorMatch) {
-						simpleOperator = simpleOperatorMatch[1];
-						switch (simpleOperator) {
-							case "*":
-								break;
-							case "+":
-							case "-":
-								sumSoFar += currentAddend;
-								break;
-							default: // should never get here
-								break;
-						}
-					} else { // should be end of arithmeticExpression
-						sumSoFar += currentAddend;
-					}
-				} while (simpleOperatorMatch);
-				replacements.push({
-					index: simpleArithmeticMatch.index,
-					lastIndex: Adj.simpleArithmeticRegexp.lastIndex,
-					arithmeticExpression: sumSoFar.toString()
-				});
-				//
-				simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedD);
-			}
-			var replacementsLength = replacements.length;
-			var replacementSegments = [];
-			var previousIndex = 0;
-			for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
-				var replacement = replacements[replacementIndex];
-				replacementSegments.push(idsResolvedD.substring(previousIndex, replacement.index));
-				replacementSegments.push(replacement.arithmeticExpression);
-				previousIndex = replacement.lastIndex;
-			}
-			replacementSegments.push(idsResolvedD.substring(previousIndex, idsResolvedD.length));
-			var dWithArithmeticResolved = replacementSegments.join("");
-			//
-			element.setAttribute("d", dWithArithmeticResolved);
+			element.setAttribute("d", dWithArithmeticEvaluated);
 		} else { // not a known case, as implemented not transformed
 		}
 		//
@@ -3678,7 +3697,7 @@ Adj.algorithms.arithmetic = {
 			var parent = element.parentNode;
 			if (element instanceof SVGPathElement) {
 				// an SVG path
-				var explainPathData = dWithArithmeticResolved;
+				var explainPathData = dWithArithmeticEvaluated;
 				var explanationElement = Adj.createExplanationElement("path");
 				explanationElement.setAttribute("d", explainPathData);
 				explanationElement.setAttribute("fill", "none");
@@ -3851,6 +3870,67 @@ Adj.algorithms.arithmetic = {
 					}
 				}
 			}
+		}
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.floater = {
+	notAnOrder1Element: true,
+	phaseHandlerName: "adjPhase3",
+	processSubtreeOnlyInPhaseHandler: "adjPhase3",
+	method: function floater (element, parametersObject, level) {
+		var at = parametersObject.at ? parametersObject.at.toString() : ""; // without toString could get number
+		if (!at) {
+			throw "missing attribute at= for an adj:floater element";
+		}
+		var arithmeticElementRecordsById = [];
+		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(element, at, arithmeticElementRecordsById, "used in attribute at= for an adj:floater element");
+		var atMatch = Adj.twoRegexp.exec(atWithArithmeticEvaluated);
+		if (!atMatch) {
+			throw "impossible attribute at=\"" + at + "\" for an adj:floater element";
+		}
+		var atX = parseFloat(atMatch[1]);
+		var atY = parseFloat(atMatch[2]);
+		//
+		var pinMatch = Adj.oneOrTwoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
+		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
+		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
+		//
+		var explain = parametersObject.explain ? true : false; // default explain = false
+		//
+		Adj.unhideByDisplayAttribute(element);
+		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
+		//
+		var boundingBox = element.getBBox();
+		var pinX = boundingBox.x + Adj.fraction(0, boundingBox.width, hFraction);
+		var pinY = boundingBox.y + Adj.fraction(0, boundingBox.height, vFraction);
+		//
+		// now put it there
+		var translationX = atX - pinX;
+		var translationY = atY - pinY;
+		element.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		//
+		// explain
+		if (explain) {
+			var parent = element.parentNode;
+			var elementTransformAttribute = element.getAttribute("transform");
+			var explanationElement = Adj.createExplanationElement("rect");
+			explanationElement.setAttribute("x", Adj.decimal(boundingBox.x));
+			explanationElement.setAttribute("y", Adj.decimal(boundingBox.y));
+			explanationElement.setAttribute("width", Adj.decimal(boundingBox.width));
+			explanationElement.setAttribute("height", Adj.decimal(boundingBox.height));
+			explanationElement.setAttribute("transform", elementTransformAttribute);
+			explanationElement.setAttribute("fill", "blue");
+			explanationElement.setAttribute("fill-opacity", "0.1");
+			explanationElement.setAttribute("stroke", "blue");
+			explanationElement.setAttribute("stroke-width", "1");
+			explanationElement.setAttribute("stroke-opacity", "0.2");
+			parent.appendChild(explanationElement);
+			//
+			var explanationElement = Adj.createExplanationPointCircle(pinX, pinY, "blue");
+			explanationElement.setAttribute("transform", elementTransformAttribute);
+			parent.appendChild(explanationElement);
 		}
 	}
 }
