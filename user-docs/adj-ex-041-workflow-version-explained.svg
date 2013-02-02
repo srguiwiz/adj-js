@@ -171,18 +171,18 @@
 			</g>
 		</g>
 		<rect adj:explanation="true" x="0" y="0" width="531" height="405" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
-		<path adj:explanation="true" d="m5,5 401,0 0,35 -401,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m411,5 50,0 0,35 -50,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m466,5 60,0 0,35 -60,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m5,45 401,0 0,50 -401,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m411,45 50,0 0,50 -50,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m466,45 60,0 0,50 -60,0 0,-50 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m5,100 401,0 0,35 -401,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m411,100 50,0 0,35 -50,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m466,100 60,0 0,35 -60,0 0,-35 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m5,140 401,0 0,150 -401,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m411,140 50,0 0,150 -50,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m466,140 60,0 0,150 -60,0 0,-150 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<path adj:explanation="true" d="m5,295 401,0 0,105 -401,0 0,-105 " fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="5" y="5" width="401" height="35" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="411" y="5" width="50" height="35" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="466" y="5" width="60" height="35" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="5" y="45" width="401" height="50" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="411" y="45" width="50" height="50" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="466" y="45" width="60" height="50" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="5" y="100" width="401" height="35" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="411" y="100" width="50" height="35" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="466" y="100" width="60" height="35" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="5" y="140" width="401" height="150" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="411" y="140" width="50" height="150" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="466" y="140" width="60" height="150" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="5" y="295" width="401" height="105" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
 	</g>
 </svg>

@@ -548,13 +548,12 @@ Adj.algorithms.verticalList = {
 				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
 				// explain
 				if (explain) {
-					var explainPathData = "m" +
-						Adj.decimal(currentChildX) + "," + Adj.decimal(currentChildY) + " " +
-						Adj.decimal(widthToUse) + "," + Adj.decimal(0) + " " +
-						Adj.decimal(0) + "," + Adj.decimal(heightToUse) + " " +
-						Adj.decimal(-widthToUse) + "," + Adj.decimal(0) + " " +
-						Adj.decimal(0) + "," + Adj.decimal(-heightToUse) + " ";
-					childRecord.explainPathData = explainPathData;
+					childRecord.explainRect = {
+						x: currentChildX,
+						y: currentChildY,
+						width: widthToUse,
+						height: heightToUse
+					};
 				}
 				// consequences
 				var currentChildRight = currentChildX + widthToUse;
@@ -608,10 +607,13 @@ Adj.algorithms.verticalList = {
 			}
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
-				var explainPathData = childRecord.explainPathData;
-				if (explainPathData) {
-					var explanationElement = Adj.createExplanationElement("path");
-					explanationElement.setAttribute("d", explainPathData);
+				var explainRect = childRecord.explainRect;
+				if (explainRect) {
+					var explanationElement = Adj.createExplanationElement("rect");
+					explanationElement.setAttribute("x", explainRect.x);
+					explanationElement.setAttribute("y", explainRect.y);
+					explanationElement.setAttribute("width", explainRect.width);
+					explanationElement.setAttribute("height", explainRect.height);
 					explanationElement.setAttribute("fill", "blue");
 					explanationElement.setAttribute("fill-opacity", "0.1");
 					explanationElement.setAttribute("stroke", "blue");
@@ -750,13 +752,12 @@ Adj.algorithms.horizontalList = {
 				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
 				// explain
 				if (explain) {
-					var explainPathData = "m" +
-						Adj.decimal(currentChildX) + "," + Adj.decimal(currentChildY) + " " +
-						Adj.decimal(widthToUse) + "," + Adj.decimal(0) + " " +
-						Adj.decimal(0) + "," + Adj.decimal(heightToUse) + " " +
-						Adj.decimal(-widthToUse) + "," + Adj.decimal(0) + " " +
-						Adj.decimal(0) + "," + Adj.decimal(-heightToUse) + " ";
-					childRecord.explainPathData = explainPathData;
+					childRecord.explainRect = {
+						x: currentChildX,
+						y: currentChildY,
+						width: widthToUse,
+						height: heightToUse
+					};
 				}
 				// consequences
 				var currentChildRight = currentChildX + widthToUse;
@@ -810,10 +811,13 @@ Adj.algorithms.horizontalList = {
 			}
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
-				var explainPathData = childRecord.explainPathData;
-				if (explainPathData) {
-					var explanationElement = Adj.createExplanationElement("path");
-					explanationElement.setAttribute("d", explainPathData);
+				var explainRect = childRecord.explainRect;
+				if (explainRect) {
+					var explanationElement = Adj.createExplanationElement("rect");
+					explanationElement.setAttribute("x", explainRect.x);
+					explanationElement.setAttribute("y", explainRect.y);
+					explanationElement.setAttribute("width", explainRect.width);
+					explanationElement.setAttribute("height", explainRect.height);
 					explanationElement.setAttribute("fill", "blue");
 					explanationElement.setAttribute("fill-opacity", "0.1");
 					explanationElement.setAttribute("stroke", "blue");
