@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:1, revision:0 };
+	Adj.version = { major:3, minor:1, revision:2 };
 	Adj.algorithms = {};
 }
 
