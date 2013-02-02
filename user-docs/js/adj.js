@@ -3884,12 +3884,15 @@ Adj.algorithms.floater = {
 	phaseHandlerName: "adjPhase3",
 	processSubtreeOnlyInPhaseHandler: "adjPhase3",
 	method: function floater (element, parametersObject, level) {
+		var parent = element.parentNode;
+		Adj.unhideByDisplayAttribute(element);
+		//
 		var at = parametersObject.at ? parametersObject.at.toString() : ""; // without toString could get number
 		if (!at) {
 			throw "missing attribute at= for an adj:floater element";
 		}
 		var arithmeticElementRecordsById = [];
-		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(element, at, arithmeticElementRecordsById, "used in attribute at= for an adj:floater element");
+		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(parent, at, arithmeticElementRecordsById, "used in attribute at= for an adj:floater element");
 		var atMatch = Adj.twoRegexp.exec(atWithArithmeticEvaluated);
 		if (!atMatch) {
 			throw "impossible attribute at=\"" + at + "\" for an adj:floater element";
@@ -3903,7 +3906,6 @@ Adj.algorithms.floater = {
 		//
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
-		Adj.unhideByDisplayAttribute(element);
 		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
 		var boundingBox = element.getBBox();
@@ -3917,7 +3919,6 @@ Adj.algorithms.floater = {
 		//
 		// explain
 		if (explain) {
-			var parent = element.parentNode;
 			var elementTransformAttribute = element.getAttribute("transform");
 			var explanationElement = Adj.createExplanationElement("rect");
 			explanationElement.setAttribute("x", Adj.decimal(boundingBox.x));
