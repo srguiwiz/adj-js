@@ -29,95 +29,58 @@
 		stroke-width="1";
 	}
 	]]></style>
-	<g>
-		<adj:horizontalList/>
-		<rect width="459.18" height="191.879" x="0.5" y="0.5">
-			<adj:frameForParent inset="0.5"/>
-		</rect>
+	<g adj:command="horizontalList">
+		<rect adj:command="frameForParent" adj:inset="0.5" width="459.18" height="191.879" x="0.5" y="0.5"/>
 		<text transform="translate(5,15)">outer one</text>
-		<g transform="translate(56,3)">
-			<adj:circularList gap="3" rAlign="inside" fromAngle="270"/>
-			<rect width="213.18" height="185.879" x="0.5" y="0.5">
-				<adj:frameForParent inset="0.5"/>
-			</rect>
-			<g transform="translate(72.089,81.428)">
-				<adj:verticalList hAlign="center"/>
+		<g adj:command="circularList" adj:gap="3" adj:rAlign="inside" adj:fromAngle="270" transform="translate(56,3)">
+			<rect adj:command="frameForParent" adj:inset="0.5" width="213.18" height="185.879" x="0.5" y="0.5"/>
+			<g adj:command="verticalList" adj:hAlign="center" transform="translate(72.089,81.428)">
 				<text transform="translate(5,15)">intermediate</text>
 				<text transform="translate(26,33)">one</text>
 			</g>
-			<g transform="translate(77.589,3)">
-				<adj:verticalList hAlign="center"/>
-				<rect width="58" height="38" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:command="verticalList" adj:hAlign="center" transform="translate(77.589,3)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="58" height="38" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost</text>
 				<text transform="translate(21,33)">one</text>
 			</g>
-			<g transform="translate(152.179,57.192)">
-				<adj:verticalList hAlign="center"/>
-				<rect width="58" height="38" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:command="verticalList" adj:hAlign="center" transform="translate(152.179,57.192)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="58" height="38" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost</text>
 				<text transform="translate(20,33)">two</text>
 			</g>
-			<g transform="translate(123.688,144.878)">
-				<adj:verticalList hAlign="center"/>
-				<rect width="58" height="38" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:command="verticalList" adj:hAlign="center" transform="translate(123.688,144.878)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="58" height="38" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost</text>
 				<text transform="translate(17,33)">three</text>
 			</g>
-			<g transform="translate(31.491,144.878)">
-				<adj:verticalList hAlign="center"/>
-				<rect width="58" height="38" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:command="verticalList" adj:hAlign="center" transform="translate(31.491,144.878)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="58" height="38" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost</text>
 				<text transform="translate(19,33)">four</text>
 			</g>
-			<g transform="translate(3,57.192)">
-				<adj:verticalList hAlign="center"/>
-				<rect width="58" height="38" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:command="verticalList" adj:hAlign="center" transform="translate(3,57.192)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="58" height="38" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost</text>
 				<text transform="translate(20,33)">five</text>
 			</g>
 		</g>
-		<g transform="translate(273.18,3)">
-			<adj:verticalTree gap="3" middleGap="10"/>
-			<rect width="183" height="82" x="0.5" y="0.5">
-				<adj:frameForParent inset="0.5"/>
-			</rect>
+		<g adj:command="verticalTree" adj:gap="3" adj:middleGap="10" transform="translate(273.18,3)">
+			<rect adj:command="frameForParent" adj:inset="0.5" width="183" height="82" x="0.5" y="0.5"/>
 			<text adj:id="int2" transform="translate(51,15)">intermediate two</text>
-			<g adj:id="inn6" adj:treeParent="int2" transform="translate(10,28)">
-				<adj:verticalList/>
-				<rect width="75" height="20" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:id="inn6" adj:treeParent="int2" adj:command="verticalList" adj:hAlign="center" transform="translate(10,28)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="75" height="20" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost six</text>
 			</g>
-			<g adj:treeParent="inn6" transform="translate(3,59)">
-				<adj:verticalList/>
-				<rect width="89" height="20" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:treeParent="inn6" adj:command="verticalList" adj:hAlign="center" transform="translate(3,59)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="89" height="20" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost seven</text>
 			</g>
-			<g adj:id="inn8" adj:treeParent="int2" transform="translate(96,28)">
-				<adj:verticalList/>
-				<rect width="84" height="20" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:id="inn8" adj:treeParent="int2" adj:command="verticalList" adj:hAlign="center" transform="translate(96,28)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="84" height="20" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost eight</text>
 			</g>
-			<g adj:treeParent="inn8" transform="translate(98,59)">
-				<adj:verticalList/>
-				<rect width="81" height="20" x="0.5" y="0.5">
-					<adj:frameForParent inset="0.5"/>
-				</rect>
+			<g adj:treeParent="inn8" adj:command="verticalList" adj:hAlign="center" transform="translate(98,59)">
+				<rect adj:command="frameForParent" adj:inset="0.5" width="81" height="20" x="0.5" y="0.5"/>
 				<text transform="translate(5,15)">innermost nine</text>
 			</g>
 		</g>

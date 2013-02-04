@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:1, revision:2 };
+	Adj.version = { major:3, minor:2, revision:0 };
 	Adj.algorithms = {};
 }
 
@@ -150,6 +150,48 @@ Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgEl
 	Adj.parseAdjElementsToPhaseHandlers(svgElement);
 }
 
+// build on first use, so any algorithms added e.g. from other source files will be considered too
+Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(parameterName) {
+	var commandNamesByParameterName = Adj.commandNamesByParameterName;
+	if (!commandNamesByParameterName) {
+		commandNamesByParameterName = Adj.commandNamesByParameterName = [];
+		var algorithms = Adj.algorithms;
+		for (var algorithmName in algorithms) {
+			var parameterNames = algorithms[algorithmName].parameters;
+			for (var i in parameterNames) {
+				var parameterName = parameterNames[i];
+				var commandNamesForParameterName = commandNamesByParameterName[parameterName];
+				if (!commandNamesForParameterName) {
+					commandNamesForParameterName = commandNamesByParameterName[parameterName] = [];
+				}
+				// commandName == algorithmName, for now
+				commandNamesForParameterName.push(algorithmName);
+			}
+		}
+	}
+	return commandNamesByParameterName[parameterName];
+}
+
+// utility
+Adj.parameterParse = function parameterParse(value) {
+	var numberMatch;
+	if (numberMatch = Adj.booleanOrDecimalRegexp.exec(value)) { // !isNaN(value) would miss boolean
+		// keep booleans and decimal and integer numbers as is
+		value = numberMatch[1];
+		switch (value) {
+			case "true":
+				value = true;
+				break;
+			case "false":
+				value = false;
+				break;
+			default:
+				value = Number(value);
+		}
+	}
+	return value;
+}
+
 // read Adj elements and make or update phase handlers,
 // recursive walking of the tree
 Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (node) {
@@ -163,6 +205,56 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	Adj.unhideByDisplayAttribute(node, true); // does delete node.adjOriginalDisplay
 	delete node.adjLevel;
 	//
+	// then look for newer alternative syntex Adj commands as attributes
+	var adjAttributesByName = [];
+	var attributes = node.attributes;
+	var numberOfAttributes = attributes.length;
+	for (var i = 0; i < numberOfAttributes; i++) {
+		var attribute = attributes[i];
+		if (attribute.namespaceURI == Adj.AdjNamespace) {
+			adjAttributesByName[attribute.localName] = attribute.value;
+		}
+	}
+	// first find out which commands
+	var commandParametersByName = {};
+	for (var adjAttributeName in adjAttributesByName) {
+		switch (adjAttributeName) {
+			case "command":
+				var commandName = adjAttributesByName[adjAttributeName];
+				commandParametersByName[commandName] = {};
+				delete adjAttributesByName[adjAttributeName]; // done with
+				break;
+			case "textBreaks":
+			case "rider":
+			case "floater":
+				// these commands can coexist with another command
+				if (Adj.parameterParse(adjAttributesByName[adjAttributeName])) { // recommended ="true"
+					commandParametersByName[adjAttributeName] = {};
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	// then assign parameters to their appropriate commands
+	for (var adjAttributeName in adjAttributesByName) {
+		var commandNamesUsingParameterName = Adj.commandNamesUsingParameterName(adjAttributeName);
+		if (commandNamesUsingParameterName) {
+			var adjAttributeValue = Adj.parameterParse(adjAttributesByName[adjAttributeName]);
+			for (var i in commandNamesUsingParameterName) {
+				var commandName = commandNamesUsingParameterName[i];
+				var commandParameters = commandParametersByName[commandName];
+				if (commandParameters) {
+					commandParameters[adjAttributeName] = adjAttributeValue;
+				}
+			}
+		}
+	}
+	for (var commandName in commandParametersByName) {
+		// commandName == algorithmName, for now
+		Adj.setAlgorithm(node, commandName, commandParametersByName[commandName]);
+	}
+	//
 	// then walk
 	for (var child = node.firstChild; child; child = child.nextSibling) {
 		if (child instanceof Element) { // if an XML element, e.g. not an XML #text
@@ -174,23 +266,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 				for (var i = 0; i < numberOfAttributes; i++) {
 					var attribute = attributes[i];
 					if (!attribute.namespaceURI || attribute.namespaceURI == Adj.AdjNamespace) {
-						var value = attribute.value;
-						var numberMatch;
-						if (numberMatch = Adj.booleanOrDecimalRegexp.exec(value)) { // !isNaN(value) would miss boolean
-							// keep booleans and decimal and integer numbers as is
-							value = numberMatch[1];
-							switch (value) {
-								case "true":
-									value = true;
-									break;
-								case "false":
-									value = false;
-									break;
-								default:
-									value = Number(value);
-							}
-						}
-						parameters[attribute.localName] = value;
+						parameters[attribute.localName] = Adj.parameterParse(attribute.value);
 					}
 				}
 				Adj.setAlgorithm(node, algorithmName, parameters);
@@ -425,6 +501,13 @@ Adj.createExplanationLine = function createExplanationLine (x1, y1, x2, y2, stro
 // a specific algorithm
 Adj.algorithms.verticalList = {
 	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "centerGap", "rightGap",
+				 "verticalGap", "topGap", "middleGap", "bottomGap",
+				 "maxHeight", "maxPerColumn",
+				 "makeGrid",
+				 "hAlign", "vAlign",
+				 "explain"],
 	method: function verticalList (element, parametersObject) {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
@@ -629,6 +712,13 @@ Adj.algorithms.verticalList = {
 // a specific algorithm
 Adj.algorithms.horizontalList = {
 	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "centerGap", "rightGap",
+				 "verticalGap", "topGap", "middleGap", "bottomGap",
+				 "maxWidth", "maxPerRow",
+				 "makeGrid",
+				 "hAlign", "vAlign",
+				 "explain"],
 	method: function horizontalList (element, parametersObject) {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
@@ -834,6 +924,9 @@ Adj.algorithms.horizontalList = {
 Adj.algorithms.frameForParent = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase2Down",
+	parameters: ["inset",
+				 "horizontalInset", "leftInset", "rightInset",
+				 "verticalInset", "topInset", "bottomInset"],
 	method: function frameForParent (element, parametersObject) {
 		var inset = !isNaN(parametersObject.inset) ? parametersObject.inset : 0.5; // default inset = 0.5
 		var horizontalInset = !isNaN(parametersObject.horizontalInset) ? parametersObject.horizontalInset : inset; // default horizontalInset = inset
@@ -862,6 +955,8 @@ Adj.lineBreakRegexp = /(?:\r?\n)/;
 // a specific algorithm
 Adj.algorithms.textBreaks = {
 	phaseHandlerName: "adjPhase1Down",
+	parameters: ["wordBreaks",
+				 "lineBreaks"],
 	method: function textBreaks (element, parametersObject) {
 		var wordBreaks = parametersObject.wordBreaks ? parametersObject.wordBreaks : false // default wordBreaks = false
 		var lineBreaks = parametersObject.lineBreaks ? parametersObject.lineBreaks : true // default lineBreaks = true
@@ -1336,6 +1431,9 @@ Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoord
 Adj.algorithms.connection = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase2Up",
+	parameters: ["from", "to",
+				 "vector",
+				 "explain"],
 	method: function connection (element, parametersObject) {
 		var fromMatch = Adj.idXYRegexp.exec(parametersObject.from);
 		var fromId = fromMatch[1];
@@ -1677,7 +1775,16 @@ Adj.algorithms.rider = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase3",
 	processSubtreeOnlyInPhaseHandler: "adjPhase3",
+	parameters: ["pin",
+				 "path",
+				 "adjust",
+				 "at",
+				 "gap",
+				 "steps"],
 	method: function rider (element, parametersObject, level) {
+		var pinMatch = Adj.oneOrTwoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
+		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
+		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		var pathId = parametersObject.path;
 		var adjust = Adj.noneClearNear[parametersObject.adjust]; // whether and how to automatically adjust
 		var atMatch = Adj.oneOrTwoRegexp.exec(parametersObject.at);
@@ -1723,9 +1830,6 @@ Adj.algorithms.rider = {
 			}
 		}
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // for adjust near, default gap = 3
-		var pinMatch = Adj.oneOrTwoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
-		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
-		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		var numberOfSamples = !isNaN(parametersObject.steps) ? parametersObject.steps + 1 : 11; // for adjust, default steps = 10, which makes numberOfSamples = 11
 		if (numberOfSamples < 4) { // sanity check
 			numberOfSamples = 4;
@@ -2070,6 +2174,7 @@ Adj.relativatePath = function relativatePath (pathElement) {
 // a specific algorithm
 Adj.algorithms.relativate = {
 	phaseHandlerName: "adjPhase1Down",
+	parameters: [],
 	method: function relativate (element, parametersObject) {
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
@@ -2113,6 +2218,7 @@ Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
 Adj.algorithms.circleForParent = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase2Down",
+	parameters: ["inset"],
 	method: function circleForParent (element, parametersObject) {
 		var inset = !isNaN(parametersObject.inset) ? parametersObject.inset : 0; // default inset = 0
 		var parent = element.parentNode;
@@ -2129,6 +2235,7 @@ Adj.algorithms.circleForParent = {
 Adj.algorithms.ellipseForParent = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase2Down",
+	parameters: ["inset", "horizontalInset", "verticalInset"],
 	method: function ellipseForParent (element, parametersObject) {
 		var inset = !isNaN(parametersObject.inset) ? parametersObject.inset : 0; // default inset = 0
 		var horizontalInset = !isNaN(parametersObject.horizontalInset) ? parametersObject.horizontalInset : inset; // default horizontalInset = inset
@@ -2148,6 +2255,12 @@ Adj.algorithms.ellipseForParent = {
 // first element is trunk in the center, could be an empty group, remaining elements are branches
 Adj.algorithms.circularList = {
 	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap", "rGap", "cGap",
+				 "fromAngle", "toAngle",
+				 "rAlign",
+				 "horizontalGap", "leftGap", "rightGap",
+				 "verticalGap", "topGap", "bottomGap",
+				 "explain"],
 	method: function circularList (element, parametersObject) {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
 		var rGap = !isNaN(parametersObject.rGap) ? parametersObject.rGap : gap; // minimum required radial gap, default rGap = gap
@@ -2345,6 +2458,12 @@ Adj.algorithms.circularList = {
 // a specific algorithm
 Adj.algorithms.verticalTree = {
 	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "centerGap", "rightGap", "childlessGap", "earGap",
+				 "verticalGap", "topGap", "middleGap", "bottomGap",
+				 "hAlign", "vAlign",
+				 "autoParrots",
+				 "explain"],
 	method: function verticalTree (element, parametersObject) {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 10; // default gap = 10
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
@@ -2888,6 +3007,12 @@ Adj.algorithms.verticalTree = {
 // e.g. a row in this algorithm is vertical, still "a series of objects placed next to each other, usually in a straight line" per AHD
 Adj.algorithms.horizontalTree = {
 	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "centerGap", "rightGap",
+				 "verticalGap", "topGap", "middleGap", "bottomGap", "childlessGap", "earGap",
+				 "hAlign", "vAlign",
+				 "autoParrots",
+				 "explain"],
 	method: function horizontalTree (element, parametersObject) {
 		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 10; // default gap = 10
 		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
@@ -3673,6 +3798,7 @@ Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpressio
 Adj.algorithms.arithmetic = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase2Up",
+	parameters: ["explain"],
 	method: function arithmetic (element, parametersObject) {
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
@@ -3883,6 +4009,9 @@ Adj.algorithms.floater = {
 	notAnOrder1Element: true,
 	phaseHandlerName: "adjPhase3",
 	processSubtreeOnlyInPhaseHandler: "adjPhase3",
+	parameters: ["at",
+				 "pin",
+				 "explain"],
 	method: function floater (element, parametersObject, level) {
 		var parent = element.parentNode;
 		Adj.unhideByDisplayAttribute(element);

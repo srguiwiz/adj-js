@@ -55,6 +55,7 @@ h1,h2,h3,h4,h5,h6 {
 }
  .todo {
   background-color: #ccffcc;
+  font-size: smaller;
 }
  .product-name {
   font-family: sans-serif;
@@ -70,9 +71,10 @@ h1,h2,h3,h4,h5,h6 {
 <h1>Adj Framework</h1>
 
 <p class="deemphasize">Note: This user guide's SVG images show in modern
-browsers only, i.e. Firefox, Chrome, Safari, Internet Explorer 9 and newer.
-Internet Explorer 8 and older show the <code>alt</code> tag text of those
-<code>img</code> elements instead.</p>
+browsers, i.e. Firefox, Chrome, Safari, Internet Explorer 9 and newer. Older
+versions Internet Explorer, 8 and earlier, show the <code>alt</code> tag text
+of those <code>img</code> elements instead. Internet Explorer users will be <a
+href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
 
 <div class="toc">
 <ul>
@@ -130,61 +132,67 @@ Internet Explorer 8 and older show the <code>alt</code> tag text of those
           <li><a href="#L1875">1.13.4. Different Search Strategies</a></li>
         </ul>
       </li>
-      <li><a href="#L1888">1.14. Complete Authoring Workflow</a></li>
-      <li><a href="#L6329">1.15. Invocation</a> 
+      <li><a href="#L2572">1.14. Issuing Commands Via adj: Attributes Instead
+        Of Via adj: Elements</a></li>
+      <li><a href="#L2579">1.15. Command Combinations</a></li>
+      <li><a href="#L1888">1.16. Complete Authoring Workflow</a></li>
+      <li><a href="#L6329">1.17. Invocation</a> 
         <ul>
-          <li><a href="#L6331">1.15.1. Explicit Invocation</a></li>
-          <li><a href="#L6345">1.15.2. Implicit Invocation</a></li>
-          <li><a href="#L10156">1.15.3. No Invocation – If Saving Processed
+          <li><a href="#L6331">1.17.1. Explicit Invocation</a></li>
+          <li><a href="#L6345">1.17.2. Implicit Invocation</a></li>
+          <li><a href="#L10156">1.17.3. No Invocation – If Saving Processed
             Document</a></li>
         </ul>
       </li>
-      <li><a href="#L6360">1.16. Alternate Syntax</a></li>
-      <li><a href="#L86788">1.17. More Details</a> 
+      <li><a href="#L86788">1.18. More Details</a> 
         <ul>
-          <li><a href="#L123304">1.17.1. Using SVG Group Element g</a></li>
-          <li><a href="#L123314">1.17.2. Overwriting Preexisting Transform
+          <li><a href="#L123304">1.18.1. Using SVG Group Element g</a></li>
+          <li><a href="#L123314">1.18.2. Overwriting Preexisting Transform
             Attributes</a></li>
-          <li><a href="#L123334">1.17.3. Transforming An SVG Path</a> 
+          <li><a href="#L123334">1.18.3. Transforming An SVG Path</a> 
             <ul>
-              <li><a href="#L123341">1.17.3.1. Changing Points</a></li>
-              <li><a href="#L6338">1.17.3.2. Storing Away Authoring
+              <li><a href="#L123341">1.18.3.1. Changing Points</a></li>
+              <li><a href="#L6338">1.18.3.2. Storing Away Authoring
                 Coordinates</a></li>
-              <li><a href="#L123364">1.17.3.3. Arcs Not Supported</a></li>
+              <li><a href="#L123364">1.18.3.3. In connection Arcs Are Not
+                Supported</a></li>
             </ul>
           </li>
-          <li><a href="#L4599">1.17.4. Exception Handling</a></li>
+          <li><a href="#L4599">1.18.4. Exception Handling</a></li>
+          <li><a href="#L2915">1.18.5. Bad Command Handling</a></li>
         </ul>
       </li>
-      <li><a href="#L4606">1.18. Helpful Hints</a> 
+      <li><a href="#L4606">1.19. Helpful Hints</a> 
         <ul>
-          <li><a href="#L4608">1.18.1. Defining An SVG rect Element</a></li>
-          <li><a href="#L4638">1.18.2. Considerations For Nesting</a></li>
+          <li><a href="#L4608">1.19.1. Defining An SVG rect Element</a></li>
+          <li><a href="#L4638">1.19.2. Considerations For Nesting</a></li>
         </ul>
       </li>
-      <li><a href="#L2289">1.19. Extending SVG With The Adj Namespace</a></li>
-      <li><a href="#L123374">1.20. Implementation Details</a> 
+      <li><a href="#L2289">1.20. Extending SVG With The Adj Namespace</a></li>
+      <li><a href="#L6360">1.21. Alternate Syntax – JavaScript Instead Of
+        XML</a></li>
+      <li><a href="#L123374">1.22. Implementation Details</a> 
         <ul>
-          <li><a href="#L2440">1.20.1. Need Driven</a></li>
-          <li><a href="#L2469">1.20.2. Sizing From Small Parts To Whole
+          <li><a href="#L2440">1.22.1. Need Driven</a></li>
+          <li><a href="#L2469">1.22.2. Sizing From Small Parts To Whole
             Image</a></li>
-          <li><a href="#L123378">1.20.3. Execution Path</a></li>
+          <li><a href="#L123378">1.22.3. Execution Path</a></li>
         </ul>
       </li>
-      <li><a href="#L2357">1.21. Automated Testing</a></li>
-      <li><a href="#L2374">1.22. Compatibility Issues</a> 
+      <li><a href="#L2357">1.23. Automated Testing</a></li>
+      <li><a href="#L2374">1.24. Compatibility Issues</a> 
         <ul>
-          <li><a href="#L2433">1.22.1. Internet Explorer 8 And Earlier</a></li>
-          <li><a href="#L2437">1.22.2. Internet Explorer 9</a></li>
-          <li><a href="#L2480">1.22.3. Internet Explorer 10</a></li>
+          <li><a href="#L2433">1.24.1. Internet Explorer 8 And Earlier</a></li>
+          <li><a href="#L2437">1.24.2. Internet Explorer 9</a></li>
+          <li><a href="#L2480">1.24.3. Internet Explorer 10</a></li>
         </ul>
       </li>
-      <li><a href="#L1688">1.23. Example Files</a> 
+      <li><a href="#L1688">1.25. Example Files</a> 
         <ul>
-          <li><a href="#L5397">1.23.1. Example File 001 Source Code</a></li>
-          <li><a href="#L5412">1.23.2. Example File 002</a></li>
-          <li><a href="#L1730">1.23.3. Example File 003</a></li>
-          <li><a href="#L5916">1.23.4. Example File 004</a></li>
+          <li><a href="#L5397">1.25.1. Example File 001 Source Code</a></li>
+          <li><a href="#L5412">1.25.2. Example File 002</a></li>
+          <li><a href="#L1730">1.25.3. Example File 003</a></li>
+          <li><a href="#L5916">1.25.4. Example File 004</a></li>
         </ul>
       </li>
     </ul>
@@ -1913,7 +1921,50 @@ src="adj-ex-050-getElementByIdNearby.svg"></img>
 the referencing element. That is more narrow of a search than function
 <code>Adj.getElementByIdNearby</code>.</p>
 
-<h3 id="L1888">1.14. Complete Authoring Workflow</h3>
+<h3 id="L2572">1.14. Issuing Commands Via adj: Attributes Instead Of Via adj:
+Elements</h3>
+
+<p>A newly implemented alternative syntax allows Adj commands to be attributes
+of SVG elements instead of requiring them to be XML elements of their own. This
+can be convenient for authors. Arguably there are distinct flavors of clarity
+in using the two different syntaxes. Both syntaxes are supported in the
+foreseeable future.</p>
+
+<p>This user guide contains at least one set of images which while similar in
+content have been written <a href="adj-ex-052-nesting.svg">one</a> with
+commands via adj: attributes versus <a href="adj-ex-052-nesting-larger.svg">the
+other</a> with commands via adj: elements.</p>
+
+<p>Despite at least a theoretical, but also avoidable, risk involving identical
+parameter names in future extensions, the benefits of commands via adj:
+Attributes appear to be worth it.</p>
+
+<h3 id="L2579">1.15. Command Combinations</h3>
+
+<p>Some commands make sense to combine for the same SVG element. Others don't
+make sense, and others would be plain impossible.</p>
+
+<p>It makes sense to combine <code>textBreaks</code> and
+<code>horizontalList</code>, for the same SVG element.</p>
+
+<p>It could make sense, for example, to combine <code>verticalList</code> or
+<code>horizontalList</code> with <code>rider</code> or <code>floater</code>.</p>
+
+<p>Obviously it would <span class="emphasize">not</span> make sense to combine
+<code>horizontalList</code> and <code>verticalList</code>, for the same SVG
+element. It wouldn't make sense to combine <code>connection</code> and
+<code>rider</code>, for the same SVG element. It wouldn't make sense to combine
+<code>rider</code> and <code>floater</code>, for the same SVG element.</p>
+
+<p>Mentioned because maybe not obvious: It makes <span
+class="emphasize">no</span> sense to combine <code>arithmetic</code> and
+<code>floater</code>.</p>
+
+<p>There is no complete list. Factual <a href="#L4276">feedback</a> about
+noteworthy combinations, maybe example files, from authors using Adj is
+welcome.</p>
+
+<h3 id="L1888">1.16. Complete Authoring Workflow</h3>
 
 <p>An author may increase productivity by using browser add-ons.</p>
 
@@ -1997,9 +2048,9 @@ with a <a href="adj-ex-041-workflow.svg">link to SVG</a>.</p>
 <p><span class="todo">TODO: make short video how simple and fun this workflow
 is to use <span class="deemphasize">and to set up</span></span></p>
 
-<h3 id="L6329">1.15. Invocation</h3>
+<h3 id="L6329">1.17. Invocation</h3>
 
-<h4 id="L6331">1.15.1. Explicit Invocation</h4>
+<h4 id="L6331">1.17.1. Explicit Invocation</h4>
 
 <p>As implemented, Adj is a JavaScript library.</p>
 
@@ -2014,7 +2065,7 @@ is to use <span class="deemphasize">and to set up</span></span></p>
 class="emphasize">the essential <code>adj.js</code> file from this
 project</span>.</p>
 
-<h4 id="L6345">1.15.2. Implicit Invocation</h4>
+<h4 id="L6345">1.17.2. Implicit Invocation</h4>
 
 <p>With script injection, explicit invocation can be avoided.</p>
 
@@ -2023,7 +2074,7 @@ href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-document
 <span class="product-name">Onload Script Some Document Files</span> can do the
 necessary script injection, effecting implicit invocation.</p>
 
-<h4 id="L10156">1.15.3. No Invocation – If Saving Processed Document</h4>
+<h4 id="L10156">1.17.3. No Invocation – If Saving Processed Document</h4>
 
 <p>If chosen to do so, with an author saving a processed document, invocation
 in users' browsers can be avoided.</p>
@@ -2048,7 +2099,116 @@ need to distribute the Adj JavaScript library</span>.</p>
 inability to dynamically adjust, e.g. to different fonts available in a
 different browser instance. This may be an acceptable compromise.</p>
 
-<h3 id="L6360">1.16. Alternate Syntax</h3>
+<h3 id="L86788">1.18. More Details</h3>
+
+<h4 id="L123304">1.18.1. Using SVG Group Element g</h4>
+
+<p>Judicious use of SVG group elements <code>g</code> makes Adj quite
+practical.</p>
+
+<p><span class="todo">TODO: some good examples</span></p>
+
+<h4 id="L123314">1.18.2. Overwriting Preexisting Transform Attributes</h4>
+
+<p>When Adj inserts a <code>transform</code> attribute it overwrites a
+preexisting <code>transform</code> attribute, if any.</p>
+
+<p>This is actually quite practical when transformations are changing, and the
+preexisting transformation has been the older version.</p>
+
+<p>If indeed a separate transformation is needed, one possible solution seems
+to be applying it as appropriate at a parent or child element, possibly at a
+dedicate group element <code>g</code>.</p>
+
+<p><span class="todo">TODO: a good example</span></p>
+
+<h4 id="L123334">1.18.3. Transforming An SVG Path</h4>
+
+<p>For a <code>connection</code> its content may be scaled and rotated. This is
+different than merely moving around an element, which can be and is done by an
+arguably simpler translation transformation.</p>
+
+<h5 id="L123341">1.18.3.1. Changing Points</h5>
+
+<p>For transforming an SVG <code>path</code> or <code>line</code> element in a
+<code>connection</code> Adj changes the coordinates of its points. For
+transforming an SVG <code>path</code> or <code>line</code> element in a
+<code>connection</code> Adj does not insert <code>transform</code>
+attributes.</p>
+
+<p>This has been implemented this way because scaling effectively changes
+stroke width, which is undesirable. <span class="deemphasize">The issue of
+scaling and stroke width has been discussed for SVG version 2, which is far
+out.</span></p>
+
+<h5 id="L6338">1.18.3.2. Storing Away Authoring Coordinates</h5>
+
+<p>Essential authoring coordinates are <a href="#L443">stored away</a> in Adj
+namespace attributes, for reuse by authors and algorithms.</p>
+
+<p>Algorithms which store away authoring coordinates also look for authoring
+coordinates in Adj namespace attributes, and if present use the values of Adj
+namespace attributes rather than equivalent SVG attributes.</p>
+
+<h5 id="L123364">1.18.3.3. In connection Arcs Are Not Supported</h5>
+
+<p>As implemented, other than straight lines and curves, arcs in an SVG
+<code>path</code> element in a <code>connection</code> don't get handled
+correctly by Adj. As implemented, Adj replaces such arcs, if any, by straight
+lines. This could be improved depending on user feedback.</p>
+
+<h4 id="L4599">1.18.4. Exception Handling</h4>
+
+<p>A visual display is provided instead of the expected SVG in case a
+JavaScript exception occurs in an invocation of <code>Adj.doDoc();</code>.</p>
+
+<h4 id="L2915">1.18.5. Bad Command Handling</h4>
+
+<p>As a matter of practicality, if authors reload documents after each change,
+they should be able to quickly know whether their most recent incremental
+change has the desired effect, doesn't have the desired effect, has bad syntax,
+or is otherwise defective.</p>
+
+<p>Bad command handling can further be improved with <a
+href="#L4276">feedback</a> from authors using Adj. Frequent, puzzling, time
+consuming, and painful cases should have priority.</p>
+
+<p>Some cases are handled already. This works in combination with a visual
+display of <a href="#L4599">exceptions</a>.</p>
+
+<p>It should be considered though, absolute perfection in bad command handling
+may not be a goal: A library providing help for every theoretically possible
+authoring issue would be significantly larger, which means more expensive to
+produce, to maintain, and using more resources and time to download, and to
+execute.</p>
+
+<h3 id="L4606">1.19. Helpful Hints</h3>
+
+<h4 id="L4608">1.19.1. Defining An SVG rect Element</h4>
+
+<p>When defining an SVG <code>rect</code> element which will be sized and
+positioned by Adj, e.g. by a <code>frameForParent</code>, it is possible to be
+minimalist.</p>
+
+<p>An SVG <code>rect</code> element only needs a <code>width</code> and
+<code>height</code> attribute, which can be zero. An SVG <code>rect</code>
+element needs neither an <code>x</code> nor a <code>y</code> attribute.</p>
+
+<h4 id="L4638">1.19.2. Considerations For Nesting</h4>
+
+<p><span class="todo">TODO: describe special limitations or benefits, if
+any</span></p>
+
+<h3 id="L2289">1.20. Extending SVG With The Adj Namespace</h3>
+
+<p>For standards compliant <a
+href="http://www.w3.org/TR/SVG/extend.html">extension of SVG</a>, Adj uses <a
+href="http://www.w3.org/TR/REC-xml-names/">XML namespace</a>
+<code>http://www.nrvr.com/2012/adj</code> with preferred prefix
+<code>adj</code>, as declared in
+<code>xmlns:adj="http://www.nrvr.com/2012/adj"</code>.</p>
+
+<h3 id="L6360">1.21. Alternate Syntax – JavaScript Instead Of XML</h3>
 
 <p>It is expected that authors will prefer the concise form Adj syntax, which
 is prevalently used in this documentation, over more verbose JavaScript
@@ -2071,103 +2231,14 @@ to an element. E.g. the concise form Adj command</p>
 interpreted as JavaScript</p>
 <pre class="example-listing">Adj.setAlgorithm(this, 'horizontalList', {makeGrid:true, hAlign:'center', vAlign:'middle', maxPerRow:3, gap:5});</pre>
 
-<p>Some details of the syntax of Adj may still change depending on user
-feedback, at least after early distributions.</p>
+<p>Some details of the syntax of Adj may change after <a
+href="#L4276">feedback</a> from authors using it.</p>
 
-<h3 id="L86788">1.17. More Details</h3>
-
-<h4 id="L123304">1.17.1. Using SVG Group Element g</h4>
-
-<p>Judicious use of SVG group elements <code>g</code> makes Adj quite
-practical.</p>
-
-<p><span class="todo">TODO: some good examples</span></p>
-
-<h4 id="L123314">1.17.2. Overwriting Preexisting Transform Attributes</h4>
-
-<p>When Adj inserts a <code>transform</code> attribute it overwrites a
-preexisting <code>transform</code> attribute, if any.</p>
-
-<p>This is actually quite practical when transformations are changing, and the
-preexisting transformation has been the older version.</p>
-
-<p>If indeed a separate transformation is needed, one possible solution seems
-to be applying it as appropriate at a parent or child element, possibly at a
-dedicate group element <code>g</code>.</p>
-
-<p><span class="todo">TODO: a good example</span></p>
-
-<h4 id="L123334">1.17.3. Transforming An SVG Path</h4>
-
-<p>For a <code>connection</code> its content may be scaled and rotated. This is
-different than merely moving around an element, which can be and is done by an
-arguably simpler translation transformation.</p>
-
-<h5 id="L123341">1.17.3.1. Changing Points</h5>
-
-<p>For transforming an SVG <code>path</code> or <code>line</code> element in a
-<code>connection</code> Adj changes the coordinates of its points. For
-transforming an SVG <code>path</code> or <code>line</code> element in a
-<code>connection</code> Adj does not insert <code>transform</code>
-attributes.</p>
-
-<p>This has been implemented this way because scaling effectively changes
-stroke width, which is undesirable. <span class="deemphasize">The issue of
-scaling and stroke width has been discussed for SVG version 2, which is far
-out.</span></p>
-
-<h5 id="L6338">1.17.3.2. Storing Away Authoring Coordinates</h5>
-
-<p>Essential authoring coordinates are <a href="#L443">stored away</a> in Adj
-namespace attributes, for reuse by authors and algorithms.</p>
-
-<p>Algorithms which store away authoring coordinates also look for authoring
-coordinates in Adj namespace attributes, and if present use the values of Adj
-namespace attributes rather than equivalent SVG attributes.</p>
-
-<h5 id="L123364">1.17.3.3. Arcs Not Supported</h5>
-
-<p>As implemented, other than straight lines and curves, arcs in an SVG
-<code>path</code> element in a <code>connection</code> don't get handled
-correctly by Adj. As implemented, Adj replaces such arcs, if any, by straight
-lines. This could be improved depending on user feedback.</p>
-
-<h4 id="L4599">1.17.4. Exception Handling</h4>
-
-<p>A visual display is provided instead of the expected SVG in case a
-JavaScript exception occurs in an invocation of <code>Adj.doDoc();</code>.</p>
-
-<h3 id="L4606">1.18. Helpful Hints</h3>
-
-<h4 id="L4608">1.18.1. Defining An SVG rect Element</h4>
-
-<p>When defining an SVG <code>rect</code> element which will be sized and
-positioned by Adj, e.g. by a <code>frameForParent</code>, it is possible to be
-minimalist.</p>
-
-<p>An SVG <code>rect</code> element only needs a <code>width</code> and
-<code>height</code> attribute, which can be zero. An SVG <code>rect</code>
-element needs neither an <code>x</code> nor a <code>y</code> attribute.</p>
-
-<h4 id="L4638">1.18.2. Considerations For Nesting</h4>
-
-<p><span class="todo">TODO: describe special limitations or benefits, if
-any</span></p>
-
-<h3 id="L2289">1.19. Extending SVG With The Adj Namespace</h3>
-
-<p>For standards compliant <a
-href="http://www.w3.org/TR/SVG/extend.html">extension of SVG</a>, Adj uses <a
-href="http://www.w3.org/TR/REC-xml-names/">XML namespace</a>
-<code>http://www.nrvr.com/2012/adj</code> with preferred prefix
-<code>adj</code>, as declared in
-<code>xmlns:adj="http://www.nrvr.com/2012/adj"</code>.</p>
-
-<h3 id="L123374">1.20. Implementation Details</h3>
+<h3 id="L123374">1.22. Implementation Details</h3>
 
 <p>This may matter to some authors.</p>
 
-<h4 id="L2440">1.20.1. Need Driven</h4>
+<h4 id="L2440">1.22.1. Need Driven</h4>
 
 <p>How Adj is implemented partially has been a function of what needs it was
 supposed to fulfill. Drawing, specifically in engineering, often has meant
@@ -2219,7 +2290,7 @@ first version.</p>
 displays, large images for some users will require panning, zooming, and
 possibly folding.</p>
 
-<h4 id="L2469">1.20.2. Sizing From Small Parts To Whole Image</h4>
+<h4 id="L2469">1.22.2. Sizing From Small Parts To Whole Image</h4>
 
 <p>One of the first patterns implemented in Adj has been collections of
 graphics objects, such as <a href="#L7357">lists</a> in <a
@@ -2254,12 +2325,12 @@ programmer's, a JavaScript point of view (are resized).</p>
 <p><span class="todo">TODO: continue here writing how this is
 implemented</span></p>
 
-<h4 id="L123378">1.20.3. Execution Path</h4>
+<h4 id="L123378">1.22.3. Execution Path</h4>
 
 <p><span class="todo">TODO: describe, possibly illustrate with an Adj
 drawing</span></p>
 
-<h3 id="L2357">1.21. Automated Testing</h3>
+<h3 id="L2357">1.23. Automated Testing</h3>
 
 <p>To ensure compatibility both while Adj moves forward in development as well
 as while browser are moving forward to newer versions, automated testing should
@@ -2283,7 +2354,7 @@ to consecutive documents.</p>
 <p>For contributing to implementing such automated testing, please use contact
 and/or repository info provided <a href="#L4276">above</a>.</p>
 
-<h3 id="L2374">1.22. Compatibility Issues</h3>
+<h3 id="L2374">1.24. Compatibility Issues</h3>
 
 <p>At the time of the writing of this section, for the release of Adj version
 3.0, there are compatibility problems with Internet Explorer.</p>
@@ -2295,11 +2366,11 @@ right direction.</p>
 Safari, while improvements in Internet Explorer are expected but cannot be
 predicted.</p>
 
-<h4 id="L2433">1.22.1. Internet Explorer 8 And Earlier</h4>
+<h4 id="L2433">1.24.1. Internet Explorer 8 And Earlier</h4>
 
 <p>No go before Internet Explorer 9.</p>
 
-<h4 id="L2437">1.22.2. Internet Explorer 9</h4>
+<h4 id="L2437">1.24.2. Internet Explorer 9</h4>
 
 <p>Probably since Adj version 2.0 in Internet Explorer 9, correctness appears
 broken when using a <code>line</code> or a <code>path</code> in a
@@ -2311,7 +2382,7 @@ The problem appears to be around use of <code>setAttributeNS</code>, possibly
 <code>getAttributeNS</code> and related functions. Apparently Internet Explorer
 10 no longer has this problem.</p>
 
-<h4 id="L2480">1.22.3. Internet Explorer 10</h4>
+<h4 id="L2480">1.24.3. Internet Explorer 10</h4>
 
 <p>Apparently in at least one pre-release of Internet Explorer 10, correctness
 is broken when using a <code>line</code> or a <code>path</code> in a
@@ -2337,9 +2408,9 @@ to explicitly click to approve the Adj JavaScript library to run.</p>
 <p>There is no going back. Older versions of Adj are no longer compatible with
 more recent development.</p>
 
-<h3 id="L1688">1.23. Example Files</h3>
+<h3 id="L1688">1.25. Example Files</h3>
 
-<h4 id="L5397">1.23.1. Example File 001 Source Code</h4>
+<h4 id="L5397">1.25.1. Example File 001 Source Code</h4>
 
 <p>The source code, before <a
 href="adj-ex-041-workflow-version-pure.svg">processing</a>, of this older
@@ -2517,19 +2588,19 @@ version</p>
     &lt;/g&gt;
 &lt;/svg&gt;</pre>
 
-<h4 id="L5412">1.23.2. Example File 002</h4>
+<h4 id="L5412">1.25.2. Example File 002</h4>
 
 <p>An example:</p>
 <img alt="example image 002" src="adj-ex-042-image.svg"
 style="max-width:95%;max-height:auto;"></img> 
 
-<h4 id="L1730">1.23.3. Example File 003</h4>
+<h4 id="L1730">1.25.3. Example File 003</h4>
 
 <p>An example:</p>
 <img alt="example image 003" src="adj-ex-043-image.svg"
 style="max-width:95%;max-height:auto;"></img> 
 
-<h4 id="L5916">1.23.4. Example File 004</h4>
+<h4 id="L5916">1.25.4. Example File 004</h4>
 
 <p>An example:</p>
 <img alt="example image 004" src="adj-ex-044-image.svg"
