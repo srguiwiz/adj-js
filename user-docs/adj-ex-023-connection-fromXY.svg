@@ -5,6 +5,6 @@
 	<rect adj:id="one" x="5" y="5" width="40" height="30" stroke="#000" fill="#aaa"/>
 	<rect adj:id="other" x="145" y="55" width="40" height="30" stroke="#000" fill="#ccc"/>
 	<path d="M45,20q20.528,21.444 50,25t50,25" stroke="#000" stroke-width="2" fill="none" adj:d="M5,100 q40,10 80,0 t80,0">
-		<adj:connection from="one#1,0.5" to="other#0,0.5"/>
+		<adj:connection from="one%1,0.5" to="other%0,0.5"/>
 	</path>
 </svg>

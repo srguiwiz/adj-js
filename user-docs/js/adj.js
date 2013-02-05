@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:2, revision:1 };
+	Adj.version = { major:3, minor:2, revision:2 };
 	Adj.algorithms = {};
 }
 
@@ -1152,9 +1152,9 @@ Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
 }
 
 // constants
-// parse an id and optionally two more parameters, e.g. full "obj1 # 0.5, 1" or less specific "obj2"
+// parse an id and optionally two more parameters, e.g. full "obj1 % 0.5, 1" or less specific "obj2"
 // note: as implemented tolerates extra paremeters
-Adj.idXYRegexp = /^\s*([^#\s]+)\s*(?:#\s*([^,\s]+)\s*)?(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
+Adj.idXYRegexp = /^\s*([^%\s]+)\s*(?:%\s*([^,\s]+)\s*)?(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
 // parse one or two parameters, e.g. "0.5, 1" or only "0.3"
 // note: as implemented tolerates extra paremeters
 Adj.oneOrTwoRegexp = /^\s*([^,\s]+)\s*(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;

@@ -44,7 +44,7 @@
 		<g transform="translate(0,12)">
 			<adj:horizontalList gap="5" centerGap="40" maxPerRow="3" makeGrid="true" hAlign="center" vAlign="middle"/>
 			<g>
-				<adj:connection from="client1 # 0, 0.7" to="server1 # 1, 0.3"/>
+				<adj:connection from="client1 % 0, 0.7" to="server1 % 1, 0.3"/>
 				<path adj:id="request1path" class="arrow" d="M531,20.4q-255.53,22.609 -483,141.2" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,50 100,0"/>
 				<g transform="translate(456.309,18.404)">
 					<adj:rider adjust="near" gap="20" pin="1, 1"/>
@@ -52,7 +52,7 @@
 				</g>
 			</g>
 			<g>
-				<adj:connection from="server1 # 1, 0.7" to="client2 # 0, 0.3"/>
+				<adj:connection from="server1 % 1, 0.7" to="client2 % 0, 0.3"/>
 				<path adj:id="response1path" class="arrow" d="M48,170.4q223.431,140.221 483,187.2" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,50 100,0"/>
 				<g transform="translate(21.296,206.06)">
 					<adj:rider adjust="near" gap="20" pin="1, 0"/>

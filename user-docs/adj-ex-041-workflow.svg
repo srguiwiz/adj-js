@@ -140,7 +140,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="subject-editor # 0.2, 1.05" to="subject-disk # 0.1, -0.2"/>
+		<adj:connection from="subject-editor % 0.2, 1.05" to="subject-disk % 0.1, -0.2"/>
 		<path class="arrow" d="M331,293.25q32.26,37.768 76.8,59.75" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
 		<g class="workflow-machine" transform="translate(319.387,314.402)">
 			<adj:rider at="0.3" pin="1,0"/>
@@ -149,7 +149,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="subject-disk # 0.9, -0.2" to="subject-editor # 0.8, 1.05"/>
+		<adj:connection from="subject-disk % 0.9, -0.2" to="subject-editor % 0.8, 1.05"/>
 		<path class="arrow" d="M446.2,353q44.54,-21.982 76.8,-59.75" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,10 100,0"/>
 		<g class="workflow-machine" transform="translate(502.606,314.395)">
 			<adj:rider at="0.7" pin="0,0"/>
@@ -160,7 +160,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="subject-disk # 0.1, 1.2" to="subject-firefox # 0.3, 0.05"/>
+		<adj:connection from="subject-disk % 0.1, 1.2" to="subject-firefox % 0.3, 0.05"/>
 		<path class="arrow" d="M407.8,402q-166.769,70.175 -215.3,136.45" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q70,30 100,0"/>
 		<g class="workflow-machine" transform="translate(238.103,425.256)">
 			<adj:rider at="0.5" pin="1,1"/>
@@ -170,7 +170,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="subject-disk # 0.4, 1.2" to="add-on-auto-reload # 0.6, -0.1"/>
+		<adj:connection from="subject-disk % 0.4, 1.2" to="add-on-auto-reload % 0.6, -0.1"/>
 		<path class="arrow" d="M422.2,402q-10.271,84.417 -58,154.8" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,-20 100,0"/>
 		<g class="workflow-machine" transform="translate(402.558,482.907)">
 			<adj:rider at="0.5" pin="0,0"/>
@@ -180,7 +180,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="add-on-onload-script # 0.2, 1.05" to="add-on-onload-script # 0.8, 1.05"/>
+		<adj:connection from="add-on-onload-script % 0.2, 1.05" to="add-on-onload-script % 0.8, 1.05"/>
 		<path class="arrow" d="M422.2,672.1q30.3,50 60.6,0" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,50 100,0"/>
 		<g class="workflow-machine" transform="translate(410.496,697.098)">
 			<adj:rider at="0.5" pin="0.5,0"/>
@@ -193,7 +193,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="add-on-save-back # 0.6, -0.05" to="subject-disk # 0.8, 1.2"/>
+		<adj:connection from="add-on-save-back % 0.6, -0.05" to="subject-disk % 0.8, 1.2"/>
 		<path class="arrow" d="M572.2,559.9q-16.137,-66.508 -130.8,-157.9" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q30,30 100,0"/>
 		<g class="workflow-machine" transform="translate(546.6,455.285)">
 			<adj:rider at="0.3" pin="-0.05,1"/>
@@ -204,7 +204,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="subject-author # 0.9, -0.1" to="subject-editor # -0.07, 0.4"/>
+		<adj:connection from="subject-author % 0.9, -0.1" to="subject-editor % -0.07, 0.4"/>
 		<path class="arrow" d="M143.6,197.1q38.465,-54.023 101,-76.1" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,-20 100,0"/>
 		<g class="workflow-user" transform="translate(107.022,106.024)">
 			<adj:rider at="0.45" pin="1,1"/>
@@ -215,7 +215,7 @@
 		</g>
 	</g>
 	<g>
-		<adj:connection from="subject-author # 0.7, 1.1" to="subject-firefox # 0.1, -0.03"/>
+		<adj:connection from="subject-author % 0.7, 1.1" to="subject-firefox % 0.1, -0.03"/>
 		<path class="arrow" d="M126.8,327.9q-55.822,127.831 -59.3,189.03" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q70,15 100,0"/>
 		<g class="workflow-user" transform="translate(25.517,345.988)">
 			<adj:rider at="0.45" pin="0.9,1"/>
