@@ -154,7 +154,7 @@ Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgEl
 Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(parameterName) {
 	var commandNamesByParameterName = Adj.commandNamesByParameterName;
 	if (!commandNamesByParameterName) {
-		commandNamesByParameterName = Adj.commandNamesByParameterName = [];
+		commandNamesByParameterName = Adj.commandNamesByParameterName = {};
 		var algorithms = Adj.algorithms;
 		for (var algorithmName in algorithms) {
 			var parameterNames = algorithms[algorithmName].parameters;
@@ -206,7 +206,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjLevel;
 	//
 	// then look for newer alternative syntex Adj commands as attributes
-	var adjAttributesByName = [];
+	var adjAttributesByName = {};
 	var attributes = node.attributes;
 	var numberOfAttributes = attributes.length;
 	for (var i = 0; i < numberOfAttributes; i++) {
@@ -991,10 +991,10 @@ Adj.algorithms.textBreaks = {
 
 // utility
 Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, level) {
-	if (idsDictionary == undefined) { idsDictionary = []; }; // ensure there is an idsDictionary
+	if (idsDictionary == undefined) { idsDictionary = {}; }; // ensure there is an idsDictionary
 	level = level || 1; // if no level given then 1
 	// chose to implement to recognize more than one kind of id
-	var ids = [];
+	var ids = {};
 	var adjId = element.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
 	if (adjId) {
 		ids[adjId] = true;
@@ -2516,7 +2516,7 @@ Adj.algorithms.verticalTree = {
 		}
 		//
 		// determine tree structure
-		var idsDictionary = [];
+		var idsDictionary = {};
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
@@ -3065,7 +3065,7 @@ Adj.algorithms.horizontalTree = {
 		}
 		//
 		// determine tree structure
-		var idsDictionary = [];
+		var idsDictionary = {};
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
@@ -3579,7 +3579,7 @@ Adj.simpleArithmeticOperatorRegexp = /([+\-*])/g;
 // resolve ids and evaluate simple arithmetic
 Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpression, arithmeticElementRecordsById, usedHow) {
 	if (!arithmeticElementRecordsById) { // if not given one to reuse, make one for local use here
-		arithmeticElementRecordsById = [];
+		arithmeticElementRecordsById = {};
 	}
 	if (!usedHow) {
 		usedHow = "";
@@ -3801,7 +3801,7 @@ Adj.algorithms.arithmetic = {
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
-		var arithmeticElementRecordsById = [];
+		var arithmeticElementRecordsById = {};
 		//
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
@@ -3846,7 +3846,7 @@ Adj.algorithms.floater = {
 		if (!at) {
 			throw "missing attribute at= for an adj:floater element";
 		}
-		var arithmeticElementRecordsById = [];
+		var arithmeticElementRecordsById = {};
 		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(parent, at, arithmeticElementRecordsById, "used in attribute at= for an adj:floater element");
 		var atMatch = Adj.twoRegexp.exec(atWithArithmeticEvaluated);
 		if (!atMatch) {
