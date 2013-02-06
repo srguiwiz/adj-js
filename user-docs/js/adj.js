@@ -122,10 +122,10 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	// phaseHandlers is an associative array object which for a phaseHandlerName key as value has an array of phaseHandler, if there is any
 	var phaseHandlers = target.adjPhaseHandlers;
 	phaseHandlers = phaseHandlers || {}; // if no phaseHandlers yet then new associative array object
-	var phaseHandlersForThisName = phaseHandlers[phaseHandlerName];
-	phaseHandlersForThisName = phaseHandlersForThisName || []; // if no phaseHandlersForThisName yet then new array
-	phaseHandlersForThisName.push(phaseHandler);
-	phaseHandlers[phaseHandlerName] = phaseHandlersForThisName;
+	var phaseHandlersForThisPhase = phaseHandlers[phaseHandlerName];
+	phaseHandlersForThisPhase = phaseHandlersForThisPhase || []; // if no phaseHandlersForThisPhase yet then new array
+	phaseHandlersForThisPhase.push(phaseHandler);
+	phaseHandlers[phaseHandlerName] = phaseHandlersForThisPhase;
 	target.adjPhaseHandlers = phaseHandlers;
 	if (algorithm.notAnOrder1Element) {
 		element.adjNotAnOrder1Element = true;
@@ -134,6 +134,27 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
 		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
 	}
+}
+
+// utility
+Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForName (target, algorithmName) {
+	var matchingPhaseHandlers = [];
+	var algorithm = Adj.algorithms[algorithmName];
+	if (!algorithm) {
+		return matchingPhaseHandlers;
+	}
+	var phaseHandlersForThisPhase = target.adjPhaseHandlers[algorithm.phaseHandlerName];
+	if (!phaseHandlersForThisPhase) {
+		return matchingPhaseHandlers;
+	}
+	var numberOfPhaseHandlersForThisPhase = phaseHandlersForThisPhase.length;
+	for (var i = 0; i < numberOfPhaseHandlersForThisPhase; i++) {
+		var phaseHandler = phaseHandlersForThisPhase[i];
+		if (phaseHandler.algorithm == algorithm) {
+			matchingPhaseHandlers.push(phaseHandler);
+		}
+	}
+	return matchingPhaseHandlers;
 }
 
 // constants
@@ -3915,7 +3936,7 @@ Adj.algorithms.vine = {
 		if (explain) {
 			if (element instanceof SVGPathElement) {
 				// an SVG path
-				if (!element.adjPhaseHandlers[Adj.algorithms.explain.phaseHandlerName]) {
+				if (Adj.getPhaseHandlersForElementForName(element, "explain").length == 0) {
 					Adj.explainBasicGeometry(element);
 				} // else { // don't explain twice
 			} // else { // not a known case, as implemented
