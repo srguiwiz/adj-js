@@ -1493,7 +1493,7 @@ Adj.algorithms.connection = {
 		// what to connect
 		var fromElement = Adj.getElementByIdNearby(fromId, element);
 		if (!fromElement) {
-			throw "nonresolving id \"" + fromId + "\" used as attribute from= for an adj:connection element";
+			throw "nonresolving id \"" + fromId + "\" used as parameter from= for a connection command";
 		}
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
@@ -1504,7 +1504,7 @@ Adj.algorithms.connection = {
 		//
 		var toElement = Adj.getElementByIdNearby(toId, element);
 		if (!toElement) {
-			throw "nonresolving id \"" + toId + "\" used as attribute to= for an adj:connection element";
+			throw "nonresolving id \"" + toId + "\" used as parameter to= for a connection command";
 		}
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
@@ -1891,7 +1891,7 @@ Adj.algorithms.rider = {
 			// general case
 			path = Adj.getElementByIdNearby(pathId, element);
 			if (!path) {
-				throw "nonresolving id \"" + pathId + "\" used as attribute path= for an adj:rider element";
+				throw "nonresolving id \"" + pathId + "\" used as parameter path= for a rider command";
 			}
 			//
 			if (considerElementsToAvoid) {
@@ -2844,7 +2844,7 @@ Adj.algorithms.verticalTree = {
 				// first check for preferred attribute adj:id
 				// second check for acceptable attribute id
 				var suspectId = suspectChild.getAttributeNS(Adj.AdjNamespace, "id") || suspectChild.getAttribute("id");
-				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with an adj:verticalTree unreachable element";
+				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with a verticalTree unreachable element";
 			}
 		}
 		//
@@ -3393,7 +3393,7 @@ Adj.algorithms.horizontalTree = {
 				// first check for preferred attribute adj:id
 				// second check for acceptable attribute id
 				var suspectId = suspectChild.getAttributeNS(Adj.AdjNamespace, "id") || suspectChild.getAttribute("id");
-				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with an adj:horizontalTree unreachable element";
+				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with a horizontalTree unreachable element";
 			}
 		}
 		//
@@ -3620,17 +3620,17 @@ Adj.simpleArithmeticOperatorRegexp = /([+\-*])/g;
 
 // essential
 // substitute variables
-Adj.substituteVariables = function substituteVariables (element, originalExpression, variableSubstitutionsByName, usedHow) {
+Adj.substituteVariables = function substituteVariables (element, originalExpression, usedHow, variableSubstitutionsByName) {
 	Adj.variableRegexp.lastIndex = 0; // be safe
 	var variableMatch = Adj.variableRegexp.exec(originalExpression);
 	if (!variableMatch) { // shortcut for speed
 		return originalExpression;
 	}
-	if (!variableSubstitutionsByName) { // if not given one to reuse, make one for local use here
-		variableSubstitutionsByName = {};
-	}
 	if (!usedHow) {
 		usedHow = "";
+	}
+	if (!variableSubstitutionsByName) { // if not given one to reuse, make one for local use here
+		variableSubstitutionsByName = {};
 	}
 	var replacements = [];
 	while (variableMatch) {
@@ -3675,17 +3675,17 @@ Adj.substituteVariables = function substituteVariables (element, originalExpress
 
 // essential
 // resolve id arithmetic
-Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpression, idedElementRecordsById, usedHow) {
+Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpression, usedHow, idedElementRecordsById) {
 	Adj.idArithmeticRegexp.lastIndex = 0; // be safe
 	var idArithmeticMatch = Adj.idArithmeticRegexp.exec(originalExpression);
 	if (!idArithmeticMatch) { // shortcut for speed
 		return originalExpression;
 	}
-	if (!idedElementRecordsById) { // if not given one to reuse, make one for local use here
-		idedElementRecordsById = {};
-	}
 	if (!usedHow) {
 		usedHow = "";
+	}
+	if (!idedElementRecordsById) { // if not given one to reuse, make one for local use here
+		idedElementRecordsById = {};
 	}
 	var parent = element.parentNode;
 	var replacements = [];
@@ -3900,6 +3900,26 @@ Adj.evaluateArithmetic = function evaluateArithmetic (originalExpression, usedHo
 	return evaluatedExpression;
 }
 
+// utility
+// combine other calls
+Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName, idedElementRecordsById) {
+	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
+	var withIdsResolved = Adj.resolveIdArithmetic(element, withVariablesSubstituted, usedHow, idedElementRecordsById);
+	var withArithmeticEvaluated = Adj.evaluateArithmetic(withIdsResolved, usedHow);
+	return withArithmeticEvaluated;
+}
+
+// utility
+// combine other calls
+Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName) {
+	if (typeof originalExpression != "string") { // e.g. if it is a number already
+		return originalExpression;
+	}
+	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
+	var withArithmeticEvaluated = Adj.evaluateArithmetic(withVariablesSubstituted, usedHow);
+	return withArithmeticEvaluated;
+}
+
 // a specific algorithm
 // note: as implemented works for path
 Adj.algorithms.vine = {
@@ -3911,9 +3931,6 @@ Adj.algorithms.vine = {
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
-		var variableSubstitutionsByName = {};
-		var idedElementRecordsById = {};
-		//
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
 			// an SVG path
@@ -3924,10 +3941,7 @@ Adj.algorithms.vine = {
 			if (!authoringD) {
 				authoringD = "";
 			}
-			var usedHow = "used in attribute adj:d= for a path element";
-			var dWithVariablesSubstituted = Adj.substituteVariables(element, authoringD, variableSubstitutionsByName, usedHow);
-			var dWithIdsResolved = Adj.resolveIdArithmetic(element, dWithVariablesSubstituted, idedElementRecordsById, usedHow);
-			var dWithArithmeticEvaluated = Adj.evaluateArithmetic(dWithIdsResolved, usedHow);
+			var dWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, authoringD, "used in attribute adj:d= for a path element");
 			//
 			element.setAttribute("d", dWithArithmeticEvaluated);
 		} // else { // not a known case, as implemented not transformed
@@ -3957,17 +3971,12 @@ Adj.algorithms.floater = {
 		//
 		var at = parametersObject.at ? parametersObject.at.toString() : ""; // without toString could get number
 		if (!at) {
-			throw "missing attribute at= for an adj:floater element";
+			throw "missing parameter at= for a floater command";
 		}
-		var variableSubstitutionsByName = {};
-		var idedElementRecordsById = {};
-		var usedHow = "used in attribute at= for an adj:floater element";
-		var atWithVariablesSubstituted = Adj.substituteVariables(element, at, variableSubstitutionsByName, usedHow);
-		var atWithIdsResolved = Adj.resolveIdArithmetic(element, atWithVariablesSubstituted, idedElementRecordsById, usedHow);
-		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(atWithIdsResolved, usedHow);
+		var atWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, at, "used in parameter at= for a floater command");
 		var atMatch = Adj.twoRegexp.exec(atWithArithmeticEvaluated);
 		if (!atMatch) {
-			throw "impossible attribute at=\"" + at + "\" for an adj:floater element";
+			throw "impossible parameter at=\"" + at + "\" for a floater command";
 		}
 		var atX = parseFloat(atMatch[1]);
 		var atY = parseFloat(atMatch[2]);
