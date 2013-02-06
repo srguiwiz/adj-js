@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:2, revision:2 };
+	Adj.version = { major:3, minor:2, revision:3 };
 	Adj.algorithms = {};
 }
 
@@ -3588,7 +3588,7 @@ Adj.firstTimeStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordi
 }
 
 // constants
-// parse a ^ prefix and an id, e.g. "^distance"
+// parse a ^ prefix and a variable name, e.g. "^distance"
 Adj.variableRegexp = /\^\s*([^^#%,+\-*\/~\s]+)/g;
 // parse a ~ prefix, an id, a #, a field, and optionally a % and one more parameter, e.g. full "~obj1#x%0.2" or less specific "~obj2#yh"
 Adj.idArithmeticRegexp = /~\s*([^#\s]+)\s*#\s*([^%,+\-*)\s]+)(?:\s*%\s*(-?[0-9.]+))?/g;
@@ -3881,11 +3881,11 @@ Adj.evaluateArithmetic = function evaluateArithmetic (originalExpression, usedHo
 
 // a specific algorithm
 // note: as implemented works for path
-Adj.algorithms.arithmetic = {
+Adj.algorithms.vine = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase2Up",
+	phaseHandlerName: "adjPhase3Up",
 	parameters: ["explain"],
-	method: function arithmetic (element, parametersObject) {
+	method: function vine (element, parametersObject) {
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		Adj.unhideByDisplayAttribute(element);
