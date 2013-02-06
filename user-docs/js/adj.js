@@ -204,6 +204,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	//delete node.adjRemoveElement; // probably safe not to delete, element should be gone
 	Adj.unhideByDisplayAttribute(node, true); // does delete node.adjOriginalDisplay
 	delete node.adjLevel;
+	delete node.adjVariables;
 	//
 	// then look for newer alternative syntex Adj commands as attributes
 	var adjAttributesByName = {};
@@ -270,7 +271,26 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 						parameters[attribute.localName] = Adj.parameterParse(attribute.value);
 					}
 				}
-				Adj.setAlgorithm(node, algorithmName, parameters);
+				switch (algorithmName) {
+					case "variable":
+						var variableName = parameters["name"];
+						if (variableName) {
+							var variableValue = parameters["value"];
+							var variables = node.adjVariables;
+							if (!variables) {
+								variables = node.adjVariables = {};
+							}
+							if (variableValue != undefined) {
+								variables[variableName] = variableValue;
+							} else {
+								delete variables[variableName];
+							}
+						}
+						break;
+					default:
+						Adj.setAlgorithm(node, algorithmName, parameters);
+						break;
+				}
 				continue;
 			}
 		}
@@ -3568,6 +3588,8 @@ Adj.firstTimeStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordi
 }
 
 // constants
+// parse a ^ prefix and an id, e.g. "^distance"
+Adj.variableRegexp = /\^\s*([^^#%,+\-*\/~\s]+)/g;
 // parse a ~ prefix, an id, a #, a field, and optionally a % and one more parameter, e.g. full "~obj1#x%0.2" or less specific "~obj2#yh"
 Adj.idArithmeticRegexp = /~\s*([^#\s]+)\s*#\s*([^%,+\-*)\s]+)(?:\s*%\s*(-?[0-9.]+))?/g;
 // match a simple arithmetic expression, allowing integer and decimal numbers, +, -, and *, e.g. "0.5 * 125 + 20"
@@ -3576,30 +3598,87 @@ Adj.simpleArithmeticNumberRegexp = /(-?\.?[0-9.]+)/g;
 Adj.simpleArithmeticOperatorRegexp = /([+\-*])/g;
 
 // essential
-// resolve ids and evaluate simple arithmetic
-Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpression, arithmeticElementRecordsById, usedHow) {
-	if (!arithmeticElementRecordsById) { // if not given one to reuse, make one for local use here
-		arithmeticElementRecordsById = {};
+// substitute variables
+Adj.substituteVariables = function substituteVariables (element, originalExpression, variableSubstitutionsByName, usedHow) {
+	Adj.variableRegexp.lastIndex = 0; // be safe
+	var variableMatch = Adj.variableRegexp.exec(originalExpression);
+	if (!variableMatch) { // shortcut for speed
+		return originalExpression;
+	}
+	if (!variableSubstitutionsByName) { // if not given one to reuse, make one for local use here
+		variableSubstitutionsByName = {};
 	}
 	if (!usedHow) {
 		usedHow = "";
 	}
-	//
-	// firstly resolve ids
 	var replacements = [];
+	while (variableMatch) {
+		var variableName = variableMatch[1];
+		var variableValue = variableSubstitutionsByName[variableName];
+		if (variableValue == undefined) {
+			var variableValue = undefined;
+			var elementToLookUpIn = element;
+			do {
+				var variablesAtElement = elementToLookUpIn.adjVariables;
+				if (variablesAtElement) {
+					variableValue = variablesAtElement[variableName];
+				}
+				elementToLookUpIn = elementToLookUpIn.parentNode;
+			} while (variableValue == undefined && elementToLookUpIn);
+			if (variableValue == undefined) {
+				throw "nonresolving ^ variable name \"" + variableName + "\" " + usedHow;
+			}
+			variableValue = variableSubstitutionsByName[variableName] = variableValue;
+		}
+		replacements.push({
+			index: variableMatch.index,
+			lastIndex: Adj.variableRegexp.lastIndex,
+			variableValue: variableValue
+		});
+		//
+		variableMatch = Adj.variableRegexp.exec(originalExpression);
+	}
+	var replacementsLength = replacements.length;
+	var replacementSegments = [];
+	var previousIndex = 0;
+	for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
+		var replacement = replacements[replacementIndex];
+		replacementSegments.push(originalExpression.substring(previousIndex, replacement.index));
+		replacementSegments.push(replacement.variableValue);
+		previousIndex = replacement.lastIndex;
+	}
+	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
+	var substitutedExpression = replacementSegments.join("");
+	return substitutedExpression;
+}
+
+// essential
+// resolve id arithmetic
+Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpression, idedElementRecordsById, usedHow) {
 	Adj.idArithmeticRegexp.lastIndex = 0; // be safe
 	var idArithmeticMatch = Adj.idArithmeticRegexp.exec(originalExpression);
+	if (!idArithmeticMatch) { // shortcut for speed
+		return originalExpression;
+	}
+	if (!idedElementRecordsById) { // if not given one to reuse, make one for local use here
+		idedElementRecordsById = {};
+	}
+	if (!usedHow) {
+		usedHow = "";
+	}
+	var parent = element.parentNode;
+	var replacements = [];
 	while (idArithmeticMatch) {
 		var arithmeticId = idArithmeticMatch[1];
-		var arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId];
-		if (arithmeticElementRecord == undefined) {
-			var arithmeticElement = Adj.getElementByIdNearby(arithmeticId, element);
-			if (!arithmeticElement) {
+		var idedElementRecord = idedElementRecordsById[arithmeticId];
+		if (idedElementRecord == undefined) {
+			var idedElement = Adj.getElementByIdNearby(arithmeticId, element);
+			if (!idedElement) {
 				throw "nonresolving ~ id \"" + arithmeticId + "\" " + usedHow;
 			}
-			arithmeticElementRecord = arithmeticElementRecordsById[arithmeticId] = {
-				boundingBox: arithmeticElement.getBBox(),
-				matrixFrom: arithmeticElement.getTransformToElement(element)
+			idedElementRecord = idedElementRecordsById[arithmeticId] = {
+				boundingBox: idedElement.getBBox(),
+				matrixFrom: idedElement.getTransformToElement(parent)
 			};
 		}
 		var arithmeticField = idArithmeticMatch[2];
@@ -3661,8 +3740,8 @@ Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpressio
 				throw "not a number % parameter \"" + arithmeticParameter + "\" " + usedHow;
 			}
 		}
-		var arithmeticBoundingBox = arithmeticElementRecord.boundingBox;
-		var matrixFromArithmeticElement = arithmeticElementRecord.matrixFrom;
+		var arithmeticBoundingBox = idedElementRecord.boundingBox;
+		var matrixFromIdedElement = idedElementRecord.matrixFrom;
 		var arithmeticPoint = document.documentElement.createSVGPoint();
 		if (!withoutEF) {
 			if (isNaN(arithmeticX)) { // unknown for now
@@ -3673,20 +3752,20 @@ Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpressio
 			}
 			arithmeticPoint.x = arithmeticBoundingBox.x + arithmeticBoundingBox.width * arithmeticX;
 			arithmeticPoint.y = arithmeticBoundingBox.y + arithmeticBoundingBox.height * arithmeticY;
-			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElement);
+			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromIdedElement);
 		} else { // withoutEF
 			// relative coordinates must be transformed without translation's e and f
-			var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF;
-			if (matrixFromArithmeticElementWithoutEF == undefined) {
-				var matrixFromArithmeticElementWithoutEF = arithmeticElementRecord.matrixFromWithoutEF = document.documentElement.createSVGMatrix();
-				matrixFromArithmeticElementWithoutEF.a = matrixFromArithmeticElement.a;
-				matrixFromArithmeticElementWithoutEF.b = matrixFromArithmeticElement.b;
-				matrixFromArithmeticElementWithoutEF.c = matrixFromArithmeticElement.c;
-				matrixFromArithmeticElementWithoutEF.d = matrixFromArithmeticElement.d;
+			var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF;
+			if (matrixFromIdedElementWithoutEF == undefined) {
+				var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF = document.documentElement.createSVGMatrix();
+				matrixFromIdedElementWithoutEF.a = matrixFromIdedElement.a;
+				matrixFromIdedElementWithoutEF.b = matrixFromIdedElement.b;
+				matrixFromIdedElementWithoutEF.c = matrixFromIdedElement.c;
+				matrixFromIdedElementWithoutEF.d = matrixFromIdedElement.d;
 			}
 			arithmeticPoint.x = arithmeticBoundingBox.width;
 			arithmeticPoint.y = arithmeticBoundingBox.height;
-			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromArithmeticElementWithoutEF);
+			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromIdedElementWithoutEF);
 		}
 		var arithmeticCoordinate;
 		if (isX) {
@@ -3713,12 +3792,22 @@ Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpressio
 		previousIndex = replacement.lastIndex;
 	}
 	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
-	var idsResolvedExpression = replacementSegments.join("");
-	//
-	// secondly evaluate simple arithmetic
-	var replacements = [];
+	var resolvedExpression = replacementSegments.join("");
+	return resolvedExpression;
+}
+
+// essential
+// evaluate simple arithmetic
+Adj.evaluateArithmetic = function evaluateArithmetic (originalExpression, usedHow) {
 	Adj.simpleArithmeticRegexp.lastIndex = 0; // be safe
-	var simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedExpression);
+	var simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(originalExpression);
+	if (!simpleArithmeticMatch) { // shortcut for speed
+		return originalExpression;
+	}
+	if (!usedHow) {
+		usedHow = "";
+	}
+	var replacements = [];
 	while (simpleArithmeticMatch) {
 		var arithmeticExpression = simpleArithmeticMatch[1];
 		var sumSoFar = 0; // start with 0
@@ -3774,18 +3863,18 @@ Adj.evaluateArithmetic = function evaluateArithmetic (element, originalExpressio
 			arithmeticExpression: sumSoFar.toString()
 		});
 		//
-		simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(idsResolvedExpression);
+		simpleArithmeticMatch = Adj.simpleArithmeticRegexp.exec(originalExpression);
 	}
 	var replacementsLength = replacements.length;
 	var replacementSegments = [];
 	var previousIndex = 0;
 	for (var replacementIndex = 0; replacementIndex < replacementsLength; replacementIndex++) {
 		var replacement = replacements[replacementIndex];
-		replacementSegments.push(idsResolvedExpression.substring(previousIndex, replacement.index));
+		replacementSegments.push(originalExpression.substring(previousIndex, replacement.index));
 		replacementSegments.push(replacement.arithmeticExpression);
 		previousIndex = replacement.lastIndex;
 	}
-	replacementSegments.push(idsResolvedExpression.substring(previousIndex, idsResolvedExpression.length));
+	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
 	var evaluatedExpression = replacementSegments.join("");
 	return evaluatedExpression;
 }
@@ -3801,7 +3890,8 @@ Adj.algorithms.arithmetic = {
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
-		var arithmeticElementRecordsById = {};
+		var variableSubstitutionsByName = {};
+		var idedElementRecordsById = {};
 		//
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
@@ -3813,7 +3903,10 @@ Adj.algorithms.arithmetic = {
 			if (!authoringD) {
 				authoringD = "";
 			}
-			var dWithArithmeticEvaluated = Adj.evaluateArithmetic(element, authoringD, arithmeticElementRecordsById, "used in attribute adj:d= for a path element");
+			var usedHow = "used in attribute adj:d= for a path element";
+			var dWithVariablesSubstituted = Adj.substituteVariables(element, authoringD, variableSubstitutionsByName, usedHow);
+			var dWithIdsResolved = Adj.resolveIdArithmetic(element, dWithVariablesSubstituted, idedElementRecordsById, usedHow);
+			var dWithArithmeticEvaluated = Adj.evaluateArithmetic(dWithIdsResolved, usedHow);
 			//
 			element.setAttribute("d", dWithArithmeticEvaluated);
 		} // else { // not a known case, as implemented not transformed
@@ -3839,15 +3932,18 @@ Adj.algorithms.floater = {
 				 "pin",
 				 "explain"],
 	method: function floater (element, parametersObject, level) {
-		var parent = element.parentNode;
 		Adj.unhideByDisplayAttribute(element);
 		//
 		var at = parametersObject.at ? parametersObject.at.toString() : ""; // without toString could get number
 		if (!at) {
 			throw "missing attribute at= for an adj:floater element";
 		}
-		var arithmeticElementRecordsById = {};
-		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(parent, at, arithmeticElementRecordsById, "used in attribute at= for an adj:floater element");
+		var variableSubstitutionsByName = {};
+		var idedElementRecordsById = {};
+		var usedHow = "used in attribute at= for an adj:floater element";
+		var atWithVariablesSubstituted = Adj.substituteVariables(element, at, variableSubstitutionsByName, usedHow);
+		var atWithIdsResolved = Adj.resolveIdArithmetic(element, atWithVariablesSubstituted, idedElementRecordsById, usedHow);
+		var atWithArithmeticEvaluated = Adj.evaluateArithmetic(atWithIdsResolved, usedHow);
 		var atMatch = Adj.twoRegexp.exec(atWithArithmeticEvaluated);
 		if (!atMatch) {
 			throw "impossible attribute at=\"" + at + "\" for an adj:floater element";
@@ -3874,6 +3970,7 @@ Adj.algorithms.floater = {
 		//
 		// explain
 		if (explain) {
+			var parent = element.parentNode;
 			var elementTransformAttribute = element.getAttribute("transform");
 			var explanationElement = Adj.createExplanationElement("rect");
 			explanationElement.setAttribute("x", Adj.decimal(boundingBox.x));
