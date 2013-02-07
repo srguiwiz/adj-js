@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:2, revision:3 };
+	Adj.version = { major:3, minor:3, revision:0 };
 	Adj.algorithms = {};
 }
 
@@ -551,22 +551,22 @@ Adj.algorithms.verticalList = {
 				 "hAlign", "vAlign",
 				 "explain"],
 	method: function verticalList (element, parametersObject) {
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
-		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
-		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
-		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
-		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
-		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var maxHeight = !isNaN(parametersObject.maxHeight) ? parametersObject.maxHeight : null; // allowed, default maxHeight = null means no limit
-		var maxPerColumn = !isNaN(parametersObject.maxPerColumn) ? parametersObject.maxPerColumn : null; // allowed, default maxPerColumn = null means no limit
+		var usedHow = "used in a parameter for a verticalList command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxHeight = null means no limit
+		var maxPerColumn = Adj.doVarsArithmetic(element, parametersObject.maxPerColumn, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerColumn = null means no limit
 		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
-		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
-		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["left"]; }; // default hAlign left
-		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
-		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
@@ -762,22 +762,22 @@ Adj.algorithms.horizontalList = {
 				 "hAlign", "vAlign",
 				 "explain"],
 	method: function horizontalList (element, parametersObject) {
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
-		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
-		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
-		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
-		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
-		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var maxWidth = !isNaN(parametersObject.maxWidth) ? parametersObject.maxWidth : null; // allowed, default maxWidth = null means no limit
-		var maxPerRow = !isNaN(parametersObject.maxPerRow) ? parametersObject.maxPerRow : null; // allowed, default maxPerRow = null means no limit
+		var usedHow = "used in a parameter for a horizontalList command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxWidth = null means no limit
+		var maxPerRow = Adj.doVarsArithmetic(element, parametersObject.maxPerRow, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerRow = null means no limit
 		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
-		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
-		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["left"]; }; // default hAlign left
-		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
-		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["top"]; }; // default vAlign top
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
@@ -970,13 +970,16 @@ Adj.algorithms.frameForParent = {
 				 "horizontalInset", "leftInset", "rightInset",
 				 "verticalInset", "topInset", "bottomInset"],
 	method: function frameForParent (element, parametersObject) {
-		var inset = !isNaN(parametersObject.inset) ? parametersObject.inset : 0.5; // default inset = 0.5
-		var horizontalInset = !isNaN(parametersObject.horizontalInset) ? parametersObject.horizontalInset : inset; // default horizontalInset = inset
-		var verticalInset = !isNaN(parametersObject.verticalInset) ? parametersObject.verticalInset : inset; // default verticalInset = inset
-		var leftInset = !isNaN(parametersObject.leftInset) ? parametersObject.leftInset : horizontalInset; // default leftInset = horizontalInset
-		var rightInset = !isNaN(parametersObject.rightInset) ? parametersObject.rightInset : horizontalInset; // default rightInset = horizontalInset
-		var topInset = !isNaN(parametersObject.topInset) ? parametersObject.topInset : verticalInset; // default topInset = verticalInset
-		var bottomInset = !isNaN(parametersObject.bottomInset) ? parametersObject.bottomInset : verticalInset; // default bottomInset = verticalInset
+		var usedHow = "used in a parameter for a frameForParent command";
+		var variableSubstitutionsByName = {};
+		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0.5, null, usedHow, variableSubstitutionsByName); // default inset = 0.5
+		var horizontalInset = Adj.doVarsArithmetic(element, parametersObject.horizontalInset, inset, null, usedHow, variableSubstitutionsByName); // default horizontalInset = inset
+		var leftInset = Adj.doVarsArithmetic(element, parametersObject.leftInset, horizontalInset, null, usedHow, variableSubstitutionsByName); // default leftInset = horizontalInset
+		var rightInset = Adj.doVarsArithmetic(element, parametersObject.rightInset, horizontalInset, null, usedHow, variableSubstitutionsByName); // default rightInset = horizontalInset
+		var verticalInset = Adj.doVarsArithmetic(element, parametersObject.verticalInset, inset, null, usedHow, variableSubstitutionsByName); // default verticalInset = inset
+		var topInset = Adj.doVarsArithmetic(element, parametersObject.topInset, verticalInset, null, usedHow, variableSubstitutionsByName); // default topInset = verticalInset
+		var bottomInset = Adj.doVarsArithmetic(element, parametersObject.bottomInset, verticalInset, null, usedHow, variableSubstitutionsByName); // default bottomInset = verticalInset
+		//
 		var parent = element.parentNode;
 		var parentBoundingBox = parent.getBBox();
 		element.setAttribute("x", Adj.decimal(parentBoundingBox.x + leftInset));
@@ -1493,7 +1496,7 @@ Adj.algorithms.connection = {
 		// what to connect
 		var fromElement = Adj.getElementByIdNearby(fromId, element);
 		if (!fromElement) {
-			throw "nonresolving id \"" + fromId + "\" used as parameter from= for a connection command";
+			throw "nonresolving id \"" + fromId + "\" used in a parameter from= for a connection command";
 		}
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
@@ -1504,7 +1507,7 @@ Adj.algorithms.connection = {
 		//
 		var toElement = Adj.getElementByIdNearby(toId, element);
 		if (!toElement) {
-			throw "nonresolving id \"" + toId + "\" used as parameter to= for a connection command";
+			throw "nonresolving id \"" + toId + "\" used in a parameter to= for a connection command";
 		}
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
@@ -1821,6 +1824,8 @@ Adj.algorithms.rider = {
 				 "gap",
 				 "steps"],
 	method: function rider (element, parametersObject, level) {
+		var usedHow = "used in a parameter for a rider command";
+		var variableSubstitutionsByName = {};
 		var pinMatch = Adj.oneOrTwoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
 		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
 		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
@@ -1868,7 +1873,7 @@ Adj.algorithms.rider = {
 					pathFraction2 = pathFraction;
 			}
 		}
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // for adjust near, default gap = 3
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // for adjust near, default gap = 3
 		var numberOfSamples = !isNaN(parametersObject.steps) ? parametersObject.steps + 1 : 11; // for adjust, default steps = 10, which makes numberOfSamples = 11
 		if (numberOfSamples < 4) { // sanity check
 			numberOfSamples = 4;
@@ -1891,7 +1896,7 @@ Adj.algorithms.rider = {
 			// general case
 			path = Adj.getElementByIdNearby(pathId, element);
 			if (!path) {
-				throw "nonresolving id \"" + pathId + "\" used as parameter path= for a rider command";
+				throw "nonresolving id \"" + pathId + "\" used in a parameter path= for a rider command";
 			}
 			//
 			if (considerElementsToAvoid) {
@@ -2258,7 +2263,10 @@ Adj.algorithms.circleForParent = {
 	phaseHandlerName: "adjPhase2Down",
 	parameters: ["inset"],
 	method: function circleForParent (element, parametersObject) {
-		var inset = !isNaN(parametersObject.inset) ? parametersObject.inset : 0; // default inset = 0
+		var usedHow = "used in a parameter for a circleForParent command";
+		var variableSubstitutionsByName = {};
+		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0, null, usedHow, variableSubstitutionsByName); // default inset = 0
+		//
 		var parent = element.parentNode;
 		var parentBoundingBox = parent.getBBox();
 		var parentBoundingCircle = Adj.circleAroundRect(parentBoundingBox);
@@ -2275,9 +2283,12 @@ Adj.algorithms.ellipseForParent = {
 	phaseHandlerName: "adjPhase2Down",
 	parameters: ["inset", "horizontalInset", "verticalInset"],
 	method: function ellipseForParent (element, parametersObject) {
-		var inset = !isNaN(parametersObject.inset) ? parametersObject.inset : 0; // default inset = 0
-		var horizontalInset = !isNaN(parametersObject.horizontalInset) ? parametersObject.horizontalInset : inset; // default horizontalInset = inset
-		var verticalInset = !isNaN(parametersObject.verticalInset) ? parametersObject.verticalInset : inset; // default verticalInset = inset
+		var usedHow = "used in a parameter for a ellipseForParent command";
+		var variableSubstitutionsByName = {};
+		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0, null, usedHow, variableSubstitutionsByName); // default inset = 0
+		var horizontalInset = Adj.doVarsArithmetic(element, parametersObject.horizontalInset, inset, null, usedHow, variableSubstitutionsByName); // default horizontalInset = inset
+		var verticalInset = Adj.doVarsArithmetic(element, parametersObject.verticalInset, inset, null, usedHow, variableSubstitutionsByName); // default verticalInset = inset
+		//
 		var parent = element.parentNode;
 		var parentBoundingBox = parent.getBBox();
 		var parentBoundingEllipse = Adj.ellipseAroundRect(parentBoundingBox);
@@ -2300,20 +2311,21 @@ Adj.algorithms.circularList = {
 				 "verticalGap", "topGap", "bottomGap",
 				 "explain"],
 	method: function circularList (element, parametersObject) {
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 3; // default gap = 3
-		var rGap = !isNaN(parametersObject.rGap) ? parametersObject.rGap : gap; // minimum required radial gap, default rGap = gap
-		var cGap = !isNaN(parametersObject.cGap) ? parametersObject.cGap : gap; // minimum required circumferencial gap, default cGap = gap
-		var fromAngle = !isNaN(parametersObject.fromAngle) ? parametersObject.fromAngle : 0; // clockwise, 0 is x axis, default fromAngle = 0
-		var toAngle = !isNaN(parametersObject.toAngle) ? parametersObject.toAngle : fromAngle + 360; // larger than fromAngle is clockwise, default toAngle = fromAngle + 360 means full circle clockwise
-		var rAlign = !isNaN(parametersObject.rAlign) ? parametersObject.rAlign : Adj.insideMedianOutside[parametersObject.rAlign]; // rAlign could be a number
-		if (rAlign == undefined) { rAlign = Adj.insideMedianOutside["median"]; }; // default rAlign median
+		var usedHow = "used in a parameter for a circularList command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var rGap = Adj.doVarsArithmetic(element, parametersObject.rGap, gap, null, usedHow, variableSubstitutionsByName); // minimum required radial gap, default rGap = gap
+		var cGap = Adj.doVarsArithmetic(element, parametersObject.cGap, gap, null, usedHow, variableSubstitutionsByName); // minimum required circumferencial gap, default cGap = gap
+		var fromAngle = Adj.doVarsArithmetic(element, parametersObject.fromAngle, 0, null, usedHow, variableSubstitutionsByName); // clockwise, 0 is x axis, default fromAngle = 0
+		var toAngle = Adj.doVarsArithmetic(element, parametersObject.toAngle, fromAngle + 360, null, usedHow, variableSubstitutionsByName); // larger than fromAngle is clockwise, default toAngle = fromAngle + 360 means full circle clockwise
+		var rAlign = Adj.doVarsArithmetic(element, parametersObject.rAlign, 0.5, Adj.insideMedianOutside, usedHow, variableSubstitutionsByName); // rAlign could be a number, default rAlign 0.5 == median
 		// outside gaps
-		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
-		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
-		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
-		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
-		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
 		// determine which nodes to process,
@@ -2503,21 +2515,21 @@ Adj.algorithms.verticalTree = {
 				 "autoParrots",
 				 "explain"],
 	method: function verticalTree (element, parametersObject) {
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 10; // default gap = 10
-		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
-		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
-		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var childlessGap = !isNaN(parametersObject.childlessGap) ? parametersObject.childlessGap : centerGap; // default childlessGap = centerGap
-		var earGap = !isNaN(parametersObject.earGap) ? parametersObject.earGap : centerGap; // default earGap = centerGap
-		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
-		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
-		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
-		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["center"]; }; // default hAlign center
-		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
-		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["middle"]; }; // default vAlign middle
+		var usedHow = "used in a parameter for a verticalTree command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 10, null, usedHow, variableSubstitutionsByName); // default gap = 10
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var childlessGap = Adj.doVarsArithmetic(element, parametersObject.childlessGap, centerGap, null, usedHow, variableSubstitutionsByName); // default childlessGap = centerGap
+		var earGap = Adj.doVarsArithmetic(element, parametersObject.earGap, centerGap, null, usedHow, variableSubstitutionsByName); // default earGap = centerGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0.5, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0.5 == center
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0.5, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0.5 == middle
 		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
@@ -3052,21 +3064,21 @@ Adj.algorithms.horizontalTree = {
 				 "autoParrots",
 				 "explain"],
 	method: function horizontalTree (element, parametersObject) {
-		var gap = !isNaN(parametersObject.gap) ? parametersObject.gap : 10; // default gap = 10
-		var horizontalGap = !isNaN(parametersObject.horizontalGap) ? parametersObject.horizontalGap : gap; // default horizontalGap = gap
-		var leftGap = !isNaN(parametersObject.leftGap) ? parametersObject.leftGap : horizontalGap; // default leftGap = horizontalGap
-		var centerGap = !isNaN(parametersObject.centerGap) ? parametersObject.centerGap : horizontalGap; // default centerGap = horizontalGap
-		var rightGap = !isNaN(parametersObject.rightGap) ? parametersObject.rightGap : horizontalGap; // default rightGap = horizontalGap
-		var verticalGap = !isNaN(parametersObject.verticalGap) ? parametersObject.verticalGap : gap; // default verticalGap = gap
-		var topGap = !isNaN(parametersObject.topGap) ? parametersObject.topGap : verticalGap; // default topGap = verticalGap
-		var middleGap = !isNaN(parametersObject.middleGap) ? parametersObject.middleGap : verticalGap; // default middleGap = verticalGap
-		var bottomGap = !isNaN(parametersObject.bottomGap) ? parametersObject.bottomGap : verticalGap; // default bottomGap = verticalGap
-		var childlessGap = !isNaN(parametersObject.childlessGap) ? parametersObject.childlessGap : middleGap; // default childlessGap = middleGap
-		var earGap = !isNaN(parametersObject.earGap) ? parametersObject.earGap : middleGap; // default earGap = middleGap
-		var hAlign = !isNaN(parametersObject.hAlign) ? parametersObject.hAlign : Adj.leftCenterRight[parametersObject.hAlign]; // hAlign could be a number
-		if (hAlign == undefined) { hAlign = Adj.leftCenterRight["center"]; }; // default hAlign center
-		var vAlign = !isNaN(parametersObject.vAlign) ? parametersObject.vAlign : Adj.topMiddleBottom[parametersObject.vAlign]; // vAlign could be a number
-		if (vAlign == undefined) { vAlign = Adj.topMiddleBottom["middle"]; }; // default vAlign middle
+		var usedHow = "used in a parameter for a horizontalTree command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 10, null, usedHow, variableSubstitutionsByName); // default gap = 10
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var childlessGap = Adj.doVarsArithmetic(element, parametersObject.childlessGap, middleGap, null, usedHow, variableSubstitutionsByName); // default childlessGap = middleGap
+		var earGap = Adj.doVarsArithmetic(element, parametersObject.earGap, middleGap, null, usedHow, variableSubstitutionsByName); // default earGap = middleGap
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0.5, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0.5 == center
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0.5, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0.5 == middle
 		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
 		var explain = parametersObject.explain ? true : false; // default explain = false
 		//
@@ -3843,7 +3855,7 @@ Adj.evaluateArithmetic = function evaluateArithmetic (originalExpression, usedHo
 			simpleNumberMatch = Adj.simpleArithmeticNumberRegexp.exec(arithmeticExpression);
 			simpleNumber = simpleNumberMatch[1];
 			if (isNaN(simpleNumber)) {
-				throw "not a number  \"" + simpleNumber + "\" " + usedHow;
+				throw "not a number \"" + simpleNumber + "\" " + usedHow;
 			}
 			simpleNumber = parseFloat(simpleNumber);
 			switch (simpleOperator) {
@@ -3901,7 +3913,8 @@ Adj.evaluateArithmetic = function evaluateArithmetic (originalExpression, usedHo
 }
 
 // utility
-// combine other calls
+// combine other calls,
+// return a string
 Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName, idedElementRecordsById) {
 	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
 	var withIdsResolved = Adj.resolveIdArithmetic(element, withVariablesSubstituted, usedHow, idedElementRecordsById);
@@ -3910,14 +3923,28 @@ Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpress
 }
 
 // utility
-// combine other calls
-Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName) {
-	if (typeof originalExpression != "string") { // e.g. if it is a number already
+// combine other calls,
+// return a number
+Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, defaultValue, constantsByName, usedHow, variableSubstitutionsByName) {
+	if (typeof originalExpression == "number") { // a number already
 		return originalExpression;
+	}
+	if (!originalExpression) { // e.g. undefined
+		return defaultValue;
+	}
+	if (constantsByName) { // e.g. Adj.leftCenterRight
+		var constantValue = constantsByName[originalExpression];
+		if (constantValue != undefined) {
+			return constantValue;
+		}
 	}
 	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
 	var withArithmeticEvaluated = Adj.evaluateArithmetic(withVariablesSubstituted, usedHow);
-	return withArithmeticEvaluated;
+	var number = parseFloat(withArithmeticEvaluated);
+	if (isNaN(number)) {
+		throw "expression \"" + originalExpression + "\" does not evaluate to a number (\"" + withArithmeticEvaluated + "\") " + usedHow;
+	}
+	return number;
 }
 
 // a specific algorithm
