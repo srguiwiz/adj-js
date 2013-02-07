@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:3, revision:0 };
+	Adj.version = { major:3, minor:3, revision:1 };
 	Adj.algorithms = {};
 }
 
@@ -160,6 +160,8 @@ Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForNa
 // constants
 // recognize a boolean or decimal
 Adj.booleanOrDecimalRegexp = /^\s*(true|false|[+-]?(?:[0-9]*\.)?[0-9]+)\s*$/;
+// recognize a boolean
+Adj.booleanRegexp = /^\s*(true|false)\s*$/;
 
 // read Adj elements and make or update phase handlers,
 // entry point
@@ -251,7 +253,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 			case "floater":
 			case "explain":
 				// these commands can coexist with another command
-				if (Adj.parameterParse(adjAttributesByName[adjAttributeName])) { // recommended ="true"
+				if (Adj.doVarsBoolean(node, adjAttributesByName[adjAttributeName], false, "used as attribute adj:" + adjAttributeName)) { // must be ="true", skip if ="false"
 					commandParametersByName[adjAttributeName] = {};
 				}
 				break;
@@ -564,10 +566,10 @@ Adj.algorithms.verticalList = {
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxHeight = null means no limit
 		var maxPerColumn = Adj.doVarsArithmetic(element, parametersObject.maxPerColumn, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerColumn = null means no limit
-		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
+		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // default makeGrid = false
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -775,10 +777,10 @@ Adj.algorithms.horizontalList = {
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxWidth = null means no limit
 		var maxPerRow = Adj.doVarsArithmetic(element, parametersObject.maxPerRow, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerRow = null means no limit
-		var makeGrid = parametersObject.makeGrid ? true : false; // default makeGrid = false
+		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // makeGrid explain = false
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -1480,6 +1482,8 @@ Adj.algorithms.connection = {
 				 "vector",
 				 "explain"],
 	method: function connection (element, parametersObject) {
+		var usedHow = "used in a parameter for a connection command";
+		var variableSubstitutionsByName = {};
 		var fromMatch = Adj.idXYRegexp.exec(parametersObject.from);
 		var fromId = fromMatch[1];
 		var fromX = fromMatch[2] ? parseFloat(fromMatch[2]) : 0.5; // default fromX = 0.5
@@ -1489,7 +1493,7 @@ Adj.algorithms.connection = {
 		var toX = toMatch[2] ? parseFloat(toMatch[2]) : 0.5; // default toX = 0.5
 		var toY = toMatch[3] ? parseFloat(toMatch[3]) : 0.5; // default toY = 0.5
 		var vector = !isNaN(parametersObject.vector) ? parametersObject.vector : 0; // default vector = 0
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
@@ -1878,7 +1882,7 @@ Adj.algorithms.rider = {
 		if (numberOfSamples < 4) { // sanity check
 			numberOfSamples = 4;
 		}
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		var considerElementsToAvoid;
 		switch (adjust) {
@@ -2326,7 +2330,7 @@ Adj.algorithms.circularList = {
 		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
 		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -2530,8 +2534,8 @@ Adj.algorithms.verticalTree = {
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0.5, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0.5 == center
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0.5, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0.5 == middle
-		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var autoParrots = Adj.doVarsBoolean(element, parametersObject.autoParrots, false, usedHow, variableSubstitutionsByName); // autoParrots explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -3079,8 +3083,8 @@ Adj.algorithms.horizontalTree = {
 		var earGap = Adj.doVarsArithmetic(element, parametersObject.earGap, middleGap, null, usedHow, variableSubstitutionsByName); // default earGap = middleGap
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0.5, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0.5 == center
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0.5, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0.5 == middle
-		var autoParrots = parametersObject.autoParrots ? true : false; // default autoParrots = false
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var autoParrots = Adj.doVarsBoolean(element, parametersObject.autoParrots, false, usedHow, variableSubstitutionsByName); // autoParrots explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -3601,7 +3605,7 @@ Adj.algorithms.horizontalTree = {
 }
 
 // utility
-Adj.firstTimeStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribute (element, name) {
+Adj.firstTimeStoreAuthoringAttribute = function firstTimeStoreAuthoringAttribute (element, name) {
 	var value = element.getAttributeNS(Adj.AdjNamespace, name);
 	if (!value) { // not any yet
 		value = element.getAttribute(name);
@@ -3612,7 +3616,7 @@ Adj.firstTimeStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribut
 }
 
 // utility
-Adj.firstTimeStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordinates (element) {
+Adj.firstTimeStoreAuthoringCoordinates = function firstTimeStoreAuthoringCoordinates (element) {
 	if (element instanceof SVGPathElement) {
 		Adj.firstTimeStoreAuthoringAttribute(element, "d");
 	} else {
@@ -3947,6 +3951,32 @@ Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, d
 	return number;
 }
 
+// utility
+// combine other calls,
+// return a boolean
+Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, defaultValue, usedHow, variableSubstitutionsByName) {
+	if (typeof originalExpression == "boolean") { // a number already
+		return originalExpression;
+	}
+	if (!originalExpression) { // e.g. undefined
+		return defaultValue;
+	}
+	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
+	var booleanMatch;
+	if (booleanMatch = Adj.booleanRegexp.exec(withVariablesSubstituted)) {
+		// strict spelling of booleans
+		var boolean = booleanMatch[1];
+		switch (boolean) {
+			case "true":
+				return true;
+			case "false":
+				return false;
+			default:
+		}
+	}
+	throw "expression \"" + originalExpression + "\" does not evaluate to a boolean (\"" + withVariablesSubstituted + "\") " + usedHow;
+}
+
 // a specific algorithm
 // note: as implemented works for path
 Adj.algorithms.vine = {
@@ -3954,7 +3984,9 @@ Adj.algorithms.vine = {
 	phaseHandlerName: "adjPhase3Up",
 	parameters: ["explain"],
 	method: function vine (element, parametersObject) {
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var usedHow = "used in a parameter for a vine command";
+		var variableSubstitutionsByName = {};
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
@@ -3994,6 +4026,9 @@ Adj.algorithms.floater = {
 				 "pin",
 				 "explain"],
 	method: function floater (element, parametersObject, level) {
+		var usedHow = "used in a parameter for a floater command";
+		var variableSubstitutionsByName = {};
+		//
 		Adj.unhideByDisplayAttribute(element);
 		//
 		var at = parametersObject.at ? parametersObject.at.toString() : ""; // without toString could get number
@@ -4012,7 +4047,7 @@ Adj.algorithms.floater = {
 		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
 		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		//
-		var explain = parametersObject.explain ? true : false; // default explain = false
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
