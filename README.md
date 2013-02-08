@@ -11,10 +11,10 @@ Adj has been designed specifically for diagrams of large complexity.
 
 Other uses are possible and are expected.
 
-Start by reading the User Guide at *user-docs/index.html*, also
+Start by reading the User Guide at **user-docs/index.html**, also
 [online here](http://srguiwiz.github.com/adj-js/user-docs/).
 
-If you are here for the essential adj.js file, it is at *user-docs/js/adj.js*
+If you are here for the essential adj.js file, it is at **user-docs/js/adj.js**
 and [online here](http://srguiwiz.github.com/adj-js/user-docs/js/adj.js).
 
 A fledgling Wiki is [online here](https://github.com/srguiwiz/adj-js/wiki).
