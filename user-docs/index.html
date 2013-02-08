@@ -1958,7 +1958,7 @@ the referencing element. That is more narrow of a search than function
       <td><img alt="example" src="adj-ex-057-variable.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="160" fill="linen"/&gt;</span>
-  <span class="example-code">&lt;adj:variable name="myvar" value="10" desc=&quot;optional description of variable&quot;/&gt;</span>
+  <span class="example-code">&lt;adj:variable name="myvar" value="10" desc="optional description of variable"/&gt;</span>
   &lt;rect adj:id="one" x="15" y="65" width="40" height="30" fill="#000"/&gt;
   &lt;rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/&gt;
   &lt;rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/&gt;
@@ -2055,6 +2055,50 @@ decimal numbers.</p>
 
 <p>Command <code><a href="#L1796">vine</a></code> also performs substitution of
 variables.</p>
+
+<p>Some parameters of some commands substitute variables with boolean
+<code>true</code> or <code>false</code>:</p>
+
+<table border="1" class="deemphasize">
+  <tbody>
+    <tr>
+      <td><code>horizontalList</code></td>
+      <td><code>makeGrid</code>, <code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>verticalList</code></td>
+      <td><code>makeGrid</code>, <code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>connection</code></td>
+      <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>rider</code></td>
+      <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>circularList</code></td>
+      <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>verticalTree</code></td>
+      <td><code>autoParrots</code>, <code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>horizontalTree</code></td>
+      <td><code>autoParrots</code>, <code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>vine</code></td>
+      <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>floater</code></td>
+      <td><code>explain</code></td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="L2572">1.15. Issuing Commands Via adj: Attributes Instead Of Via adj:
 Elements</h3>
