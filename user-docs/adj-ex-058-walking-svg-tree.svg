@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="596" height="482">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<title>Adj Walking The SVG Tree</title>
+	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(fonts/Liberation/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: Liberation Sans;
+		src: local("Liberation Sans"), local("Liberation Sans Regular"), local("LiberationSans-Regular"),
+			url(fonts/Liberation/LiberationSans-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 10px;
+	}
+	.caption {
+		fill: gray;
+	}
+	.source {
+		font-family: "Liberation Sans","Arial";
+		font-size: 10px;
+	}
+	.toChild {
+		stroke: #777;
+		stroke-width: 1;
+	}
+	.toChildEllipsis {
+		stroke: #ccc;
+		stroke-width: 1;
+	}
+	.executionPath {
+		stroke: #777;
+		stroke-width: 2;
+		fill: none;
+	}
+	]]></style>
+	<adj:variable name="g" value="10" desc="gap"/>
+	<adj:variable name="d" value="8" desc="distance"/>
+	<adj:variable name="e" value="false" desc="explain"/>
+	<g adj:command="verticalList">
+		<text class="caption" transform="translate(5,13)">Adj walking the SVG element tree.</text>
+		<g transform="translate(3,18)">
+			<g transform="scale(1)">
+				<g class="tree">
+					<adj:verticalTree explain="^e" autoParrots="true" hAlign=".5" vAlign="top" gap="^g" centerGap="3 * ^g" earGap="3 * ^g + 20" childlessGap="^g" middleGap="4 * ^g" topGap="^g" leftGap="2 *^g" rightGap="2 *^g" bottomGap="2 * ^g"/>
+					<g adj:id="tsvg" adj:command="verticalList" transform="translate(275,10)">
+						<text class="source" transform="translate(4,13)">&lt;svg…</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tsvg%.5,1" adj:to="tg1%.5,0" x1="295" y1="29" x2="295" y2="69"/>
+					<g adj:id="tg1" adj:treeParent="tsvg" adj:command="verticalList" transform="translate(253,69)">
+						<text class="source" transform="translate(4,13)">&lt;g</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "horizontalList"</text>
+						<text class="source" transform="translate(4,61)"> …&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg1%.5,1" adj:to="trect11%.5,0" x1="295" y1="136" x2="71" y2="176"/>
+					<g adj:id="trect11" adj:treeParent="tg1" adj:command="verticalList" transform="translate(24,176)">
+						<text class="source" transform="translate(4,13)">&lt;rect</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "frameForParent"</text>
+						<text class="source" transform="translate(4,61)"> …/&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg1%.5,1" adj:to="ttext12%.5,0" x1="295" y1="136" x2="175.5" y2="176"/>
+					<g adj:id="ttext12" adj:treeParent="tg1" adj:command="verticalList" transform="translate(148,176)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(4,29)">outer one</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg1%.5,1" adj:to="tg13%.5,0" x1="295" y1="136" x2="295" y2="176"/>
+					<g adj:id="tg13" adj:treeParent="tg1" adj:command="verticalList" transform="translate(253,176)">
+						<text class="source" transform="translate(4,13)">&lt;g</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "circularList"</text>
+						<text class="source" transform="translate(4,61)"> …&gt;</text>
+					</g>
+					<line class="toChildEllipsis" adj:command="connection" adj:from="tg13%.5,1" adj:to="trect131%.5,0" x1="295" y1="243" x2="29.5" y2="283"/>
+					<g adj:id="trect131" adj:treeParent="tg13" adj:command="verticalList" transform="translate(20,283)">
+						<text class="source" transform="translate(4,13)">…</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg13%.5,1" adj:to="tg132%.5,0" x1="295" y1="243" x2="131" y2="283"/>
+					<g adj:id="tg132" adj:treeParent="tg13" adj:command="verticalList" transform="translate(89,283)">
+						<text class="source" transform="translate(4,13)">&lt;g</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "verticalList"</text>
+						<text class="source" transform="translate(4,61)"> …&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg132%.5,1" adj:to="ttext1321%.5,0" x1="131" y1="350" x2="105" y2="390"/>
+					<g adj:id="ttext1321" adj:treeParent="tg132" adj:command="verticalList" transform="translate(70,390)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(4,29)">intermediate</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg132%.5,1" adj:to="ttext1322%.5,0" x1="131" y1="350" x2="171" y2="390"/>
+					<g adj:id="ttext1322" adj:treeParent="tg132" adj:command="verticalList" transform="translate(150,390)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(4,29)">one</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg13%.5,1" adj:to="tg133%.5,0" x1="295" y1="243" x2="291" y2="283"/>
+					<g adj:id="tg133" adj:treeParent="tg13" adj:command="verticalList" transform="translate(249,283)">
+						<text class="source" transform="translate(4,13)">&lt;g</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "verticalList"</text>
+						<text class="source" transform="translate(4,61)"> …&gt;</text>
+					</g>
+					<line class="toChildEllipsis" adj:command="connection" adj:from="tg133%.5,1" adj:to="trect1331%.5,0" x1="291" y1="350" x2="231.5" y2="390"/>
+					<g adj:id="trect1331" adj:treeParent="tg133" adj:command="verticalList" transform="translate(222,390)">
+						<text class="source" transform="translate(4,13)">…</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg133%.5,1" adj:to="ttext1332%.5,0" x1="291" y1="350" x2="279.5" y2="390"/>
+					<g adj:id="ttext1332" adj:treeParent="tg133" adj:command="verticalList" transform="translate(251,390)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(4,29)">innermost</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg133%.5,1" adj:to="ttext1333%.5,0" x1="291" y1="350" x2="339" y2="390"/>
+					<g adj:id="ttext1333" adj:treeParent="tg133" adj:command="verticalList" transform="translate(318,390)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(4,29)">one</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg13%.5,1" adj:to="tg134%.5,0" x1="295" y1="243" x2="459" y2="283"/>
+					<g adj:id="tg134" adj:treeParent="tg13" adj:command="verticalList" transform="translate(417,283)">
+						<text class="source" transform="translate(4,13)">&lt;g</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "verticalList"</text>
+						<text class="source" transform="translate(4,61)"> …&gt;</text>
+					</g>
+					<line class="toChildEllipsis" adj:command="connection" adj:from="tg134%.5,1" adj:to="trect1341%.5,0" x1="459" y1="350" x2="399.5" y2="390"/>
+					<g adj:id="trect1341" adj:treeParent="tg134" adj:command="verticalList" transform="translate(390,390)">
+						<text class="source" transform="translate(4,13)">…</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg134%.5,1" adj:to="ttext1342%.5,0" x1="459" y1="350" x2="447.5" y2="390"/>
+					<g adj:id="ttext1342" adj:treeParent="tg134" adj:command="verticalList" transform="translate(419,390)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(4,29)">innermost</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg134%.5,1" adj:to="ttext1343%.5,0" x1="459" y1="350" x2="507" y2="390"/>
+					<g adj:id="ttext1343" adj:treeParent="tg134" adj:command="verticalList" transform="translate(486,390)">
+						<text class="source" transform="translate(4,13)">&lt;text&gt;</text>
+						<text class="source" transform="translate(5,29)">two</text>
+						<text class="source" transform="translate(4,45)">&lt;/text&gt;</text>
+					</g>
+					<line class="toChildEllipsis" adj:command="connection" adj:from="tg13%.5,1" adj:to="tg135%.5,0" x1="295" y1="243" x2="560.5" y2="283"/>
+					<g adj:id="tg135" adj:treeParent="tg13" adj:command="verticalList" transform="translate(551,283)">
+						<text class="source" transform="translate(4,13)">…</text>
+					</g>
+					<line class="toChild" adj:command="connection" adj:from="tg1%.5,1" adj:to="tg14%.5,0" x1="295" y1="136" x2="429" y2="176"/>
+					<g adj:id="tg14" adj:treeParent="tg1" adj:command="verticalList" transform="translate(387,176)">
+						<text class="source" transform="translate(4,13)">&lt;g</text>
+						<text class="source" transform="translate(4,29)"> adj:command=</text>
+						<text class="source" transform="translate(4,45)"> "verticalTree"</text>
+						<text class="source" transform="translate(4,61)"> …&gt;</text>
+					</g>
+				</g>
+				<path adj:command="vine" adj:explain="^e" class="executionPath" d="  M 267, 29  C 267, 37  245, 69  245, 102.5  S 16, 109  16, 209.5  C 16, 243  24, 251  71, 251  S 148, 235  175.5, 235  S 253, 243  253, 251  S 12, 264  12, 292.5  C 12, 302  20, 310  29.5, 310  S 89, 350  89, 358  S 62, 390  62, 415.5  C 62, 441  70, 449  105, 449  S 150, 449  171, 449  S 200, 441  200, 415.5  S 173, 366  173, 358  S 249, 350  249, 358  S 214, 390  214, 399.5  S 222, 417  231.5, 417  S 251, 449  279.5, 449  S 318, 449  339, 449  S 368, 441  368, 415.5  S 333, 366  333, 358  S 417, 350  417, 358  S 382, 390  382, 399.5  S 390, 417  399.5, 417  S 419, 449  447.5, 449  S 486, 449  507, 449  S 536, 441  536, 415.5  S 501, 366  501, 358  S 551, 310  560.5, 310  S 578, 302  578, 292.5  C 578, 264  337, 259  337, 251  S 387, 251  429, 251  S 479, 243  479, 209.5  C 479, 109  345, 136  345, 102.5  S 323, 37  323, 29 " adj:d="
+	M ~tsvg#x - ^d, ~tsvg#yh
+	C ~tsvg#x - ^d, ~tsvg#yh + ^d
+	~tg1#x - ^d, ~tg1#y
+	~tg1#x - ^d, ~tg1#cy
+	S ~trect11#x - ^d, ~trect11#y - ~trect11#h
+	~trect11#x - ^d, ~trect11#cy
+	C ~trect11#x - ^d, ~trect11#yh
+	~trect11#x, ~trect11#yh + ^d
+	~trect11#cx, ~trect11#yh + ^d
+	S ~ttext12#x, ~ttext12#yh + ^d
+	~ttext12#cx, ~ttext12#yh + ^d
+	S ~tg13#x, ~tg13#yh
+	~tg13#x, ~tg13#yh + ^d
+	S ~trect131#x - ^d, ~trect131#y - ~trect131#h
+	~trect131#x - ^d, ~trect131#cy
+	C ~trect131#x - ^d, ~trect131#yh
+	~trect131#x, ~trect131#yh + ^d
+	~trect131#cx, ~trect131#yh + ^d
+	S ~tg132#x, ~tg132#yh
+	~tg132#x, ~tg132#yh + ^d
+	S ~ttext1321#x - ^d, ~ttext1321#y
+	~ttext1321#x - ^d, ~ttext1321#cy
+	C ~ttext1321#x - ^d, ~ttext1321#yh
+	~ttext1321#x, ~ttext1321#yh + ^d
+	~ttext1321#cx, ~ttext1321#yh + ^d
+	S ~ttext1322#x, ~ttext1322#yh + ^d
+	~ttext1322#cx, ~ttext1322#yh + ^d
+	S ~ttext1322#xw + ^d, ~ttext1322#yh
+	~ttext1322#xw + ^d, ~ttext1322#cy
+	S ~tg132#xw, ~tg132#yh + 2 * ^d
+	~tg132#xw, ~tg132#yh + ^d
+	S ~tg133#x, ~tg133#yh
+	~tg133#x, ~tg133#yh + ^d
+	S ~trect1331#x - ^d, ~trect1331#y
+	~trect1331#x - ^d, ~trect1331#cy
+	S ~trect1331#x, ~trect1331#yh + ^d
+	~trect1331#cx, ~trect1331#yh + ^d
+	S ~ttext1332#x, ~ttext1332#yh + ^d
+	~ttext1332#cx, ~ttext1332#yh + ^d
+	S ~ttext1333#x, ~ttext1333#yh + ^d
+	~ttext1333#cx, ~ttext1333#yh + ^d
+	S ~ttext1333#xw + ^d, ~ttext1333#yh
+	~ttext1333#xw + ^d, ~ttext1333#cy
+	S ~tg133#xw, ~tg133#yh + 2 * ^d
+	~tg133#xw, ~tg133#yh + ^d
+	S ~tg134#x, ~tg134#yh
+	~tg134#x, ~tg134#yh + ^d
+	S ~trect1341#x - ^d, ~trect1341#y
+	~trect1341#x - ^d, ~trect1341#cy
+	S ~trect1341#x, ~trect1341#yh + ^d
+	~trect1341#cx, ~trect1341#yh + ^d
+	S ~ttext1342#x, ~ttext1342#yh + ^d
+	~ttext1342#cx, ~ttext1342#yh + ^d
+	S ~ttext1343#x, ~ttext1343#yh + ^d
+	~ttext1343#cx, ~ttext1343#yh + ^d
+	S ~ttext1343#xw + ^d, ~ttext1343#yh
+	~ttext1343#xw + ^d, ~ttext1343#cy
+	S ~tg134#xw, ~tg134#yh + 2 * ^d
+	~tg134#xw, ~tg134#yh + ^d
+	S ~tg135#x, ~tg135#yh + ^d
+	~tg135#cx, ~tg135#yh + ^d
+	S ~tg135#xw + ^d, ~tg135#yh
+	~tg135#xw + ^d, ~tg135#cy
+	C ~tg135#xw + ^d, ~tg135#y - ~tg135#h
+	~tg13#xw, ~tg13#yh + 2 * ^d
+	~tg13#xw, ~tg13#yh + ^d
+	S ~tg14#x, ~tg14#yh + ^d
+	~tg14#cx, ~tg14#yh + ^d
+	S ~tg14#xw + ^d, ~tg14#yh
+	~tg14#xw + ^d, ~tg14#cy
+	C ~tg14#xw + ^d, ~tg14#y - ~tg14#h
+	~tg1#xw + ^d, ~tg1#yh
+	~tg1#xw + ^d, ~tg1#cy
+	S ~tsvg#xw + ^d, ~tsvg#yh + ^d
+	~tsvg#xw + ^d, ~tsvg#yh
+"/>
+			</g>
+		</g>
+	</g>
+</svg>
