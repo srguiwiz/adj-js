@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:3, revision:1 };
+	Adj.version = { major:3, minor:4, revision:0 };
 	Adj.algorithms = {};
 }
 
@@ -997,7 +997,7 @@ Adj.algorithms.horizontalList = {
 // a specific algorithm
 Adj.algorithms.frameForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase2Down",
+	phaseHandlerName: "adjPhase4Down",
 	parameters: ["inset",
 				 "horizontalInset", "leftInset", "rightInset",
 				 "verticalInset", "topInset", "bottomInset"],
@@ -1506,7 +1506,7 @@ Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoord
 // and for general case group containing one line (or path) as vector and any number of lines and paths as children of that group
 Adj.algorithms.connection = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase2Up",
+	phaseHandlerName: "adjPhase4Up",
 	parameters: ["from", "to",
 				 "vector",
 				 "explain"],
@@ -1848,8 +1848,8 @@ Adj.overlapAndDistances = function overlapAndDistances (rectangle, rectangles) {
 // and for general case given the id of a path to ride on
 Adj.algorithms.rider = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase3",
-	processSubtreeOnlyInPhaseHandler: "adjPhase3",
+	phaseHandlerName: "adjPhase7",
+	processSubtreeOnlyInPhaseHandler: "adjPhase7",
 	parameters: ["pin",
 				 "path",
 				 "adjust",
@@ -2293,7 +2293,7 @@ Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
 // a specific algorithm
 Adj.algorithms.circleForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase2Down",
+	phaseHandlerName: "adjPhase4Down",
 	parameters: ["inset"],
 	method: function circleForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a circleForParent command";
@@ -2312,7 +2312,7 @@ Adj.algorithms.circleForParent = {
 // a specific algorithm
 Adj.algorithms.ellipseForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase2Down",
+	phaseHandlerName: "adjPhase4Down",
 	parameters: ["inset", "horizontalInset", "verticalInset"],
 	method: function ellipseForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a ellipseForParent command";
@@ -4008,7 +4008,7 @@ Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, default
 // note: as implemented works for path
 Adj.algorithms.vine = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase3Up",
+	phaseHandlerName: "adjPhase7Up",
 	parameters: ["explain"],
 	method: function vine (element, parametersObject) {
 		var usedHow = "used in a parameter for a vine command";
@@ -4047,8 +4047,8 @@ Adj.algorithms.vine = {
 // a specific algorithm
 Adj.algorithms.floater = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase3",
-	processSubtreeOnlyInPhaseHandler: "adjPhase3",
+	phaseHandlerName: "adjPhase7",
+	processSubtreeOnlyInPhaseHandler: "adjPhase7",
 	parameters: ["at",
 				 "pin",
 				 "explain"],
@@ -4295,7 +4295,7 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 // a specific algorithm
 // note: as implemented works for path
 Adj.algorithms.explain = {
-	phaseHandlerName: "adjPhase3Up",
+	phaseHandlerName: "adjPhase7Up",
 	parameters: [],
 	method: function explain (element, parametersObject) {
 		// differntiate simplified cases
