@@ -225,7 +225,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjNotAnOrder1Element;
 	delete node.adjExplanationArtifact;
 	//delete node.adjRemoveElement; // probably safe not to delete, element should be gone
-	Adj.unhideByDisplayAttribute(node, true); // does delete node.adjOriginalDisplay
+	Adj.unhideByDisplayAttribute(node); // does delete node.adjOriginalDisplay
 	delete node.adjLevel;
 	delete node.adjVariables;
 	//
@@ -339,8 +339,11 @@ Adj.processSvgElementWithPhaseHandlers = function processSvgElementWithPhaseHand
 			child.adjRemoveElement = true;
 			return;
 		}
-		if (child.adjExplanationArtifact) {
+		if (child.adjNotAnOrder1Element) {
 			Adj.unhideByDisplayAttribute(child);
+		}
+		if (child.adjExplanationArtifact) {
+			Adj.unhideByDisplayAttribute(child, true);
 		}
 	 });
 }
@@ -489,7 +492,7 @@ Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
 }
 
 // utility
-Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, onlyIfOriginalDisplay) {
+Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenIfNoOriginalDisplay) {
 	var originalDisplay = element.adjOriginalDisplay;
 	if (!originalDisplay) {
 		originalDisplay = element.getAttributeNS(Adj.AdjNamespace, "originalDisplay");
@@ -500,7 +503,7 @@ Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, onlyI
 		} else { // == "-" is code for the fact there wasn't any
 			element.removeAttribute("display");
 		}
-	} else if (!onlyIfOriginalDisplay) {
+	} else if (evenIfNoOriginalDisplay) {
 		element.removeAttribute("display");
 	}
 	delete element.adjOriginalDisplay;
@@ -988,7 +991,6 @@ Adj.algorithms.frameForParent = {
 		element.setAttribute("y", Adj.decimal(parentBoundingBox.y + topInset));
 		element.setAttribute("width", Adj.decimal(parentBoundingBox.width - leftInset - rightInset));
 		element.setAttribute("height", Adj.decimal(parentBoundingBox.height - topInset - bottomInset));
-		Adj.unhideByDisplayAttribute(element);
 	}
 }
 
@@ -2277,7 +2279,6 @@ Adj.algorithms.circleForParent = {
 		element.setAttribute("cx", Adj.decimal(parentBoundingCircle.cx));
 		element.setAttribute("cy", Adj.decimal(parentBoundingCircle.cy));
 		element.setAttribute("r", Adj.decimal(parentBoundingCircle.r - inset));
-		Adj.unhideByDisplayAttribute(element);
 	}
 }
 
@@ -2300,7 +2301,6 @@ Adj.algorithms.ellipseForParent = {
 		element.setAttribute("cy", Adj.decimal(parentBoundingEllipse.cy));
 		element.setAttribute("rx", Adj.decimal(parentBoundingEllipse.rx - horizontalInset));
 		element.setAttribute("ry", Adj.decimal(parentBoundingEllipse.ry - verticalInset));
-		Adj.unhideByDisplayAttribute(element);
 	}
 }
 
