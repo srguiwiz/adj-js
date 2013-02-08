@@ -9,18 +9,12 @@ creation and long term maintenance of system diagrams.
 
 Adj has been designed specifically for diagrams of large complexity.
 
-Because of its general nature, other uses may be possible.
+Other uses are possible and are expected.
 
-Start by reading the User Guide at user-docs/index.html.
-
-A readable copy of the User Guide should be
+Start by reading the User Guide at *user-docs/index.html*, also
 [online here](http://srguiwiz.github.com/adj-js/user-docs/).
 
-If you are here for the essential adj.js file, it is at
-
-user-docs/js/adj.js
-
-A copy of the essential adj.js file should be
-[online here](http://srguiwiz.github.com/adj-js/user-docs/js/adj.js).
+If you are here for the essential adj.js file, it is at *user-docs/js/adj.js*
+and [online here](http://srguiwiz.github.com/adj-js/user-docs/js/adj.js).
 
 A fledgling Wiki is [online here](https://github.com/srguiwiz/adj-js/wiki).
