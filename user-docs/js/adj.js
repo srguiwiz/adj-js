@@ -134,6 +134,9 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
 		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
 	}
+	//
+	var ownerDocumentElement = target.ownerDocument.documentElement;
+	ownerDocumentElement.adjPhaseHandlerNamesOccurringByName[phaseHandlerName] = true;
 }
 
 // utility
@@ -162,15 +165,36 @@ Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForNa
 Adj.booleanOrDecimalRegexp = /^\s*(true|false|[+-]?(?:[0-9]*\.)?[0-9]+)\s*$/;
 // recognize a boolean
 Adj.booleanRegexp = /^\s*(true|false)\s*$/;
+// recognize a valid phase handler name
+Adj.phaseHandlerNameRegexp = /^(adjPhase[0-9])(Down|Up|)$/;
 
 // read Adj elements and make or update phase handlers,
 // entry point
 Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgElement) {
 	// first clear svgElement.adjSomething properties for a new start
 	delete svgElement.adjIdsDictionary;
+	svgElement.adjPhaseHandlerNamesOccurringByName = {};
+	delete svgElement.adjPhaseNamesOccurring;
 	//
 	// then walk
 	Adj.parseAdjElementsToPhaseHandlers(svgElement);
+	//
+	// determine which phases are occurring in this document
+	var phaseHandlerNamesOccurringByName = svgElement.adjPhaseHandlerNamesOccurringByName;
+	var phaseNamesOccurringByName = {};
+	for (var phaseHandlerName in phaseHandlerNamesOccurringByName) {
+		var nameMatch = Adj.phaseHandlerNameRegexp.exec(phaseHandlerName);
+		if (nameMatch) {
+			var phaseName = nameMatch[1];
+			phaseNamesOccurringByName[phaseName] = true;
+		}
+	}
+	var phaseNamesOccurringInOrder = [];
+	for (var phaseName in phaseNamesOccurringByName) {
+		phaseNamesOccurringInOrder.push(phaseName);
+	}
+	phaseNamesOccurringInOrder.sort();
+	svgElement.adjPhaseNamesOccurring = phaseNamesOccurringInOrder;
 }
 
 // build on first use, so any algorithms added e.g. from other source files will be considered too
@@ -350,9 +374,12 @@ Adj.processSvgElementWithPhaseHandlers = function processSvgElementWithPhaseHand
 
 // complete processing of all phases
 Adj.processElementWithPhaseHandlers = function processElementWithPhaseHandlers(element, thisTimeFullyProcessSubtree, level) {
-	Adj.walkNodes(element, "adjPhase1", thisTimeFullyProcessSubtree, level);
-	Adj.walkNodes(element, "adjPhase2", thisTimeFullyProcessSubtree, level);
-	Adj.walkNodes(element, "adjPhase3", thisTimeFullyProcessSubtree, level);
+	var ownerDocumentElement = element.ownerDocument.documentElement;
+	var phaseNamesOccurring = ownerDocumentElement.adjPhaseNamesOccurring;
+	for (var i = 0, n = phaseNamesOccurring.length; i < n; i++) {
+		var phaseName = phaseNamesOccurring[i];
+		Adj.walkNodes(element, phaseName, thisTimeFullyProcessSubtree, level);
+	}
 }
 
 // recursive walking of the tree
