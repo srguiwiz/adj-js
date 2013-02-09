@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Adj Framework - Test Suite</title>
+  <style type="text/css">
+td {
+  padding: 1.0ex;
+}
+@media print {
+  tr, td, img {
+    page-break-inside: avoid;
+  }
+}
+h1 {
+  font-size: 130%;
+}
+h2 {
+  font-size: 120%;
+}
+h3 {
+  font-size: 110%;
+}
+h4, h5, h6 {
+  font-size: 105%;
+}
+h1,h2,h3,h4,h5,h6 {
+  page-break-after: avoid;
+}
+ .passedTest {
+  background-color:green;
+}
+ .failedTest {
+  background-color:red;
+}
+ .deemphasize {
+  font-size: smaller;
+}
+  </style>
+</head>
+
+<body>
+<h1>Adj Framework - Test Suite</h1>
+
+<p class="deemphasize">For more abiut Adj, see the <a href="index.html">user
+guide</a>.</p>
+
+<p>So far runs in Firefox only. That is a limitation of the test suite more
+than of Adj. Other browsers are being worked on.</p>
+<iframe id="tif" name="tif" src="adj-ex-002-verticalList.svg" width="600"
+height="300">
+If you see this text then your browser doesn't support iframes.</iframe>
+
+
+<p>Normally you'd want to 
+<input name="" type="button" onclick="runThroughAllDocuments();"
+value="Run All" />. To start over cleanly, simply <a
+href="tests.html">reload</a>.</p>
+
+<p>To help debugging, after selecting a file below, once you see it above, you
+can force an 
+<input name="" type="button" onclick="forceAnAdjDoDoc();" value="Adj.doDoc()"
+/>.</p>
+
+<table border="1">
+  <tbody id="tb">
+    <tr>
+      <td><a href="test-adj-ex-002-verticalList.svg"
+        target="tif">test-adj-ex-002-verticalList.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-003-horizontalList.svg"
+        target="tif">test-adj-ex-003-horizontalList.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-004-frameForParent.svg"
+        target="tif">test-adj-ex-004-frameForParent.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-005-textBreaks.svg"
+        target="tif">test-adj-ex-005-textBreaks.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-006-connection.svg"
+        target="tif">test-adj-ex-006-connection.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-007-rider.svg"
+        target="tif">test-adj-ex-007-rider.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-008-circleForParent.svg"
+        target="tif">test-adj-ex-008-circleForParent.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-009-ellipseForParent.svg"
+        target="tif">test-adj-ex-009-ellipseForParent.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-010-circularList.svg"
+        target="tif">test-adj-ex-010-circularList.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-045-verticalTree.svg"
+        target="tif">test-adj-ex-045-verticalTree.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-051-horizontalTree.svg"
+        target="tif">test-adj-ex-051-horizontalTree.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-053-vine.svg"
+        target="tif">test-adj-ex-053-vine.svg</a></td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <td><a href="test-adj-ex-054-floater.svg"
+        target="tif">test-adj-ex-054-floater.svg</a></td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+//
+// Copyright (c) 2002-2013, Nirvana Research
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the copyright holder nor the names of
+//       contributors may be used to endorse or promote products derived from
+//       this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT,
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// i.e. Modified BSD License
+//
+// ==============================================================================
+//
+// Idea and first implementation - Leo Baschy <srguiwiz12 AT nrvr DOT com>
+//
+// ==============================================================================
+//
+// Comments to: <adj.feedback AT nrvr DOT com>
+//
+// ==============================================================================
+//
+// Public repository - https://github.com/srguiwiz/adj-js
+//
+
+  	var trs = [];
+	var current = -1;
+
+	function initializeSome() {
+		var testIframe = document.getElementById("tif");
+		var tbody = document.getElementById("tb");
+		trs = tbody.getElementsByTagName("tr");
+		//
+		testIframe.setAttribute("onload","tifLoaded();");
+ 	}
+	initializeSome();
+
+	function runThroughAllDocuments() {
+		loadFileByNumber(0);
+	}
+
+	function loadFileByNumber(number) {
+		var tr = trs[number];
+		var tds = tr.getElementsByTagName("td");
+		var tdFile = tds[0];
+		var a = tdFile.getElementsByTagName("a")[0];
+		var address = a.getAttribute("href");
+		console.log("going to load #" + number + " = " + address);
+		current = number;
+		var testIframe = document.getElementById("tif");
+		testIframe.setAttribute("src",address);
+	}
+
+	function tifLoaded() {
+		if (current < 0 || current >= trs.length) { // <0 used to flag no interest
+			return;
+		}
+		var testIframe = document.getElementById("tif");
+		var address = testIframe.getAttribute("src");
+		var tr = trs[current];
+		var tds = tr.getElementsByTagName("td");
+		var tdFile = tds[0];
+		var tdResult = tds[1];
+		var a = tdFile.getElementsByTagName("a")[0];
+		var href = a.getAttribute("href");
+		if (href != address) { // something must have got out of sync
+			tdResult.setAttribute("class","failedTest");
+			tdResult.textContent = "TEST RUNNING PROBLEM at #" + current + " expected " + address + " but found " + href;
+			continueToNext(); // try to keep going
+			return;
+		}
+		//
+		// look at result
+		var adj = testIframe.contentWindow.Adj;
+		var testResult = "did not complete";
+		var exceptionString = null;
+		try {
+			testResult = adj.doDocAndVerify(testIframe.contentDocument);
+		} catch (exception) {
+			exceptionString = exception.toString();
+		}
+		//var serializer = new XMLSerializer();
+		//var documentAsString = serializer.serializeToString(testIframe.contentDocument);
+		if (!testResult) { // empty string if expected result == success
+			tdResult.setAttribute("class","passedTest");
+			tdResult.textContent = "PASSED";
+		} else {
+			tdResult.setAttribute("class","failedTest");
+			if (!exceptionString) {
+				tdResult.textContent = "FAILED with: " + testResult;
+			} else {
+				tdResult.textContent = "FAILED with exception: " + exceptionString;
+			}
+		}
+		//
+		// iterate
+		continueToNext();
+	}
+
+	function continueToNext() {
+		// continue to next row / file
+		current += 1;
+		if (current < trs.length) {
+			loadFileByNumber(current);
+		}
+	}
+
+	function forceAnAdjDoDoc() {
+		var testIframe = document.getElementById("tif");
+		var adj = testIframe.contentWindow.Adj;
+		testResult = adj.doDoc(testIframe.contentDocument);
+	}
+  //]]></script>
+</body>
+</html>

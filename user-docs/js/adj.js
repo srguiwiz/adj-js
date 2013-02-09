@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:4, revision:0 };
+	Adj.version = { major:3, minor:5, revision:0 };
 	Adj.algorithms = {};
 }
 
@@ -58,8 +58,12 @@ Adj.SvgNamespace = "http://www.w3.org/2000/svg"
 Adj.AdjNamespace = "http://www.nrvr.com/2012/adj";
 
 // shortcut
-Adj.doDoc = function doDoc() {
-	Adj.processAdjElements(document);
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDoc = function doDoc(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	Adj.processAdjElements(documentToDo);
 }
 
 // shortcut
@@ -4329,4 +4333,200 @@ Adj.displayException = function displayException (exception, svgElement) {
 	var svgElementBoundingBox = svgElement.getBBox();
 	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
 	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
+}
+
+// constant
+Adj.documentResultStashHeader = "ExpectedResultForTestAutomation:";
+Adj.documentResultStashHeaderLength = Adj.documentResultStashHeader.length;
+// recognize a double hyphen, not allowed in an XML comment
+Adj.doubleHyphenRegexp = /--/g;
+
+// for running automated tests
+Adj.encodeDocumentResultStash = function encodeDocumentResultStash(content) {
+	return Adj.documentResultStashHeader + encodeURIComponent(content).replace(Adj.doubleHyphenRegexp,"-%2D");
+}
+
+// for running automated tests
+Adj.apparentlyEncodedDocumentResultStash = function encodeDocumentResultStash(encoded) {
+	return encoded.substring(0,Adj.documentResultStashHeaderLength) == Adj.documentResultStashHeader;
+}
+
+// for running automated tests
+Adj.decodeDocumentResultStash = function encodeDocumentResultStash(encoded) {
+	return decodeURIComponent(encoded.substring(encoded.indexOf(":") + 1));
+}
+
+// for running automated tests
+// look for previous stash, if any then return its content still encoded else null,
+// if not given a documentToDo then default to doing _the_ document
+Adj.apparentlyDocumentResultStash = function apparentlyDocumentResultStash(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	var node = documentToDo.documentElement;
+	do {
+		var nextSibling = node.nextSibling;
+		if (nextSibling) {
+			if (nextSibling.nodeType == Node.COMMENT_NODE) {
+				var maybeStashContent = nextSibling.nodeValue;
+				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
+					return maybeStashContent;
+				}
+			}
+		}
+		node = nextSibling;
+	} while (node);
+	return null;
+}
+
+// for running automated tests
+// remove previous stash, if any then return its content still encoded else null,
+// if not given a documentToDo then default to doing _the_ document
+Adj.removeDocumentResultStash = function removeDocumentResultStash(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	var apparentStashContent = null;
+	var node = documentToDo.documentElement;
+	do {
+		var nextSibling = node.nextSibling;
+		if (nextSibling) {
+			if (nextSibling.nodeType == Node.COMMENT_NODE) {
+				var maybeStashContent = nextSibling.nodeValue;
+				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
+					if (!apparentStashContent) { // first one
+						apparentStashContent = maybeStashContent; // remember
+					}
+					documentToDo.removeChild(nextSibling);
+					continue;
+				}
+			}
+		}
+		node = nextSibling;
+	} while (node);
+	return apparentStashContent;
+}
+
+// for running automated tests
+// put stash,
+// if not given a documentToDo then default to doing _the_ document
+Adj.stashDocumentResult = function stashDocumentResult(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	// convert to text
+	var serializer = new XMLSerializer();
+	var documentAsString = serializer.serializeToString(documentToDo);
+	// encode
+	var comment = documentToDo.createComment(Adj.encodeDocumentResultStash(documentAsString));
+	documentToDo.appendChild(comment);
+}
+
+// for running automated tests
+// get stash, decoded,
+// if not given a documentToDo then default to doing _the_ document
+Adj.stashedDocumentResult = function stashedDocumentResult(documentToDo, removeDocumentResultStash) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	var apparentStashContent;
+	if (!removeDocumentResultStash) {
+		apparentStashContent = Adj.apparentlyDocumentResultStash(documentToDo);
+	} else {
+		apparentStashContent = Adj.removeDocumentResultStash(documentToDo);
+	}
+	if (apparentStashContent) {
+		apparentStashContent = Adj.decodeDocumentResultStash(apparentStashContent);
+	}
+	return apparentStashContent;
+}
+
+// for running automated tests
+// get stash, decoded, and remove it from the document,
+// if not given a documentToDo then default to doing _the_ document
+Adj.stashedDocumentResultAndRemove = function stashedDocumentResultAndRemove(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	return Adj.stashedDocumentResult(documentToDo, true);
+}
+
+// for running automated tests,
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDocAndStashIfNoStashYet = function doDocAndStashIfNoStashYet(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	if (Adj.apparentlyDocumentResultStash(documentToDo)) { // apparently not first time
+		return; // bail out
+	}
+	// do
+	Adj.doDoc(documentToDo);
+	// put stash
+	Adj.stashDocumentResult(documentToDo);
+}
+
+// for running automated tests,
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDocAndStash = function doDocAndStash(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	// remove previous stash
+	Adj.removeDocumentResultStash(documentToDo);
+	// do
+	Adj.doDoc(documentToDo);
+	// put stash
+	Adj.stashDocumentResult(documentToDo);
+}
+
+// constants
+Adj.whitespaceBetweenElementsRegexp = />\s+</g;
+Adj.whitespaceAtEndRegexp = /\s+$/g;
+Adj.whitespacesRegexp = /\s+/g;
+
+// for running automated tests,
+// return string describing difference == failed, or empty string if expected result == passed,
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDocAndVerify = function doDocAndVerify(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	// get stash
+	var stashContent = Adj.stashedDocumentResultAndRemove(documentToDo);
+	if (!stashContent) { // apparently no stash
+		// cannot verify
+		throw "cannot verify because no stash found to compare against";
+	}
+	// do
+	Adj.doDoc(documentToDo);
+	// convert to text
+	var serializer = new XMLSerializer();
+	var documentAsString = serializer.serializeToString(documentToDo);
+	// may have to become a bit more tolerant for different browsers and borderline cases, yet not slack
+	stashContent = stashContent.replace(Adj.whitespaceBetweenElementsRegexp, "><");
+	stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
+	stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
+	documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "><");
+	documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
+	documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
+	// compare
+	if (documentAsString == stashContent) {
+		return "";
+	} else {
+		var sLength = stashContent.length;
+		var dLength = documentAsString.length;
+		var minLength = Math.min(sLength, dLength);
+		var firstDifference = minLength;
+		for (var i = 0; i < minLength; i++) {
+			if (documentAsString[i] != stashContent[i]) {
+				firstDifference = i;
+				break;
+			}
+		}
+		var sectionFrom = Math.max(firstDifference - 10, 0);
+		var stashSection = stashContent.substring(sectionFrom, sectionFrom + 40);
+		var documentSection = documentAsString.substring(sectionFrom, sectionFrom + 40);
+		return "a difference near char " + firstDifference + ", now getting \"…" + documentSection + "…\" instead of expected \"…" + stashSection + "…\"";
+	}
 }
