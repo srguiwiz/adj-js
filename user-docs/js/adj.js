@@ -4484,6 +4484,7 @@ Adj.doDocAndStash = function doDocAndStash(documentToDo) {
 Adj.whitespaceBetweenElementsRegexp = />\s+</g;
 Adj.whitespaceAtEndRegexp = /\s+$/g;
 Adj.whitespacesRegexp = /\s+/g;
+Adj.xmlDeclarationRegexp = /^\s*<\?xml[^>]*>/g;
 
 // for running automated tests,
 // return string describing difference == failed, or empty string if expected result == passed,
@@ -4507,9 +4508,11 @@ Adj.doDocAndVerify = function doDocAndVerify(documentToDo) {
 	stashContent = stashContent.replace(Adj.whitespaceBetweenElementsRegexp, "><");
 	stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
 	stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
+	stashContent = stashContent.replace(Adj.xmlDeclarationRegexp, "");
 	documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "><");
 	documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
 	documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
+	documentAsString = documentAsString.replace(Adj.xmlDeclarationRegexp, "");
 	// compare
 	if (documentAsString == stashContent) {
 		return "";
