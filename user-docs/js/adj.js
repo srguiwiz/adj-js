@@ -4351,8 +4351,12 @@ Adj.apparentlyEncodedDocumentResultStash = function encodeDocumentResultStash(en
 	return encoded.substring(0,Adj.documentResultStashHeaderLength) == Adj.documentResultStashHeader;
 }
 
+// constant
+Adj.anyWhitespaceRegexp = /\s+/g;
+
 // for running automated tests
 Adj.decodeDocumentResultStash = function encodeDocumentResultStash(encoded) {
+	encoded = encoded.replace(Adj.anyWhitespaceRegexp, ""); // remove accidentally or erroneously introduced whitespace or newlines
 	return decodeURIComponent(encoded.substring(encoded.indexOf(":") + 1));
 }
 
