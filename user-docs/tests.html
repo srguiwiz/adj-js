@@ -29,6 +29,9 @@ h4, h5, h6 {
 h1,h2,h3,h4,h5,h6 {
   page-break-after: avoid;
 }
+ .testInvoked {
+  background-color:aqua;
+}
  .passedTest {
   background-color:green;
 }
@@ -49,7 +52,7 @@ guide</a>.</p>
 
 <p>So far runs in Firefox only. That is a limitation of the test suite more
 than of Adj. Other browsers are being worked on.</p>
-<iframe id="tif" name="tif" src="adj-ex-002-verticalList.svg" width="600"
+<iframe id="tif" name="tif" src="test-adj-ex-002-verticalList.svg" width="600"
 height="300">
 If you see this text then your browser doesn't support iframes.</iframe>
 
@@ -83,7 +86,8 @@ can force an
     </tr>
     <tr>
       <td><a href="test-adj-ex-005-textBreaks.svg"
-        target="tif">test-adj-ex-005-textBreaks.svg</a></td>
+        target="tif">test-adj-ex-005-textBreaks.svg</a><br/>
+        still expecting failure because of font metrics differences</td>
       <td>?</td>
     </tr>
     <tr>
@@ -113,12 +117,14 @@ can force an
     </tr>
     <tr>
       <td><a href="test-adj-ex-045-verticalTree.svg"
-        target="tif">test-adj-ex-045-verticalTree.svg</a></td>
+        target="tif">test-adj-ex-045-verticalTree.svg</a><br/>
+        still expecting failure because of font metrics differences</td>
       <td>?</td>
     </tr>
     <tr>
       <td><a href="test-adj-ex-051-horizontalTree.svg"
-        target="tif">test-adj-ex-051-horizontalTree.svg</a></td>
+        target="tif">test-adj-ex-051-horizontalTree.svg</a><br/>
+        still expecting failure because of font metrics differences</td>
       <td>?</td>
     </tr>
     <tr>
@@ -198,10 +204,16 @@ can force an
 		var tdFile = tds[0];
 		var a = tdFile.getElementsByTagName("a")[0];
 		var address = a.getAttribute("href");
+		if (address.indexOf("://") < 0) {
+			var thisPageLocation = window.location.href;
+			address = thisPageLocation.substring(0, thisPageLocation.lastIndexOf("/") + 1) + address;
+		}
 		console.log("going to load #" + number + " = " + address);
 		current = number;
 		var testIframe = document.getElementById("tif");
-		testIframe.setAttribute("src",address);
+		// for Firefox was OK with testIframe.setAttribute("src",address);
+		// now working around Chrome "Unsafe JavaScript attempt to access frame with URL file:"
+		testIframe.contentWindow.postMessage("load|" + address, "*");
 	}
 
 	function tifLoaded() {
@@ -209,19 +221,34 @@ can force an
 			return;
 		}
 		var testIframe = document.getElementById("tif");
-		var address = testIframe.getAttribute("src");
+		// for Firefox was OK with var address = testIframe.getAttribute("src");
+		// now working around Chrome "Unsafe JavaScript attempt to access frame with URL file:"
+		var address = testIframe.contentWindow.location;
 		var tr = trs[current];
 		var tds = tr.getElementsByTagName("td");
 		var tdFile = tds[0];
 		var tdResult = tds[1];
 		var a = tdFile.getElementsByTagName("a")[0];
-		var href = a.getAttribute("href");
-		if (href != address) { // something must have got out of sync
+		var listedHref = a.getAttribute("href");
+		var expectedAtEndOfPath = "/" + listedHref;
+		var windowLocationHref = address.href.toString();
+		var foundAtEndOfPath = windowLocationHref.substring(windowLocationHref.length - expectedAtEndOfPath.length);
+		if (expectedAtEndOfPath != foundAtEndOfPath) { // something must have got out of sync
 			tdResult.setAttribute("class","failedTest");
-			tdResult.textContent = "TEST RUNNING PROBLEM at #" + current + " expected " + address + " but found " + href;
+			tdResult.textContent = "TEST RUNNING PROBLEM at #" + current + " expected " + listedHref + " but found " + windowLocationHref;
 			continueToNext(); // try to keep going
 			return;
 		}
+		//
+		// invoke test
+		// for Firefox was OK with var adj = testIframe.contentWindow.Adj;
+		// for Firefox was OK with var testResult = adj.doDocAndVerify(testIframe.contentDocument);
+		// now working around Chrome "Unsafe JavaScript attempt to access frame with URL file:"
+		tdResult.setAttribute("class","testInvoked");
+		tdResult.textContent = "invoked";
+		testIframe.contentWindow.postMessage("Adj.doDocAndVerify|", "*");
+		return;
+		// old code below here, simple call
 		//
 		// look at result
 		var adj = testIframe.contentWindow.Adj;
@@ -229,25 +256,62 @@ can force an
 		var exceptionString = null;
 		try {
 			testResult = adj.doDocAndVerify(testIframe.contentDocument);
+			displayTestResult(testResult,false);
 		} catch (exception) {
 			exceptionString = exception.toString();
+			displayTestResult(exceptionString,true);
 		}
-		//var serializer = new XMLSerializer();
-		//var documentAsString = serializer.serializeToString(testIframe.contentDocument);
-		if (!testResult) { // empty string if expected result == success
-			tdResult.setAttribute("class","passedTest");
-			tdResult.textContent = "PASSED";
-		} else {
-			tdResult.setAttribute("class","failedTest");
-			if (!exceptionString) {
-				tdResult.textContent = "FAILED with: " + testResult;
-			} else {
-				tdResult.textContent = "FAILED with exception: " + exceptionString;
-			}
-		}
-		//
 		// iterate
 		continueToNext();
+	}
+	
+	messageRegexp = /^([^|]*)(?:\|(.*))?$/;
+	
+	windowReceivesMessage = function windowReceivesMessage(evt) {
+		// accept any evt.origin
+		var messageCommand;
+		var messageParameter;
+		var messageMatch = messageRegexp.exec(evt.data);
+		if (messageMatch) {
+			messageCommand = messageMatch[1];
+			messageParameter = messageMatch[2];
+		} else {
+			messageCommand = "";
+		}
+		switch (messageCommand) {
+			case "Adj.didDocAndVerify":
+				displayTestResult(messageParameter,false);
+				// iterate
+				continueToNext();
+				break;
+			case "Adj.didDocAndVerifyException":
+				displayTestResult(messageParameter,true);
+				// iterate
+				continueToNext();
+				break;
+			default:
+		}
+	}
+
+	// see https://developer.mozilla.org/en-US/docs/DOM/window.postMessage
+	window.addEventListener("message", windowReceivesMessage, false);
+
+	function displayTestResult(testResult, wasException) {
+		var tr = trs[current];
+		var tds = tr.getElementsByTagName("td");
+		var tdResult = tds[1];
+		if (!wasException) {
+			if (!testResult) { // empty string if expected result == success
+				tdResult.setAttribute("class","passedTest");
+				tdResult.textContent = "PASSED";
+			} else {
+				tdResult.setAttribute("class","failedTest");
+				tdResult.textContent = "FAILED with: " + testResult;
+			}
+		} else {
+			tdResult.setAttribute("class","failedTest");
+			tdResult.textContent = "FAILED with exception: " + testResult;
+		}
 	}
 
 	function continueToNext() {

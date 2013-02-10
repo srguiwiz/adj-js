@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDocAndStashIfNoStashYet();" width="200" height="100">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
 	<rect width="200" height="100" fill="linen"/>
 	<g>
 		<rect x="30" y="30" width="50" height="20" fill="#000"/>
@@ -9,4 +10,4 @@
 		</ellipse>
 	</g>
 </svg>
-<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doDocAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%22100%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cg%3E%0A%09%09%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2220%22%20fill%3D%22%23000%22%2F%3E%0A%09%09%3Cellipse%20rx%3D%2235.355%22%20ry%3D%2214.142%22%20stroke%3D%22gray%22%20fill%3D%22gray%22%20fill-opacity%3D%220.2%22%20cx%3D%2255%22%20cy%3D%2240%22%3E%0A%09%09%09%3Cadj%3AellipseForParent%2F%3E%0A%09%09%3C%2Fellipse%3E%0A%09%3C%2Fg%3E%0A%3C%2Fsvg%3E-->
+<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doDocAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%22100%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cg%3E%0A%09%09%3Crect%20x%3D%2230%22%20y%3D%2230%22%20width%3D%2250%22%20height%3D%2220%22%20fill%3D%22%23000%22%2F%3E%0A%09%09%3Cellipse%20rx%3D%2235.355%22%20ry%3D%2214.142%22%20stroke%3D%22gray%22%20fill%3D%22gray%22%20fill-opacity%3D%220.2%22%20cx%3D%2255%22%20cy%3D%2240%22%3E%0A%09%09%09%3Cadj%3AellipseForParent%2F%3E%0A%09%09%3C%2Fellipse%3E%0A%09%3C%2Fg%3E%0A%3C%2Fsvg%3E-->
