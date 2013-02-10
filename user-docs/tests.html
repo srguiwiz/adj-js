@@ -59,8 +59,7 @@ If you see this text then your browser doesn't support iframes.</iframe>
 
 <p>Normally you'd want to 
 <input name="" type="button" onclick="runThroughAllDocuments();"
-value="Run All" />. To start over cleanly, simply <a
-href="tests.html">reload</a>.</p>
+value="Run All Tests" />. To start over cleanly, reload your browser window.</p>
 
 <p>To help debugging, after selecting a file below, once you see it above, you
 can force an 
@@ -193,8 +192,15 @@ can force an
 		testIframe.setAttribute("onload","tifLoaded();");
  	}
 	initializeSome();
+	
+	var ranSomethingAlready = false;
 
 	function runThroughAllDocuments() {
+		if (ranSomethingAlready) {
+			alert("You must reload your browser window first.");
+			return;
+		}
+		ranSomethingAlready = true;
 		loadFileByNumber(0);
 	}
 
@@ -323,9 +329,9 @@ can force an
 	}
 
 	function forceAnAdjDoDoc() {
+		ranSomethingAlready = true;
 		var testIframe = document.getElementById("tif");
-		var adj = testIframe.contentWindow.Adj;
-		testResult = adj.doDoc(testIframe.contentDocument);
+		testIframe.contentWindow.postMessage("Adj.doDoc|", "*");
 	}
   //]]></script>
 </body>

@@ -86,6 +86,9 @@ AdjTests.windowReceivesMessage = function windowReceivesMessage(evt) {
 				evt.source.postMessage("Adj.didDocAndVerifyException|" + exceptionString, "*");
 			}
 			break;
+		case "Adj.doDoc":
+			var commandResult = Adj.doDoc();
+			break;
 		default:
 	}
 }
