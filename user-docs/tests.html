@@ -50,8 +50,14 @@ h1,h2,h3,h4,h5,h6 {
 <p class="deemphasize">For more abiut Adj, see the <a href="index.html">user
 guide</a>.</p>
 
-<p>So far runs in Firefox only. That is a limitation of the test suite more
-than of Adj. Other browsers are being worked on.</p>
+<p>This test suite so far runs in Firefox, Chrome, and Safari only. That is a
+limitation of the test suite more than of Adj. Other browsers are being worked
+on.</p>
+
+<p>Also, minor differences still cause failure: Font metrics being different,
+or coordinates being off by as little as one thousandth of a pixel. That also
+is a limitation of the test suite more than of Adj. That also is being worked
+on.</p>
 <iframe id="tif" name="tif" src="test-adj-ex-002-verticalList.svg" width="600"
 height="300">
 If you see this text then your browser doesn't support iframes.</iframe>
@@ -85,7 +91,7 @@ can force an
     </tr>
     <tr>
       <td><a href="test-adj-ex-005-textBreaks.svg"
-        target="tif">test-adj-ex-005-textBreaks.svg</a><br/>
+        target="tif">test-adj-ex-005-textBreaks.svg</a><br />
         still expecting failure because of font metrics differences</td>
       <td>?</td>
     </tr>
@@ -116,13 +122,13 @@ can force an
     </tr>
     <tr>
       <td><a href="test-adj-ex-045-verticalTree.svg"
-        target="tif">test-adj-ex-045-verticalTree.svg</a><br/>
+        target="tif">test-adj-ex-045-verticalTree.svg</a><br />
         still expecting failure because of font metrics differences</td>
       <td>?</td>
     </tr>
     <tr>
       <td><a href="test-adj-ex-051-horizontalTree.svg"
-        target="tif">test-adj-ex-051-horizontalTree.svg</a><br/>
+        target="tif">test-adj-ex-051-horizontalTree.svg</a><br />
         still expecting failure because of font metrics differences</td>
       <td>?</td>
     </tr>
@@ -181,11 +187,11 @@ can force an
 // Public repository - https://github.com/srguiwiz/adj-js
 //
 
+	var testIframe = document.getElementById("tif");
   	var trs = [];
 	var current = -1;
 
 	function initializeSome() {
-		var testIframe = document.getElementById("tif");
 		var tbody = document.getElementById("tb");
 		trs = tbody.getElementsByTagName("tr");
 		//
@@ -216,9 +222,6 @@ can force an
 		}
 		console.log("going to load #" + number + " = " + address);
 		current = number;
-		var testIframe = document.getElementById("tif");
-		// for Firefox was OK with testIframe.setAttribute("src",address);
-		// now working around Chrome "Unsafe JavaScript attempt to access frame with URL file:"
 		testIframe.contentWindow.postMessage("load|" + address, "*");
 	}
 
@@ -226,53 +229,21 @@ can force an
 		if (current < 0 || current >= trs.length) { // <0 used to flag no interest
 			return;
 		}
-		var testIframe = document.getElementById("tif");
-		// for Firefox was OK with var address = testIframe.getAttribute("src");
-		// now working around Chrome "Unsafe JavaScript attempt to access frame with URL file:"
-		var address = testIframe.contentWindow.location;
+		//
 		var tr = trs[current];
 		var tds = tr.getElementsByTagName("td");
-		var tdFile = tds[0];
 		var tdResult = tds[1];
-		var a = tdFile.getElementsByTagName("a")[0];
-		var listedHref = a.getAttribute("href");
-		var expectedAtEndOfPath = "/" + listedHref;
-		var windowLocationHref = address.href.toString();
-		var foundAtEndOfPath = windowLocationHref.substring(windowLocationHref.length - expectedAtEndOfPath.length);
-		if (expectedAtEndOfPath != foundAtEndOfPath) { // something must have got out of sync
-			tdResult.setAttribute("class","failedTest");
-			tdResult.textContent = "TEST RUNNING PROBLEM at #" + current + " expected " + listedHref + " but found " + windowLocationHref;
-			continueToNext(); // try to keep going
-			return;
-		}
-		//
 		// invoke test
-		// for Firefox was OK with var adj = testIframe.contentWindow.Adj;
-		// for Firefox was OK with var testResult = adj.doDocAndVerify(testIframe.contentDocument);
-		// now working around Chrome "Unsafe JavaScript attempt to access frame with URL file:"
 		tdResult.setAttribute("class","testInvoked");
 		tdResult.textContent = "invoked";
 		testIframe.contentWindow.postMessage("Adj.doDocAndVerify|", "*");
 		return;
 		// old code below here, simple call
-		//
-		// look at result
-		var adj = testIframe.contentWindow.Adj;
-		var testResult = "did not complete";
-		var exceptionString = null;
-		try {
-			testResult = adj.doDocAndVerify(testIframe.contentDocument);
-			displayTestResult(testResult,false);
-		} catch (exception) {
-			exceptionString = exception.toString();
-			displayTestResult(exceptionString,true);
-		}
-		// iterate
-		continueToNext();
 	}
-	
-	messageRegexp = /^([^|]*)(?:\|(.*))?$/;
-	
+
+	// match command by itself, or command followed by one or two parameters separated by |
+	messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
+
 	windowReceivesMessage = function windowReceivesMessage(evt) {
 		// accept any evt.origin
 		var messageCommand;
@@ -280,18 +251,34 @@ can force an
 		var messageMatch = messageRegexp.exec(evt.data);
 		if (messageMatch) {
 			messageCommand = messageMatch[1];
-			messageParameter = messageMatch[2];
+			messageParameter1 = messageMatch[2];
+			messageParameter2 = messageMatch[3];
 		} else {
 			messageCommand = "";
 		}
 		switch (messageCommand) {
 			case "Adj.didDocAndVerify":
-				displayTestResult(messageParameter,false);
-				// iterate
-				continueToNext();
-				break;
 			case "Adj.didDocAndVerifyException":
-				displayTestResult(messageParameter,true);
+				var verifiedLocation = messageParameter1;
+				var tr = trs[current];
+				var tds = tr.getElementsByTagName("td");
+				var tdFile = tds[0];
+				var tdResult = tds[1];
+				var a = tdFile.getElementsByTagName("a")[0];
+				var listedHref = a.getAttribute("href");
+				var expectedAtEndOfPath = "/" + listedHref;
+				var foundAtEndOfPath = verifiedLocation.substring(verifiedLocation.length - expectedAtEndOfPath.length);
+				if (expectedAtEndOfPath != foundAtEndOfPath) { // something must have got out of sync
+					tdResult.setAttribute("class","failedTest");
+					tdResult.textContent = "TEST RUNNING PROBLEM at #" + current + " expected " + listedHref + " but found " + verifiedLocation;
+					return; // do NOT keep going
+				}
+
+				if (messageCommand == "Adj.didDocAndVerify") {
+					displayTestResult(messageParameter2,false);
+				} else {
+					displayTestResult(messageParameter2,true);
+				}
 				// iterate
 				continueToNext();
 				break;
@@ -330,7 +317,6 @@ can force an
 
 	function forceAnAdjDoDoc() {
 		ranSomethingAlready = true;
-		var testIframe = document.getElementById("tif");
 		testIframe.contentWindow.postMessage("Adj.doDoc|", "*");
 	}
   //]]></script>

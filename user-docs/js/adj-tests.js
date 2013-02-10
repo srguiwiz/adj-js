@@ -53,8 +53,8 @@ if (typeof AdjTests == "undefined") {
 	AdjTests = {};
 }
 
-// constant
-AdjTests.messageRegexp = /^([^|]*)(?:\|(.*))?$/;
+// match command by itself, or command followed by one or two parameters separated by |
+AdjTests.messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
 
 AdjTests.windowReceivesMessage = function windowReceivesMessage(evt) {
 	// accept any evt.origin
@@ -79,11 +79,11 @@ AdjTests.windowReceivesMessage = function windowReceivesMessage(evt) {
 				// do
 				var commandResult = Adj.doDocAndVerify();
 				// reply
-				evt.source.postMessage("Adj.didDocAndVerify|" + commandResult, "*");
+				evt.source.postMessage("Adj.didDocAndVerify|" + window.location.href + "|" + commandResult, "*");
 			} catch (exception) {
 				exceptionString = exception.toString();
 				// reply
-				evt.source.postMessage("Adj.didDocAndVerifyException|" + exceptionString, "*");
+				evt.source.postMessage("Adj.didDocAndVerifyException|" + window.location.href + "|" + exceptionString, "*");
 			}
 			break;
 		case "Adj.doDoc":
