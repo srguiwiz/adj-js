@@ -67,6 +67,11 @@ If you see this text then your browser doesn't support iframes.</iframe>
 <input name="" type="button" onclick="runThroughAllDocuments();"
 value="Run All Tests" />. To start over cleanly, reload your browser window.</p>
 
+<p>Sometimes, if needed, after selecting a file below, once you see it above, you
+can
+<input name="" type="button" onclick="runOneDocument();" value="Run One Test"
+/>.</p>
+
 <p>To help debugging, after selecting a file below, once you see it above, you
 can force an 
 <input name="" type="button" onclick="forceAnAdjDoDoc();" value="Adj.doDoc()"
@@ -188,18 +193,37 @@ can force an
 //
 
 	var testIframe = document.getElementById("tif");
-  	var trs = [];
+	var tbody = document.getElementById("tb");
+	var trs = tbody.getElementsByTagName("tr");
 	var current = -1;
+	var thisPageLocation = window.location.href;
+	var thisPageLocationDirectory = thisPageLocation.substring(0, thisPageLocation.lastIndexOf("/") + 1);
+	var indexesByUrl = {};
+	//
+	var ranSomethingAlready = false;
+	var runOnlyOne = false;
+
+	function makeAbsoluteAddress(address) {
+		if (address.indexOf("://") < 0) {
+			address = thisPageLocationDirectory + address;
+		}
+		return address;
+	}
 
 	function initializeSome() {
-		var tbody = document.getElementById("tb");
-		trs = tbody.getElementsByTagName("tr");
+		for (var i = 0, n = trs.length; i < n; i++) {
+			var tr = trs[i];
+			var tds = tr.getElementsByTagName("td");
+			var tdFile = tds[0];
+			var a = tdFile.getElementsByTagName("a")[0];
+			var address = a.getAttribute("href");
+			address = makeAbsoluteAddress(address);
+			indexesByUrl[address] = i;
+		}
 		//
 		testIframe.setAttribute("onload","tifLoaded();");
  	}
 	initializeSome();
-	
-	var ranSomethingAlready = false;
 
 	function runThroughAllDocuments() {
 		if (ranSomethingAlready) {
@@ -210,16 +234,23 @@ can force an
 		loadFileByNumber(0);
 	}
 
+	function runOneDocument() {
+		if (ranSomethingAlready) {
+			alert("You must reload your browser window first.");
+			return;
+		}
+		ranSomethingAlready = true;
+		runOnlyOne = true;
+		testIframe.contentWindow.postMessage("Adj.doDocAndVerify|", "*");
+	}
+
 	function loadFileByNumber(number) {
 		var tr = trs[number];
 		var tds = tr.getElementsByTagName("td");
 		var tdFile = tds[0];
 		var a = tdFile.getElementsByTagName("a")[0];
 		var address = a.getAttribute("href");
-		if (address.indexOf("://") < 0) {
-			var thisPageLocation = window.location.href;
-			address = thisPageLocation.substring(0, thisPageLocation.lastIndexOf("/") + 1) + address;
-		}
+		address = makeAbsoluteAddress(address);
 		console.log("going to load #" + number + " = " + address);
 		current = number;
 		testIframe.contentWindow.postMessage("load|" + address, "*");
@@ -229,7 +260,6 @@ can force an
 		if (current < 0 || current >= trs.length) { // <0 used to flag no interest
 			return;
 		}
-		//
 		var tr = trs[current];
 		var tds = tr.getElementsByTagName("td");
 		var tdResult = tds[1];
@@ -259,28 +289,17 @@ can force an
 		switch (messageCommand) {
 			case "Adj.didDocAndVerify":
 			case "Adj.didDocAndVerifyException":
-				var verifiedLocation = messageParameter1;
-				var tr = trs[current];
-				var tds = tr.getElementsByTagName("td");
-				var tdFile = tds[0];
-				var tdResult = tds[1];
-				var a = tdFile.getElementsByTagName("a")[0];
-				var listedHref = a.getAttribute("href");
-				var expectedAtEndOfPath = "/" + listedHref;
-				var foundAtEndOfPath = verifiedLocation.substring(verifiedLocation.length - expectedAtEndOfPath.length);
-				if (expectedAtEndOfPath != foundAtEndOfPath) { // something must have got out of sync
-					tdResult.setAttribute("class","failedTest");
-					tdResult.textContent = "TEST RUNNING PROBLEM at #" + current + " expected " + listedHref + " but found " + verifiedLocation;
-					return; // do NOT keep going
-				}
-
 				if (messageCommand == "Adj.didDocAndVerify") {
-					displayTestResult(messageParameter2,false);
+					displayTestResult(messageParameter1,messageParameter2,false);
 				} else {
-					displayTestResult(messageParameter2,true);
+					displayTestResult(messageParameter1,messageParameter2,true);
 				}
 				// iterate
-				continueToNext();
+				if (!runOnlyOne) {
+					continueToNext();
+				} else { // runOnlyOne
+					current = trs.length;
+				}
 				break;
 			default:
 		}
@@ -289,8 +308,13 @@ can force an
 	// see https://developer.mozilla.org/en-US/docs/DOM/window.postMessage
 	window.addEventListener("message", windowReceivesMessage, false);
 
-	function displayTestResult(testResult, wasException) {
-		var tr = trs[current];
+	function displayTestResult(testedUrl, testResult, wasException) {
+		var index = indexesByUrl[testedUrl];
+		if (typeof index != "number") {
+			console.log("cannot figure what row has URL " + testedUrl);
+			return;
+		}
+		var tr = trs[index];
 		var tds = tr.getElementsByTagName("td");
 		var tdResult = tds[1];
 		if (!wasException) {
