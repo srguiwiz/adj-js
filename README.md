@@ -17,4 +17,7 @@ Start by reading the User Guide at **user-docs/index.html**, also
 If you are here for the essential adj.js file, it is at **user-docs/js/adj.js**
 and [online here](http://srguiwiz.github.com/adj-js/user-docs/js/adj.js).
 
+If you are here for running the test suite, it is at **user-docs/tests.html**
+and [online here](http://srguiwiz.github.com/adj-js/user-docs/tests.html).
+
 A fledgling Wiki is [online here](https://github.com/srguiwiz/adj-js/wiki).
