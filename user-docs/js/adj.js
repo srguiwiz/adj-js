@@ -4367,18 +4367,18 @@ Adj.apparentlyDocumentResultStash = function apparentlyDocumentResultStash(docum
 	if (!documentToDo) {
 		documentToDo = document;
 	}
-	var node = documentToDo.documentElement;
+	var node = documentToDo.documentElement.firstChild;
 	do {
-		var nextSibling = node.nextSibling;
-		if (nextSibling) {
-			if (nextSibling.nodeType == Node.COMMENT_NODE) {
-				var maybeStashContent = nextSibling.nodeValue;
+		var nextChild = node.nextSibling;
+		if (nextChild) {
+			if (nextChild.nodeType == Node.COMMENT_NODE) {
+				var maybeStashContent = nextChild.nodeValue;
 				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
 					return maybeStashContent;
 				}
 			}
 		}
-		node = nextSibling;
+		node = nextChild;
 	} while (node);
 	return null;
 }
@@ -4391,22 +4391,22 @@ Adj.removeDocumentResultStash = function removeDocumentResultStash(documentToDo)
 		documentToDo = document;
 	}
 	var apparentStashContent = null;
-	var node = documentToDo.documentElement;
+	var node = documentToDo.documentElement.firstChild;
 	do {
-		var nextSibling = node.nextSibling;
-		if (nextSibling) {
-			if (nextSibling.nodeType == Node.COMMENT_NODE) {
-				var maybeStashContent = nextSibling.nodeValue;
+		var nextChild = node.nextSibling;
+		if (nextChild) {
+			if (nextChild.nodeType == Node.COMMENT_NODE) {
+				var maybeStashContent = nextChild.nodeValue;
 				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
 					if (!apparentStashContent) { // first one
 						apparentStashContent = maybeStashContent; // remember
 					}
-					documentToDo.removeChild(nextSibling);
+					documentToDo.documentElement.removeChild(nextChild);
 					continue;
 				}
 			}
 		}
-		node = nextSibling;
+		node = nextChild;
 	} while (node);
 	return apparentStashContent;
 }
@@ -4423,7 +4423,7 @@ Adj.stashDocumentResult = function stashDocumentResult(documentToDo) {
 	var documentAsString = serializer.serializeToString(documentToDo);
 	// encode
 	var comment = documentToDo.createComment(Adj.encodeDocumentResultStash(documentAsString));
-	documentToDo.appendChild(comment);
+	documentToDo.documentElement.appendChild(comment);
 }
 
 // for running automated tests
@@ -4488,7 +4488,7 @@ Adj.doDocAndStash = function doDocAndStash(documentToDo) {
 Adj.whitespaceBetweenElementsRegexp = />\s+</g;
 Adj.whitespaceAtEndRegexp = /\s+$/g;
 Adj.whitespacesRegexp = /\s+/g;
-Adj.xmlDeclarationRegexp = /^\s*<\?xml[^>]*>/g;
+Adj.xmlDeclarationRegexp = /^\s*<\?xml[^>]*>/;
 
 // for running automated tests,
 // return string describing difference == failed, or empty string if expected result == passed,
