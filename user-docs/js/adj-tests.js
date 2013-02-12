@@ -39,28 +39,426 @@
 // Public repository - https://github.com/srguiwiz/adj-js
 //
 
+// ==============================================================================
 // in an SVG document being used in a test suite, load this source file after loading adj.js
 // e.g.
 //   <script type="text/javascript" xlink:href="js/adj.js"/>
 //   <script type="text/javascript" xlink:href="js/adj-tests.js"/>
 //
-// raison d'être of this file is to allow a test suite to iterate through test cases in an iframe,
+
+// ==============================================================================
+// extension of Adj in order to facilitate running automated tests
+//
+
+// constant
+Adj.documentResultStashHeader = "ExpectedResultForTestAutomation:";
+Adj.documentResultStashHeaderLength = Adj.documentResultStashHeader.length;
+// recognize a double hyphen, not allowed in an XML comment
+Adj.doubleHyphenRegexp = /--/g;
+
+// for running automated tests
+Adj.encodeDocumentResultStash = function encodeDocumentResultStash(content) {
+	return Adj.documentResultStashHeader + encodeURIComponent(content).replace(Adj.doubleHyphenRegexp,"-%2D");
+}
+
+// for running automated tests
+Adj.apparentlyEncodedDocumentResultStash = function encodeDocumentResultStash(encoded) {
+	return encoded.substring(0,Adj.documentResultStashHeaderLength) == Adj.documentResultStashHeader;
+}
+
+// constant
+Adj.anyWhitespaceRegexp = /\s+/g;
+
+// for running automated tests
+Adj.decodeDocumentResultStash = function encodeDocumentResultStash(encoded) {
+	encoded = encoded.replace(Adj.anyWhitespaceRegexp, ""); // remove accidentally or erroneously introduced whitespace or newlines
+	return decodeURIComponent(encoded.substring(encoded.indexOf(":") + 1));
+}
+
+// for running automated tests
+// look for previous stash, if any then return its content still encoded else null,
+// if not given a documentToDo then default to doing _the_ document
+Adj.apparentlyDocumentResultStash = function apparentlyDocumentResultStash(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	var node = documentToDo.documentElement.firstChild;
+	do {
+		var nextChild = node.nextSibling;
+		if (nextChild) {
+			if (nextChild.nodeType == Node.COMMENT_NODE) {
+				var maybeStashContent = nextChild.nodeValue;
+				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
+					return maybeStashContent;
+				}
+			}
+		}
+		node = nextChild;
+	} while (node);
+	return null;
+}
+
+// for running automated tests
+// remove previous stash, if any then return its content still encoded else null,
+// if not given a documentToDo then default to doing _the_ document
+Adj.removeDocumentResultStash = function removeDocumentResultStash(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	var apparentStashContent = null;
+	var node = documentToDo.documentElement.firstChild;
+	do {
+		var nextChild = node.nextSibling;
+		if (nextChild) {
+			if (nextChild.nodeType == Node.COMMENT_NODE) {
+				var maybeStashContent = nextChild.nodeValue;
+				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
+					if (!apparentStashContent) { // first one
+						apparentStashContent = maybeStashContent; // remember
+					}
+					documentToDo.documentElement.removeChild(nextChild);
+					continue;
+				}
+			}
+		}
+		node = nextChild;
+	} while (node);
+	return apparentStashContent;
+}
+
+// for running automated tests
+// put stash,
+// if not given a documentToDo then default to doing _the_ document
+Adj.stashDocumentResult = function stashDocumentResult(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	// convert to text
+	var serializer = new XMLSerializer();
+	var documentAsString = serializer.serializeToString(documentToDo);
+	// encode
+	var comment = documentToDo.createComment(Adj.encodeDocumentResultStash(documentAsString));
+	documentToDo.documentElement.appendChild(comment);
+}
+
+// for running automated tests
+// get stash, decoded,
+// if not given a documentToDo then default to doing _the_ document
+Adj.stashedDocumentResult = function stashedDocumentResult(documentToDo, removeDocumentResultStash) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	var apparentStashContent;
+	if (!removeDocumentResultStash) {
+		apparentStashContent = Adj.apparentlyDocumentResultStash(documentToDo);
+	} else {
+		apparentStashContent = Adj.removeDocumentResultStash(documentToDo);
+	}
+	if (apparentStashContent) {
+		apparentStashContent = Adj.decodeDocumentResultStash(apparentStashContent);
+	}
+	return apparentStashContent;
+}
+
+// for running automated tests
+// get stash, decoded, and remove it from the document,
+// if not given a documentToDo then default to doing _the_ document
+Adj.stashedDocumentResultAndRemove = function stashedDocumentResultAndRemove(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	return Adj.stashedDocumentResult(documentToDo, true);
+}
+
+// for running automated tests,
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDocAndStashIfNoStashYet = function doDocAndStashIfNoStashYet(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	if (Adj.apparentlyDocumentResultStash(documentToDo)) { // apparently not first time
+		return; // bail out
+	}
+	// do
+	Adj.doDoc(documentToDo);
+	// put stash
+	Adj.stashDocumentResult(documentToDo);
+}
+
+// for running automated tests,
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDocAndStash = function doDocAndStash(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	// remove previous stash
+	Adj.removeDocumentResultStash(documentToDo);
+	// do
+	Adj.doDoc(documentToDo);
+	// put stash
+	Adj.stashDocumentResult(documentToDo);
+}
+
+// constants
+Adj.whitespaceBetweenElementsRegexp = />\s+</g;
+Adj.whitespaceAtEndRegexp = /\s+$/g;
+Adj.whitespacesRegexp = /\s+/g;
+Adj.xmlDeclarationRegexp = /^\s*<\?xml[^>]*>/;
+//
+Adj.trimRegexp = /^\s*(.*?)\s*$/;
+
+// rather specific to use in Adj.doDocAndVerify(),
+// for correct results .normalize() MUST have been called on both nodes
+Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences, tolerance) {
+	var stashedNodeType = stashedNode.nodeType;
+	var currentNodeType = currentNode.nodeType;
+	if (currentNodeType != stashedNodeType) {
+		differences.push("node types are different");
+		return false;
+	}
+	switch (stashedNodeType) {
+		case Node.ELEMENT_NODE:
+			// compare the elements' sets of attributes
+			var areNotEqual = false;
+			var stashedAttributes = stashedNode.attributes;
+			var currentAttributes = currentNode.attributes;
+			var stashedAttributesLength = stashedAttributes.length;
+			var currentAttributesLength = currentAttributes.length;
+			var stashedAttributesByName = {};
+			var currentAttributesByName = {};
+			// nodeName holds the qualified name
+			for (var i = 0; i < stashedAttributesLength; i++) {
+				var a = stashedAttributes.item(i);
+				stashedAttributesByName[a.nodeName] = a;
+			}
+			for (var i = 0; i < currentAttributesLength; i++) {
+				var a = currentAttributes.item(i);
+				currentAttributesByName[a.nodeName] = a;
+			}
+			for (stashedAttributeName in stashedAttributesByName) {
+				var stashedAttribute = stashedAttributesByName[stashedAttributeName];
+				if (stashedAttribute.prefix == "xmlns") {
+					// ignore xmlns: attributes for now, because different browsers serialize them into different elements
+					delete stashedAttributesByName[stashedAttributeName];
+					continue;
+				}
+				var currentAttribute = currentAttributesByName[stashedAttributeName];
+				if (!currentAttribute) {
+					differences.push("now missing attribute " + stashedAttributeName + "=\"" + stashedAttribute.value + "\"");
+					areNotEqual = true;
+					delete stashedAttributesByName[stashedAttributeName];
+					continue;
+				}
+				// compare one attribute
+				if (!Adj.areEqualNodes(stashedAttribute, currentAttribute, differences, tolerance)) {
+					areNotEqual = true;
+				}
+				delete stashedAttributesByName[stashedAttributeName];
+				delete currentAttributesByName[stashedAttributeName];
+			}
+			for (currentAttributeName in currentAttributesByName) {
+				var currentAttribute = currentAttributesByName[currentAttributeName];
+				if (currentAttribute.prefix == "xmlns") {
+					// ignore xmlns: attributes for now, because different browsers serialize them into different elements
+					delete currentAttributesByName[currentAttributeName];
+					continue;
+				}
+				differences.push("now extra attribute " + currentAttributeName + "=\"" + currentAttribute.value + "\"");
+				areNotEqual = true;
+				delete stashedAttributesByName[stashedAttributeName];
+			}
+			// compare the elements' lists of children
+			var stashedChildren = stashedNode.childNodes;
+			var currentChildren = currentNode.childNodes;
+			var stashedChildrenLength = stashedChildren.length;
+			var currentChildrenLength = currentChildren.length;
+			if (currentChildrenLength != stashedChildrenLength) {
+				differences.push("a " + currentNode.nodeName + " element now has " + currentChildrenLength + " children instead of " + stashedChildrenLength);
+				return false;
+			}
+			for (var i = 0; i < stashedChildrenLength; i++) {
+				var stashedChild = stashedChildren.item(i);
+				var currentChild = currentChildren.item(i);
+				if (!Adj.areEqualNodes(stashedChild, currentChild, differences, tolerance)) {
+					areNotEqual = true;
+				}
+			}
+			return !areNotEqual;
+			break;
+		case Node.ATTRIBUTE_NODE:
+			// nodeName holds the qualified name
+			var stashedAttributeName = stashedNode.nodeName;
+			var currentAttributeName = currentNode.nodeName;
+			// don't expect to get here with currentAttributeName != stashedAttributeName,
+			// if ever in the future because of namespace tricks, deal with it then
+			var stashedAttributeValue = stashedNode.value;
+			var currentAttributeValue = currentNode.value;
+			if (currentAttributeValue == stashedAttributeValue) {
+				return true;
+			} else {
+				differences.push("now getting attribute " + stashedAttributeName + "=\"" + currentAttributeValue + "\" instead of expected value =\"" + stashedAttributeValue + "\"");
+				return false;
+			}
+			break;
+		case Node.TEXT_NODE:
+		case Node.CDATA_SECTION_NODE:
+		case Node.COMMENT_NODE:
+			var stashedNodeValue = stashedNode.nodeValue;
+			var currentNodeValue = currentNode.nodeValue;
+			// trim and normalize any sequence of whitespace to a single space
+			stashedNodeValue = stashedNodeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
+			currentNodeValue = currentNodeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
+			if (currentNodeValue == stashedNodeValue) {
+				return true;
+			} else {
+				differences.push("now getting \"…" + currentNodeValue + "…\" instead of expected \"…" + stashedNodeValue + "…\"");
+				return false;
+			}
+			break;
+		case Node.ENTITY_REFERENCE_NODE:
+		case Node.ENTITY_NODE:
+		case Node.PROCESSING_INSTRUCTION_NODE:
+			// ignore for now,
+			// don't depend on these in test cases,
+			// character references and references to predefined entities are considered to be
+			// expanded by the HTML or XML processor so that characters are represented by their
+			// Unicode equivalent rather than by an entity reference
+			return true; // ignore for now, pass them OK
+			break;
+		case Node.DOCUMENT_NODE:
+			return Adj.areEqualNodes(stashedNode.documentElement, currentNode.documentElement, differences, tolerance);
+			break;
+		case Node.DOCUMENT_TYPE_NODE:
+		case Node.DOCUMENT_FRAGMENT_NODE:
+		case Node.NOTATION_NODE:
+			// ignore for now,
+			// not called on document node, only called on root element, aka documentElement
+			return true; // ignore for now, pass them OK
+			break;
+		default:
+			break;
+	}
+	// strange if it gets here
+	return false;
+}
+
+// for running automated tests,
+// return string describing difference == failed, or empty string if expected result == passed,
+// if not given a documentToDo then default to doing _the_ document
+Adj.doDocAndVerify = function doDocAndVerify(documentToDo) {
+	if (!documentToDo) {
+		documentToDo = document;
+	}
+	// get stash
+	var stashContent = Adj.stashedDocumentResultAndRemove(documentToDo);
+	if (!stashContent) { // apparently no stash
+		// cannot verify
+		throw "cannot verify because no stash found to compare against";
+	}
+	// do
+	Adj.doDoc(documentToDo);
+	// convert to text
+	var serializer = new XMLSerializer();
+	var documentAsString = serializer.serializeToString(documentToDo);
+	// may have to become a bit more tolerant for different browsers and borderline cases, yet not slack
+	stashContent = stashContent.replace(Adj.whitespaceBetweenElementsRegexp, "><");
+	stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
+	stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
+	stashContent = stashContent.replace(Adj.xmlDeclarationRegexp, "");
+	documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "><");
+	documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
+	documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
+	documentAsString = documentAsString.replace(Adj.xmlDeclarationRegexp, "");
+	// compare serialized documents
+	if (documentAsString == stashContent) {
+		return "";
+	}
+	// compare as DOM
+	var parser = new DOMParser();
+	var stashedDom;
+	var currentDom;
+	var apparentlyGoodParse = false;
+	var stashedDomRootElement;
+	var currentDomRootElement;
+	try {
+		stashedDom = parser.parseFromString(stashContent, "application/xml");
+		currentDom = parser.parseFromString(documentAsString, "application/xml");
+		stashedDomRootElement = stashedDom.documentElement;
+		currentDomRootElement = currentDom.documentElement;
+		if (stashedDomRootElement.localName != "svg") {
+			throw "not svg";
+		}
+		if (currentDomRootElement.localName != "svg") {
+			throw "not svg";
+		}
+		apparentlyGoodParse = true;
+	} catch (exception) {
+		apparentlyGoodParse = false;
+	}
+	var apparentlyEqualDom = false;
+	if (apparentlyGoodParse) {
+		try {
+			apparentlyEqualDom = currentDomRootElement.isEqualNode(stashedDomRootElement);
+		} catch (exception) {
+			apparentlyEqualDom = false;
+		}
+	}
+	// custom comparison of DOM
+	var differences = [];
+	if (!apparentlyEqualDom) {
+		try {
+			stashedDom.normalize();
+			currentDom.normalize();
+			apparentlyEqualDom = Adj.areEqualNodes(stashedDomRootElement, currentDomRootElement, differences, 0.01);
+		} catch (exception) {
+			apparentlyEqualDom = false;
+		}
+	}
+	if (apparentlyEqualDom) {
+		return "";
+	} else {
+		var differencesString;
+		if (differences.length) {
+			differencesString = differences.join("; ");
+		} else {
+			var sLength = stashContent.length;
+			var dLength = documentAsString.length;
+			var minLength = Math.min(sLength, dLength);
+			var firstDifference = minLength;
+			for (var i = 0; i < minLength; i++) {
+				if (documentAsString[i] != stashContent[i]) {
+					firstDifference = i;
+					break;
+				}
+			}
+			var sectionFrom = Math.max(firstDifference - 10, 0);
+			var stashSection = stashContent.substring(sectionFrom, sectionFrom + 40);
+			var documentSection = documentAsString.substring(sectionFrom, sectionFrom + 40);
+			differencesString = "a difference near char " + firstDifference + ", now getting \"…" + documentSection + "…\" instead of expected \"…" + stashSection + "…\"";
+		}
+		return differencesString;
+	}
+}
+
+// ==============================================================================
+// raison d'être of AdjTestWindow is to allow a test suite to iterate through test cases in an iframe,
 // specifically to work around newer browsers (Chrome) not allowing access to local files in an iframe,
 // use window.postMessage to communicate between test suite HTML document and an iframe with SVG documents being tested
+//
 
 // the singleton
-if (typeof AdjTests == "undefined") {
-	AdjTests = {};
+if (typeof AdjTestWindow == "undefined") {
+	AdjTestWindow = {};
 }
 
 // match command by itself, or command followed by one or two parameters separated by |
-AdjTests.messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
+AdjTestWindow.messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
 
-AdjTests.windowReceivesMessage = function windowReceivesMessage(evt) {
+AdjTestWindow.receivesMessage = function receivesMessage(evt) {
 	// accept any evt.origin
 	var messageCommand;
 	var messageParameter;
-	var messageMatch = AdjTests.messageRegexp.exec(evt.data);
+	var messageMatch = AdjTestWindow.messageRegexp.exec(evt.data);
 	if (messageMatch) {
 		messageCommand = messageMatch[1];
 		messageParameter = messageMatch[2];
@@ -70,7 +468,7 @@ AdjTests.windowReceivesMessage = function windowReceivesMessage(evt) {
 	switch (messageCommand) {
 		case "load":
 			// remove before loading another listener
-			window.removeEventListener("message", AdjTests.windowReceivesMessage, false);
+			window.removeEventListener("message", AdjTestWindow.receivesMessage, false);
 			// navigate, load
 			window.location.href = messageParameter;
 			break;
@@ -94,4 +492,4 @@ AdjTests.windowReceivesMessage = function windowReceivesMessage(evt) {
 }
 
 // see https://developer.mozilla.org/en-US/docs/DOM/window.postMessage
-window.addEventListener("message", AdjTests.windowReceivesMessage, false);
+window.addEventListener("message", AdjTestWindow.receivesMessage, false);
