@@ -206,6 +206,9 @@ Adj.whitespacesRegexp = /\s+/g;
 Adj.xmlDeclarationRegexp = /^\s*<\?xml[^>]*>/;
 //
 Adj.trimRegexp = /^\s*(.*?)\s*$/;
+//
+Adj.decimalForToleranceRegexp = /[+-]?[0-9]+\.?[0-9]*|[0-9]*\.?[0-9]/g;
+Adj.decimalCharacterRegexp = /[0-9.+-]/;
 
 // rather specific to use in Adj.doDocAndVerify(),
 // for correct results .normalize() MUST have been called on both nodes
@@ -293,12 +296,75 @@ Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences
 			// if ever in the future because of namespace tricks, deal with it then
 			var stashedAttributeValue = stashedNode.value;
 			var currentAttributeValue = currentNode.value;
+			// trim and normalize any sequence of whitespace to a single space
+			stashedAttributeValue = stashedAttributeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
+			currentAttributeValue = currentAttributeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
 			if (currentAttributeValue == stashedAttributeValue) {
 				return true;
-			} else {
-				differences.push("now getting attribute " + stashedAttributeName + "=\"" + currentAttributeValue + "\" instead of expected value =\"" + stashedAttributeValue + "\"");
-				return false;
 			}
+			// try tolerance
+			var differenceScanningPosition = 0;
+			do {
+				var stashedAttributeValueLength = stashedAttributeValue.length;
+				var currentAttributeValueLength = currentAttributeValue.length;
+				var minLength = Math.min(stashedAttributeValueLength, currentAttributeValueLength);
+				var firstDifference = minLength;
+				for (var i = differenceScanningPosition; i < minLength; i++) {
+					if (currentAttributeValue[i] != stashedAttributeValue[i]) {
+						firstDifference = i;
+						break;
+					}
+				}
+				if (firstDifference >= minLength) { // at end
+					break;
+				}
+				if (!Adj.decimalCharacterRegexp.test(stashedAttributeValue[firstDifference]) && !Adj.decimalCharacterRegexp.test(currentAttributeValue[firstDifference])) {
+					break; // cannot calculate tolerance if not number
+				}
+				var decimalBegin = firstDifference;
+				while (decimalBegin > 0 && Adj.decimalCharacterRegexp.test(stashedAttributeValue[decimalBegin-1])) {
+					decimalBegin--;
+				}
+				var stashedDecimalMatch;
+				Adj.decimalForToleranceRegexp.lastIndex = decimalBegin;
+				do {
+					var stashedDecimalMatch = Adj.decimalForToleranceRegexp.exec(stashedAttributeValue);
+				} while (stashedDecimalMatch && Adj.decimalForToleranceRegexp.lastIndex < firstDifference);
+				if (!stashedDecimalMatch) { // odd case, yet possible
+					break;
+				}
+				var stashedDecimalString = stashedDecimalMatch[0];
+				var stashedDecimalIndex = stashedDecimalMatch.index;
+				var stashedDecimalLastIndex = Adj.decimalForToleranceRegexp.lastIndex;
+				var stashedDecimal = parseFloat(stashedDecimalString);
+				var currentDecimalMatch;
+				Adj.decimalForToleranceRegexp.lastIndex = decimalBegin;
+				do {
+					var currentDecimalMatch = Adj.decimalForToleranceRegexp.exec(currentAttributeValue);
+				} while (currentDecimalMatch && Adj.decimalForToleranceRegexp.lastIndex < firstDifference);
+				if (!currentDecimalMatch) { // odd case, yet possible
+					break;
+				}
+				var currentDecimalString = currentDecimalMatch[0];
+				var currentDecimalIndex = currentDecimalMatch.index;
+				var currentDecimalLastIndex = Adj.decimalForToleranceRegexp.lastIndex;
+				var currentDecimal = parseFloat(currentDecimalString);
+				var difference = Math.abs(currentDecimal - stashedDecimal);
+				if (difference > tolerance) { // numerically more difference than tolerance
+					break;
+				}
+				// fix up to match
+				if (stashedDecimalLastIndex < firstDifference) { // odd case, yet possible
+					break; // prevent endless loop
+				}
+				currentAttributeValue = currentAttributeValue.substring(0,currentDecimalIndex) + stashedDecimalString + currentAttributeValue.substring(currentDecimalLastIndex);
+				differenceScanningPosition = stashedDecimalLastIndex + 1;
+			} while (true);
+			if (currentAttributeValue == stashedAttributeValue) {
+				return true;
+			}
+			differences.push("now getting attribute " + stashedAttributeName + "=\"" + currentNode.value + "\" instead of expected value =\"" + stashedNode.value + "\"");
+			return false;
 			break;
 		case Node.TEXT_NODE:
 		case Node.CDATA_SECTION_NODE:

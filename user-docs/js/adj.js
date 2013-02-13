@@ -166,7 +166,7 @@ Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForNa
 
 // constants
 // recognize a boolean or decimal
-Adj.booleanOrDecimalRegexp = /^\s*(true|false|[+-]?(?:[0-9]*\.)?[0-9]+)\s*$/;
+Adj.booleanOrDecimalRegexp = /^\s*(true|false|[+-]?[0-9]+\.?[0-9]*|[0-9]*\.?[0-9]+)\s*$/;
 // recognize a boolean
 Adj.booleanRegexp = /^\s*(true|false)\s*$/;
 // recognize a valid phase handler name
