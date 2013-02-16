@@ -78,7 +78,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
 
 <div class="toc">
 <ul>
-  <li><a href="#L7142">1. User Guide</a> 
+  <li><a href="#L7142">1. Users Guide</a> 
     <ul>
       <li><a href="#L4238">1.1. Modified BSD License</a></li>
       <li><a href="#L4276">1.2. Contributors</a></li>
@@ -115,6 +115,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
             </ul>
           </li>
           <li><a href="#L2184">1.11.13. Command floater Options</a></li>
+          <li><a href="#L2299">1.11.14. Command fit Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -606,6 +607,43 @@ stored away for reuse by authors and algorithms:</p>
     &lt;path d="M0,0 l40,0 -20,-50 z" fill="#444"&gt;
       <span class="example-code">&lt;adj:<a href="#L2184">floater</a> at="~one#cx*0.333+~other#cx*0.333+~another#cx*0.333,~one#cy*0.333+~other#cy*0.333+~another#cy*0.333"/&gt;</span>
     &lt;/path&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-060-fit.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;style type="text/css"&gt;&lt;![CDATA[
+  circle { stroke: black; stroke-width: 1; }
+  ]]&gt;&lt;/style&gt;
+  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
+  &lt;g adj:command="horizontalList" adj:makeGrid="true" adj:maxWidth="200" adj:gap="10" adj:hAlign="center" adj:vAlign="middle"&gt;
+    &lt;circle fill="#444" r="25"/&gt;
+    &lt;g&gt;
+      &lt;circle fill="#ccc" r="25" <span class="example-code">adj:command="<a href="#L2299">fit</a>" adj:maxHeight="20"</span>/&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;circle fill="#ccc" r="25" <span class="example-code">adj:command="fit" adj:maxWidth="40" adj:maxHeight="30"</span>/&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;circle fill="#ccc" r="25" <span class="example-code">adj:command="fit" adj:maxWidth="100"</span>/&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;circle fill="#ccc" r="25" <span class="example-code">adj:command="fit" adj:height="70"</span>/&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;circle fill="#ccc" r="25" <span class="example-code">adj:command="fit" adj:width="120" adj:height="80" adj:maxWidth="40"</span>/&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+  &lt;g adj:command="floater" adj:at="0,0" adj:pin="0,0"&gt;
+    &lt;adj:variable name="w" value="200"/&gt;
+    &lt;adj:variable name="h" value="150"/&gt;
+    &lt;path adj:command="vine" stroke="#777" stroke-width="1" opacity="0.2" fill="none" d="
+    M 0,10 h ^w
+    M 0,20 h ^w
+    …
+    "/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -1690,6 +1728,25 @@ href="#L1796">vine</a></code>.</p>
   </tbody>
 </table>
 
+<h4 id="L2299">1.11.14. Command fit Options</h4>
+
+<p>All command <code>fit</code> parameters are optional.</p>
+
+<p>Scaling is done proportionally for horizontal and vertical. Always the
+smallest scale is picked to fulfill all constraints. If parameter
+<code>maxWidth</code> and parameter <code>maxHeight</code> would cause two
+different scales, the smaller scale is picked.</p>
+
+<p>Other than parameters <code>maxWidth</code> and <code>maxHeight</code>,
+parameters <code>width</code> and <code>height</code> can cause a scale larger
+than 1.0. Parameters <code>maxWidth</code> and <code>maxHeight</code> never
+cause an increase of scale, while parameters <code>width</code> and
+<code>height</code> can cause an increase of scale.</p>
+
+<p>Parameters <code>maxWidth</code> and <code>maxHeight</code> can further
+constrain than parameters <code>width</code> and <code>height</code>, in case
+they have been given along the same axis.</p>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -2051,6 +2108,11 @@ decimal numbers.</p>
         <code>bottomGap</code>, <code>childlessGap</code>, <code>earGap</code>,
         <code>hAlign</code>, <code>vAlign</code></td>
     </tr>
+    <tr>
+      <td><code>fit</code></td>
+      <td><code>maxWidth</code>, <code>maxHeight</code>, <code>width</code>,
+        <code>height</code></td>
+    </tr>
   </tbody>
 </table>
 
@@ -2116,12 +2178,14 @@ foreseeable future.</p>
 
 <p>This user guide contains at least one set of images which while similar in
 content have been written <a href="adj-ex-052-nesting.svg">one</a> with
-commands via adj: attributes versus <a href="adj-ex-052-nesting-larger.svg">the
-other</a> with commands via adj: elements.</p>
+commands via <code>adj:</code> attributes versus <a
+href="adj-ex-052-nesting-larger.svg">the other</a> with commands via
+<code>adj:</code> elements. More examples of commands via <code>adj:</code>
+attributes are <a href="adj-ex-060-fit.svg">here</a>.</p>
 
 <p>Despite at least a theoretical, but also avoidable, risk involving identical
-parameter names in future extensions, the benefits of commands via adj:
-Attributes appear to be worth it.</p>
+parameter names in future extensions, the benefits of commands via
+<code>adj:</code> attributes appear to be worth it.</p>
 
 <h3 id="L2579">1.16. Command Combinations</h3>
 

@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:2 };
+	Adj.version = { major:3, minor:5, revision:3 };
 	Adj.algorithms = {};
 }
 
@@ -279,8 +279,11 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 			case "textBreaks":
 			case "rider":
 			case "floater":
+			case "fit":
 			case "explain":
-				// these commands can coexist with another command
+				// these commands can coexist with another command,
+				// though only some combinations make sense, while others cause conflicts,
+				// those that do work allow nicely looking SVG/Adj source, hence keeping this, for now
 				if (Adj.doVarsBoolean(node, adjAttributesByName[adjAttributeName], false, "used as attribute adj:" + adjAttributeName)) { // must be ="true", skip if ="false"
 					commandParametersByName[adjAttributeName] = {};
 				}
