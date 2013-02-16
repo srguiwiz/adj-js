@@ -50,12 +50,14 @@ h1,h2,h3,h4,h5,h6 {
 <p class="deemphasize">For more abiut Adj, see the <a href="index.html">user
 guide</a>.</p>
 
-<p>This test suite so far runs in Firefox, Chrome, Safari, and Internet
-Explorer 10. Does it run in Internet Explorer 9? Any other browsers <a
+<p>This <a href="index.html#L2357">test suite</a> so far runs in contemporary
+Firefox, Chrome, Safari, and Internet Explorer 10. Any other browsers <a
 href="index.html#L4276">to report</a>?</p>
 
-<p>Font metrics differences still cause failure. That is a limitation of the
-test suite more than of Adj, and it is being investigated.</p>
+<p>Font metrics differences between browsers still are a challenge. In this
+context, a functioning test suite is a challenge of its own. Problems are not
+always an indication of a problem with Adj itself. Overall, having and using
+this test suite is much better than not having or not using it.</p>
 <iframe id="tif" name="tif" src="test-adj-ex-002-verticalList.svg" width="600"
 height="300">
 If you see this text then your browser doesn't support iframes.</iframe>
@@ -95,7 +97,8 @@ can force an
     <tr>
       <td><a href="test-adj-ex-005-textBreaks.svg"
         target="tif">test-adj-ex-005-textBreaks.svg</a><br />
-        still expecting failure because of font metrics differences</td>
+        <span class="deemphasize">has text, may suffer from font metrics
+        differences</span></td>
       <td>?</td>
     </tr>
     <tr>
@@ -126,13 +129,15 @@ can force an
     <tr>
       <td><a href="test-adj-ex-045-verticalTree.svg"
         target="tif">test-adj-ex-045-verticalTree.svg</a><br />
-        still expecting failure because of font metrics differences</td>
+        <span class="deemphasize">has text, may suffer from font metrics
+        differences</span></td>
       <td>?</td>
     </tr>
     <tr>
       <td><a href="test-adj-ex-051-horizontalTree.svg"
         target="tif">test-adj-ex-051-horizontalTree.svg</a><br />
-        still expecting failure because of font metrics differences</td>
+        <span class="deemphasize">has text, may suffer from font metrics
+        differences</span></td>
       <td>?</td>
     </tr>
     <tr>
@@ -261,12 +266,15 @@ can force an
 		var tr = trs[current];
 		var tds = tr.getElementsByTagName("td");
 		var tdResult = tds[1];
-		// invoke test
+		// wait less than a second, for font metrics to work better in some browsers
 		tdResult.setAttribute("class","testInvoked");
-		tdResult.textContent = "invoked";
-		testIframe.contentWindow.postMessage("Adj.doDocAndVerify|", "*");
-		return;
-		// old code below here, simple call
+		tdResult.textContent = "waiting";
+		window.setTimeout(function(){
+			// invoke test
+			tdResult.setAttribute("class","testInvoked");
+			tdResult.textContent = "invoked";
+			testIframe.contentWindow.postMessage("Adj.doDocAndVerify|", "*");
+		},300);
 	}
 
 	// match command by itself, or command followed by one or two parameters separated by |
@@ -294,7 +302,10 @@ can force an
 				}
 				// iterate
 				if (!runOnlyOne) {
-					continueToNext();
+					// wait less than a second, to allow a user to catch a glimpse of the image
+					window.setTimeout(function(){
+						continueToNext();
+					},700);
 				} else { // runOnlyOne
 					current = trs.length;
 				}

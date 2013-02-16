@@ -309,16 +309,20 @@ Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences
 				var currentAttributeValueLength = currentAttributeValue.length;
 				var minLength = Math.min(stashedAttributeValueLength, currentAttributeValueLength);
 				var firstDifference = minLength;
+				if (differenceScanningPosition >= minLength) { // at least one at end (stashed or current)
+					break;
+				}
 				for (var i = differenceScanningPosition; i < minLength; i++) {
 					if (currentAttributeValue[i] != stashedAttributeValue[i]) {
 						firstDifference = i;
 						break;
 					}
 				}
-				if (firstDifference >= minLength) { // at end
+				if (firstDifference >= stashedAttributeValueLength && firstDifference >= currentAttributeValueLength) { // both at end (stashed and current)
 					break;
 				}
-				if (!Adj.decimalCharacterRegexp.test(stashedAttributeValue[firstDifference]) && !Adj.decimalCharacterRegexp.test(currentAttributeValue[firstDifference])) {
+				if ((firstDifference >= stashedAttributeValueLength || !Adj.decimalCharacterRegexp.test(stashedAttributeValue[firstDifference])) && (firstDifference >= currentAttributeValueLength || !Adj.decimalCharacterRegexp.test(currentAttributeValue[firstDifference]))) {
+					// both either at end or not number
 					break; // cannot calculate tolerance if not number
 				}
 				var decimalBegin = firstDifference;
@@ -350,7 +354,7 @@ Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences
 				var currentDecimalLastIndex = Adj.decimalForToleranceRegexp.lastIndex;
 				var currentDecimal = parseFloat(currentDecimalString);
 				var difference = Math.abs(currentDecimal - stashedDecimal);
-				if (difference > tolerance) { // numerically more difference than tolerance
+				if (difference > tolerance.inEffect) { // numerically more difference than tolerance.inEffect
 					break;
 				}
 				// fix up to match
@@ -358,7 +362,7 @@ Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences
 					break; // prevent endless loop
 				}
 				currentAttributeValue = currentAttributeValue.substring(0,currentDecimalIndex) + stashedDecimalString + currentAttributeValue.substring(currentDecimalLastIndex);
-				differenceScanningPosition = stashedDecimalLastIndex + 1;
+				differenceScanningPosition = stashedDecimalLastIndex + 1; // + 1 OK because there must be at least one character that separates numbers
 			} while (true);
 			if (currentAttributeValue == stashedAttributeValue) {
 				return true;
@@ -411,9 +415,15 @@ Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences
 // for running automated tests,
 // return string describing difference == failed, or empty string if expected result == passed,
 // if not given a documentToDo then default to doing _the_ document
-Adj.doDocAndVerify = function doDocAndVerify(documentToDo) {
+Adj.doDocAndVerify = function doDocAndVerify(documentToDo, tolerance) {
 	if (!documentToDo) {
 		documentToDo = document;
+	}
+	if (!tolerance) {
+		tolerance = {
+			generalInUnits: 0.01, // default
+			ifTextFractionOfTotal: 0.05 // if at least one SVG text element
+		};
 	}
 	// get stash
 	var stashContent = Adj.stashedDocumentResultAndRemove(documentToDo);
@@ -448,12 +458,12 @@ Adj.doDocAndVerify = function doDocAndVerify(documentToDo) {
 	var currentDomRootElement;
 	try {
 		stashedDom = parser.parseFromString(stashContent, "application/xml");
-		currentDom = parser.parseFromString(documentAsString, "application/xml");
 		stashedDomRootElement = stashedDom.documentElement;
-		currentDomRootElement = currentDom.documentElement;
 		if (stashedDomRootElement.localName != "svg") {
 			throw "not svg";
 		}
+		currentDom = parser.parseFromString(documentAsString, "application/xml");
+		currentDomRootElement = currentDom.documentElement;
 		if (currentDomRootElement.localName != "svg") {
 			throw "not svg";
 		}
@@ -475,7 +485,11 @@ Adj.doDocAndVerify = function doDocAndVerify(documentToDo) {
 		try {
 			stashedDom.normalize();
 			currentDom.normalize();
-			apparentlyEqualDom = Adj.areEqualNodes(stashedDomRootElement, currentDomRootElement, differences, 0.01);
+			tolerance.inEffect = tolerance.generalInUnits; // default
+			if (stashedDom.getElementsByTagName("text").length) { // at least one SVG text element
+				tolerance.inEffect = tolerance.ifTextFractionOfTotal * Math.sqrt(Math.pow(parseFloat(stashedDomRootElement.getAttribute("width")),2)+Math.pow(parseFloat(stashedDomRootElement.getAttribute("height")),2));
+			}
+			apparentlyEqualDom = Adj.areEqualNodes(stashedDomRootElement, currentDomRootElement, differences, tolerance);
 		} catch (exception) {
 			apparentlyEqualDom = false;
 		}
