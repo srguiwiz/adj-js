@@ -202,7 +202,7 @@ Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgEl
 }
 
 // build on first use, so any algorithms added e.g. from other source files will be considered too
-Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(parameterName) {
+Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(parameterNameToMatch) {
 	var commandNamesByParameterName = Adj.commandNamesByParameterName;
 	if (!commandNamesByParameterName) {
 		commandNamesByParameterName = Adj.commandNamesByParameterName = {};
@@ -220,7 +220,7 @@ Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(par
 			}
 		}
 	}
-	return commandNamesByParameterName[parameterName];
+	return commandNamesByParameterName[parameterNameToMatch];
 }
 
 // utility
