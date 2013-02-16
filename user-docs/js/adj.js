@@ -4115,6 +4115,60 @@ Adj.algorithms.floater = {
 	}
 }
 
+// a specific algorithm
+Adj.algorithms.fit = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["maxWidth", "maxHeight",
+				 "width", "height"],
+	method: function fit (element, parametersObject) {
+		var usedHow = "used in a parameter for a fit command";
+		var variableSubstitutionsByName = {};
+		var width = Adj.doVarsArithmetic(element, parametersObject.width, null, null, usedHow, variableSubstitutionsByName); // default width = null
+		var height = Adj.doVarsArithmetic(element, parametersObject.height, null, null, usedHow, variableSubstitutionsByName); // default height = null
+		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // default maxWidth = null
+		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // default maxHeight = null
+		//
+		var boundingBox = element.getBBox();
+		var boundingBoxWidth = boundingBox.width;
+		var boundingBoxHeight = boundingBox.height;
+		var hScale = null;
+		var vScale = null;
+		if (width != null) {
+			hScale = width / boundingBoxWidth;
+		}
+		if (height != null) {
+			vScale = height / boundingBoxHeight;
+		}
+		var scale;
+		if (hScale != null) {
+			if (vScale != null) {
+				scale = Math.min(hScale, vScale);
+			} else {
+				scale = hScale;
+			}
+		} else {
+			if (vScale != null) {
+				scale = vScale;
+			} else {
+				scale = 1;
+			}
+		}
+		var wouldBeWidth = scale * boundingBoxWidth;
+		if (maxWidth != null) {
+			if (wouldBeWidth > maxWidth) {
+				scale = scale * maxWidth / wouldBeWidth;
+			}
+		}
+		var wouldBeHeight = scale * boundingBoxHeight;
+		if (maxHeight != null) {
+			if (wouldBeHeight > maxHeight) {
+				scale = scale * maxHeight / wouldBeHeight;
+			}
+		}
+		element.setAttribute("transform", "scale(" + Adj.decimal(scale) + ")");
+	}
+}
+
 // utility for use inside algorithms
 Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 	var parent = element.parentNode;
