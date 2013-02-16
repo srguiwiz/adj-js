@@ -41,6 +41,15 @@ h1,h2,h3,h4,h5,h6 {
  .deemphasize {
   font-size: smaller;
 }
+@font-face {
+  font-family: Liberation Mono;
+  src: local("Liberation Mono"), local("Liberation Mono Regular"), local("LiberationMono-Regular"), url(fonts/Liberation/LiberationMono-Regular.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+ .liberationMono {
+  font-family: "Liberation Mono","Courier New";
+}
   </style>
 </head>
 
@@ -51,13 +60,23 @@ h1,h2,h3,h4,h5,h6 {
 guide</a>.</p>
 
 <p>This <a href="index.html#L2357">test suite</a> so far runs in contemporary
-Firefox, Chrome, Safari, and Internet Explorer 10. Any other browsers <a
+Firefox (Windows, Linux), Chrome (Windows), Safari (Windows, Mac OS X, iOS on
+iPhone and iPad), and Internet Explorer 10. Any other browsers <a
 href="index.html#L4276">to report</a>?</p>
 
 <p>Font metrics differences between browsers still are a challenge. In this
 context, a functioning test suite is a challenge of its own. Problems are not
 always an indication of a problem with Adj itself. Overall, having and using
 this test suite is much better than not having or not using it.</p>
+
+<p class="deemphasize">In addition to other font metric related issues, some
+versions of WebKit based browsers have an issue where they are still loading
+web based fonts while already drawing an SVG image, and hence don't know the
+correct metric yet. This seems to be more noticeable on the weaker CPU of a
+mobile device, such as an iPad. If that would cause test failures then simply
+running this test suite a second time appears to work better, possibly because
+the font might be cached on the device already. Maybe this page loading the
+font <span class="liberationMono">here</span> already helps too.</p>
 <iframe id="tif" name="tif" src="test-adj-ex-002-verticalList.svg" width="600"
 height="300">
 If you see this text then your browser doesn't support iframes.</iframe>
