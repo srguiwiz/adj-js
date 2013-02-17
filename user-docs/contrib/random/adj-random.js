@@ -39,8 +39,15 @@ Adj.algorithms.randomTilt = {
 		var usedHow = "used in a parameter for a randomTilt command";
 		var variableSubstitutionsByName = {};
 		var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 30, null, usedHow, variableSubstitutionsByName); // default maxAngle = 30
+		var minAngle = Adj.doVarsArithmetic(element, parametersObject.minAngle, 3, null, usedHow, variableSubstitutionsByName); // default minAngle = 3
 		//
-		var angle = 2*maxAngle*Math.random()-maxAngle;
+		var angle = 2*(maxAngle-minAngle)*Math.random()-(maxAngle-minAngle);
+		if(angle>=0){
+			angle+=minAngle;
+		}
+		if(angle<=0){
+			angle-=minAngle;
+		}
 		var boundingBox = element.getBBox();
 		element.setAttribute("transform", "rotate("+Adj.decimal(angle)+")");
 	}
