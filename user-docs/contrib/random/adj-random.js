@@ -49,6 +49,14 @@ Adj.algorithms.randomTilt = {
 			angle-=minAngle;
 		}
 		var boundingBox = element.getBBox();
-		element.setAttribute("transform", "rotate("+Adj.decimal(angle)+")");
+		//element.setAttribute("transform", "rotate("+Adj.decimal(angle)+")");
+		angle = angle / 180 * Math.PI;
+		var a = Math.cos(angle);
+		var b = Math.sin(angle);
+		var c = -b;
+		var d = a;
+		var e = 0;
+		var f = 0;
+		element.setAttribute("transform", "matrix("+Adj.decimal(a)+","+Adj.decimal(b)+","+Adj.decimal(c)+","+Adj.decimal(d)+","+Adj.decimal(e)+","+Adj.decimal(f)+")");
 	}
 }
