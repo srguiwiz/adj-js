@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Adj Framework - Contributions - Random Tilt</title>
+  <style type="text/css">
+td {
+  padding: 1.0ex;
+}
+@media print {
+  tr, td, img {
+    page-break-inside: avoid;
+  }
+}
+h1 {
+  font-size: 130%;
+}
+h2 {
+  font-size: 120%;
+}
+h3 {
+  font-size: 110%;
+}
+h4, h5, h6 {
+  font-size: 105%;
+}
+h1,h2,h3,h4,h5,h6 {
+  page-break-after: avoid;
+}
+ .subtle-link {
+  color: black;
+}
+ .hilite {
+  background-color: #FFFF80;
+}
+ .example-code {
+  font-weight: bolder;
+  background-color: #FFFF80;
+}
+ .example-result {
+  font-weight: bolder;
+  background-color: #D0FFFF;
+}
+ .deemphasize-code {
+  color: #888;
+  font-size: smaller;
+}
+ .deemphasize {
+  font-size: smaller;
+}
+ .emphasize {
+  font-weight: bolder;
+}
+ .todo {
+  color: #448844;
+  font-size: smaller;
+}
+ .product-name {
+  font-family: sans-serif;
+}
+ .example-listing {
+  white-space: pre-wrap;
+  font-size: smaller;
+}
+  </style>
+</head>
+
+<body>
+<h1>Adj Framework – Contributions – Random Tilt</h1>
+
+<p class="deemphasize">For more abiut Adj, see the <a href="../index.html">user
+guide</a>.</p>
+
+<p>A first example of extending Adj with commands, command
+<code>randomTilt</code>.</p>
+
+<p>Source code listing, from <code><a
+href="adj-random.js">adj-random.js</a></code>:</p>
+<pre><span class="example-code">Adj.algorithms.randomTilt</span> = {
+  phaseHandlerName: "adjPhase7Up",
+  parameters: ["maxAngle"],
+  method: function randomTilt (element, parametersObject) {
+    var usedHow = "used in a parameter for a randomTilt command";
+    var variableSubstitutionsByName = {};
+    var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 15, null, usedHow, variableSubstitutionsByName); // default maxAngle = 15
+    var minAngle = Adj.doVarsArithmetic(element, parametersObject.minAngle, 0, null, usedHow, variableSubstitutionsByName); // default minAngle = 0
+    //
+    var angle = (maxAngle - minAngle) * (2 * Math.random() - 1);
+    if (angle &gt;= 0) {
+      angle += minAngle;
+    }
+    if (angle &lt;= 0) {
+      angle -= minAngle;
+    }
+    var boundingBox = element.getBBox();
+    var cx = boundingBox.x + boundingBox.width / 2;
+    var cy = boundingBox.y + boundingBox.height / 2;
+    angle = angle / 180 * Math.PI;
+    var a = Math.cos(angle);
+    var b = Math.sin(angle);
+    var c = -b;
+    var d = a;
+    var e = cx - a * cx - c * cy;
+    var f = cy - b * cx - d * cy;
+    element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
+  }
+}</pre>
+
+<p>How to use, from an <a href="adj-contrib-ex-001-randomTilt.svg">example
+image</a>:</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="70"&gt;
+  &lt;script type="text/javascript" xlink:href="../../js/adj.js"/&gt;
+  <span class="example-code">&lt;script type="text/javascript" xlink:href="adj-random.js"/&gt;</span>
+  &lt;rect width="200" height="70" fill="linen"/&gt;
+  &lt;g adj:command="horizontalList" adj:gap="5"&gt;
+    &lt;g transform="translate(5,5)"&gt;
+      &lt;rect width="45" height="30" fill="#000" <span class="example-code">adj:command="randomTilt"</span>/&gt;
+    &lt;/g&gt;
+    &lt;g transform="translate(55,5)"&gt;
+      &lt;rect width="40" height="25" fill="#444" adj:command="randomTilt"/&gt;
+    &lt;/g&gt;
+    &lt;g transform="translate(100,5)"&gt;
+      &lt;rect width="35" height="20" fill="#888" adj:command="randomTilt"/&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+&lt;/svg&gt;</pre>
+</body>
+</html>
