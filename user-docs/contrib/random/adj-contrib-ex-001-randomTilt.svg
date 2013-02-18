@@ -5,13 +5,13 @@
 	<rect width="200" height="70" fill="linen"/>
 	<g adj:command="horizontalList" adj:gap="5">
 		<g transform="translate(5,5)">
-			<rect width="45" height="30" fill="#000" adj:command="randomTilt" transform="rotate(9.9)"/>
+			<rect width="45" height="30" fill="#000" adj:command="randomTilt"/>
 		</g>
 		<g transform="translate(55,5)">
-			<rect width="40" height="25" fill="#444" adj:command="randomTilt" transform="rotate(13.628)"/>
+			<rect width="40" height="25" fill="#444" adj:command="randomTilt"/>
 		</g>
 		<g transform="translate(100,5)">
-			<rect width="35" height="20" fill="#888" adj:command="randomTilt" transform="rotate(-16.83)"/>
+			<rect width="35" height="20" fill="#888" adj:command="randomTilt"/>
 		</g>
 	</g>
 </svg>

@@ -41,7 +41,7 @@ Adj.algorithms.randomTilt = {
 		var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 30, null, usedHow, variableSubstitutionsByName); // default maxAngle = 30
 		var minAngle = Adj.doVarsArithmetic(element, parametersObject.minAngle, 3, null, usedHow, variableSubstitutionsByName); // default minAngle = 3
 		//
-		var angle = 2*(maxAngle-minAngle)*Math.random()-(maxAngle-minAngle);
+		var angle = (maxAngle-minAngle)*(2*Math.random()-1);
 		if(angle>=0){
 			angle+=minAngle;
 		}
