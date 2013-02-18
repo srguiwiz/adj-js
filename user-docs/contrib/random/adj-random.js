@@ -38,25 +38,27 @@ Adj.algorithms.randomTilt = {
 	method: function randomTilt (element, parametersObject) {
 		var usedHow = "used in a parameter for a randomTilt command";
 		var variableSubstitutionsByName = {};
-		var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 30, null, usedHow, variableSubstitutionsByName); // default maxAngle = 30
+		var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 15, null, usedHow, variableSubstitutionsByName); // default maxAngle = 15
 		var minAngle = Adj.doVarsArithmetic(element, parametersObject.minAngle, 3, null, usedHow, variableSubstitutionsByName); // default minAngle = 3
 		//
-		var angle = (maxAngle-minAngle)*(2*Math.random()-1);
-		if(angle>=0){
-			angle+=minAngle;
+		var angle = (maxAngle - minAngle) * (2 * Math.random() - 1);
+		if (angle >= 0) {
+			angle += minAngle;
 		}
-		if(angle<=0){
-			angle-=minAngle;
+		if (angle <= 0) {
+			angle -= minAngle;
 		}
-		var boundingBox = element.getBBox();
 		//element.setAttribute("transform", "rotate("+Adj.decimal(angle)+")");
+		var boundingBox = element.getBBox();
+		var cx = boundingBox.x + boundingBox.width / 2;
+		var cy = boundingBox.y + boundingBox.height / 2;
 		angle = angle / 180 * Math.PI;
 		var a = Math.cos(angle);
 		var b = Math.sin(angle);
 		var c = -b;
 		var d = a;
-		var e = 0;
-		var f = 0;
+		var e = cx - a*cx - c*cy;
+		var f = cy - b*cx - d*cy;
 		element.setAttribute("transform", "matrix("+Adj.decimal(a)+","+Adj.decimal(b)+","+Adj.decimal(c)+","+Adj.decimal(d)+","+Adj.decimal(e)+","+Adj.decimal(f)+")");
 	}
 }
