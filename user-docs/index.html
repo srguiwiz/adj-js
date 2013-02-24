@@ -2298,6 +2298,38 @@ can be convenient for authors. Arguably there are distinct flavors of clarity
 in using the two different syntaxes. Both syntaxes are supported in the
 foreseeable future.</p>
 
+<table border="1">
+  <tbody>
+    <tr>
+      <td><p><code>adj:</code> elements<br />
+        </p>
+
+        <p>original, still OK to write this way</p>
+      </td>
+      <td><pre class="example-listing">&lt;g&gt;
+  <span class="example-code">&lt;adj:verticalList hAlign="center"/&gt;</span>
+  &lt;rect width="60" height="40"&gt;
+    <span class="example-code">&lt;adj:frameForParent inset="0.5"/&gt;</span>
+  &lt;/rect&gt;
+  &lt;text&gt;innermost&lt;/text&gt;
+  &lt;text&gt;one&lt;/text&gt;
+&lt;/g&gt;</pre>
+      </td>
+    </tr>
+    <tr>
+      <td><code>adj:</code> attributes<br />
+        <br />
+        new, OK to write</td>
+      <td><pre class="example-listing">&lt;g <span class="example-code">adj:command="verticalList" adj:hAlign="center"</span>&gt;
+  &lt;rect <span class="example-code">adj:command="frameForParent" adj:inset="0.5"</span> width="60" height="40"/&gt;
+  &lt;text&gt;innermost&lt;/text&gt;
+  &lt;text&gt;one&lt;/text&gt;
+&lt;/g&gt;</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <p>This user guide contains at least one set of images which while similar in
 content have been written <a href="adj-ex-052-nesting.svg">one</a> with
 commands via <code>adj:</code> attributes versus <a
