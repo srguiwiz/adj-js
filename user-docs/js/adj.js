@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:6 };
+	Adj.version = { major:3, minor:5, revision:7 };
 	Adj.algorithms = {};
 }
 
@@ -3999,8 +3999,8 @@ Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, default
 	var booleanMatch;
 	if (booleanMatch = Adj.booleanRegexp.exec(withVariablesSubstituted)) {
 		// strict spelling of booleans
-		var boolean = booleanMatch[1];
-		switch (boolean) {
+		var booleanString = booleanMatch[1];
+		switch (booleanString) {
 			case "true":
 				return true;
 			case "false":
