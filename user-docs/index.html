@@ -142,9 +142,11 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
       <li><a href="#L6329">1.18. Invocation</a> 
         <ul>
           <li><a href="#L6331">1.18.1. Explicit Invocation</a></li>
-          <li><a href="#L6345">1.18.2. Implicit Invocation</a></li>
-          <li><a href="#L10156">1.18.3. No Invocation – If Saving Processed
+          <li><a href="#L6345">1.18.2. No Invocation – If Saving Processed
             Document</a></li>
+          <li><a href="#L3737">1.18.3. Explicit Invocation And Saving Processed
+            Document</a></li>
+          <li><a href="#L">1.18.4. Implicit Invocation</a></li>
         </ul>
       </li>
       <li><a href="#L86788">1.19. More Details</a> 
@@ -251,8 +253,8 @@ started on your own, these three points may be for you:</p>
 <ul>
   <li>a discussion of <a href="#L6329">Invocation</a></li>
   <li>a <a href="#L6319">Complete Authoring Workflow</a></li>
-  <li>a reminder to get a copy of the essential <code><span
-    class="emphasize">adj.js</span></code> file from <a
+  <li>a reminder to get a copy of the essential <a href="js/adj.js"><code><span
+    class="emphasize">adj.js</span></code> file here</a> or from <a
     href="https://github.com/srguiwiz/adj-js">this project's repository</a></li>
 </ul>
 
@@ -2413,8 +2415,8 @@ auxiliary authoring tools used.</p>
       <li>Set up a directory which will contain files</li>
       <li>Make sure that directory contains a subdirectory with a file
         <code>.adj-js/adj.js</code>, which is a copy of <span
-        class="emphasize">the essential <code>adj.js</code> file from this
-        project</span></li>
+        class="emphasize">the essential <code><a
+        href="js/adj.js">adj.js</a></code> file from this project</span></li>
     </ul>
   </li>
   <li>Steps 
@@ -2452,11 +2454,20 @@ is to use <span class="deemphasize">and to set up</span></span></p>
 
 <h3 id="L6329">1.18. Invocation</h3>
 
+<p>Invoking Adj is relatively simple, once you have decided which option works
+best for you.</p>
+
+<p>You could use Adj the same way many SVG files in this documentation are
+using it: <a href="#L3737">Explicit invocation <span
+class="emphasize">and</span> saving processed document</a>. Look at their
+source code.</p>
+
+<p>Here, however, for the sake of completeness, more choices are explained.</p>
+
 <h4 id="L6331">1.18.1. Explicit Invocation</h4>
 
-<p>As implemented, Adj is a JavaScript library.</p>
-
-<p>At first, Adj had to be invoked explicitly, e.g. like</p>
+<p>As implemented, Adj is a JavaScript library. Hence, most straight forward,
+Adj can be invoked explicitly, e.g. like</p>
 <pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd"&gt;
 &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" <span class="example-code">onload="Adj.doDoc();"</span>&gt;
@@ -2464,30 +2475,21 @@ is to use <span class="deemphasize">and to set up</span></span></p>
   &lt;g&gt;…</pre>
 
 <p>Obviously, there must be a correct reference (path) to a copy of <span
-class="emphasize">the essential <code>adj.js</code> file from this
-project</span>.</p>
+class="emphasize">the essential <code><a href="js/adj.js">adj.js</a></code>
+file from this project</span>.</p>
 
-<h4 id="L6345">1.18.2. Implicit Invocation</h4>
+<h4 id="L6345">1.18.2. No Invocation – If Saving Processed Document</h4>
 
-<p>With script injection, explicit invocation can be avoided.</p>
+<p>If chosen to do so, with an author saving a processed document, <span
+class="emphasize">invocation in users' browsers can be avoided</span>.</p>
 
-<p>As an example implementation, the Firefox <a
-href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/">add-on</a>
-<span class="product-name">Onload Script Some Document Files</span> can do the
-necessary script injection, effecting implicit invocation.</p>
+<p>As an example implementation, the Firefox add-on <a
+href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/"><span
+class="product-name">Save Back to File from DOM</span></a> can do the necessary
+saving, obviating invocation.</p>
 
-<h4 id="L10156">1.18.3. No Invocation – If Saving Processed Document</h4>
-
-<p>If chosen to do so, with an author saving a processed document, invocation
-in users' browsers can be avoided.</p>
-
-<p>As an example implementation, the Firefox <a
-href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/">add-on</a>
-<span class="product-name">Save Back to File from DOM</span> can do the
-necessary saving, obviating invocation.</p>
-
-<p>An <a href="#example-workflow-description">example workflow</a> <span
-class="emphasize">combining both implicit invocation and saving processed
+<p>An <a href="#example-workflow-description">example workflow</a> combining
+implicit invocation and <span class="emphasize">saving processed
 documents</span> has been described <a
 href="#example-workflow-description">above</a>.</p>
 
@@ -2500,6 +2502,39 @@ need to distribute the Adj JavaScript library</span>.</p>
 <p>One downside, however, of not distributing the Adj JavaScript library is
 inability to dynamically adjust, e.g. to different fonts available in a
 different browser instance. This may be an acceptable compromise.</p>
+
+<h4 id="L3737">1.18.3. Explicit Invocation And Saving Processed Document</h4>
+
+<p>For best results for most users, Adj can be invoked <a
+href="#L6331">explicitely</a> <span class="emphasize">and</span> the processed
+document can be saved.</p>
+<ul>
+  <li>Users that are set <span class="emphasize">not</span> to allow script
+    invocation will see an image that in case it isn't perfect still should be
+    acceptable.</li>
+  <li>All other users, that hopefully being <span class="emphasize">most</span>
+    users, will get the benefit of dynamic adjustment.</li>
+</ul>
+
+<p>Most SVG files in this documentation have been processed this way. You can
+look at their source code.</p>
+
+<p>It has become an easy habit to work this way. SVG files in this
+documentation so far have been finalized with the help of Firefox add-on <a
+href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/"><span
+class="product-name">Save Back to File from DOM</span></a>.</p>
+
+<h4 id="L">1.18.4. Implicit Invocation</h4>
+
+<p>With script injection, explicit invocation can be avoided.</p>
+
+<p>As an example implementation, the Firefox add-on <a
+href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/"><span
+class="product-name">Onload Script Some Document Files</span></a> can do the
+necessary script injection, effecting implicit invocation.</p>
+
+<p>Implicit invocation possibly is of interest to authors who want to
+distribute processed documents only.</p>
 
 <h3 id="L86788">1.19. More Details</h3>
 
