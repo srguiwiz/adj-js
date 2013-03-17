@@ -348,9 +348,13 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 				continue;
 			}
 		}
-		if (child instanceof SVGElement) {
-			Adj.parseAdjElementsToPhaseHandlers(child); // recursion
-		} // else skip if not an SVGElement, e.g. an XML #text
+		if (!(child instanceof SVGElement)) {
+			continue; // skip if not an SVGElement, e.g. an XML #text
+		}
+		if (!child.getBBox) {
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
+		}
+		Adj.parseAdjElementsToPhaseHandlers(child); // recursion
 	}
 }
 
@@ -433,6 +437,9 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 		if (!(child instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
 		}
+		if (!child.getBBox) {
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
+		}
 		Adj.walkNodes(child, phaseName, false, level + 1); // recursion
 	}
 	//
@@ -455,6 +462,10 @@ Adj.modifyMaybeRemoveChildren = function modifyMaybeRemoveChildren (node, modify
 		if (!(child instanceof SVGElement)) {
 			child = child.nextSibling;
 			continue; // skip if not an SVGElement, e.g. an XML #text
+		}
+		if (!child.getBBox) {
+			child = child.nextSibling;
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
 		}
 		var conditionValue = modifyMaybeMarkFunctionOfNodeAndChild(node,child);
 		if (child.adjRemoveElement) {
@@ -616,6 +627,9 @@ Adj.algorithms.verticalList = {
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
@@ -827,6 +841,9 @@ Adj.algorithms.horizontalList = {
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
@@ -1093,9 +1110,13 @@ Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, le
 	element.adjLevel = level;
 	// then walk
 	for (var child = element.firstChild; child; child = child.nextSibling) {
-		if (child instanceof SVGElement) {
-			Adj.buildIdsDictionary(child, idsDictionary, level + 1); // recursion
-		} // else skip if not an SVGElement, e.g. an XML #text
+		if (!(child instanceof SVGElement)) {
+			continue; // skip if not an SVGElement, e.g. an XML #text
+		}
+		if (!child.getBBox) {
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
+		}
+		Adj.buildIdsDictionary(child, idsDictionary, level + 1); // recursion
 	}
 	return idsDictionary;
 }
@@ -1592,6 +1613,9 @@ Adj.algorithms.connection = {
 				if (!(child instanceof SVGElement)) {
 					continue; // skip if not an SVGElement, e.g. an XML #text
 				}
+				if (!child.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
+				}
 				if (child.adjNotAnOrder1Element) { // e.g. a rider, or a floater
 					continue;
 				}
@@ -1769,6 +1793,9 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 	for (var sibling = parent.firstChild, index = 0; sibling; sibling = sibling.nextSibling) {
 		if (!(sibling instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
+		}
+		if (!sibling.getBBox) {
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
 		}
 		if (sibling == element) {
 			continue; // don't avoid self
@@ -1949,6 +1976,9 @@ Adj.algorithms.rider = {
 			for (var sibling = parent.firstChild, index = 0; sibling; sibling = sibling.nextSibling) {
 				if (!(sibling instanceof SVGElement)) {
 					continue; // skip if not an SVGElement, e.g. an XML #text
+				}
+				if (!sibling.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
 				}
 				// found it
 				path = sibling;
@@ -2270,6 +2300,9 @@ Adj.algorithms.relativate = {
 				if (!(child instanceof SVGElement)) {
 					continue; // skip if not an SVGElement, e.g. an XML #text
 				}
+				if (!child.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
+				}
 				if (child instanceof SVGPathElement) {
 					// an SVG path
 					Adj.relativatePath(child);
@@ -2376,6 +2409,9 @@ Adj.algorithms.circularList = {
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
@@ -2579,6 +2615,9 @@ Adj.algorithms.verticalTree = {
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
@@ -3128,6 +3167,9 @@ Adj.algorithms.horizontalTree = {
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
@@ -4373,6 +4415,9 @@ Adj.displayException = function displayException (exception, svgElement) {
 	for (var child = rootElement.firstChild; child; child = child.nextSibling) {
 		if (!(child instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
+		}
+		if (!child.getBBox) {
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
 		}
 		Adj.hideByDisplayAttribute(child); // make invisible but don't delete
 	}
