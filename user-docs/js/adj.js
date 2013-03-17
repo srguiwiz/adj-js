@@ -1820,7 +1820,13 @@ Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
 	var relativeBoundingBoxes = [];
 	for (var oneElementIndex in elements) {
 		var oneElement = elements[oneElementIndex];
-		var oneBoundingBox = oneElement.getBBox();
+		var oneBoundingBox;
+		try {
+			oneBoundingBox = oneElement.getBBox();
+		} catch (exception) {
+			// observed to get here in Firefox 19 when defs element has getBBox but expectably fails
+			continue; // can ignore as long as no requirement for matching indexes
+		}
 		var oneBoundingBoxX = oneBoundingBox.x;
 		var oneBoundingBoxY = oneBoundingBox.y;
 		var oneBoundingBoxWidth = oneBoundingBox.width;
