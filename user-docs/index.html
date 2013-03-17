@@ -2780,7 +2780,7 @@ parent's (the collection's) size can be known.</p>
 <p>Hence, in a first walk of the SVG element tree Adj collections are laid
 out.</p>
 
-<p>To perform all commands, Adj walks the SVG element tree 3 times, in 3
+<p>To perform all commands, Adj walks the SVG element tree 4 times, in 4
 phases:</p>
 
 <table border="1">
@@ -2797,21 +2797,26 @@ phases:</p>
       <td><code>adjPhase1Up</code></td>
       <td><code>verticalList</code>, <code>horizontalList</code>,
         <code>circularList</code>, <code>verticalTree</code>,
-        <code>horizontalTree</code></td>
+        <code>horizontalTree</code>, <code>fit</code></td>
     </tr>
     <tr>
-      <td><code>adjPhase4Down</code></td>
+      <td><code>adjPhase3</code> with <br />
+        <code>processSubtreeOnlyInPhaseHandler</code></td>
+      <td><code>floater</code></td>
+    </tr>
+    <tr>
+      <td><code>adjPhase5Down</code></td>
       <td><code>frameForParent</code>, <code>circleForParent</code>,
         <code>ellipseForParent</code></td>
     </tr>
     <tr>
-      <td><code>adjPhase4Up</code></td>
+      <td><code>adjPhase5Up</code></td>
       <td><code>connection</code></td>
     </tr>
     <tr>
       <td><code>adjPhase7</code> with <br />
         <code>processSubtreeOnlyInPhaseHandler</code></td>
-      <td><code>rider</code>, <code>floater</code></td>
+      <td><code>rider</code></td>
     </tr>
     <tr>
       <td><code>adjPhase7Up</code></td>
@@ -2820,9 +2825,10 @@ phases:</p>
   </tbody>
 </table>
 
-<p>The 3 phases <code>adjPhase1</code>, <code>adjPhase4</code>, and
-<code>adjPhase7</code> are known to developers of Adj commands (algorithms).
-Their numbers have been spaced out without impending necessity.</p>
+<p>The 4 phases <code>adjPhase1</code>, <code>adjPhase3</code>,
+<code>adjPhase5</code>, and <code>adjPhase7</code> are known to developers of
+Adj commands (algorithms). Their numbers have been spaced out without impending
+necessity.</p>
 <img alt="walking SVG tree multiple times"
 src="adj-ex-059-walking-svg-tree-multiple.svg"></img> 
 

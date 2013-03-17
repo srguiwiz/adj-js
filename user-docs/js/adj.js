@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:7 };
+	Adj.version = { major:3, minor:5, revision:8 };
 	Adj.algorithms = {};
 }
 
@@ -1004,7 +1004,7 @@ Adj.algorithms.horizontalList = {
 // a specific algorithm
 Adj.algorithms.frameForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase4Down",
+	phaseHandlerName: "adjPhase5Down",
 	parameters: ["inset",
 				 "horizontalInset", "leftInset", "rightInset",
 				 "verticalInset", "topInset", "bottomInset"],
@@ -1513,7 +1513,7 @@ Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoord
 // and for general case group containing one line (or path) as vector and any number of lines and paths as children of that group
 Adj.algorithms.connection = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase4Up",
+	phaseHandlerName: "adjPhase5Up",
 	parameters: ["from", "to",
 				 "vector",
 				 "explain"],
@@ -2300,7 +2300,7 @@ Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
 // a specific algorithm
 Adj.algorithms.circleForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase4Down",
+	phaseHandlerName: "adjPhase5Down",
 	parameters: ["inset"],
 	method: function circleForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a circleForParent command";
@@ -2319,7 +2319,7 @@ Adj.algorithms.circleForParent = {
 // a specific algorithm
 Adj.algorithms.ellipseForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase4Down",
+	phaseHandlerName: "adjPhase5Down",
 	parameters: ["inset", "horizontalInset", "verticalInset"],
 	method: function ellipseForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a ellipseForParent command";
@@ -4054,8 +4054,8 @@ Adj.algorithms.vine = {
 // a specific algorithm
 Adj.algorithms.floater = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase7",
-	processSubtreeOnlyInPhaseHandler: "adjPhase7",
+	phaseHandlerName: "adjPhase3",
+	processSubtreeOnlyInPhaseHandler: "adjPhase3",
 	parameters: ["at",
 				 "pin",
 				 "explain"],
