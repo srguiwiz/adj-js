@@ -1986,6 +1986,9 @@ Adj.algorithms.rider = {
 				if (!sibling.getBBox) {
 					continue; // skip if not an SVGLocatable, e.g. a <script> element
 				}
+				if (sibling.adjNotAnOrder1Element) {
+					continue; // skip in case a rider is first
+				}
 				// found it
 				path = sibling;
 				break; // findFirstSiblingLoop
