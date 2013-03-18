@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:8 };
+	Adj.version = { major:3, minor:5, revision:9 };
 	Adj.algorithms = {};
 }
 
@@ -89,6 +89,10 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		Adj.modifyMaybeRemoveChildren
 		(rootElement,
 		 function(node,child) {
+			if (child.adjPermanentArtifact || child.getAttributeNS(Adj.AdjNamespace, "artifact")) {
+				child.adjPermanentArtifact = true;
+				child.adjRemoveElement = true;
+			}
 			if (child.adjExplanationArtifact || child.getAttributeNS(Adj.AdjNamespace, "explanation")) {
 				child.adjExplanationArtifact = true;
 				child.adjRemoveElement = true;
@@ -251,7 +255,8 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjProcessSubtreeOnlyInPhaseHandler;
 	//delete node.adjPlacementArtifact; // probably safe not to delete, element should be gone
 	delete node.adjNotAnOrder1Element;
-	delete node.adjExplanationArtifact;
+	//delete node.adjPermanentArtifact; // probably safe not to delete, element should be gone
+	//delete node.adjExplanationArtifact; // probably safe not to delete, element should be gone
 	//delete node.adjRemoveElement; // probably safe not to delete, element should be gone
 	Adj.unhideByDisplayAttribute(node); // does delete node.adjOriginalDisplay
 	delete node.adjLevel;
@@ -553,6 +558,13 @@ Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenI
 	}
 	delete element.adjOriginalDisplay;
 	element.removeAttributeNS(Adj.AdjNamespace, "originalDisplay");
+}
+
+// utility
+Adj.createArtifactElement = function createExplanationElement (name) {
+	var artifactElement = Adj.createSVGElement(name, {adjPermanentArtifact:true});
+	artifactElement.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
+	return artifactElement;
 }
 
 // utility
