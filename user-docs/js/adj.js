@@ -566,6 +566,12 @@ Adj.createArtifactElement = function createExplanationElement (name) {
 	artifactElement.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
 	return artifactElement;
 }
+// utility
+Adj.cloneArtifactElement = function createExplanationElement (element) {
+	var clone = element.cloneNode(true);
+	clone.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
+	return clone;
+}
 
 // utility
 Adj.createExplanationElement = function createExplanationElement (name, dontDisplayNone) {
@@ -1276,6 +1282,9 @@ Adj.oneOrTwoRegexp = /^\s*([^,\s]+)\s*(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
 // parse two parameters, e.g. "0.5, 1"
 // note: as implemented tolerates extra paremeters
 Adj.twoRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
+// parse three parameters, e.g. "3, -4, 4"
+// note: as implemented tolerates extra paremeters
+Adj.threeRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
 
 // note: document.documentElement.createSVGPoint() used because createSVGPoint() only implemented in SVG element,
 // same for createSVGRect(), createSVGMatrix()
@@ -4427,6 +4436,86 @@ Adj.algorithms.explain = {
 			// an SVG path
 			Adj.explainBasicGeometry(element);
 		} // else { // not a known case, as implemented
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.stackFrames = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["inset",
+				 "horizontalInset", "leftInset", "rightInset",
+				 "verticalInset", "topInset", "bottomInset",
+				 "stacking", "frame", "subject"],
+	method: function stackFrames (element, parametersObject) {
+		var usedHow = "used in a parameter for a stackFrames command";
+		var variableSubstitutionsByName = {};
+		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0.5, null, usedHow, variableSubstitutionsByName); // default inset = 0.5
+		var horizontalInset = Adj.doVarsArithmetic(element, parametersObject.horizontalInset, inset, null, usedHow, variableSubstitutionsByName); // default horizontalInset = inset
+		var leftInset = Adj.doVarsArithmetic(element, parametersObject.leftInset, horizontalInset, null, usedHow, variableSubstitutionsByName); // default leftInset = horizontalInset
+		var rightInset = Adj.doVarsArithmetic(element, parametersObject.rightInset, horizontalInset, null, usedHow, variableSubstitutionsByName); // default rightInset = horizontalInset
+		var verticalInset = Adj.doVarsArithmetic(element, parametersObject.verticalInset, inset, null, usedHow, variableSubstitutionsByName); // default verticalInset = inset
+		var topInset = Adj.doVarsArithmetic(element, parametersObject.topInset, verticalInset, null, usedHow, variableSubstitutionsByName); // default topInset = verticalInset
+		var bottomInset = Adj.doVarsArithmetic(element, parametersObject.bottomInset, verticalInset, null, usedHow, variableSubstitutionsByName); // default bottomInset = verticalInset
+		//
+		var stacking = parametersObject.stacking ? parametersObject.stacking.toString() : ""; // without toString could get number
+		if (!stacking) {
+			throw "missing parameter stacking= for a stackFrames command";
+		}
+		var stackingWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, stacking, "used in parameter stacking= for a stackFrames command");
+		var stackingMatch = Adj.threeRegexp.exec(stackingWithArithmeticEvaluated);
+		if (!stackingMatch) {
+			throw "impossible parameter stacking=\"" + stacking + "\" for a stackFrames command";
+		}
+		var stackingN = parseInt(stackingMatch[1]);
+		var stackingX = parseFloat(stackingMatch[2]);
+		var stackingY = parseFloat(stackingMatch[3]);
+		if (stackingN < 1) {
+			stackingN = 1;
+		}
+		//
+		var frame = !isNaN(parametersObject.frame) ? parametersObject.frame : 0; // default frame = 0
+		var subject = !isNaN(parametersObject.subject) ? parametersObject.subject : frame + 1; // default subject = frame + 1
+		//
+		// determine which nodes are frame template and subject respectively
+		for (var child = element.firstChild, index = 0; child; child = child.nextSibling) {
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
+			}
+			if (child.adjNotAnOrder1Element) { // e.g. a rider, or a floater
+				continue;
+			}
+			if (child.adjExplanationArtifact) {
+				continue;
+			}
+			if (index == frame) {
+				frame = child; // now an SVGElement instead of a number
+			}
+			if (index == subject) {
+				subject = child; // now an SVGElement instead of a number
+			}
+			index++;
+		}
+		if (!(frame instanceof SVGElement)) { // maybe childRecords.length == 0
+			return; // defensive exit
+		}
+		if (!(subject instanceof SVGElement)) { // maybe childRecords.length == 0
+			return; // defensive exit
+		}
+		//
+		var subjectBoundingBox = subject.getBBox();
+		frame.setAttribute("x", Adj.decimal(subjectBoundingBox.x + leftInset));
+		frame.setAttribute("y", Adj.decimal(subjectBoundingBox.y + topInset));
+		frame.setAttribute("width", Adj.decimal(subjectBoundingBox.width - leftInset - rightInset));
+		frame.setAttribute("height", Adj.decimal(subjectBoundingBox.height - topInset - bottomInset));
+		frame.removeAttribute("transform");
+		for (var i = stackingN - 1; i > 0; i--) { // needs new elements
+			var clonedFrame = Adj.cloneArtifactElement(frame);
+			clonedFrame.setAttribute("transform", "translate(" + Adj.decimal(i * stackingX) + "," + Adj.decimal(i * stackingY) + ")");
+			element.insertBefore(clonedFrame, frame);
+		}
 	}
 }
 
