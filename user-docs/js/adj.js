@@ -4034,6 +4034,15 @@ Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpress
 
 // utility
 // combine other calls,
+// return a string
+Adj.doVarsArithmetic2 = function doVarsIdsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName) {
+	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
+	var withArithmeticEvaluated = Adj.evaluateArithmetic(withVariablesSubstituted, usedHow);
+	return withArithmeticEvaluated;
+}
+
+// utility
+// combine other calls,
 // return a number
 Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, defaultValue, constantsByName, usedHow, variableSubstitutionsByName) {
 	if (typeof originalExpression == "number") { // a number already
@@ -4092,6 +4101,7 @@ Adj.algorithms.vine = {
 	method: function vine (element, parametersObject) {
 		var usedHow = "used in a parameter for a vine command";
 		var variableSubstitutionsByName = {};
+		var idedElementRecordsById = {};
 		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		Adj.unhideByDisplayAttribute(element);
@@ -4106,7 +4116,7 @@ Adj.algorithms.vine = {
 			if (!authoringD) {
 				authoringD = "";
 			}
-			var dWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, authoringD, "used in attribute adj:d= for a path element");
+			var dWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, authoringD, "used in attribute adj:d= for a path element", variableSubstitutionsByName, idedElementRecordsById);
 			//
 			element.setAttribute("d", dWithArithmeticEvaluated);
 		} // else { // not a known case, as implemented not transformed
@@ -4134,6 +4144,7 @@ Adj.algorithms.floater = {
 	method: function floater (element, parametersObject, level) {
 		var usedHow = "used in a parameter for a floater command";
 		var variableSubstitutionsByName = {};
+		var idedElementRecordsById = {};
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
@@ -4141,7 +4152,7 @@ Adj.algorithms.floater = {
 		if (!at) {
 			throw "missing parameter at= for a floater command";
 		}
-		var atWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, at, "used in parameter at= for a floater command");
+		var atWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, at, "used in parameter at= for a floater command", variableSubstitutionsByName, idedElementRecordsById);
 		var atMatch = Adj.twoRegexp.exec(atWithArithmeticEvaluated);
 		if (!atMatch) {
 			throw "impossible parameter at=\"" + at + "\" for a floater command";
@@ -4461,7 +4472,7 @@ Adj.algorithms.stackFrames = {
 		if (!stacking) {
 			throw "missing parameter stacking= for a stackFrames command";
 		}
-		var stackingWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, stacking, "used in parameter stacking= for a stackFrames command");
+		var stackingWithArithmeticEvaluated = Adj.doVarsArithmetic2(element, stacking, "used in parameter stacking= for a stackFrames command", variableSubstitutionsByName);
 		var stackingMatch = Adj.threeRegexp.exec(stackingWithArithmeticEvaluated);
 		if (!stackingMatch) {
 			throw "impossible parameter stacking=\"" + stacking + "\" for a stackFrames command";
