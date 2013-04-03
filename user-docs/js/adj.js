@@ -491,6 +491,7 @@ Adj.insideMedianOutside = { inside:0, median:0.5, outside:1 };
 Adj.noneClearNear = { none:"none", clear:"clear", near:"near" };
 
 // utility
+// if one and other both are integers and not too close then round result to be an integer as well
 Adj.fraction = function fraction (one, other, fraction, roundNoCloser, roundIfIntegers) {
 	roundNoCloser = roundNoCloser != undefined ? roundNoCloser : 0; // default roundNoCloser = 0
 	roundIfIntegers = roundIfIntegers != undefined ? roundIfIntegers : true; // default roundIfInteger = true
@@ -561,14 +562,15 @@ Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenI
 }
 
 // utility
-Adj.createArtifactElement = function createExplanationElement (name) {
+Adj.createArtifactElement = function createArtifactElement (name) {
 	var artifactElement = Adj.createSVGElement(name, {adjPermanentArtifact:true});
 	artifactElement.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
 	return artifactElement;
 }
 // utility
-Adj.cloneArtifactElement = function createExplanationElement (element) {
-	var clone = element.cloneNode(true);
+Adj.cloneArtifactElement = function cloneArtifactElement (element, deep) {
+	deep = deep != undefined ? deep : true; // default deep = true
+	var clone = element.cloneNode(deep);
 	clone.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
 	return clone;
 }
@@ -1578,7 +1580,7 @@ Adj.algorithms.connection = {
 		// what to connect
 		var fromElement = Adj.getElementByIdNearby(fromId, element);
 		if (!fromElement) {
-			throw "nonresolving id \"" + fromId + "\" used in a parameter from= for a connection command";
+			throw "nonresolving id \"" + fromId + "\" used in parameter from= for a connection command";
 		}
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
@@ -1589,7 +1591,7 @@ Adj.algorithms.connection = {
 		//
 		var toElement = Adj.getElementByIdNearby(toId, element);
 		if (!toElement) {
-			throw "nonresolving id \"" + toId + "\" used in a parameter to= for a connection command";
+			throw "nonresolving id \"" + toId + "\" used in parameter to= for a connection command";
 		}
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
@@ -1990,7 +1992,7 @@ Adj.algorithms.rider = {
 			// general case
 			path = Adj.getElementByIdNearby(pathId, element);
 			if (!path) {
-				throw "nonresolving id \"" + pathId + "\" used in a parameter path= for a rider command";
+				throw "nonresolving id \"" + pathId + "\" used in parameter path= for a rider command";
 			}
 			//
 			if (considerElementsToAvoid) {
@@ -4526,6 +4528,171 @@ Adj.algorithms.stackFrames = {
 			var clonedFrame = Adj.cloneArtifactElement(frame);
 			clonedFrame.setAttribute("transform", "translate(" + Adj.decimal(i * stackingX) + "," + Adj.decimal(i * stackingY) + ")");
 			element.insertBefore(clonedFrame, frame);
+		}
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.zoomFrames = {
+	notAnOrder1Element: true,
+	phaseHandlerName: "adjPhase5Down",
+	parameters: ["from", "to",
+				 "step"],
+	method: function zoomFrames (element, parametersObject) {
+		var usedHow = "used in a parameter for a zoomFrames command";
+		var variableSubstitutionsByName = {};
+		var fromId = parametersObject.from;
+		var toId = parametersObject.to;
+		var step = Adj.doVarsArithmetic(element, parametersObject.step, 10, null, usedHow, variableSubstitutionsByName); // default step = 10
+		//
+		var parent = element.parentNode;
+		var fromElement;
+		if (fromId) { // from id given
+			fromElement = Adj.getElementByIdNearby(fromId, element);
+			if (!fromElement) {
+				throw "nonresolving id \"" + fromId + "\" used in parameter from= for a zoomFrames command";
+			}
+		} else { // no from id given
+			// find previous sibling
+			for (var sibling = parent.firstChild, index = 0, couldBeIt; sibling; sibling = sibling.nextSibling) {
+				if (sibling == element) { // at element self
+					fromElement = couldBeIt; // found it
+					break; // findPreviousSiblingLoop
+				}
+				if (!(sibling instanceof SVGElement)) {
+					continue; // skip if not an SVGElement, e.g. an XML #text
+				}
+				if (!sibling.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
+				}
+				if (sibling.adjNotAnOrder1Element) {
+					continue; // skip in case a rider is first
+				}
+				couldBeIt = sibling;
+			}
+			if (!fromElement) {
+				throw "missing parameter from= for a zoomFrames command";
+			}
+		}
+		var toElement;
+		if (toId) { // to id given
+			toElement = Adj.getElementByIdNearby(toId, element);
+			if (!toElement) {
+				throw "nonresolving id \"" + toId + "\" used in parameter to= for a zoomFrames command";
+			}
+		} else { // no to id given
+			// find next sibling
+			for (var sibling = parent.firstChild, index = 0, nextOneIsIt; sibling; sibling = sibling.nextSibling) {
+				if (sibling == element) { // at element self
+					nextOneIsIt = true;
+					continue; // next one will be it
+				}
+				if (!(sibling instanceof SVGElement)) {
+					continue; // skip if not an SVGElement, e.g. an XML #text
+				}
+				if (!sibling.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
+				}
+				if (sibling.adjNotAnOrder1Element) {
+					continue; // skip in case a rider is first
+				}
+				if (nextOneIsIt) {
+					toElement = sibling; // found it
+					break; // findNextSiblingLoop
+				}
+			}
+			if (!toElement) {
+				throw "missing parameter to= for a zoomFrames command";
+			}
+		}
+		//
+		var fromBoundingBox = fromElement.getBBox();
+		var matrixFromFromElement = fromElement.getTransformToElement(element);
+		var fromTopLeft = document.documentElement.createSVGPoint();
+		fromTopLeft.x = fromBoundingBox.x;
+		fromTopLeft.y = fromBoundingBox.y;
+		fromTopLeft = fromTopLeft.matrixTransform(matrixFromFromElement);
+		var fromTopRight = document.documentElement.createSVGPoint();
+		fromTopRight.x = fromBoundingBox.x + fromBoundingBox.width;
+		fromTopRight.y = fromBoundingBox.y;
+		fromTopRight = fromTopRight.matrixTransform(matrixFromFromElement);
+		var fromBottomLeft = document.documentElement.createSVGPoint();
+		fromBottomLeft.x = fromBoundingBox.x;
+		fromBottomLeft.y = fromBoundingBox.y + fromBoundingBox.height;
+		fromBottomLeft = fromBottomLeft.matrixTransform(matrixFromFromElement);
+		var fromBottomRight = document.documentElement.createSVGPoint();
+		fromBottomRight.x = fromBoundingBox.x + fromBoundingBox.width;
+		fromBottomRight.y = fromBoundingBox.y + fromBoundingBox.height;
+		fromBottomRight = fromBottomRight.matrixTransform(matrixFromFromElement);
+		//
+		var toBoundingBox = toElement.getBBox();
+		var matrixFromToElement = toElement.getTransformToElement(element);
+		var toTopLeft = document.documentElement.createSVGPoint();
+		toTopLeft.x = toBoundingBox.x;
+		toTopLeft.y = toBoundingBox.y;
+		toTopLeft = toTopLeft.matrixTransform(matrixFromToElement);
+		var toTopRight = document.documentElement.createSVGPoint();
+		toTopRight.x = toBoundingBox.x + toBoundingBox.width;
+		toTopRight.y = toBoundingBox.y;
+		toTopRight = toTopRight.matrixTransform(matrixFromToElement);
+		var toBottomLeft = document.documentElement.createSVGPoint();
+		toBottomLeft.x = toBoundingBox.x;
+		toBottomLeft.y = toBoundingBox.y + toBoundingBox.height;
+		toBottomLeft = toBottomLeft.matrixTransform(matrixFromToElement);
+		var toBottomRight = document.documentElement.createSVGPoint();
+		toBottomRight.x = toBoundingBox.x + toBoundingBox.width;
+		toBottomRight.y = toBoundingBox.y + toBoundingBox.height;
+		toBottomRight = toBottomRight.matrixTransform(matrixFromToElement);
+		//
+		var deltaTopLeft = Math.sqrt(Math.pow(toTopLeft.x - fromTopLeft.x, 2) + Math.pow(toTopLeft.y - fromTopLeft.y, 2));
+		var deltaTopRight = Math.sqrt(Math.pow(toTopRight.x - fromTopRight.x, 2) + Math.pow(toTopRight.y - fromTopRight.y, 2));
+		var deltaBottomLeft = Math.sqrt(Math.pow(toBottomLeft.x - fromBottomLeft.x, 2) + Math.pow(toBottomLeft.y - fromBottomLeft.y, 2));
+		var deltaBottomRight = Math.sqrt(Math.pow(toBottomRight.x - fromBottomRight.x, 2) + Math.pow(toBottomRight.y - fromBottomRight.y, 2));
+		var delta = (deltaTopLeft + deltaTopRight + deltaBottomLeft + deltaBottomRight) / 4;
+		//
+		if (step < 1) {
+			step = 1; // for stability, a defensive check rather than risk an exception
+		}
+		var steps = Math.floor(delta / step); // integer
+		if (steps > 1000) {
+			steps = 1000; // a defensive limit
+		}
+		var firstStepFraction;
+		var stepFraction;
+		if (steps > 1) { // normal case
+			firstStepFraction = (delta - (steps - 1) * step) / 2 / delta;
+			stepFraction = step / delta;
+		} else { // special case
+			steps = 1;
+			firstStepFraction = 0.5;
+			stepFraction = 0;
+		}
+		//
+		var fromX = fromTopLeft.x;
+		var fromY = fromTopLeft.y;
+		var fromW = fromTopRight.x - fromTopLeft.x;
+		var fromH = fromBottomLeft.y - fromTopLeft.y;
+		var toX = toTopLeft.x;
+		var toY = toTopLeft.y;
+		var toW = toTopRight.x - toTopLeft.x;
+		var toH = toBottomLeft.y - toTopLeft.y;
+		//
+		var fraction = firstStepFraction;
+		element.setAttribute("x", Adj.decimal(Adj.fraction(fromX, toX, fraction)));
+		element.setAttribute("y", Adj.decimal(Adj.fraction(fromY, toY, fraction)));
+		element.setAttribute("width", Adj.decimal(Adj.fraction(fromW, toW, fraction)));
+		element.setAttribute("height", Adj.decimal(Adj.fraction(fromH, toH, fraction)));
+		element.removeAttribute("transform");
+		var nextSibling = element.nextSibling;
+		for (var i = 1; i < steps; i++) { // needs new elements
+			fraction = firstStepFraction + i * stepFraction;
+			var clonedElement = Adj.cloneArtifactElement(element, false);
+			clonedElement.adjNotAnOrder1Element = true;
+			clonedElement.setAttribute("x", Adj.decimal(Adj.fraction(fromX, toX, fraction)));
+			clonedElement.setAttribute("y", Adj.decimal(Adj.fraction(fromY, toY, fraction)));
+			clonedElement.setAttribute("width", Adj.decimal(Adj.fraction(fromW, toW, fraction)));
+			clonedElement.setAttribute("height", Adj.decimal(Adj.fraction(fromH, toH, fraction)));
+			parent.insertBefore(clonedElement, nextSibling);
 		}
 	}
 }
