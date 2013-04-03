@@ -117,6 +117,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
           <li><a href="#L2184">1.11.13. Command floater Options</a></li>
           <li><a href="#L2299">1.11.14. Command fit Options</a></li>
           <li><a href="#L2518">1.11.15. Command stackFrames Options</a></li>
+          <li><a href="#L2604">1.11.16. Command zoomFrames Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -662,6 +663,19 @@ stored away for reuse by authors and algorithms:</p>
     &lt;rect fill="white" stroke="black" stroke-width="2" width="30" height="20"/&gt;
     &lt;ellipse cx="60" cy="40" rx="40" ry="20" fill="#666"/&gt;
   &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-063-zoomFrames.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;rect width="200" height="120" fill="linen"/&gt;
+  &lt;rect width="30" height="20" stroke="black" stroke-width="1" fill="#000" transform="translate(5,5)"/&gt;
+  &lt;rect width="45" height="35" stroke="gray" stroke-width="1" fill="white" opacity="0.5"&gt;
+    <span class="example-code">&lt;adj:<a href="#L2604">zoomFrames</a>/&gt;</span>
+  &lt;/rect&gt;
+  &lt;rect width="60" height="50" stroke="black" stroke-width="1" fill="#888" transform="translate(135,65)"/&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -1922,6 +1936,45 @@ they have been given along the same axis.</p>
 are equivalent to optional <code>inset</code> family parameters of <code><a
 href="#L12321">frameForParent</a></code>.</p>
 
+<h4 id="L2604">1.11.16. Command zoomFrames Options</h4>
+
+<p>Optional parameters of <code>zoomFrames</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-064-zoomFrames-from.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect width="200" height="120" fill="linen"/&gt;
+  &lt;rect width="30" height="20" stroke="black" stroke-width="1" fill="#000" adj:id="small" transform="translate(5,5)"/&gt;
+  &lt;rect width="40" height="30" stroke="black" stroke-width="1" fill="#444" transform="translate(155,5)"/&gt;
+  &lt;rect width="50" height="40" stroke="black" stroke-width="1" fill="#666" transform="translate(5,75)"/&gt;
+  &lt;rect width="45" height="35" stroke="lightgray" stroke-width="1" fill="white" opacity="0.75"&gt;
+    <span class="example-code">&lt;adj:zoomFrames adj:from="small" adj:step="20"/&gt;</span>
+  &lt;/rect&gt;
+  &lt;rect width="60" height="50" stroke="black" stroke-width="1" fill="#888" transform="translate(135,65)"/&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-065-zoomFrames-to.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;rect width="200" height="120" fill="linen"/&gt;
+  &lt;rect width="30" height="20" stroke="black" stroke-width="1" fill="#000" adj:id="small" transform="translate(5,5)"/&gt;
+  &lt;rect width="45" height="35" stroke="gray" stroke-width="1" fill="none"&gt;
+    <span class="example-code">&lt;adj:zoomFrames adj:to="big" adj:step="60"/&gt;</span>
+  &lt;/rect&gt;
+  &lt;rect width="40" height="30" stroke="black" stroke-width="1" fill="#444" transform="translate(155,5)"/&gt;
+  &lt;rect width="50" height="40" stroke="black" stroke-width="1" fill="#666" transform="translate(5,75)"/&gt;
+  &lt;rect width="60" height="50" stroke="black" stroke-width="1" fill="#888" adj:id="big" transform="translate(135,65)"/&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -2303,6 +2356,10 @@ decimal numbers.</p>
         <code>leftInset</code>, <code>rightInset</code>,
         <code>verticalInset</code>, <code>topInset</code>,
         <code>bottomInset</code>, <code>stacking</code></td>
+    </tr>
+    <tr>
+      <td><code>zoomFrames</code></td>
+      <td><code>step</code></td>
     </tr>
   </tbody>
 </table>
@@ -2872,7 +2929,7 @@ phases:</p>
     <tr>
       <td><code>adjPhase5Down</code></td>
       <td><code>frameForParent</code>, <code>circleForParent</code>,
-        <code>ellipseForParent</code></td>
+        <code>ellipseForParent</code>, <code>zoomFrames</code></td>
     </tr>
     <tr>
       <td><code>adjPhase5Up</code></td>
