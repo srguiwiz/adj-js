@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:10 };
+	Adj.version = { major:3, minor:5, revision:11 };
 	Adj.algorithms = {};
 }
 
@@ -4616,6 +4616,8 @@ Adj.algorithms.zoomFrames = {
 			}
 		}
 		//
+		Adj.unhideByDisplayAttribute(element);
+		//
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
 		var fromTopLeft = document.documentElement.createSVGPoint();
@@ -4653,6 +4655,8 @@ Adj.algorithms.zoomFrames = {
 		toBottomRight.x = toBoundingBox.x + toBoundingBox.width;
 		toBottomRight.y = toBoundingBox.y + toBoundingBox.height;
 		toBottomRight = toBottomRight.matrixTransform(matrixFromToElement);
+		//
+		Adj.hideByDisplayAttribute(element);
 		//
 		var deltaTopLeft = Math.sqrt(Math.pow(toTopLeft.x - fromTopLeft.x, 2) + Math.pow(toTopLeft.y - fromTopLeft.y, 2));
 		var deltaTopRight = Math.sqrt(Math.pow(toTopRight.x - fromTopRight.x, 2) + Math.pow(toTopRight.y - fromTopRight.y, 2));
