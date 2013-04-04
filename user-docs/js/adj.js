@@ -519,6 +519,16 @@ Adj.decimal = function decimal (number, decimalDigits) {
 }
 
 // utility
+Adj.qualifyName = function qualifyName (element, namespaceURI, name) {
+	var prefix = element.lookupPrefix(namespaceURI);
+	if (prefix) {
+		return prefix + ":" + name;
+	} else {
+		return name;
+	}
+}
+
+// utility
 Adj.createSVGElement = function createSVGElement (name, additionalProperties) {
 	var svgElement = document.createElementNS(Adj.SvgNamespace, name);
 	if (additionalProperties) {
@@ -537,7 +547,7 @@ Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
 	}
 	if (!element.adjOriginalDisplay) {
 		element.adjOriginalDisplay = originalDisplay;
-		element.setAttributeNS(Adj.AdjNamespace, "originalDisplay", element.adjOriginalDisplay);
+		element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, "originalDisplay"), element.adjOriginalDisplay);
 	}
 	element.setAttribute("display", "none");
 }
@@ -562,23 +572,23 @@ Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenI
 }
 
 // utility
-Adj.createArtifactElement = function createArtifactElement (name) {
+Adj.createArtifactElement = function createArtifactElement (name, parent) {
 	var artifactElement = Adj.createSVGElement(name, {adjPermanentArtifact:true});
-	artifactElement.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
+	artifactElement.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(artifactElement, Adj.AdjNamespace, "artifact"), "true");
 	return artifactElement;
 }
 // utility
 Adj.cloneArtifactElement = function cloneArtifactElement (element, deep) {
 	deep = deep != undefined ? deep : true; // default deep = true
 	var clone = element.cloneNode(deep);
-	clone.setAttributeNS(Adj.AdjNamespace, "artifact", "true");
+	clone.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, "artifact"), "true");
 	return clone;
 }
 
 // utility
 Adj.createExplanationElement = function createExplanationElement (name, dontDisplayNone) {
 	var explanationElement = Adj.createSVGElement(name, {adjExplanationArtifact:true});
-	explanationElement.setAttributeNS(Adj.AdjNamespace, "explanation", "true");
+	explanationElement.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(explanationElement, Adj.AdjNamespace, "explanation"), "true");
 	if (!dontDisplayNone) {
 		Adj.hideByDisplayAttribute(explanationElement);
 	}
@@ -1533,7 +1543,7 @@ Adj.restoreAndStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribu
 	} else {
 		value = element.getAttribute(name);
 		if (value) { // store if any
-			element.setAttributeNS(Adj.AdjNamespace, name, value);
+			element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, name), value);
 		}
 	}
 }
@@ -3718,7 +3728,7 @@ Adj.firstTimeStoreAuthoringAttribute = function firstTimeStoreAuthoringAttribute
 	if (!value) { // not any yet
 		value = element.getAttribute(name);
 		if (value) { // store if any
-			element.setAttributeNS(Adj.AdjNamespace, name, value);
+			element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, name), value);
 		}
 	}
 }
