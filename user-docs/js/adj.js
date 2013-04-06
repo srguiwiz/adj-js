@@ -4711,6 +4711,28 @@ Adj.algorithms.zoomFrames = {
 	}
 }
 
+// a specific algorithm
+Adj.algorithms.tilt = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["maxAngle"],
+	method: function tilt (element, parametersObject) {
+		var usedHow = "used in a parameter for a tilt command";
+		var variableSubstitutionsByName = {};
+		var alpha = Adj.doVarsArithmetic(element, parametersObject.alpha, 30, null, usedHow, variableSubstitutionsByName); // default alpha = 30
+		var beta = Adj.doVarsArithmetic(element, parametersObject.beta, 0, null, usedHow, variableSubstitutionsByName); // default beta = 0
+		//
+		alpha = alpha / 180 * Math.PI;
+		beta = beta / 180 * Math.PI;
+		var a = Math.cos(alpha);
+		var b = Math.sin(alpha);
+		var c = -Math.sin(beta);
+		var d = Math.cos(beta);
+		var e = 0;
+		var f = 0;
+		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
+	}
+}
+
 // visual exception display
 Adj.displayException = function displayException (exception, svgElement) {
 	var rootElement = document.documentElement;
