@@ -3,8 +3,8 @@
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="100" fill="linen"/>
 	<g adj:command="set">
-		<rect width="50" height="70" stroke="black" stroke-width="1" fill="#888">
-			<adj:tilt alpha="15"/>
+		<rect width="90" height="60" stroke="black" stroke-width="1" fill="#888">
+			<adj:tilt alpha="15" beta="10"/>
 		</rect>
 	</g>
 </svg>
