@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:11 };
+	Adj.version = { major:3, minor:5, revision:12 };
 	Adj.algorithms = {};
 }
 
@@ -1045,6 +1045,48 @@ Adj.algorithms.horizontalList = {
 				}
 			}
 		}
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.set = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "rightGap",
+				 "verticalGap", "topGap", "bottomGap"],
+	method: function set (element, parametersObject) {
+		var usedHow = "used in a parameter for a horizontalList command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		//
+		var boundingBox = element.getBBox();
+		var minLeft = boundingBox.x;
+		var minTop = boundingBox.y;
+		var maxRight = minLeft + boundingBox.width;
+		var maxBottom = minTop + boundingBox.height;
+		minLeft -= leftGap;
+		minTop -= topGap;
+		maxRight += rightGap;
+		maxBottom += bottomGap;
+		// now we know where to put it
+		var translationX = -minLeft;
+		var translationY = -minTop;
+		element.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		var hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+		hiddenRect.setAttribute("x", minLeft);
+		hiddenRect.setAttribute("y", minTop);
+		hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
+		hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
+		hiddenRect.setAttribute("visibility", "hidden");
+		element.insertBefore(hiddenRect, element.firstChild);
 	}
 }
 
