@@ -621,220 +621,6 @@ Adj.createExplanationLine = function createExplanationLine (x1, y1, x2, y2, stro
 }
 
 // a specific algorithm
-Adj.algorithms.verticalList = {
-	phaseHandlerName: "adjPhase1Up",
-	parameters: ["gap",
-				 "horizontalGap", "leftGap", "centerGap", "rightGap",
-				 "verticalGap", "topGap", "middleGap", "bottomGap",
-				 "maxHeight", "maxPerColumn",
-				 "makeGrid",
-				 "hAlign", "vAlign",
-				 "explain"],
-	method: function verticalList (element, parametersObject) {
-		var usedHow = "used in a parameter for a verticalList command";
-		var variableSubstitutionsByName = {};
-		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
-		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
-		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
-		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
-		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
-		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
-		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
-		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
-		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
-		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxHeight = null means no limit
-		var maxPerColumn = Adj.doVarsArithmetic(element, parametersObject.maxPerColumn, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerColumn = null means no limit
-		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // default makeGrid = false
-		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
-		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
-		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
-		//
-		// determine which nodes to process,
-		// children that are instances of SVGElement rather than every DOM node,
-		// also skipping hiddenRect and skipping notAnOrder1Element
-		var hiddenRect;
-		var childRecords = [];
-		for (var child = element.firstChild; child; child = child.nextSibling) {
-			if (!(child instanceof SVGElement)) {
-				continue; // skip if not an SVGElement, e.g. an XML #text
-			}
-			if (!child.getBBox) {
-				continue; // skip if not an SVGLocatable, e.g. a <script> element
-			}
-			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
-				// make hidden rect
-				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
-				hiddenRect.setAttribute("width", 0);
-				hiddenRect.setAttribute("height", 0);
-				hiddenRect.setAttribute("visibility", "hidden");
-				element.insertBefore(hiddenRect, child);
-			}
-			if (child.adjNotAnOrder1Element) {
-				continue;
-			}
-			childRecords.push({
-				boundingBox: child.getBBox(),
-				node: child
-			});
-		}
-		if (!maxPerColumn) { // don't allow it to remain null below here
-			maxPerColumn = childRecords.length; // make sure it is a number
-		}
-		//
-		// process
-		var maxRight;
-		var maxBottom;
-		var columnWidths = [];
-		var rowHeights = [];
-		var tryToFit = true;
-		tryToFitLoop: while (tryToFit) {
-			var currentChildX = leftGap;
-			var currentChildY = topGap;
-			maxRight = currentChildX;
-			maxBottom = currentChildY;
-			var currentColumn = 0;
-			var currentRow = 0;
-			var anyMadeWider = false;
-			var anyMadeTaller = false;
-			childRecordsLoop: for (var childRecordIndex in childRecords) {
-				var childRecord = childRecords[childRecordIndex];
-				var childBoundingBox = childRecord.boundingBox;
-				var child = childRecord.node;
-				// figure height
-				var heightToUse;
-				var currentChildHeight = childBoundingBox.height;
-				if (!makeGrid) { // make it whatever wide it is
-					heightToUse = currentChildHeight;
-				} else { // makeGrid
-					var rowHeight = rowHeights[currentRow];
-					if (rowHeight == undefined) { // first column
-						heightToUse = currentChildHeight;
-						rowHeights[currentRow] = heightToUse;
-					} else { // further column
-						if (currentChildHeight <= rowHeight) { // fits
-							heightToUse = rowHeight;
-						} else { // row must be taller
-							heightToUse = currentChildHeight;
-							rowHeights[currentRow] = heightToUse;
-							anyMadeTaller = true;
-						}
-					}
-				}
-				// figure whether it sticks out too far
-				if (maxHeight && currentRow > 0 && currentChildY + heightToUse + middleGap > maxHeight) { // needs new column for current element
-					if (makeGrid && maxPerColumn > 1) { // try one row less, unless only one row left
-						// try again with one row less
-						maxPerColumn -= 1;
-						columnWidths = [];
-						rowHeights = [];
-						continue tryToFitLoop;
-					}
-					currentChildX = maxRight + centerGap;
-					currentChildY = topGap;
-					currentColumn += 1;
-					currentRow = 0;
-				}
-				// figure width
-				var widthToUse;
-				var currentChildWidth = childBoundingBox.width;
-				var columnWidth = columnWidths[currentColumn];
-				if (columnWidth == undefined) { // first element in column
-					widthToUse = currentChildWidth;
-					columnWidths[currentColumn] = widthToUse;
-				} else { // further element in column
-					if (currentChildWidth <= columnWidth) { // fits
-						widthToUse = columnWidth;
-					} else { // column must be wider
-						widthToUse = currentChildWidth;
-						columnWidths[currentColumn] = widthToUse;
-						anyMadeWider = true;
-					}
-				}
-				// now we know where to put it
-				var translationX = currentChildX - childBoundingBox.x + Adj.fraction(0, widthToUse - currentChildWidth, hAlign);
-				var translationY = currentChildY - childBoundingBox.y + Adj.fraction(0, heightToUse - currentChildHeight, vAlign);
-				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
-				// explain
-				if (explain) {
-					childRecord.explainRect = {
-						x: currentChildX,
-						y: currentChildY,
-						width: widthToUse,
-						height: heightToUse
-					};
-				}
-				// consequences
-				var currentChildRight = currentChildX + widthToUse;
-				if (currentChildRight > maxRight) {
-					maxRight = currentChildRight;
-				}
-				var currentChildBottom = currentChildY + heightToUse;
-				if (currentChildBottom > maxBottom) {
-					maxBottom = currentChildBottom;
-				}
-				// get ready for next position
-				currentChildY = currentChildBottom + middleGap;
-				currentRow += 1;
-				if (currentRow >= maxPerColumn) { // needs new column for next element
-					currentChildX = maxRight + centerGap;
-					currentChildY = topGap;
-					currentColumn += 1;
-					currentRow = 0;
-				}
-			}
-			if (anyMadeTaller // fyi anyMadeTaller only should occur if makeGrid
-				|| (anyMadeWider && hAlign != 0)) { // anyMadeWider only should matter if hAlign != 0
-				// try again with known columnWidths and rowHeights
-				continue tryToFitLoop;
-			}
-			tryToFit = false;
-		}
-		//
-		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
-		if (hiddenRect) {
-			hiddenRect.setAttribute("x", 0);
-			hiddenRect.setAttribute("y", 0);
-			hiddenRect.setAttribute("width", Adj.decimal(maxRight + rightGap));
-			hiddenRect.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
-		}
-		//
-		// explain
-		if (explain) {
-			if (hiddenRect) {
-				var explanationElement = Adj.createExplanationElement("rect");
-				explanationElement.setAttribute("x", 0);
-				explanationElement.setAttribute("y", 0);
-				explanationElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
-				explanationElement.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
-				explanationElement.setAttribute("fill", "white");
-				explanationElement.setAttribute("fill-opacity", "0.1");
-				explanationElement.setAttribute("stroke", "blue");
-				explanationElement.setAttribute("stroke-width", "1");
-				explanationElement.setAttribute("stroke-opacity", "0.2");
-				element.appendChild(explanationElement);
-			}
-			for (var childRecordIndex in childRecords) {
-				var childRecord = childRecords[childRecordIndex];
-				var explainRect = childRecord.explainRect;
-				if (explainRect) {
-					var explanationElement = Adj.createExplanationElement("rect");
-					explanationElement.setAttribute("x", explainRect.x);
-					explanationElement.setAttribute("y", explainRect.y);
-					explanationElement.setAttribute("width", explainRect.width);
-					explanationElement.setAttribute("height", explainRect.height);
-					explanationElement.setAttribute("fill", "blue");
-					explanationElement.setAttribute("fill-opacity", "0.1");
-					explanationElement.setAttribute("stroke", "blue");
-					explanationElement.setAttribute("stroke-width", "1");
-					explanationElement.setAttribute("stroke-opacity", "0.1");
-					element.appendChild(explanationElement);
-				}
-			}
-		}
-	}
-}
-
-// a specific algorithm
 Adj.algorithms.horizontalList = {
 	phaseHandlerName: "adjPhase1Up",
 	parameters: ["gap",
@@ -1049,44 +835,216 @@ Adj.algorithms.horizontalList = {
 }
 
 // a specific algorithm
-Adj.algorithms.set = {
+Adj.algorithms.verticalList = {
 	phaseHandlerName: "adjPhase1Up",
 	parameters: ["gap",
-				 "horizontalGap", "leftGap", "rightGap",
-				 "verticalGap", "topGap", "bottomGap"],
-	method: function set (element, parametersObject) {
-		var usedHow = "used in a parameter for a horizontalList command";
+				 "horizontalGap", "leftGap", "centerGap", "rightGap",
+				 "verticalGap", "topGap", "middleGap", "bottomGap",
+				 "maxHeight", "maxPerColumn",
+				 "makeGrid",
+				 "hAlign", "vAlign",
+				 "explain"],
+	method: function verticalList (element, parametersObject) {
+		var usedHow = "used in a parameter for a verticalList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
 		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
 		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
 		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
 		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
 		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxHeight = null means no limit
+		var maxPerColumn = Adj.doVarsArithmetic(element, parametersObject.maxPerColumn, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerColumn = null means no limit
+		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // default makeGrid = false
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
-		var boundingBox = element.getBBox();
-		var minLeft = boundingBox.x;
-		var minTop = boundingBox.y;
-		var maxRight = minLeft + boundingBox.width;
-		var maxBottom = minTop + boundingBox.height;
-		minLeft -= leftGap;
-		minTop -= topGap;
-		maxRight += rightGap;
-		maxBottom += bottomGap;
-		// now we know where to put it
-		var translationX = -minLeft;
-		var translationY = -minTop;
-		element.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		// determine which nodes to process,
+		// children that are instances of SVGElement rather than every DOM node,
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
+		var childRecords = [];
+		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
+			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
+			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			childRecords.push({
+				boundingBox: child.getBBox(),
+				node: child
+			});
+		}
+		if (!maxPerColumn) { // don't allow it to remain null below here
+			maxPerColumn = childRecords.length; // make sure it is a number
+		}
+		//
+		// process
+		var maxRight;
+		var maxBottom;
+		var columnWidths = [];
+		var rowHeights = [];
+		var tryToFit = true;
+		tryToFitLoop: while (tryToFit) {
+			var currentChildX = leftGap;
+			var currentChildY = topGap;
+			maxRight = currentChildX;
+			maxBottom = currentChildY;
+			var currentColumn = 0;
+			var currentRow = 0;
+			var anyMadeWider = false;
+			var anyMadeTaller = false;
+			childRecordsLoop: for (var childRecordIndex in childRecords) {
+				var childRecord = childRecords[childRecordIndex];
+				var childBoundingBox = childRecord.boundingBox;
+				var child = childRecord.node;
+				// figure height
+				var heightToUse;
+				var currentChildHeight = childBoundingBox.height;
+				if (!makeGrid) { // make it whatever wide it is
+					heightToUse = currentChildHeight;
+				} else { // makeGrid
+					var rowHeight = rowHeights[currentRow];
+					if (rowHeight == undefined) { // first column
+						heightToUse = currentChildHeight;
+						rowHeights[currentRow] = heightToUse;
+					} else { // further column
+						if (currentChildHeight <= rowHeight) { // fits
+							heightToUse = rowHeight;
+						} else { // row must be taller
+							heightToUse = currentChildHeight;
+							rowHeights[currentRow] = heightToUse;
+							anyMadeTaller = true;
+						}
+					}
+				}
+				// figure whether it sticks out too far
+				if (maxHeight && currentRow > 0 && currentChildY + heightToUse + middleGap > maxHeight) { // needs new column for current element
+					if (makeGrid && maxPerColumn > 1) { // try one row less, unless only one row left
+						// try again with one row less
+						maxPerColumn -= 1;
+						columnWidths = [];
+						rowHeights = [];
+						continue tryToFitLoop;
+					}
+					currentChildX = maxRight + centerGap;
+					currentChildY = topGap;
+					currentColumn += 1;
+					currentRow = 0;
+				}
+				// figure width
+				var widthToUse;
+				var currentChildWidth = childBoundingBox.width;
+				var columnWidth = columnWidths[currentColumn];
+				if (columnWidth == undefined) { // first element in column
+					widthToUse = currentChildWidth;
+					columnWidths[currentColumn] = widthToUse;
+				} else { // further element in column
+					if (currentChildWidth <= columnWidth) { // fits
+						widthToUse = columnWidth;
+					} else { // column must be wider
+						widthToUse = currentChildWidth;
+						columnWidths[currentColumn] = widthToUse;
+						anyMadeWider = true;
+					}
+				}
+				// now we know where to put it
+				var translationX = currentChildX - childBoundingBox.x + Adj.fraction(0, widthToUse - currentChildWidth, hAlign);
+				var translationY = currentChildY - childBoundingBox.y + Adj.fraction(0, heightToUse - currentChildHeight, vAlign);
+				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+				// explain
+				if (explain) {
+					childRecord.explainRect = {
+						x: currentChildX,
+						y: currentChildY,
+						width: widthToUse,
+						height: heightToUse
+					};
+				}
+				// consequences
+				var currentChildRight = currentChildX + widthToUse;
+				if (currentChildRight > maxRight) {
+					maxRight = currentChildRight;
+				}
+				var currentChildBottom = currentChildY + heightToUse;
+				if (currentChildBottom > maxBottom) {
+					maxBottom = currentChildBottom;
+				}
+				// get ready for next position
+				currentChildY = currentChildBottom + middleGap;
+				currentRow += 1;
+				if (currentRow >= maxPerColumn) { // needs new column for next element
+					currentChildX = maxRight + centerGap;
+					currentChildY = topGap;
+					currentColumn += 1;
+					currentRow = 0;
+				}
+			}
+			if (anyMadeTaller // fyi anyMadeTaller only should occur if makeGrid
+				|| (anyMadeWider && hAlign != 0)) { // anyMadeWider only should matter if hAlign != 0
+				// try again with known columnWidths and rowHeights
+				continue tryToFitLoop;
+			}
+			tryToFit = false;
+		}
 		//
 		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
-		var hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
-		hiddenRect.setAttribute("x", minLeft);
-		hiddenRect.setAttribute("y", minTop);
-		hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
-		hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
-		hiddenRect.setAttribute("visibility", "hidden");
-		element.insertBefore(hiddenRect, element.firstChild);
+		if (hiddenRect) {
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", Adj.decimal(maxRight + rightGap));
+			hiddenRect.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
+		}
+		//
+		// explain
+		if (explain) {
+			if (hiddenRect) {
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", 0);
+				explanationElement.setAttribute("y", 0);
+				explanationElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
+				explanationElement.setAttribute("height", Adj.decimal(maxBottom + bottomGap));
+				explanationElement.setAttribute("fill", "white");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				element.appendChild(explanationElement);
+			}
+			for (var childRecordIndex in childRecords) {
+				var childRecord = childRecords[childRecordIndex];
+				var explainRect = childRecord.explainRect;
+				if (explainRect) {
+					var explanationElement = Adj.createExplanationElement("rect");
+					explanationElement.setAttribute("x", explainRect.x);
+					explanationElement.setAttribute("y", explainRect.y);
+					explanationElement.setAttribute("width", explainRect.width);
+					explanationElement.setAttribute("height", explainRect.height);
+					explanationElement.setAttribute("fill", "blue");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.1");
+					element.appendChild(explanationElement);
+				}
+			}
+		}
 	}
 }
 
@@ -4772,6 +4730,48 @@ Adj.algorithms.tilt = {
 		var e = 0;
 		var f = 0;
 		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.set = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "rightGap",
+				 "verticalGap", "topGap", "bottomGap"],
+	method: function set (element, parametersObject) {
+		var usedHow = "used in a parameter for a horizontalList command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		//
+		var boundingBox = element.getBBox();
+		var minLeft = boundingBox.x;
+		var minTop = boundingBox.y;
+		var maxRight = minLeft + boundingBox.width;
+		var maxBottom = minTop + boundingBox.height;
+		minLeft -= leftGap;
+		minTop -= topGap;
+		maxRight += rightGap;
+		maxBottom += bottomGap;
+		// now we know where to put it
+		var translationX = -minLeft;
+		var translationY = -minTop;
+		element.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		var hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+		hiddenRect.setAttribute("x", minLeft);
+		hiddenRect.setAttribute("y", minTop);
+		hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
+		hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
+		hiddenRect.setAttribute("visibility", "hidden");
+		element.insertBefore(hiddenRect, element.firstChild);
 	}
 }
 
