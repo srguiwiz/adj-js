@@ -4756,7 +4756,7 @@ Adj.algorithms.zoomFrames = {
 // a specific algorithm
 Adj.algorithms.tilt = {
 	phaseHandlerName: "adjPhase1Up",
-	parameters: ["maxAngle"],
+	parameters: ["alpha", "beta"],
 	method: function tilt (element, parametersObject) {
 		var usedHow = "used in a parameter for a tilt command";
 		var variableSubstitutionsByName = {};
