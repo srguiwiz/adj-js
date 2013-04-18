@@ -4,13 +4,13 @@
 	<rect width="200" height="140" fill="linen"/>
 	<g>
 		<adj:circularList gap="5"/>
-		<circle r="10" fill="#000" transform="translate(62.626,61.125)"/>
-		<rect width="30" height="20" fill="#222" transform="translate(94.938,51.125)"/>
-		<rect width="30" height="20" fill="#444" transform="translate(77.125,88.115)"/>
-		<rect width="30" height="20" fill="#666" transform="translate(37.098,97.251)"/>
-		<rect width="30" height="20" fill="#888" transform="translate(5,71.653)"/>
-		<rect width="30" height="20" fill="#aaa" transform="translate(5,30.598)"/>
-		<rect width="30" height="20" fill="#bbb" transform="translate(37.098,5)"/>
-		<rect width="30" height="20" fill="#ccc" transform="translate(77.125,14.136)"/>
+		<circle r="10" fill="#000" transform="translate(66,64)"/>
+		<rect width="30" height="20" fill="#222" transform="translate(101,54)"/>
+		<rect width="30" height="20" fill="#444" transform="translate(82,93)"/>
+		<rect width="30" height="20" fill="#666" transform="translate(40,103)"/>
+		<rect width="30" height="20" fill="#888" transform="translate(6,76)"/>
+		<rect width="30" height="20" fill="#aaa" transform="translate(6,32)"/>
+		<rect width="30" height="20" fill="#bbb" transform="translate(40,5)"/>
+		<rect width="30" height="20" fill="#ccc" transform="translate(82,15)"/>
 	</g>
 </svg>

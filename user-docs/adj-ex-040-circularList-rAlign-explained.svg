@@ -4,22 +4,22 @@
 	<rect width="200" height="120" fill="linen"/>
 	<g>
 		<adj:circularList rAlign="inside" gap="2" explain="true"/>
-		<circle r="20" fill="#000" transform="translate(46.341,52.934)"/>
-		<rect width="3" height="3" fill="#222" transform="translate(77.247,51.434)"/>
-		<rect width="6" height="6" fill="#444" transform="translate(64.869,76.928)"/>
-		<rect width="9" height="9" fill="#666" transform="translate(33.686,84.163)"/>
-		<rect width="12" height="12" fill="#888" transform="translate(5.411,63.755)"/>
-		<rect width="15" height="15" fill="#aaa" transform="translate(2,27.692)"/>
-		<rect width="18" height="18" fill="#bbb" transform="translate(27.77,2)"/>
-		<rect width="21" height="21" fill="#ccc" transform="translate(63.982,7.147)"/>
-		<circle adj:explanation="true" cx="46.341" cy="52.934" r="59.983" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
-		<circle adj:explanation="true" cx="46.341" cy="52.934" r="28.284" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="78.747" cy="52.934" r="2.121" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="67.869" cy="79.928" r="4.243" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="38.186" cy="88.663" r="6.364" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="11.411" cy="69.755" r="8.485" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="9.5" cy="35.192" r="10.607" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="36.77" cy="11" r="12.728" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
-		<circle adj:explanation="true" cx="74.482" cy="17.647" r="14.849" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle r="20" fill="#000" transform="translate(48,54)"/>
+		<rect width="3" height="3" fill="#222" transform="translate(81,53)"/>
+		<rect width="6" height="6" fill="#444" transform="translate(67,79)"/>
+		<rect width="9" height="9" fill="#666" transform="translate(35,87)"/>
+		<rect width="12" height="12" fill="#888" transform="translate(6,65)"/>
+		<rect width="15" height="15" fill="#aaa" transform="translate(3,28)"/>
+		<rect width="18" height="18" fill="#bbb" transform="translate(29,2)"/>
+		<rect width="21" height="21" fill="#ccc" transform="translate(66,8)"/>
+		<circle adj:explanation="true" cx="48" cy="54" r="61" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="48" cy="54" r="29" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="82" cy="54" r="3" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="70.446" cy="82.146" r="5" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="39.544" cy="91.047" r="7" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="11.961" cy="71.355" r="9" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="10.159" cy="35.777" r="11" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="38.209" cy="11.103" r="13" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="76.681" cy="18.036" r="15" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
 	</g>
 </svg>

@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:12 };
+	Adj.version = { major:3, minor:5, revision:13 };
 	Adj.algorithms = {};
 }
 
@@ -2468,6 +2468,7 @@ Adj.algorithms.circularList = {
 			}
 			var boundingBox = child.getBBox();
 			var boundingCircle = Adj.circleAroundRect(boundingBox);
+			boundingCircle.r = Math.ceil(boundingCircle.r);
 			childRecords.push({
 				boundingBox: boundingBox,
 				boundingCircle: boundingCircle,
@@ -2509,7 +2510,7 @@ Adj.algorithms.circularList = {
 		}
 		// figure radius
 		var treeRadius = trunkRecord.boundingCircle.r + rGap + maxBranchRadius;
-		var necessaryRadius = (maxBranchRadius + cGap / 2) / Math.sin(Math.abs(angleStep) / 2 / 180 * Math.PI);
+		var necessaryRadius = Math.ceil((maxBranchRadius + cGap / 2) / Math.sin(Math.abs(angleStep) / 2 / 180 * Math.PI));
 		if (necessaryRadius > treeRadius) {
 			treeRadius = necessaryRadius;
 		}
@@ -2540,8 +2541,8 @@ Adj.algorithms.circularList = {
 				currentAngle += angleStep; // increment
 			}
 			// now we know where to put it
-			childRecord.translationX = placedChildCx - childBoundingCircle.cx;
-			childRecord.translationY = placedChildCy - childBoundingCircle.cy;
+			childRecord.translationX = Math.round(placedChildCx - childBoundingCircle.cx);
+			childRecord.translationY = Math.round(placedChildCy - childBoundingCircle.cy);
 			// figure how to fix up translations to be top left aligned
 			var childBoundingBox = childRecord.boundingBox;
 			var childBoundingBoxWidth = childBoundingBox.width;
@@ -2572,8 +2573,8 @@ Adj.algorithms.circularList = {
 			}
 		}
 		// how to fix up translations to be top left aligned
-		var topLeftAlignmentFixX = minPlacedChildBoundingBoxX - leftGap;
-		var topLeftAlignmentFixY = minPlacedChildBoundingBoxY - topGap;
+		var topLeftAlignmentFixX = Math.floor(minPlacedChildBoundingBoxX) - leftGap;
+		var topLeftAlignmentFixY = Math.floor(minPlacedChildBoundingBoxY) - topGap;
 		// then apply the respective translations, but fixed up translations to be top left aligned
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
@@ -2587,8 +2588,8 @@ Adj.algorithms.circularList = {
 		if (hiddenRect) {
 			hiddenRect.setAttribute("x", 0);
 			hiddenRect.setAttribute("y", 0);
-			hiddenRect.setAttribute("width", Adj.decimal(maxPlacedChildBoundingBoxX + rightGap - topLeftAlignmentFixX));
-			hiddenRect.setAttribute("height", Adj.decimal(maxPlacedChildBoundingBoxY + bottomGap - topLeftAlignmentFixY));
+			hiddenRect.setAttribute("width", Adj.decimal(Math.ceil(maxPlacedChildBoundingBoxX) + rightGap - topLeftAlignmentFixX));
+			hiddenRect.setAttribute("height", Adj.decimal(Math.ceil(maxPlacedChildBoundingBoxY) + bottomGap - topLeftAlignmentFixY));
 		}
 		//
 		// explain

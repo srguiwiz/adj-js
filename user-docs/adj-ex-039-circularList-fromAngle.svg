@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200.547" height="163.824">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="164">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="100" fill="linen"/>
 	<g>
-		<adj:circularList fromAngle="225" toAngle="315" cGap="5" horizontalGap="10" verticalGap="20"/>
-		<g transform="translate(100.274,143.824)"/>
-		<rect width="15" height="15" fill="#000" transform="translate(10,53.55)"/>
-		<rect width="15" height="15" fill="#222" transform="translate(30.494,37.206)"/>
-		<rect width="15" height="15" fill="#444" transform="translate(54.112,25.833)"/>
-		<rect width="15" height="15" fill="#666" transform="translate(79.668,20)"/>
-		<rect width="15" height="15" fill="#888" transform="translate(105.881,20)"/>
-		<rect width="15" height="15" fill="#aaa" transform="translate(131.437,25.833)"/>
-		<rect width="15" height="15" fill="#bbb" transform="translate(155.054,37.206)"/>
-		<rect width="15" height="15" fill="#ccc" transform="translate(175.548,53.55)"/>
+		<adj:circularList fromAngle="225" toAngle="315" cGap="4" horizontalGap="5" verticalGap="20"/>
+		<g transform="translate(96,144)"/>
+		<rect width="15" height="15" fill="#000" transform="translate(6,54)"/>
+		<rect width="15" height="15" fill="#222" transform="translate(26,37)"/>
+		<rect width="15" height="15" fill="#444" transform="translate(50,26)"/>
+		<rect width="15" height="15" fill="#666" transform="translate(75,20)"/>
+		<rect width="15" height="15" fill="#888" transform="translate(102,20)"/>
+		<rect width="15" height="15" fill="#aaa" transform="translate(127,26)"/>
+		<rect width="15" height="15" fill="#bbb" transform="translate(151,37)"/>
+		<rect width="15" height="15" fill="#ccc" transform="translate(171,54)"/>
 	</g>
 </svg>
