@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:14 };
+	Adj.version = { major:3, minor:5, revision:15 };
 	Adj.algorithms = {};
 }
 
@@ -2503,7 +2503,7 @@ Adj.algorithms.circularList = {
 		toAngle = fromAngle + angleCovered;
 		var numberOfSteps = fullCircle ? numberOfBranches : numberOfBranches - 1;
 		var angleStep;
-		if (numberOfSteps > 1) {
+		if (numberOfSteps >= 1) {
 			angleStep = angleCovered / numberOfSteps;
 		} else {
 			angleStep = 180; // defensive default for later /sin(angleStep/2)
