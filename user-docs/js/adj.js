@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:13 };
+	Adj.version = { major:3, minor:5, revision:14 };
 	Adj.algorithms = {};
 }
 
@@ -4735,13 +4735,13 @@ Adj.algorithms.tilt = {
 }
 
 // a specific algorithm
-Adj.algorithms.set = {
+Adj.algorithms.skimpyList = {
 	phaseHandlerName: "adjPhase1Up",
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap"],
-	method: function set (element, parametersObject) {
-		var usedHow = "used in a parameter for a horizontalList command";
+	method: function skimpyList (element, parametersObject) {
+		var usedHow = "used in a parameter for a skimpyList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
 		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
@@ -4751,11 +4751,80 @@ Adj.algorithms.set = {
 		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		//
-		var boundingBox = element.getBBox();
-		var minLeft = boundingBox.x;
-		var minTop = boundingBox.y;
-		var maxRight = minLeft + boundingBox.width;
-		var maxBottom = minTop + boundingBox.height;
+		// determine which nodes to process,
+		// children that are instances of SVGElement rather than every DOM node,
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
+		var childRecords = [];
+		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
+			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
+			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			childRecords.push({
+				boundingBox: child.getBBox(),
+				node: child
+			});
+		}
+		//
+		// process
+		var minLeft = undefined;
+		var minTop = undefined;
+		var maxRight = undefined;
+		var maxBottom = undefined;
+		childRecordsLoop: for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var childBoundingBox = childRecord.boundingBox;
+			var currentChildX = childBoundingBox.x;
+			var currentChildY = childBoundingBox.y;
+			var currentChildXW = currentChildX + childBoundingBox.width;
+			var currentChildYH = currentChildY + childBoundingBox.height;
+			if (minLeft != undefined) {
+				if (currentChildX < minLeft) {
+					minLeft = currentChildX;
+				}
+			} else {
+				minLeft = currentChildX;
+			}
+			if (minTop != undefined) {
+				if (currentChildY < minTop) {
+					minTop = currentChildY;
+				}
+			} else {
+				minTop = currentChildY;
+			}
+			if (maxRight != undefined) {
+				if (currentChildXW > maxRight) {
+					maxRight = currentChildXW;
+				}
+			} else {
+				maxRight = currentChildXW;
+			}
+			if (maxBottom != undefined) {
+				if (currentChildYH > maxBottom) {
+					maxBottom = currentChildYH;
+				}
+			} else {
+				maxBottom = currentChildYH;
+			}
+		}
+		minLeft = minLeft ? minLeft : 0;
+		minTop = minTop ? minTop : 0;
+		maxRight = maxRight ? maxRight : 0;
+		maxBottom = maxBottom ? maxBottom : 0;
 		minLeft -= leftGap;
 		minTop -= topGap;
 		maxRight += rightGap;
@@ -4763,16 +4832,19 @@ Adj.algorithms.set = {
 		// now we know where to put it
 		var translationX = -minLeft;
 		var translationY = -minTop;
-		element.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		childRecordsLoop: for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var child = childRecord.node;
+			child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		}
 		//
 		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
-		var hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
-		hiddenRect.setAttribute("x", minLeft);
-		hiddenRect.setAttribute("y", minTop);
-		hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
-		hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
-		hiddenRect.setAttribute("visibility", "hidden");
-		element.insertBefore(hiddenRect, element.firstChild);
+		if (hiddenRect) {
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
+			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
+		}
 	}
 }
 

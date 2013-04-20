@@ -2,8 +2,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="100">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="100" fill="linen"/>
-	<g adj:command="set" transform="translate(33,23)">
-		<rect x="-30" y="-20" width="80" height="30" stroke="black" stroke-width="1" fill="#666"/>
-		<rect x="30" y="20" width="80" height="30" stroke="black" stroke-width="1" fill="#aaa"/>
+	<g adj:command="skimpyList">
+		<rect x="-30" y="-20" width="80" height="30" stroke="black" stroke-width="1" fill="#666" transform="translate(33,23)"/>
+		<rect x="30" y="20" width="80" height="30" stroke="black" stroke-width="1" fill="#aaa" transform="translate(33,23)"/>
 	</g>
 </svg>

@@ -126,7 +126,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
           <li><a href="#L7602">1.12.1. Option explain</a></li>
           <li><a href="#L2422">1.12.2. Command explain</a></li>
           <li><a href="#L7627">1.12.3. Command relativate</a></li>
-          <li><a href="#L2936">1.12.4. Command set</a></li>
+          <li><a href="#L2936">1.12.4. Command skimpyList</a></li>
         </ul>
       </li>
       <li><a href="#L1780">1.13. Referencing By Identifier Attribute</a> 
@@ -684,10 +684,12 @@ stored away for reuse by authors and algorithms:</p>
       <td><img alt="example" src="adj-ex-066-tilt.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;g adj:command="set"&gt;
-    &lt;rect width="50" height="70" stroke="black" stroke-width="1" fill="#888"&gt;
-      <span class="example-code">&lt;adj:<a href="#L2672">tilt</a> alpha="15"/&gt;</span>
-    &lt;/rect&gt;
+  &lt;g adj:command="skimpyList"&gt;
+    &lt;g&gt;
+      &lt;rect width="50" height="70" stroke="black" stroke-width="1" fill="#888"&gt;
+        <span class="example-code">&lt;adj:<a href="#L2672">tilt</a> alpha="15"/&gt;</span>
+      &lt;/rect&gt;
+    &lt;/g&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -1998,10 +2000,12 @@ href="#L12321">frameForParent</a></code>.</p>
       <td><img alt="example" src="adj-ex-067-tilt-beta.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;g adj:command="set"&gt;
-    &lt;rect width="90" height="60" stroke="black" stroke-width="1" fill="#888"&gt;
-      <span class="example-code">&lt;adj:tilt alpha="15" beta="10"/&gt;</span>
-    &lt;/rect&gt;
+  &lt;g adj:command="skimpyList"&gt;
+    &lt;g&gt;
+      &lt;rect width="90" height="60" stroke="black" stroke-width="1" fill="#888"&gt;
+        <span class="example-code">&lt;adj:tilt alpha="15" beta="10"/&gt;</span>
+      &lt;/rect&gt;
+    &lt;/g&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -2195,22 +2199,24 @@ command <code>explain</code> inserts explanatory elements for an SVG
 <p>Command <code>relativate</code> converts the coordinates of a path into
 relative coordinates. Can be useful when editing.</p>
 
-<h4 id="L2936">1.12.4. Command set</h4>
+<h4 id="L2936">1.12.4. Command skimpyList</h4>
 
-<p>Command <code>set</code> is a shim to align to <code>0,0</code> the top left
-corner of an Adj modified SVG element which has no further Adj modified SVG
-ancestors. Its use may be easier to comprehend or less verbose than would be a
-similar but different use of <code><a href="#L7357">horizontalList</a></code>
-for a single element. Can be useful when top left corner coordinates are not
-easily known at the time of authoring, e.g. when using <code>tilt</code>.</p>
+<p>Command <code>skimpyList</code> may be easier to comprehend than would be
+similar use of <code><a href="#L7357">horizontalList</a></code> for a single
+element. One use may be to align to <code>0,0</code> the top left corner of an
+Adj modified SVG element which has no further Adj modified SVG ancestors. Can
+be useful when top left corner coordinates are not easily known at the time of
+authoring, e.g. when using <code>tilt</code>.</p>
+
+<p>Slightly different for multiple elements.</p>
 
 <table border="1">
   <tbody>
     <tr>
-      <td><img alt="example" src="adj-ex-068-set.svg"></img></td>
+      <td><img alt="example" src="adj-ex-068-skimpyList.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;g <span class="example-code">adj:command="set"</span>&gt;
+  &lt;g <span class="example-code">adj:command="skimpyList"</span>&gt;
     &lt;rect x="-30" y="-20" width="80" height="30" stroke="black" stroke-width="1" fill="#666"/&gt;
     &lt;rect x="30" y="20" width="80" height="30" stroke="black" stroke-width="1" fill="#aaa"/&gt;
   &lt;/g&gt;
@@ -2218,10 +2224,10 @@ easily known at the time of authoring, e.g. when using <code>tilt</code>.</p>
       </td>
     </tr>
     <tr>
-      <td><img alt="example" src="adj-ex-069-set-gap.svg"></img></td>
+      <td><img alt="example" src="adj-ex-069-skimpyList-gap.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
-  &lt;g <span class="example-code">adj:command="set" adj:gap="10"</span>&gt;
+  &lt;g <span class="example-code">adj:command="skimpyList" adj:gap="10"</span>&gt;
     &lt;rect adj:command="frameForParent" fill="none" stroke="black" stroke-width="1" width="60" height="40"/&gt;
     &lt;rect x="-30" y="-20" width="80" height="30" stroke="black" stroke-width="1" fill="#666"/&gt;
     &lt;rect x="30" y="20" width="80" height="30" stroke="black" stroke-width="1" fill="#aaa"/&gt;
