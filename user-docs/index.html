@@ -119,6 +119,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
           <li><a href="#L2518">1.11.15. Command stackFrames Options</a></li>
           <li><a href="#L2604">1.11.16. Command zoomFrames Options</a></li>
           <li><a href="#L2672">1.11.17. Command tilt Options</a></li>
+          <li><a href="#L2717">1.11.18. Command pinnedList Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -688,6 +689,31 @@ stored away for reuse by authors and algorithms:</p>
     &lt;g&gt;
       &lt;rect width="50" height="70" stroke="black" stroke-width="1" fill="#888"&gt;
         <span class="example-code">&lt;adj:<a href="#L2672">tilt</a> alpha="15"/&gt;</span>
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-070-pinnedList.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:<a href="#L2717">pinnedList</a>/&gt;</span>
+    &lt;g&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#aaa" adj:id="top"&gt;
+        &lt;adj:tilt alpha="30" beta="60"/&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:pinThis="front % 0.5, 0.0" adj:pinTo="top % 0.5, 1.0"</span>&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#888" adj:id="front"&gt;
+        &lt;adj:tilt alpha="30"/&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:pinThis="side % 0.5, 0.0" adj:pinTo="top % 1.0, 0.5"</span>&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#666" adj:id="side"&gt;
+        &lt;adj:tilt alpha="-30"/&gt;
       &lt;/rect&gt;
     &lt;/g&gt;
   &lt;/g&gt;
@@ -2013,6 +2039,70 @@ href="#L12321">frameForParent</a></code>.</p>
   </tbody>
 </table>
 
+<h4 id="L2717">1.11.18. Command pinnedList Options</h4>
+
+<p>Different than for other lists, for <code>pinnedList</code> respective
+placement parameters <code>pinThis</code> and <code>pinTo</code> are found
+within individual elements of the list. By allowing pinning to hinge on
+elements further nested inside elements of the list, this works great for
+isometric drawings.</p>
+
+<p>Optional parameters of <code>pinnedList</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-070-pinnedList.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:pinnedList/&gt;</span>
+    &lt;g&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#aaa" adj:id="top"&gt;
+        &lt;adj:tilt alpha="30" beta="60"/&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:pinThis="front % 0.5, 0.0" adj:pinTo="top % 0.5, 1.0"</span>&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#888" adj:id="front"&gt;
+        &lt;adj:tilt alpha="30"/&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:pinThis="side % 0.5, 0.0" adj:pinTo="top % 1.0, 0.5"</span>&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#666" adj:id="side"&gt;
+        &lt;adj:tilt alpha="-30"/&gt;
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-071-pinnedList-gap.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g <span class="example-code">adj:command="pinnedList" adj:gap="10"</span>&gt;
+    &lt;g&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#aaa" adj:tilt="true" adj:alpha="30" adj:beta="60" adj:id="top"/&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:pinThis="front % 0.5, 0.0" adj:pinTo="top % 0.5, 1.0"</span>&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#888" adj:tilt="true" adj:alpha="30" adj:id="front"/&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:pinThis="side % 0.5, 0.0" adj:pinTo="top % 1.0, 0.5"</span>&gt;
+      &lt;rect width="40" height="40" stroke="black" stroke-width="1" fill="#666" adj:tilt="true" adj:alpha="30" adj:id="side"/&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Optional parameters <code>gap</code>, <code>horizontalGap</code>,
+<code>leftGap</code>, <code>rightGap</code>, <code>verticalGap</code>,
+<code>topGap</code>, <code>bottomGap</code> are equivalent to optional
+parameters of <code><a href="#L7357">horizontalList</a></code>, yet effecting
+padding for the whole list only rather than between elements.</p>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -2241,7 +2331,8 @@ authoring, e.g. when using <code>tilt</code>.</p>
 <p>Optional parameters <code>gap</code>, <code>horizontalGap</code>,
 <code>leftGap</code>, <code>rightGap</code>, <code>verticalGap</code>,
 <code>topGap</code>, <code>bottomGap</code> are equivalent to optional
-parameters of <code><a href="#L7357">horizontalList</a></code>.</p>
+parameters of <code><a href="#L7357">horizontalList</a></code>, yet effecting
+padding for the whole list only rather than between elements.</p>
 
 <h3 id="L1780">1.13. Referencing By Identifier Attribute</h3>
 

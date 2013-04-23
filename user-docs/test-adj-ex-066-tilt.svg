@@ -5,7 +5,7 @@
 	<rect width="200" height="100" fill="linen"/>
 	<g adj:command="skimpyList">
 		<g transform="translate(3,3)">
-			<rect width="50" height="70" stroke="black" stroke-width="1" fill="#888" transform="matrix(0.966,0.259,0,1,0,0)">
+			<rect width="50" height="70" stroke="black" stroke-width="1" fill="#888">
 				<adj:tilt alpha="15"/>
 			</rect>
 		</g>

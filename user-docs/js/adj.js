@@ -49,7 +49,7 @@
 // the singleton
 if (typeof Adj == "undefined") {
 	Adj = {};
-	Adj.version = { major:3, minor:5, revision:15 };
+	Adj.version = { major:3, minor:5, revision:16 };
 	Adj.algorithms = {};
 }
 
@@ -4845,6 +4845,215 @@ Adj.algorithms.skimpyList = {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
 			child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		}
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		if (hiddenRect) {
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
+			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
+		}
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.pinnedList = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "rightGap",
+				 "verticalGap", "topGap", "bottomGap"],
+	method: function pinnedList (element, parametersObject) {
+		var usedHow = "used in a parameter for a pinnedList command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		//
+		// determine which nodes to process,
+		// children that are instances of SVGElement rather than every DOM node,
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
+		var childRecords = [];
+		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
+			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
+			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			childRecords.push({
+				boundingBox: child.getBBox(),
+				node: child
+			});
+		}
+		//
+		// process
+		var minLeft = undefined;
+		var minTop = undefined;
+		var maxRight = undefined;
+		var maxBottom = undefined;
+		var placedYetChilds = [];
+		childRecordsLoop: for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var childBoundingBox = childRecord.boundingBox;
+			var child = childRecord.node;
+			var childIndex = childRecord.index;
+			//
+			var currentChildX = childBoundingBox.x;
+			var currentChildY = childBoundingBox.y;
+			var currentChildXW = currentChildX + childBoundingBox.width;
+			var currentChildYH = currentChildY + childBoundingBox.height;
+			//
+			var pinThisParameter = child.getAttributeNS(Adj.AdjNamespace, "pinThis");
+			var pinToParameter = child.getAttributeNS(Adj.AdjNamespace, "pinTo");
+			if (pinThisParameter || pinToParameter) { // this child to be pinned
+				if (childRecordIndex < 1) {
+					throw "cannot pin first element inside a pinnedList";
+				}
+				var pinThisElement;
+				var pinThisX;
+				var pinThisY;
+				var pinToElement;
+				var pinToX;
+				var pinToY;
+				var childLevel = Adj.elementLevel(child);
+				var pinThisSibling;
+				if (pinThisParameter) {
+					var pinThisMatch = Adj.idXYRegexp.exec(pinThisParameter);
+					var pinThisId = pinThisMatch[1];
+					pinThisX = pinThisMatch[2] ? parseFloat(pinThisMatch[2]) : 0.5; // default pinThisX = 0.5
+					pinThisY = pinThisMatch[3] ? parseFloat(pinThisMatch[3]) : 0.0; // default pinThisY = 0.0
+					pinThisElement = Adj.getElementByIdNearby(pinThisId, child);
+					if (!pinThisElement) {
+						throw "nonresolving id \"" + pinThisId + "\" used in attribute adj:pinThis= of an element inside a pinnedList";
+					}
+					var pinThisElementLevel = Adj.elementLevel(pinThisElement);
+					pinThisSibling = pinThisElement;
+					for (var l = pinThisElementLevel; l > childLevel; l--) {
+						pinThisSibling = pinThisSibling.parentNode;
+					}
+					if (pinThisSibling != child) {
+						throw "non-contained id \"" + pinThisId + "\" used in attribute adj:pinThis= of an element inside a pinnedList";
+					}
+				} else {
+					pinThisSibling = pinThisElement = child; // default this child itself
+					pinThisX = 0.5; // default pinThisX = 0.5
+					pinThisY = 0.0; // default pinThisY = 0.0
+				}
+				var pinToSibling;
+				if (pinToParameter) {
+					var pinToMatch = Adj.idXYRegexp.exec(pinToParameter);
+					var pinToId = pinToMatch[1];
+					pinToX = pinToMatch[2] ? parseFloat(pinToMatch[2]) : 0.5; // default pinToX = 0.5
+					pinToY = pinToMatch[3] ? parseFloat(pinToMatch[3]) : 1.0; // default pinToY = 1.0
+					pinToElement = Adj.getElementByIdNearby(pinToId, child);
+					if (!pinToElement) {
+						throw "nonresolving id \"" + pinToId + "\" used in attribute adj:pinTo= of an element inside a pinnedList";
+					}
+					var pinToElementLevel = Adj.elementLevel(pinToElement);
+					pinToSibling = pinToElement;
+					for (var l = pinToElementLevel; l > childLevel; l--) {
+						pinToSibling = pinToSibling.parentNode;
+					}
+					var pinToSiblingIndex = placedYetChilds.indexOf(pinToSibling);
+					if (pinToSiblingIndex == -1) {
+						throw "non-preceding id \"" + pinToId + "\" used in attribute adj:pinTo= of an element inside a pinnedList";
+					}
+				} else {
+					pinToSibling = pinToElement = childRecords[childRecordIndex - 1]; // default previous child
+					pinToX = 0.5; // default pinToX = 0.5
+					pinToY = 1.0; // default pinToY = 1.0
+				}
+				//
+				var pinToBoundingBox = pinToElement.getBBox();
+				var matrixFromPinToElement = pinToElement.getTransformToElement(pinToSibling);
+				var pinToPoint = document.documentElement.createSVGPoint();
+				pinToPoint.x = pinToBoundingBox.x + pinToBoundingBox.width * pinToX;
+				pinToPoint.y = pinToBoundingBox.y + pinToBoundingBox.height * pinToY;
+				pinToPoint = pinToPoint.matrixTransform(matrixFromPinToElement);
+				//
+				var pinThisBoundingBox = pinThisElement.getBBox();
+				var matrixFromPinThisElement = pinThisElement.getTransformToElement(pinThisSibling);
+				var pinThisPoint = document.documentElement.createSVGPoint();
+				pinThisPoint.x = pinThisBoundingBox.x + pinThisBoundingBox.width * pinThisX;
+				pinThisPoint.y = pinThisBoundingBox.y + pinThisBoundingBox.height * pinThisY;
+				pinThisPoint = pinThisPoint.matrixTransform(matrixFromPinThisElement);
+				//
+				var pinTranslationX = pinToPoint.x - pinThisPoint.x;
+				var pinTranslationY = pinToPoint.y - pinThisPoint.y;
+				childRecord.pinTranslationX = pinTranslationX;
+				childRecord.pinTranslationY = pinTranslationY;
+				childRecord.pinned = true;
+				//
+				currentChildX += pinTranslationX;
+				currentChildY += pinTranslationY;
+			}
+			//
+			if (minLeft != undefined) {
+				if (currentChildX < minLeft) {
+					minLeft = currentChildX;
+				}
+			} else {
+				minLeft = currentChildX;
+			}
+			if (minTop != undefined) {
+				if (currentChildY < minTop) {
+					minTop = currentChildY;
+				}
+			} else {
+				minTop = currentChildY;
+			}
+			if (maxRight != undefined) {
+				if (currentChildXW > maxRight) {
+					maxRight = currentChildXW;
+				}
+			} else {
+				maxRight = currentChildXW;
+			}
+			if (maxBottom != undefined) {
+				if (currentChildYH > maxBottom) {
+					maxBottom = currentChildYH;
+				}
+			} else {
+				maxBottom = currentChildYH;
+			}
+			placedYetChilds.push(child);
+		}
+		minLeft = minLeft ? minLeft : 0;
+		minTop = minTop ? minTop : 0;
+		maxRight = maxRight ? maxRight : 0;
+		maxBottom = maxBottom ? maxBottom : 0;
+		minLeft -= leftGap;
+		minTop -= topGap;
+		maxRight += rightGap;
+		maxBottom += bottomGap;
+		// now we know where to put it
+		var translationX = -minLeft;
+		var translationY = -minTop;
+		childRecordsLoop: for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var child = childRecord.node;
+			if (childRecord.pinned) {
+				child.setAttribute("transform", "translate(" + Adj.decimal(translationX + childRecord.pinTranslationX) + "," + Adj.decimal(translationY + childRecord.pinTranslationY) + ")");
+			} else {
+				child.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+			}
 		}
 		//
 		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
