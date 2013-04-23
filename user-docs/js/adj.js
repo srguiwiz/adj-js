@@ -1574,11 +1574,19 @@ Adj.algorithms.connection = {
 	method: function connection (element, parametersObject) {
 		var usedHow = "used in a parameter for a connection command";
 		var variableSubstitutionsByName = {};
-		var fromMatch = Adj.idXYRegexp.exec(parametersObject.from);
+		var fromParameter = parametersObject.from;
+		if (!fromParameter) {
+			throw "missing parameter from= for a connection command";
+		}
+		var fromMatch = Adj.idXYRegexp.exec(fromParameter);
 		var fromId = fromMatch[1];
 		var fromX = fromMatch[2] ? parseFloat(fromMatch[2]) : 0.5; // default fromX = 0.5
 		var fromY = fromMatch[3] ? parseFloat(fromMatch[3]) : 0.5; // default fromY = 0.5
-		var toMatch = Adj.idXYRegexp.exec(parametersObject.to);
+		var toParameter = parametersObject.to;
+		if (!toParameter) {
+			throw "missing parameter to= for a connection command";
+		}
+		var toMatch = Adj.idXYRegexp.exec(toParameter);
 		var toId = toMatch[1];
 		var toX = toMatch[2] ? parseFloat(toMatch[2]) : 0.5; // default toX = 0.5
 		var toY = toMatch[3] ? parseFloat(toMatch[3]) : 0.5; // default toY = 0.5
