@@ -285,6 +285,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 			case "rider":
 			case "floater":
 			case "fit":
+			case "tilt":
 			case "explain":
 				// these commands can coexist with another command,
 				// though only some combinations make sense, while others cause conflicts,
