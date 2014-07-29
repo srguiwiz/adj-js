@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2002-2013, Nirvana Research
+// Copyright (c) 2002-2014, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -645,7 +645,7 @@ Adj.algorithms.horizontalList = {
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxWidth = null means no limit
 		var maxPerRow = Adj.doVarsArithmetic(element, parametersObject.maxPerRow, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerRow = null means no limit
-		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // makeGrid explain = false
+		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // default makeGrid = false
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
 		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
