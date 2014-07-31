@@ -139,6 +139,10 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 		element.adjNotAnOrder1Element = true;
 		Adj.hideByDisplayAttribute(element);
 	}
+	if (algorithm.hiddenByCommand) {
+		element.adjHiddenByCommand = true;
+		Adj.hideByDisplayAttribute(element);
+	}
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
 		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
 	}
@@ -255,6 +259,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjProcessSubtreeOnlyInPhaseHandler;
 	//delete node.adjPlacementArtifact; // probably safe not to delete, element should be gone
 	delete node.adjNotAnOrder1Element;
+	delete node.adjHiddenByCommand;
 	//delete node.adjPermanentArtifact; // probably safe not to delete, element should be gone
 	//delete node.adjExplanationArtifact; // probably safe not to delete, element should be gone
 	//delete node.adjRemoveElement; // probably safe not to delete, element should be gone
@@ -286,6 +291,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 			case "floater":
 			case "fit":
 			case "tilt":
+			case "hide":
 			case "explain":
 				// these commands can coexist with another command,
 				// though only some combinations make sense, while others cause conflicts,
@@ -445,6 +451,9 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 		}
 		if (!child.getBBox) {
 			continue; // skip if not an SVGLocatable, e.g. a <script> element
+		}
+		if (child.adjHiddenByCommand) {
+			continue; // skip
 		}
 		Adj.walkNodes(child, phaseName, false, level + 1); // recursion
 	}
@@ -673,6 +682,9 @@ Adj.algorithms.horizontalList = {
 			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
+			if (child.adjHiddenByCommand) {
+				continue;
+			}
 			childRecords.push({
 				boundingBox: child.getBBox(),
 				node: child
@@ -885,6 +897,9 @@ Adj.algorithms.verticalList = {
 				element.insertBefore(hiddenRect, child);
 			}
 			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			if (child.adjHiddenByCommand) {
 				continue;
 			}
 			childRecords.push({
@@ -1848,6 +1863,9 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 		if (sibling.adjNotAnOrder1Element) {
 			continue;
 		}
+		if (sibling.adjHiddenByCommand) {
+			continue;
+		}
 		if (sibling.adjExplanationArtifact) {
 			continue;
 		}
@@ -2475,6 +2493,9 @@ Adj.algorithms.circularList = {
 			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
+			if (child.adjHiddenByCommand) {
+				continue;
+			}
 			var boundingBox = child.getBBox();
 			var boundingCircle = Adj.circleAroundRect(boundingBox);
 			boundingCircle.r = Math.ceil(boundingCircle.r);
@@ -2680,6 +2701,9 @@ Adj.algorithms.verticalTree = {
 				element.insertBefore(hiddenRect, child);
 			}
 			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			if (child.adjHiddenByCommand) {
 				continue;
 			}
 			var childBoundingBox = child.getBBox();
@@ -3232,6 +3256,9 @@ Adj.algorithms.horizontalTree = {
 				element.insertBefore(hiddenRect, child);
 			}
 			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			if (child.adjHiddenByCommand) {
 				continue;
 			}
 			var childBoundingBox = child.getBBox();
@@ -4783,6 +4810,9 @@ Adj.algorithms.skimpyList = {
 			if (child.adjNotAnOrder1Element) {
 				continue;
 			}
+			if (child.adjHiddenByCommand) {
+				continue;
+			}
 			childRecords.push({
 				boundingBox: child.getBBox(),
 				node: child
@@ -4895,6 +4925,9 @@ Adj.algorithms.pinnedList = {
 				element.insertBefore(hiddenRect, child);
 			}
 			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			if (child.adjHiddenByCommand) {
 				continue;
 			}
 			childRecords.push({
@@ -5063,6 +5096,15 @@ Adj.algorithms.pinnedList = {
 			hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
 			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
 		}
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.hide = {
+	hiddenByCommand: true,
+	phaseHandlerName: "adjPhase1Down",
+	parameters: [],
+	method: function hide (element, parametersObject) {
 	}
 }
 
