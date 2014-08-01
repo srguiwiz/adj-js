@@ -5105,6 +5105,7 @@ Adj.algorithms.hide = {
 	phaseHandlerName: "adjPhase1Down",
 	parameters: [],
 	method: function hide (element, parametersObject) {
+		// actual hiding done in Adj.setAlgorithm, for now
 	}
 }
 

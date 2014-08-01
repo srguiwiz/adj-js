@@ -92,6 +92,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
         <ul>
           <li><a href="#L378">1.9.1. Applying Transformations</a></li>
           <li><a href="#L443">1.9.2. Storing Away Authoring Coordinates</a></li>
+          <li><a href="#L61380">1.9.3. Storing Away Original Attributes</a></li>
         </ul>
       </li>
       <li><a href="#L7202">1.10. Command Overview</a></li>
@@ -120,6 +121,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
           <li><a href="#L2604">1.11.16. Command zoomFrames Options</a></li>
           <li><a href="#L2672">1.11.17. Command tilt Options</a></li>
           <li><a href="#L2717">1.11.18. Command pinnedList Options</a></li>
+          <li><a href="#L94550">1.11.19. Command hide Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -142,7 +144,12 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
       <li><a href="#L2629">1.14. Substitution Of Variables</a></li>
       <li><a href="#L2572">1.15. Issuing Commands Via adj: Attributes Instead
         Of Via adj: Elements</a></li>
-      <li><a href="#L2579">1.16. Command Combinations</a></li>
+      <li><a href="#L2579">1.16. Command Combinations</a> 
+        <ul>
+          <li><a href="#L14093">1.16.1. Command Combinations Via adj:
+            Attributes Instead Of Via adj: Elements</a></li>
+        </ul>
+      </li>
       <li><a href="#L1888">1.17. Complete Authoring Workflow</a></li>
       <li><a href="#L6329">1.18. Invocation</a> 
         <ul>
@@ -216,7 +223,7 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
 <h2 id="L7142">1. User Guide</h2>
 
 <h3 id="L4238">1.1. Modified BSD License</h3>
-<pre class="deemphasize">// Copyright (c) 2002-2013, Nirvana Research
+<pre class="deemphasize">// Copyright (c) 2002-2014, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -396,6 +403,12 @@ stored away for reuse by authors and algorithms:</p>
     </tr>
   </tbody>
 </table>
+
+<h4 id="L61380">1.9.3. Storing Away Original Attributes</h4>
+
+<p>With some modifications, original attributes are stored away for reuse by
+algorithms. E.g. SVG attribute <code>display</code> may be stored away in an
+attribute <code>adj:originalDisplay</code>.</p>
 
 <h3 id="L7202">1.10. Command Overview</h3>
 
@@ -716,6 +729,19 @@ stored away for reuse by authors and algorithms:</p>
         &lt;adj:tilt alpha="-30"/&gt;
       &lt;/rect&gt;
     &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-072-hide.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:horizontalList gap="5"/&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444" <span class="example-code">adj:<a href="#L94550">hide</a>="true"</span>/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -2103,6 +2129,28 @@ isometric drawings.</p>
 parameters of <code><a href="#L7357">horizontalList</a></code>, yet effecting
 padding for the whole list only rather than between elements.</p>
 
+<h4 id="L94550">1.11.19. Command hide Options</h4>
+
+<p>Command <code>hide</code> has no options:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-072-hide.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:horizontalList gap="5"/&gt;
+    &lt;rect width="45" height="30" fill="#000"/&gt;
+    &lt;rect width="40" height="25" fill="#444" <span class="example-code">adj:hide="true"</span>/&gt;
+    &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -2614,9 +2662,8 @@ foreseeable future.</p>
   <tbody>
     <tr>
       <td><p><code>adj:</code> elements<br />
-        </p>
-
-        <p>original, still OK to write this way</p>
+        <br />
+        original, still OK to write this way</p>
       </td>
       <td><pre class="example-listing">&lt;g&gt;
   <span class="example-code">&lt;adj:verticalList hAlign="center"/&gt;</span>
@@ -2677,6 +2724,61 @@ class="emphasize">no</span> sense to combine <code>vine</code> and
 <p>There is no complete list. Factual <a href="#L4276">feedback</a> about
 noteworthy combinations, maybe example files, from authors using Adj is
 welcome.</p>
+
+<h4 id="L14093">1.16.1. Command Combinations Via adj: Attributes Instead Of Via
+adj: Elements</h4>
+
+<p>Commands <code>textBreaks</code>, <code>rider</code>, <code>floater</code>,
+<code>fit</code>, <code>tilt</code>, <code>hide</code>, and
+<code>explain</code> instead of being written e.g. as
+<code>adj:command="textBreaks"</code> alternatively can be written as
+<code>adj:textBreaks="true"</code>.</p>
+
+<p>This allows command combinations via <code>adj:</code> attributes, as shown
+by example:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><p><code>adj:</code> elements<br />
+        <br />
+        original, still OK to write this way</p>
+      </td>
+      <td><pre class="example-listing">&lt;g&gt;
+  <span class="example-code">&lt;adj:verticalList/&gt;</span>
+  <span class="example-code">&lt;adj:textBreaks/&gt;</span>
+  &lt;text&gt;line one
+line two&lt;/text&gt;
+&lt;/g&gt;</pre>
+      </td>
+    </tr>
+    <tr>
+      <td><code>adj:</code> attribute and element<br />
+        <br />
+        OK to write</td>
+      <td><pre class="example-listing">&lt;g <span class="example-code">adj:command="verticalList"</span>&gt;
+  <span class="example-code">&lt;adj:textBreaks/&gt;</span>
+  &lt;text&gt;line one
+line two&lt;/text&gt;
+&lt;/g&gt;</pre>
+      </td>
+    </tr>
+    <tr>
+      <td><code>adj:</code> attributes only<br />
+        <br />
+        newest, OK to write</td>
+      <td><pre class="example-listing">&lt;g <span class="example-code">adj:command="verticalList" adj:textBreaks="true"</span>&gt;
+  &lt;text&gt;line one
+line two&lt;/text&gt;
+&lt;/g&gt;</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This alleviates the fact it is not possible to combine two
+<code>adj:command</code> attributes as such for a single element, as in XML an
+attribute name must not appear more than once in the same element.</p>
 
 <h3 id="L1888">1.17. Complete Authoring Workflow</h3>
 
