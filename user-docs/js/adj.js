@@ -1847,7 +1847,7 @@ Adj.addElementToAvoid = function addElementToAvoid (avoidList, element) {
 // utility
 Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 	var parent = element.parentNode;
-	for (var sibling = parent.firstChild, index = 0; sibling; sibling = sibling.nextSibling) {
+	for (var sibling = parent.firstChild; sibling; sibling = sibling.nextSibling) {
 		if (!(sibling instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
 		}
@@ -5107,6 +5107,67 @@ Adj.algorithms.hide = {
 	method: function hide (element, parametersObject) {
 		// actual hiding done in Adj.setAlgorithm, for now
 	}
+}
+
+// utility
+Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element, hide, doDoc) {
+	console.log("hideUnhideSiblingsFollowing " + hide);
+	switch (hide) {
+		case "hide":
+		case "unhide":
+		case "toggle":
+			break;
+		default:
+			hide = "unhide";
+	}
+	var parent = element.parentNode;
+	var following = false;
+	for (var sibling = parent.firstChild; sibling; sibling = sibling.nextSibling) {
+		if (!(sibling instanceof SVGElement)) {
+			continue; // skip if not an SVGElement, e.g. an XML #text
+		}
+		if (!sibling.getBBox) {
+			continue; // skip if not an SVGLocatable, e.g. a <script> element
+		}
+		if (sibling == element) {
+			following = true;
+			continue; // don't hide self
+		}
+		if (sibling.adjPlacementArtifact) {
+			continue;
+		}
+		// different than other algorithms, don't skip sibling.adjNotAnOrder1Element
+		// different than other algorithms, don't skip sibling.adjHiddenByCommand
+		if (sibling.adjExplanationArtifact) {
+			continue;
+		}
+		//
+		// process
+		if (hide == "toggle") { // only possible at first sibling following
+			if (sibling.adjHiddenByCommand) {
+				hide = "unhide";
+			} else {
+				hide = "hide";
+			}
+		}
+		if (hide == "hide") {
+			sibling.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(sibling, Adj.AdjNamespace, "hide"), "true");
+		} else { // "unhide"
+			sibling.removeAttributeNS(Adj.AdjNamespace, "hide");
+		}
+	}
+	if (doDoc) {
+		Adj.doDoc();
+	}
+}
+Adj.hideSiblingsFollowing = function hideSiblingsFollowing (element, doDoc) {
+	Adj.hideUnhideSiblingsFollowing(element, "hide", doDoc);
+}
+Adj.unhideSiblingsFollowing = function unhideSiblingsFollowing (element, doDoc) {
+	Adj.hideUnhideSiblingsFollowing(element, "unhide", doDoc);
+}
+Adj.toggleSiblingsFollowing = function toggleSiblingsFollowing (element, doDoc) {
+	Adj.hideUnhideSiblingsFollowing(element, "toggle", doDoc);
 }
 
 // visual exception display
