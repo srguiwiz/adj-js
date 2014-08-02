@@ -5111,7 +5111,6 @@ Adj.algorithms.hide = {
 
 // utility
 Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element, hide, doDoc) {
-	console.log("hideUnhideSiblingsFollowing " + hide);
 	switch (hide) {
 		case "hide":
 		case "unhide":
