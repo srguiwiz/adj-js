@@ -5143,17 +5143,19 @@ Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element,
 		}
 		//
 		// process
-		if (hide == "toggle") { // only possible at first sibling following
-			if (sibling.adjHiddenByCommand) {
-				hide = "unhide";
-			} else {
-				hide = "hide";
+		if (following) {
+			if (hide == "toggle") { // only possible at first sibling following
+				if (sibling.adjHiddenByCommand) {
+					hide = "unhide";
+				} else {
+					hide = "hide";
+				}
 			}
-		}
-		if (hide == "hide") {
-			sibling.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(sibling, Adj.AdjNamespace, "hide"), "true");
-		} else { // "unhide"
-			sibling.removeAttributeNS(Adj.AdjNamespace, "hide");
+			if (hide == "hide") {
+				sibling.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(sibling, Adj.AdjNamespace, "hide"), "true");
+			} else { // "unhide"
+				sibling.removeAttributeNS(Adj.AdjNamespace, "hide");
+			}
 		}
 	}
 	if (doDoc) {
