@@ -654,6 +654,7 @@ Adj.algorithms.horizontalList = {
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxWidth = null means no limit
 		var maxPerRow = Adj.doVarsArithmetic(element, parametersObject.maxPerRow, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerRow = null means no limit
+		var itemsH2V = Adj.doVarsArithmetic(element, parametersObject.itemsH2V, null, null, usedHow, variableSubstitutionsByName); // allowed, default itemsH2V = null means not used
 		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // default makeGrid = false
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
@@ -689,6 +690,12 @@ Adj.algorithms.horizontalList = {
 				boundingBox: child.getBBox(),
 				node: child
 			});
+		}
+		if (itemsH2V) {
+			var maxPerRowByItemsH2V = Math.max(1, Math.round(Math.sqrt(childRecords.length * itemsH2V)));
+			if (!maxPerRow || maxPerRowByItemsH2V < maxPerRow) {
+				maxPerRow = maxPerRowByItemsH2V;
+			}
 		}
 		if (!maxPerRow) { // don't allow it to remain null below here
 			maxPerRow = childRecords.length; // make sure it is a number
@@ -871,6 +878,7 @@ Adj.algorithms.verticalList = {
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
 		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxHeight = null means no limit
 		var maxPerColumn = Adj.doVarsArithmetic(element, parametersObject.maxPerColumn, null, null, usedHow, variableSubstitutionsByName); // allowed, default maxPerColumn = null means no limit
+		var itemsH2V = Adj.doVarsArithmetic(element, parametersObject.itemsH2V, null, null, usedHow, variableSubstitutionsByName); // allowed, default itemsH2V = null means not used
 		var makeGrid = Adj.doVarsBoolean(element, parametersObject.makeGrid, false, usedHow, variableSubstitutionsByName); // default makeGrid = false
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
 		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
@@ -906,6 +914,12 @@ Adj.algorithms.verticalList = {
 				boundingBox: child.getBBox(),
 				node: child
 			});
+		}
+		if (itemsH2V) {
+			var maxPerColumnByItemsH2V = Math.max(1, Math.round(Math.sqrt(childRecords.length / itemsH2V)));
+			if (!maxPerColumn || maxPerColumnByItemsH2V < maxPerColumn) {
+				maxPerColumn = maxPerColumnByItemsH2V;
+			}
 		}
 		if (!maxPerColumn) { // don't allow it to remain null below here
 			maxPerColumn = childRecords.length; // make sure it is a number
