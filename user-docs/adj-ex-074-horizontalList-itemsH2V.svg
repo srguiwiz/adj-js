@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="100">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<adj:horizontalList itemsH2V="1.5" gap="5"/>
+		<rect width="20" height="20" fill="#000" transform="translate(5,5)"/>
+		<rect width="20" height="20" fill="#222" transform="translate(30,5)"/>
+		<rect width="20" height="20" fill="#444" transform="translate(55,5)"/>
+		<rect width="20" height="20" fill="#666" transform="translate(80,5)"/>
+		<rect width="20" height="20" fill="#888" transform="translate(5,30)"/>
+		<rect width="20" height="20" fill="#999" transform="translate(30,30)"/>
+		<rect width="20" height="20" fill="#aaa" transform="translate(55,30)"/>
+		<rect width="20" height="20" fill="#bbb" transform="translate(80,30)"/>
+		<rect width="20" height="20" fill="#ccc" transform="translate(5,55)"/>
+		<rect width="20" height="20" fill="#ddd" transform="translate(30,55)"/>
+	</g>
+</svg>
