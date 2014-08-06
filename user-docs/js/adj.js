@@ -692,7 +692,7 @@ Adj.algorithms.horizontalList = {
 			});
 		}
 		if (itemsH2V) {
-			var maxPerRowByItemsH2V = Math.max(1, Math.round(Math.sqrt(childRecords.length * itemsH2V)));
+			var maxPerRowByItemsH2V = Math.ceil(Math.sqrt(childRecords.length * itemsH2V));
 			if (!maxPerRow || maxPerRowByItemsH2V < maxPerRow) {
 				maxPerRow = maxPerRowByItemsH2V;
 			}
@@ -916,7 +916,7 @@ Adj.algorithms.verticalList = {
 			});
 		}
 		if (itemsH2V) {
-			var maxPerColumnByItemsH2V = Math.max(1, Math.round(Math.sqrt(childRecords.length / itemsH2V)));
+			var maxPerColumnByItemsH2V = Math.ceil(Math.sqrt(childRecords.length / itemsH2V));
 			if (!maxPerColumn || maxPerColumnByItemsH2V < maxPerColumn) {
 				maxPerColumn = maxPerColumnByItemsH2V;
 			}
