@@ -99,6 +99,11 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 			}
 		 });
 		//
+		// define some global adjVariables
+		var globalVariables = rootElement.parentNode.adjVariables = {};
+		globalVariables.windowInnerWidth = function windowInnerWidth () { return window.innerWidth };
+		globalVariables.windowInnerHeight = function windowInnerHeight () { return window.innerHeight };
+		//
 		// read Adj elements and make or update phase handlers
 		Adj.parseSvgElementForAdjElements(rootElement);
 		//
@@ -3833,6 +3838,9 @@ Adj.substituteVariables = function substituteVariables (element, originalExpress
 			} while (variableValue == undefined && elementToLookUpIn);
 			if (variableValue == undefined) {
 				throw "nonresolving ^ variable name \"" + variableName + "\" " + usedHow;
+			}
+			if (typeof variableValue == "function") {
+				variableValue = variableValue.call(element);
 			}
 			variableSubstitutionsByName[variableName] = variableValue;
 		}
