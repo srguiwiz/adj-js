@@ -4105,6 +4105,24 @@ Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpress
 
 // utility
 // combine other calls,
+// return a number
+Adj.doVarsIdsArithmeticToGetNumber = function doVarsIdsArithmetic (element, originalExpression, defaultValue, usedHow, variableSubstitutionsByName, idedElementRecordsById) {
+	if (typeof originalExpression == "number") { // a number already
+		return originalExpression;
+	}
+	if (!originalExpression) { // e.g. undefined
+		return defaultValue;
+	}
+	var withArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, originalExpression, usedHow, variableSubstitutionsByName, idedElementRecordsById);
+	var number = parseFloat(withArithmeticEvaluated);
+	if (isNaN(number)) {
+		throw "expression \"" + originalExpression + "\" does not evaluate to a number (\"" + withArithmeticEvaluated + "\") " + usedHow;
+	}
+	return number;
+}
+
+// utility
+// combine other calls,
 // return a string
 Adj.doVarsArithmetic2 = function doVarsIdsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName) {
 	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
@@ -4280,10 +4298,12 @@ Adj.algorithms.fit = {
 	method: function fit (element, parametersObject) {
 		var usedHow = "used in a parameter for a fit command";
 		var variableSubstitutionsByName = {};
-		var width = Adj.doVarsArithmetic(element, parametersObject.width, null, null, usedHow, variableSubstitutionsByName); // default width = null
-		var height = Adj.doVarsArithmetic(element, parametersObject.height, null, null, usedHow, variableSubstitutionsByName); // default height = null
-		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // default maxWidth = null
-		var maxHeight = Adj.doVarsArithmetic(element, parametersObject.maxHeight, null, null, usedHow, variableSubstitutionsByName); // default maxHeight = null
+		var idedElementRecordsById = {};
+		//
+		var width = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.width, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default width = null
+		var height = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.height, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default height = null
+		var maxWidth = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.maxWidth, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default maxWidth = null
+		var maxHeight = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.maxHeight, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default maxHeight = null
 		//
 		var boundingBox = element.getBBox();
 		var boundingBoxWidth = boundingBox.width;
