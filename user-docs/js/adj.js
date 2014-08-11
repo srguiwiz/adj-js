@@ -3834,7 +3834,7 @@ Adj.substituteVariables = function substituteVariables (element, originalExpress
 			if (variableValue == undefined) {
 				throw "nonresolving ^ variable name \"" + variableName + "\" " + usedHow;
 			}
-			variableValue = variableSubstitutionsByName[variableName] = variableValue;
+			variableSubstitutionsByName[variableName] = variableValue;
 		}
 		replacements.push({
 			index: variableMatch.index,
