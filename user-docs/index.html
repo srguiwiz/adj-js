@@ -1539,15 +1539,37 @@ it also recognizes some symbols (strings in JavaScript).</p>
 <table border="1">
   <tbody>
     <tr>
+      <td><img alt="example" src="adj-ex-045-verticalTree.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="130" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:verticalTree/&gt;</span>
+    &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
+    &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
+    &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
+    &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
+    &lt;text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1"&gt;L1212&lt;/text&gt;
+    &lt;text adj:id="l-1-2-2" adj:treeParent="n-1-2"&gt;L122&lt;/text&gt;
+    &lt;text adj:id="l-1-3" adj:treeParent="r-1"&gt;L13&lt;/text&gt;
+    &lt;line stroke="#666"&gt;
+      &lt;adj:connection from="r-1%0.2,1" to="l-1-1%0.8,0"/&gt;
+    &lt;/line&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
       <td><img alt="example"
         src="adj-ex-046-verticalTree-autoParrots.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="130" fill="linen"/&gt;</span>
   &lt;g&gt;
     <span class="example-code">&lt;adj:verticalTree autoParrots="true"/&gt;</span>
-    &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
+    &lt;text adj:id="r-1"&gt;R1&lt;/text&gt;
     &lt;text adj:id="r-2"&gt;R2&lt;/text&gt;
-    &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
+    &lt;text adj:id="l-1-1" adj:treeParent="r-1"&gt;L11&lt;/text&gt;
     &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
     &lt;text adj:id="n-1-2-1" adj:treeParent="n-1-2"&gt;N121&lt;/text&gt;
     &lt;text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1"&gt;L1211&lt;/text&gt;
