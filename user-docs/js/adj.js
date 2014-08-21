@@ -256,6 +256,20 @@ Adj.parameterParse = function parameterParse(value) {
 	return value;
 }
 
+// utility
+Adj.collectParameters = function collectParameters(element) {
+	var parameters = {};
+	var attributes = element.attributes;
+	var numberOfAttributes = attributes.length;
+	for (var i = 0; i < numberOfAttributes; i++) {
+		var attribute = attributes[i];
+		if (!attribute.namespaceURI || attribute.namespaceURI == Adj.AdjNamespace) {
+			parameters[attribute.localName] = Adj.parameterParse(attribute.value);
+		}
+	}
+	return parameters;
+}
+
 // read Adj elements and make or update phase handlers,
 // recursive walking of the tree
 Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (node) {
@@ -333,15 +347,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 		if (child instanceof Element) { // if an XML element, e.g. not an XML #text
 			if (child.namespaceURI == Adj.AdjNamespace) { // if an Adj element
 				var algorithmName = child.localName;
-				var parameters = {};
-				var attributes = child.attributes;
-				var numberOfAttributes = attributes.length;
-				for (var i = 0; i < numberOfAttributes; i++) {
-					var attribute = attributes[i];
-					if (!attribute.namespaceURI || attribute.namespaceURI == Adj.AdjNamespace) {
-						parameters[attribute.localName] = Adj.parameterParse(attribute.value);
-					}
-				}
+				var parameters = Adj.collectParameters(child);
 				switch (algorithmName) {
 					case "variable":
 						var variableName = parameters["name"];
@@ -504,6 +510,7 @@ Adj.leftCenterRight = { left:0, center:0.5, right:1 };
 Adj.topMiddleBottom = { top:0, middle:0.5, bottom:1 };
 Adj.insideMedianOutside = { inside:0, median:0.5, outside:1 };
 Adj.noneClearNear = { none:"none", clear:"clear", near:"near" };
+Adj.eastSouthWestNorth = { east:0, south:90, west:180, north:270 };
 
 // utility
 // if one and other both are integers and not too close then round result to be an integer as well
@@ -1321,16 +1328,21 @@ Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
 
 // constants
 // parse an id and optionally two more parameters, e.g. full "obj1 % 0.5, 1" or less specific "obj2"
-// note: as implemented tolerates extra paremeters
+// note: as implemented tolerates extra parameters
 Adj.idXYRegexp = /^\s*([^%\s]+)\s*(?:%\s*([^,\s]+)\s*)?(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
+// parse an optional id and optionally two more parameters, e.g. full "obj1 % 0.5, 1" or less specific "obj1" or "0.5, 1" or "% 0.5, 1" or "obj1 %"
+// note: as implemented does not tolerate extra parameters
+Adj.idXYRegexp2 = /^\s*([^%,\s]*?)\s*%?\s*(?:([^%,\s]+)\s*,\s*([^%,\s]+))?\s*$/;
+Adj.idXYRegexp2NoMatch = [null, null, null, null];
 // parse one or two parameters, e.g. "0.5, 1" or only "0.3"
-// note: as implemented tolerates extra paremeters
+// note: as implemented tolerates extra parameters
 Adj.oneOrTwoRegexp = /^\s*([^,\s]+)\s*(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
 // parse two parameters, e.g. "0.5, 1"
-// note: as implemented tolerates extra paremeters
+// note: as implemented tolerates extra parameters
 Adj.twoRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
+Adj.twoRegexpNoMatch = [null, null, null];
 // parse three parameters, e.g. "3, -4, 4"
-// note: as implemented tolerates extra paremeters
+// note: as implemented tolerates extra parameters
 Adj.threeRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
 
 // note: document.documentElement.createSVGPoint() used because createSVGPoint() only implemented in SVG element,
@@ -1978,7 +1990,7 @@ Adj.algorithms.rider = {
 	method: function rider (element, parametersObject, level) {
 		var usedHow = "used in a parameter for a rider command";
 		var variableSubstitutionsByName = {};
-		var pinMatch = Adj.oneOrTwoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
+		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
 		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
 		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		var pathId = parametersObject.path;
@@ -2781,10 +2793,10 @@ Adj.algorithms.verticalTree = {
 			var child = childRecord.node;
 			var treeParentId = child.getAttributeNS(Adj.AdjNamespace, "treeParent");
 			if (treeParentId) {
-				var treeParent = idsDictionary[treeParentId];
-				if (treeParent) { // an element found with an id matching attribute adj:treeParent, as expected
-					treeParent.treeChildRecords.push(childRecord);
-					childRecord.treeParentRecord = treeParent;
+				var treeParentRecord = idsDictionary[treeParentId];
+				if (treeParentRecord) { // an element found with an id matching attribute adj:treeParent, as expected
+					treeParentRecord.treeChildRecords.push(childRecord);
+					childRecord.treeParentRecord = treeParentRecord;
 				} else { // no element found with an id matching attribute adj:treeParent, e.g. author error
 					rootRecords.push(childRecord);
 					childRecord.treeParentRecord = superRootRecord;
@@ -3336,10 +3348,10 @@ Adj.algorithms.horizontalTree = {
 			var child = childRecord.node;
 			var treeParentId = child.getAttributeNS(Adj.AdjNamespace, "treeParent");
 			if (treeParentId) {
-				var treeParent = idsDictionary[treeParentId];
-				if (treeParent) { // an element found with an id matching attribute adj:treeParent, as expected
-					treeParent.treeChildRecords.push(childRecord);
-					childRecord.treeParentRecord = treeParent;
+				var treeParentRecord = idsDictionary[treeParentId];
+				if (treeParentRecord) { // an element found with an id matching attribute adj:treeParent, as expected
+					treeParentRecord.treeChildRecords.push(childRecord);
+					childRecord.treeParentRecord = treeParentRecord;
 				} else { // no element found with an id matching attribute adj:treeParent, e.g. author error
 					rootRecords.push(childRecord);
 					childRecord.treeParentRecord = superRootRecord;
@@ -4249,7 +4261,7 @@ Adj.algorithms.floater = {
 		var atX = parseFloat(atMatch[1]);
 		var atY = parseFloat(atMatch[2]);
 		//
-		var pinMatch = Adj.oneOrTwoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
+		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
 		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
 		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		//
@@ -5138,6 +5150,458 @@ Adj.algorithms.pinnedList = {
 			hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
 			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
 		}
+	}
+}
+
+// utility
+// as implemented would loop infinitely on a circular reference, but is good enough for here
+Adj.deepCloneObject = function deepCloneObject(object) {
+	var clone = (object instanceof Array) ? [] : {};
+	for (var i in object) {
+		if (object[i] && typeof object[i] == "object") {
+			clone[i] = Adj.deepCloneObject(object[i]);
+		} else {
+			clone[i] = object[i];
+		}
+	}
+	return clone;
+};
+
+// a specific algorithm
+Adj.algorithms.telescopicTree = {
+	phaseHandlerName: "adjPhase1Up",
+	parameters: ["gap",
+				 "explain"],
+	method: function telescopicTree (element, parametersObject) {
+		var usedHow = "used in a parameter for a telescopicTree command";
+		var variableSubstitutionsByName = {};
+		var idedElementRecordsById = {};
+		var gap = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.gap, 10, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default gap = 10
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
+		//
+		// determine which nodes to process,
+		// children that are instances of SVGElement rather than every DOM node,
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
+		// boom tells where child will be placed
+		var currentBoomConfiguration = {
+			angle: 0 // initial default boom east 0 == right
+		};
+		var childRecords = [];
+		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (child instanceof Element) { // if an XML element, e.g. not an XML #text
+				if (child.namespaceURI == Adj.AdjNamespace) { // if an Adj element
+					if (child.localName == "boom") {
+						var boomParametersObject = Adj.collectParameters(child);
+						var previousBoomConfiguration = currentBoomConfiguration;
+						currentBoomConfiguration = {};
+						//
+						var boomUsedHow = "used in a parameter for a boom command";
+						var boomFromParameter = boomParametersObject.from;
+						var boomFromMatch = Adj.idXYRegexp2.exec(boomFromParameter)
+						if (!boomFromMatch) {
+							boomFromMatch = Adj.idXYRegexp2NoMatch;
+						}
+						var boomFromId = boomFromMatch[1]; // if any
+						var boomFromX = boomFromMatch[2] ? parseFloat(boomFromMatch[2]) : 0.5; // default boomFromX = 0.5
+						var boomFromY = boomFromMatch[3] ? parseFloat(boomFromMatch[3]) : 0.5; // default boomFromY = 0.5
+						currentBoomConfiguration.from = {
+							id: boomFromId,
+							x: boomFromX,
+							y: boomFromY
+						};
+						// there is no boomToId
+						var boomToParameter = boomParametersObject.to;
+						var boomToMatch = Adj.twoRegexp.exec(boomToParameter);
+						if (!boomToMatch) {
+							boomToMatch = Adj.twoRegexpNoMatch;
+						}
+						var boomToX = boomToMatch[1] ? parseFloat(boomToMatch[1]) : 0.5; // default boomToX = 0.5
+						var boomToY = boomToMatch[2] ? parseFloat(boomToMatch[2]) : 0.5; // default boomToY = 0.5
+						currentBoomConfiguration.to = {
+							x: boomToX,
+							y: boomToY
+						};
+						currentBoomConfiguration.angle = Adj.doVarsArithmetic(element, boomParametersObject.angle, previousBoomConfiguration.angle, Adj.eastSouthWestNorth, boomUsedHow, variableSubstitutionsByName); // boom angle could be a number, default boom angle 0 == previous boom angle
+						currentBoomConfiguration.gap = Adj.doVarsIdsArithmeticToGetNumber(element, boomParametersObject.gap, gap, boomUsedHow, variableSubstitutionsByName, idedElementRecordsById); // default boom gap = telescopicTree gap
+						//console.log(currentBoomConfiguration);
+					}
+				}
+			}
+			//
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
+			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement("rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
+			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			if (child.adjHiddenByCommand) {
+				continue;
+			}
+			var childBoundingBox = child.getBBox();
+			childRecords.push({
+				boomConfiguration: childRecords.length ? Adj.deepCloneObject(currentBoomConfiguration) : undefined, // undefined for rootRecord
+				boundingBox: childBoundingBox,
+				node: child,
+				treeChildRecords: [],
+				positioningBox: { // x and y relative to ancestor being processed
+					x: 0,
+					y: 0,
+					width: childBoundingBox.width,
+					height: childBoundingBox.height
+				}
+			});
+		}
+		if (!childRecords.length) {
+			return;
+		}
+		//
+		// determine tree structure
+		var idsDictionary = {};
+		// resolve among DOM siblings only
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var child = childRecord.node;
+			var adjId = child.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+			if (adjId && !idsDictionary[adjId]) { // new
+				idsDictionary[adjId] = childRecord;
+			}
+			var plainId = child.getAttribute("id"); // second check for acceptable attribute id
+			if (plainId && !idsDictionary[plainId]) { // new
+				idsDictionary[plainId] = childRecord;
+			}
+		}
+		var rootRecord = childRecords[0];
+		//console.log(rootRecord);
+		var numberOfChildRecords = childRecords.length;
+		for (var childRecordIndex = 1; childRecordIndex < numberOfChildRecords; childRecordIndex++) {
+			var childRecord = childRecords[childRecordIndex];
+			var boomConfiguration = childRecord.boomConfiguration;
+			if (boomConfiguration) {
+				var boomFrom = boomConfiguration.from;
+				if (boomFrom) {
+					var treeParentRecord;
+					if (boomFrom.id) {
+						treeParentRecord = idsDictionary[boomFrom.id]; // resolve
+					} else {
+						treeParentRecord = null;
+					}
+					if (!treeParentRecord) { // if not given then default
+						treeParentRecord = childRecords[childRecordIndex - 1]; // previous in order
+					}
+					childRecord.treeParentRecord = treeParentRecord;
+					treeParentRecord.treeChildRecords.push(childRecord);
+				}
+			}
+			//console.log(childRecord);
+		}
+		//
+		// walk tree structure
+		// tree walking variables
+		var currentSiblingRecords = [rootRecord];
+		var currentSiblingRecordIndex = 0;
+		var stack = [];
+		var onWayBack = false;
+		//
+		// walk
+		//console.log("walkTreeLoop1 starting");
+		walkTreeLoop1: while (currentSiblingRecordIndex < currentSiblingRecords.length) {
+			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
+			var treeChildRecords = currentChildRecord.treeChildRecords;
+			var numberOfTreeChildren = treeChildRecords.length;
+			var placeNow = false;
+			//
+			if (!onWayBack) {
+				if (currentSiblingRecordIndex == 0) {
+					//console.log("walkTreeLoop1 before first of siblings at level " + (stack.length + 1));
+				}
+				//console.log("walkTreeLoop1 on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
+				//
+				currentChildRecord.indexAsSibling = currentSiblingRecordIndex;
+				currentChildRecord.branchRecords = [currentChildRecord];
+				currentChildRecord.branchBox = Adj.deepCloneObject(currentChildRecord.positioningBox);
+				//
+				if (numberOfTreeChildren) {
+					//console.log("walkTreeLoop1 on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					stack.push( { siblingRecords: currentSiblingRecords, index: currentSiblingRecordIndex } );
+					currentSiblingRecords = treeChildRecords;
+					currentSiblingRecordIndex = 0;
+					continue walkTreeLoop1;
+				} else { // childless node, aka leaf
+					//console.log("walkTreeLoop1 at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
+					//
+					placeNow = true;
+				}
+			} else { // onWayBack
+				//console.log("walkTreeLoop1 on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
+				//
+				onWayBack = false;
+				placeNow = true;
+			}
+			//
+			if (placeNow) {
+				var boomConfiguration = currentChildRecord.boomConfiguration;
+				if (!boomConfiguration) {
+					//console.log("walkTreeLoop1 done");
+					//
+					break walkTreeLoop1;
+				}
+				//
+				// position current branch
+				var currentTreeParentRecord = currentChildRecord.treeParentRecord;
+				var currentTreeParentPositioningBox = currentTreeParentRecord.positioningBox; // from
+				var currentChildPositioningBox = currentChildRecord.positioningBox; // to
+				var from = boomConfiguration.from;
+				var to = boomConfiguration.to;
+				var fromX = from.x;
+				var fromY = from.y;
+				var toX = to.x;
+				var toY = to.y;
+				var fromPointRelativeX = currentTreeParentPositioningBox.width * fromX;
+				var fromPointRelativeY = currentTreeParentPositioningBox.height * fromY;
+				var toPointRelativeX = currentChildPositioningBox.width * toX;
+				var toPointRelativeY = currentChildPositioningBox.height * toY;
+				//
+				var boomAngle = boomConfiguration.angle;
+				// note: % 180 to avoid result 6.123233995736766e-17 != 0
+				var cosine = (boomAngle - 90) % 180 ? Math.cos(boomAngle / 180 * Math.PI) : 0;
+				var sine = boomAngle % 180 ? Math.sin(boomAngle / 180 * Math.PI) : 0;
+				var boomGap = boomConfiguration.gap;
+				//
+				var currentTreeParentBranchBox = currentTreeParentRecord.branchBox; // from
+				var currentChildBranchBox = currentChildRecord.branchBox; // to
+				//
+				var fromInside;
+				// was if (fromX > 0 && fromX < 1 && fromY > 0 && fromY < 1) {
+				var fromXInside, fromYInside;
+				if (cosine > 0) {
+					fromXInside = (currentTreeParentBranchBox.width - (currentTreeParentPositioningBox.x + fromPointRelativeX - currentTreeParentBranchBox.x)) / cosine;
+				} else if (cosine < 0) {
+					fromXInside = - (currentTreeParentPositioningBox.x + fromPointRelativeX - currentTreeParentBranchBox.x) / cosine;
+				} else {
+					fromXInside = undefined;
+				}
+				if (sine > 0) {
+					fromYInside = (currentTreeParentBranchBox.height - (currentTreeParentPositioningBox.y + fromPointRelativeY - currentTreeParentBranchBox.y)) / sine;
+				} else if (sine < 0) {
+					fromYInside = - (currentTreeParentPositioningBox.y + fromPointRelativeY - currentTreeParentBranchBox.y) / sine;
+				} else {
+					fromYInside = undefined;
+				}
+				if (fromXInside == undefined) {
+					fromInside = fromYInside;
+				} else if (fromYInside == undefined) {
+					fromInside = fromXInside;
+				} else if (fromXInside < 0 || fromYInside < 0) {
+					fromInside = Math.max(fromXInside, fromYInside);
+				} else {
+					fromInside = Math.min(fromXInside, fromYInside);
+				}
+				var toInside;
+				var toXInside, toYInside;
+				if (cosine > 0) {
+					toXInside = (currentChildPositioningBox.x + toPointRelativeX - currentChildBranchBox.x) / cosine;
+				} else if (cosine < 0) {
+					toXInside = - (currentChildBranchBox.width - (currentChildPositioningBox.x + toPointRelativeX - currentChildBranchBox.x)) / cosine;
+				} else {
+					toXInside = undefined;
+				}
+				if (sine > 0) {
+					toYInside = (currentChildPositioningBox.y + toPointRelativeY - currentChildBranchBox.y) / sine;
+				} else if (sine < 0) {
+					toYInside = - (currentChildBranchBox.height - (currentChildPositioningBox.y + toPointRelativeY - currentChildBranchBox.y)) / sine;
+				} else {
+					toYInside = undefined;
+				}
+				if (toXInside == undefined) {
+					toInside = toYInside;
+				} else if (toYInside == undefined) {
+					toInside = toXInside;
+				} else if (toXInside < 0 || toYInside < 0) {
+					toInside = Math.max(toXInside, toYInside);
+				} else { // normal
+					toInside = Math.min(toXInside, toYInside);
+				}
+				var delta = fromInside + boomGap + toInside;
+				var deltaX = delta * cosine;
+				var deltaY = delta * sine;
+				//
+				// correct first for connection points relative coordinates and then for already existing offset
+				deltaX = (fromPointRelativeX + deltaX - toPointRelativeX) - (currentChildPositioningBox.x - currentTreeParentPositioningBox.x);
+				deltaY = (fromPointRelativeY + deltaY - toPointRelativeY) - (currentChildPositioningBox.y - currentTreeParentPositioningBox.y);
+				//
+				// shift
+				var currentChildBranchRecords = currentChildRecord.branchRecords;
+				var numberOfCurrentChildBranchRecords = currentChildBranchRecords.length;
+				// this loop inside a loop introduces a little bit of O(n^2) and might be possible to avoid
+				for (var branchRecordIndex = 0; branchRecordIndex < numberOfCurrentChildBranchRecords; branchRecordIndex++) {
+					var branchRecord = currentChildBranchRecords[branchRecordIndex];
+					var positioningBox = branchRecord.positioningBox;
+					positioningBox.x += deltaX;
+					positioningBox.y += deltaY;
+				}
+				currentChildBranchBox.x += deltaX;
+				currentChildBranchBox.y += deltaY;
+				//
+				// merge branches
+				var currentTreeParentBranchRecords = currentTreeParentRecord.branchRecords;
+				currentTreeParentRecord.branchRecords = currentTreeParentBranchRecords.concat(currentChildBranchRecords);
+				delete currentChildRecord.branchRecords; // release memory
+				// merge branch boxes
+				var currentChildBranchBoxRight = currentChildBranchBox.x + currentChildBranchBox.width;
+				var currentChildBranchBoxBottom = currentChildBranchBox.y + currentChildBranchBox.height;
+				var currentTreeParentBranchBoxRight = currentTreeParentBranchBox.x + currentTreeParentBranchBox.width;
+				var currentTreeParentBranchBoxBottom = currentTreeParentBranchBox.y + currentTreeParentBranchBox.height;
+				if (currentChildBranchBox.x < currentTreeParentBranchBox.x) {
+					currentTreeParentBranchBox.x = currentChildBranchBox.x;
+				}
+				if (currentChildBranchBoxRight > currentTreeParentBranchBoxRight) {
+					currentTreeParentBranchBoxRight = currentChildBranchBoxRight;
+				}
+				currentTreeParentBranchBox.width = currentTreeParentBranchBoxRight - currentTreeParentBranchBox.x;
+				if (currentChildBranchBox.y < currentTreeParentBranchBox.y) {
+					currentTreeParentBranchBox.y = currentChildBranchBox.y;
+				}
+				if (currentChildBranchBoxBottom > currentTreeParentBranchBoxBottom) {
+					currentTreeParentBranchBoxBottom = currentChildBranchBoxBottom;
+				}
+				currentTreeParentBranchBox.height = currentTreeParentBranchBoxBottom - currentTreeParentBranchBox.y;
+			}
+			//console.log("walkTreeLoop1 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
+			//
+			currentSiblingRecordIndex += 1;
+			if (currentSiblingRecordIndex < currentSiblingRecords.length) {
+				continue walkTreeLoop1;
+			} else { // no more sibling
+				//console.log("walkTreeLoop1 after last of siblings at level " + (stack.length + 1));
+				if (stack.length > 0) {
+					//console.log("walkTreeLoop1 on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					var stackedPosition = stack.pop();
+					currentSiblingRecords = stackedPosition.siblingRecords;
+					currentSiblingRecordIndex = stackedPosition.index;
+					onWayBack = true;
+					continue walkTreeLoop1;
+				} else { // stack.length == 0
+					//console.log("walkTreeLoop1 done");
+					//
+					break walkTreeLoop1;
+				}
+			}
+		}
+		//
+		// whole tree
+		var rootRecordBranchBox = rootRecord.branchBox;
+		var rootShiftX = gap - rootRecordBranchBox.x;
+		var rootShiftY = gap - rootRecordBranchBox.y;
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var childPositioningBox = childRecord.positioningBox;
+			childPositioningBox.x += rootShiftX;
+			childPositioningBox.y += rootShiftY;
+		}
+		rootRecordBranchBox.x += rootShiftX;
+		rootRecordBranchBox.y += rootShiftY;
+		//
+		// now we know where to put each
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
+			var childPositioningBox = childRecord.positioningBox;
+			//
+			var childBoundingBox = childRecord.boundingBox;
+			var translationX = Math.round(childPositioningBox.x - childBoundingBox.x);
+			var translationY = Math.round(childPositioningBox.y - childBoundingBox.y);
+			childRecord.node.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+		}
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		if (hiddenRect) {
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", Adj.decimal(Math.ceil(rootRecordBranchBox.width) + 2 * gap));
+			hiddenRect.setAttribute("height", Adj.decimal(Math.ceil(rootRecordBranchBox.height) + 2 * gap));
+		}
+		//
+		// explain
+		if (explain) {
+			if (hiddenRect) {
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", 0);
+				explanationElement.setAttribute("y", 0);
+				explanationElement.setAttribute("width", hiddenRect.getAttribute("width"));
+				explanationElement.setAttribute("height", hiddenRect.getAttribute("height"));
+				explanationElement.setAttribute("fill", "white");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				element.appendChild(explanationElement);
+			}
+			for (var childRecordIndex in childRecords) {
+				var childRecord = childRecords[childRecordIndex];
+				var explainRect = childRecord.positioningBox;
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", explainRect.x);
+				explanationElement.setAttribute("y", explainRect.y);
+				explanationElement.setAttribute("width", explainRect.width);
+				explanationElement.setAttribute("height", explainRect.height);
+				explanationElement.setAttribute("fill", "blue");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.1");
+				element.appendChild(explanationElement);
+				//
+				var treeParentRecord = childRecord.treeParentRecord;
+				if (treeParentRecord) {
+					var boomConfiguration = childRecord.boomConfiguration;
+					var treeParentPositioningBox = treeParentRecord.positioningBox; // from
+					var childPositioningBox = childRecord.positioningBox; // to
+					var from = boomConfiguration.from;
+					var to = boomConfiguration.to;
+					var fromX = from.x;
+					var fromY = from.y;
+					var toX = to.x;
+					var toY = to.y;
+					var fromPointX = treeParentPositioningBox.x + treeParentPositioningBox.width * fromX;
+					var fromPointY = treeParentPositioningBox.y + treeParentPositioningBox.height * fromY;
+					var toPointX = childPositioningBox.x + childPositioningBox.width * toX;
+					var toPointY = childPositioningBox.y + childPositioningBox.height * toY;
+					var explanationElement = Adj.createExplanationElement("line");
+					explanationElement.setAttribute("x1", fromPointX);
+					explanationElement.setAttribute("y1", fromPointY);
+					explanationElement.setAttribute("x2", toPointX);
+					explanationElement.setAttribute("y2", toPointY);
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.2");
+					element.appendChild(explanationElement);
+					element.appendChild(Adj.createExplanationPointCircle(fromPointX, fromPointY, "green"));
+					element.appendChild(Adj.createExplanationPointCircle(toPointX, toPointY, "red"));
+				}
+			}
+		}
+	}
+}
+
+// a specific algorithm
+Adj.algorithms.boom = {
+	phaseHandlerName: "adjPhase1Down",
+	parameters: ["from", "to",
+				 "angle",
+				 "gap"],
+	method: function boom (element, parametersObject) {
+		// actual processing done in Adj.algorithms.telescopicTree, for now
 	}
 }
 
