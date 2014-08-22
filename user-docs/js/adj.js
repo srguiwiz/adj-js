@@ -850,10 +850,10 @@ Adj.algorithms.horizontalList = {
 				var explainRect = childRecord.explainRect;
 				if (explainRect) {
 					var explanationElement = Adj.createExplanationElement("rect");
-					explanationElement.setAttribute("x", explainRect.x);
-					explanationElement.setAttribute("y", explainRect.y);
-					explanationElement.setAttribute("width", explainRect.width);
-					explanationElement.setAttribute("height", explainRect.height);
+					explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
+					explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
+					explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
+					explanationElement.setAttribute("height", Adj.decimal(explainRect.height));
 					explanationElement.setAttribute("fill", "blue");
 					explanationElement.setAttribute("fill-opacity", "0.1");
 					explanationElement.setAttribute("stroke", "blue");
@@ -1074,10 +1074,10 @@ Adj.algorithms.verticalList = {
 				var explainRect = childRecord.explainRect;
 				if (explainRect) {
 					var explanationElement = Adj.createExplanationElement("rect");
-					explanationElement.setAttribute("x", explainRect.x);
-					explanationElement.setAttribute("y", explainRect.y);
-					explanationElement.setAttribute("width", explainRect.width);
-					explanationElement.setAttribute("height", explainRect.height);
+					explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
+					explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
+					explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
+					explanationElement.setAttribute("height", Adj.decimal(explainRect.height));
 					explanationElement.setAttribute("fill", "blue");
 					explanationElement.setAttribute("fill-opacity", "0.1");
 					explanationElement.setAttribute("stroke", "blue");
@@ -5528,8 +5528,10 @@ Adj.algorithms.telescopicTree = {
 		if (hiddenRect) {
 			hiddenRect.setAttribute("x", 0);
 			hiddenRect.setAttribute("y", 0);
-			hiddenRect.setAttribute("width", Adj.decimal(Math.ceil(rootRecordBranchBox.width) + 2 * gap));
-			hiddenRect.setAttribute("height", Adj.decimal(Math.ceil(rootRecordBranchBox.height) + 2 * gap));
+			var hiddenRectWidth = Math.ceil(rootRecordBranchBox.width) + 2 * gap;
+			var hiddenRectHeight = Math.ceil(rootRecordBranchBox.height) + 2 * gap;
+			hiddenRect.setAttribute("width", Adj.decimal(hiddenRectWidth));
+			hiddenRect.setAttribute("height", Adj.decimal(hiddenRectHeight));
 		}
 		//
 		// explain
@@ -5538,8 +5540,8 @@ Adj.algorithms.telescopicTree = {
 				var explanationElement = Adj.createExplanationElement("rect");
 				explanationElement.setAttribute("x", 0);
 				explanationElement.setAttribute("y", 0);
-				explanationElement.setAttribute("width", hiddenRect.getAttribute("width"));
-				explanationElement.setAttribute("height", hiddenRect.getAttribute("height"));
+				explanationElement.setAttribute("width", Adj.decimal(hiddenRectWidth));
+				explanationElement.setAttribute("height", Adj.decimal(hiddenRectHeight));
 				explanationElement.setAttribute("fill", "white");
 				explanationElement.setAttribute("fill-opacity", "0.1");
 				explanationElement.setAttribute("stroke", "blue");
@@ -5551,10 +5553,10 @@ Adj.algorithms.telescopicTree = {
 				var childRecord = childRecords[childRecordIndex];
 				var explainRect = childRecord.positioningBox;
 				var explanationElement = Adj.createExplanationElement("rect");
-				explanationElement.setAttribute("x", explainRect.x);
-				explanationElement.setAttribute("y", explainRect.y);
-				explanationElement.setAttribute("width", explainRect.width);
-				explanationElement.setAttribute("height", explainRect.height);
+				explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
+				explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
+				explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
+				explanationElement.setAttribute("height", Adj.decimal(explainRect.height));
 				explanationElement.setAttribute("fill", "blue");
 				explanationElement.setAttribute("fill-opacity", "0.1");
 				explanationElement.setAttribute("stroke", "blue");
@@ -5578,10 +5580,10 @@ Adj.algorithms.telescopicTree = {
 					var toPointX = childPositioningBox.x + childPositioningBox.width * toX;
 					var toPointY = childPositioningBox.y + childPositioningBox.height * toY;
 					var explanationElement = Adj.createExplanationElement("line");
-					explanationElement.setAttribute("x1", fromPointX);
-					explanationElement.setAttribute("y1", fromPointY);
-					explanationElement.setAttribute("x2", toPointX);
-					explanationElement.setAttribute("y2", toPointY);
+					explanationElement.setAttribute("x1", Adj.decimal(fromPointX));
+					explanationElement.setAttribute("y1", Adj.decimal(fromPointY));
+					explanationElement.setAttribute("x2", Adj.decimal(toPointX));
+					explanationElement.setAttribute("y2", Adj.decimal(toPointY));
 					explanationElement.setAttribute("stroke", "blue");
 					explanationElement.setAttribute("stroke-width", "1");
 					explanationElement.setAttribute("stroke-opacity", "0.2");
