@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="170">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<rect width="200" height="170" fill="linen"/>
+	<g>
+		<adj:telescopicTree gap="5" explain="true"/>
+		<rect width="30" height="20" fill="#000" adj:id="l-1-1" transform="translate(18,7)"/>
+		<adj:boom/>
+		<rect width="32" height="22" fill="#222" transform="translate(53,6)"/>
+		<adj:boom angle="east"/>
+		<rect width="34" height="24" fill="#444" transform="translate(90,5)"/>
+		<adj:boom from="l-1-1" angle="90" gap="15"/>
+		<rect width="36" height="26" fill="#666" adj:id="l-2-1" transform="translate(15,44)"/>
+		<adj:boom angle="10"/>
+		<rect width="38" height="28" fill="#888" transform="translate(56,50)"/>
+		<rect width="40" height="30" fill="#aaa" transform="translate(99,57)"/>
+		<adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/>
+		<rect width="42" height="32" fill="#bbb" transform="translate(5,109)"/>
+		<adj:boom angle="-10"/>
+		<rect width="44" height="34" fill="#ccc" transform="translate(52,100)"/>
+		<adj:boom angle="10"/>
+		<rect width="46" height="36" fill="#ddd" transform="translate(101,108)"/>
+		<rect adj:explanation="true" x="0" y="0" width="152" height="149" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="17.946" y="7" width="30" height="20" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<rect adj:explanation="true" x="52.946" y="6" width="32" height="22" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="32.946" y1="17" x2="68.946" y2="17" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="32.946" cy="17" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="68.946" cy="17" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="89.946" y="5" width="34" height="24" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="68.946" y1="17" x2="106.946" y2="17" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="68.946" cy="17" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="106.946" cy="17" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="14.946" y="44" width="36" height="26" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="32.946" y1="17" x2="32.946" y2="57" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="32.946" cy="17" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="32.946" cy="57" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="55.87" y="50.392" width="38" height="28" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="32.946" y1="57" x2="74.87" y2="64.392" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="32.946" cy="57" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="74.87" cy="64.392" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="98.794" y="57.137" width="40" height="30" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="74.87" y1="64.392" x2="118.794" y2="72.137" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="74.87" cy="64.392" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="118.794" cy="72.137" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="5" y="109.39" width="42" height="32" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="32.946" y1="70" x2="26" y2="109.39" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="32.946" cy="70" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="26" cy="109.39" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="51.924" y="99.94" width="44" height="34" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="26" y1="125.39" x2="73.924" y2="116.94" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="26" cy="125.39" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="73.924" cy="116.94" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+		<rect adj:explanation="true" x="100.848" y="107.743" width="46" height="36" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<line adj:explanation="true" x1="73.924" y1="116.94" x2="123.848" y2="125.743" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="73.924" cy="116.94" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="123.848" cy="125.743" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+	</g>
+</svg>

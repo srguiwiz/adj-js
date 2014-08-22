@@ -121,7 +121,8 @@ href="#L2433">better off</a> with Internet Explorer 10 anyway.</p>
           <li><a href="#L2604">1.11.16. Command zoomFrames Options</a></li>
           <li><a href="#L2672">1.11.17. Command tilt Options</a></li>
           <li><a href="#L2717">1.11.18. Command pinnedList Options</a></li>
-          <li><a href="#L94550">1.11.19. Command hide Options</a></li>
+          <li><a href="#L45423">1.11.19. Command telescopicTree Options</a></li>
+          <li><a href="#L94550">1.11.20. Command hide Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -739,6 +740,32 @@ attribute <code>adj:originalDisplay</code>.</p>
         &lt;adj:tilt alpha="-30"/&gt;
       &lt;/rect&gt;
     &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-075-telescopicTree.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="170" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:<a href="#L45423">telescopicTree</a> gap="5"/&gt;</span>
+    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="l-1-1"</span>/&gt;
+    <span class="example-code">&lt;adj:boom/&gt;</span>
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    <span class="example-code">&lt;adj:boom from="l-1-1" angle="90" gap="15"/&gt;</span>
+    &lt;rect width="36" height="26" fill="#666" adj:id="l-2-1"/&gt;
+    &lt;adj:boom angle="10"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    &lt;adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/&gt;&lt;!--  --&gt;
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    &lt;adj:boom angle="-10"/&gt;
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+    &lt;adj:boom angle="10"/&gt;
+    &lt;rect width="46" height="36" fill="#ddd"/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -2120,7 +2147,7 @@ href="#L12321">frameForParent</a></code>.</p>
 
 <h4 id="L2717">1.11.18. Command pinnedList Options</h4>
 
-<p>Different than for other lists, for <code>pinnedList</code> respective
+<p>Different than with other lists, within <code>pinnedList</code> respective
 placement parameters <code>pinThis</code> and <code>pinTo</code> are found
 within individual elements of the list. By allowing pinning to hinge on
 elements further nested inside elements of the list, this works great for
@@ -2182,7 +2209,91 @@ isometric drawings.</p>
 parameters of <code><a href="#L7357">horizontalList</a></code>, yet effecting
 padding for the whole list only rather than between elements.</p>
 
-<h4 id="L94550">1.11.19. Command hide Options</h4>
+<h4 id="L45423">1.11.19. Command telescopicTree Options</h4>
+
+<p>Different than with other trees or lists, within <code>telescopicTree</code>
+placement is mostly defined by optional <code>boom</code> elements listed
+between individual elements of the tree.</p>
+
+<p>Optional parameters of <code>telescopicTree</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-075-telescopicTree.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="170" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:telescopicTree gap="5"/&gt;</span>
+    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="l-1-1"</span>/&gt;
+    <span class="example-code">&lt;adj:boom/&gt;</span>
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    <span class="example-code">&lt;adj:boom from="l-1-1" angle="90" gap="15"/&gt;</span>
+    &lt;rect width="36" height="26" fill="#666" <span class="example-code">adj:id="l-2-1"/&gt;</span>
+    <span class="example-code">&lt;adj:boom angle="10"/&gt;</span>
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    <span class="example-code">&lt;adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/&gt;&lt;!--  --&gt;</span>
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    <span class="example-code">&lt;adj:boom angle="-10"/&gt;</span>
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+    <span class="example-code">&lt;adj:boom angle="10"/&gt;</span>
+    &lt;rect width="46" height="36" fill="#ddd"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Optional <code>telescopicTree</code> parameter <code>gap</code> is the
+default value for <code>boom</code> parameter <code>gap</code>.</p>
+
+<p>When no <code>boom</code> is specificed between two elements, the most
+recent <code>angle</code> will be used again, with the default
+<code>gap</code>.</p>
+
+<p>Optional <code>boom</code> parameters <code>from</code> and <code>to</code>
+default to the middle, i.e. <code>0.5,0.5</code>. If not given an identifier,
+<code>boom</code> parameter <code>from</code> defaults to the preceeding
+element, which commonly can be anonymous. An identifier must not be given to
+<code>boom</code> parameter <code>to</code>, which always implies the following
+element.</p>
+
+<p>The degree value of <code>boom</code> parameter <code>angle</code> accepts
+decimal numbers, but also recognizes some symbols (strings in JavaScript).</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td rowspan="4">angle</td>
+      <td>east</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>south</td>
+      <td>90</td>
+    </tr>
+    <tr>
+      <td>west</td>
+      <td>180</td>
+    </tr>
+    <tr>
+      <td>north</td>
+      <td>270</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This at first experimental command works great in many circumstances. As
+implemented, command <code>telescopicTree</code> may still be subject to minor
+changes in how it places under some circumstances, because the implementation
+at the time has been optimized for speed rather than ideal coverage of all
+possible cases.</p>
+
+<h4 id="L94550">1.11.20. Command hide Options</h4>
 
 <p>Command <code>hide</code> has no options:</p>
 
@@ -2213,7 +2324,8 @@ padding for the whole list only rather than between elements.</p>
 <p>As implemented, <code>explain</code> inserts explanatory elements for
 <code>verticalList</code>, <code>horizontalList</code>,
 <code>connection</code>, <code>rider</code>, <code>circularList</code>,
-<code>verticalTree</code>, <code>vine</code>, and <code>floater</code>.</p>
+<code>verticalTree</code>, <code>vine</code>, <code>floater</code>, and
+<code>telescopicTree</code>.</p>
 
 <table border="1">
   <tbody>
@@ -2352,6 +2464,33 @@ padding for the whole list only rather than between elements.</p>
     &lt;path d="M0,0 l40,0 -20,-50 z" fill="#ccc"&gt;
       &lt;adj:<a href="#L2184">floater</a> pin="0.5,0" at="~one#cx*0.333+~other#cx*0.333+~another#cx*0.333,~one#cy*0.333+~other#cy*0.333+~another#cy*0.333" <span class="example-code">explain="true"</span>/&gt;
     &lt;/path&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="adj-ex-075-telescopicTree-explained.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="170" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:telescopicTree gap="5" <span class="example-code">explain="true"</span>/&gt;
+    &lt;rect width="30" height="20" fill="#000" adj:id="l-1-1"/&gt;
+    &lt;adj:boom/&gt;
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;adj:boom angle="east"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    &lt;adj:boom from="l-1-1" angle="90" gap="15"/&gt;
+    &lt;rect width="36" height="26" fill="#666" adj:id="l-2-1"/&gt;
+    &lt;adj:boom angle="10"/&gt;
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    &lt;adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/&gt;&lt;!--  --&gt;
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    &lt;adj:boom angle="-10"/&gt;
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
+    &lt;adj:boom angle="10"/&gt;
+    &lt;rect width="46" height="36" fill="#ddd"/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -2521,6 +2660,10 @@ detail than you were hoping for.</p>
       <td><code><a href="#L2299">fit</a></code></td>
       <td>when evaluating parameters <code>width</code>, <code>height</code>,
         <code>maxWidth</code>, <code>maxHeight</code></td>
+    </tr>
+    <tr>
+      <td><code><a href="#L45423">telescopicTree</a></code></td>
+      <td>a <code>boom</code> element's parameter <code>from</code></td>
     </tr>
   </tbody>
 </table>
@@ -2739,6 +2882,11 @@ decimal numbers.</p>
       <td><code>gap</code>, <code>horizontalGap</code>, <code>leftGap</code>,
         <code>rightGap</code>, <code>verticalGap</code>, <code>topGap</code>,
         <code>bottomGap</code></td>
+    </tr>
+    <tr>
+      <td><code>telescopicTree</code></td>
+      <td><code>gap</code>, and a <code>boom</code> element's
+      <code>gap</code></td>
     </tr>
     <tr>
       <td><code>skimpyList</code></td>
@@ -3376,7 +3524,7 @@ phases:</p>
         <code>circularList</code>, <code>verticalTree</code>,
         <code>horizontalTree</code>, <code>fit</code>,
         <code>stackFrames</code>, <code>tilt</code>, <code>skimpyList</code>,
-        <code>pinnedList</code></td>
+        <code>pinnedList</code>, <code>telescopicTree</code></td>
     </tr>
     <tr>
       <td><code>adjPhase3</code> with <br />
