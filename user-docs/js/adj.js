@@ -5185,7 +5185,11 @@ Adj.algorithms.telescopicTree = {
 		var hiddenRect;
 		// boom tells where child will be placed
 		var currentBoomConfiguration = {
-			angle: 0 // initial default boom east 0 == right
+			// initial default boom
+			from: { x: 0.5, y: 0.5 },
+			to: { x: 0.5, y: 0.5 },
+			angle: 0,
+			gap: gap
 		};
 		var childRecords = [];
 		for (var child = element.firstChild; child; child = child.nextSibling) {
