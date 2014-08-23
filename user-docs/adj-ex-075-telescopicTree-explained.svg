@@ -4,17 +4,17 @@
 	<rect width="200" height="170" fill="linen"/>
 	<g>
 		<adj:telescopicTree gap="5" explain="true"/>
-		<rect width="30" height="20" fill="#000" adj:id="l-1-1" transform="translate(18,7)"/>
+		<rect width="30" height="20" fill="#000" adj:id="id1" transform="translate(18,7)"/>
 		<adj:boom/>
 		<rect width="32" height="22" fill="#222" transform="translate(53,6)"/>
 		<adj:boom angle="east"/>
 		<rect width="34" height="24" fill="#444" transform="translate(90,5)"/>
-		<adj:boom from="l-1-1" angle="90" gap="15"/>
-		<rect width="36" height="26" fill="#666" adj:id="l-2-1" transform="translate(15,44)"/>
+		<adj:boom from="id1" angle="90" gap="15"/>
+		<rect width="36" height="26" fill="#666" adj:id="id2" transform="translate(15,44)"/>
 		<adj:boom angle="10"/>
 		<rect width="38" height="28" fill="#888" transform="translate(56,50)"/>
 		<rect width="40" height="30" fill="#aaa" transform="translate(99,57)"/>
-		<adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/>
+		<adj:boom from="id2%0.5,1" to="0.5,0" angle="100" gap="~id2#h * 0.5"/>
 		<rect width="42" height="32" fill="#bbb" transform="translate(5,109)"/>
 		<adj:boom angle="-10"/>
 		<rect width="44" height="34" fill="#ccc" transform="translate(52,100)"/>

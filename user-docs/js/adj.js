@@ -5171,12 +5171,35 @@ Adj.deepCloneObject = function deepCloneObject(object) {
 Adj.algorithms.telescopicTree = {
 	phaseHandlerName: "adjPhase1Up",
 	parameters: ["gap",
+				 "from", "to",
 				 "explain"],
 	method: function telescopicTree (element, parametersObject) {
 		var usedHow = "used in a parameter for a telescopicTree command";
 		var variableSubstitutionsByName = {};
 		var idedElementRecordsById = {};
-		var gap = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.gap, 10, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default gap = 10
+		var gap = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.gap, 3, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default gap = 3
+		//
+		var fromParameter = parametersObject.from;
+		if (!fromParameter) {
+			fromParameter = "";
+		}
+		var fromMatch = Adj.twoRegexp.exec(fromParameter);
+		if (!fromMatch) {
+			fromMatch = Adj.twoRegexpNoMatch;
+		}
+		var defaultFromX = fromMatch[1] ? parseFloat(fromMatch[1]) : 0.5; // default fromX = 0.5
+		var defaultFromY = fromMatch[2] ? parseFloat(fromMatch[2]) : 0.5; // default fromY = 0.5
+		var toParameter = parametersObject.to;
+		if (!toParameter) {
+			toParameter = "";
+		}
+		var toMatch = Adj.twoRegexp.exec(toParameter);
+		if (!toMatch) {
+			toMatch = Adj.twoRegexpNoMatch;
+		}
+		var defaultToX = toMatch[1] ? parseFloat(toMatch[1]) : 0.5; // default toX = 0.5
+		var defaultToY = toMatch[2] ? parseFloat(toMatch[2]) : 0.5; // default toY = 0.5
+		//
 		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		// determine which nodes to process,
@@ -5186,8 +5209,8 @@ Adj.algorithms.telescopicTree = {
 		// boom tells where child will be placed
 		var currentBoomConfiguration = {
 			// initial default boom
-			from: { x: 0.5, y: 0.5 },
-			to: { x: 0.5, y: 0.5 },
+			from: { x: defaultFromX, y: defaultFromY },
+			to: { x: defaultToX, y: defaultToY },
 			angle: 0,
 			gap: gap
 		};
@@ -5202,13 +5225,16 @@ Adj.algorithms.telescopicTree = {
 						//
 						var boomUsedHow = "used in a parameter for a boom command";
 						var boomFromParameter = boomParametersObject.from;
+						if (!boomFromParameter) {
+							boomFromParameter = "";
+						}
 						var boomFromMatch = Adj.idXYRegexp2.exec(boomFromParameter)
 						if (!boomFromMatch) {
 							boomFromMatch = Adj.idXYRegexp2NoMatch;
 						}
 						var boomFromId = boomFromMatch[1]; // if any
-						var boomFromX = boomFromMatch[2] ? parseFloat(boomFromMatch[2]) : 0.5; // default boomFromX = 0.5
-						var boomFromY = boomFromMatch[3] ? parseFloat(boomFromMatch[3]) : 0.5; // default boomFromY = 0.5
+						var boomFromX = boomFromMatch[2] ? parseFloat(boomFromMatch[2]) : defaultFromX;
+						var boomFromY = boomFromMatch[3] ? parseFloat(boomFromMatch[3]) : defaultFromY;
 						currentBoomConfiguration.from = {
 							id: boomFromId,
 							x: boomFromX,
@@ -5216,12 +5242,15 @@ Adj.algorithms.telescopicTree = {
 						};
 						// there is no boomToId
 						var boomToParameter = boomParametersObject.to;
+						if (!boomToParameter) {
+							boomToParameter = "";
+						}
 						var boomToMatch = Adj.twoRegexp.exec(boomToParameter);
 						if (!boomToMatch) {
 							boomToMatch = Adj.twoRegexpNoMatch;
 						}
-						var boomToX = boomToMatch[1] ? parseFloat(boomToMatch[1]) : 0.5; // default boomToX = 0.5
-						var boomToY = boomToMatch[2] ? parseFloat(boomToMatch[2]) : 0.5; // default boomToY = 0.5
+						var boomToX = boomToMatch[1] ? parseFloat(boomToMatch[1]) : defaultToX;
+						var boomToY = boomToMatch[2] ? parseFloat(boomToMatch[2]) : defaultToY;
 						currentBoomConfiguration.to = {
 							x: boomToX,
 							y: boomToY

@@ -750,17 +750,17 @@ attribute <code>adj:originalDisplay</code>.</p>
   &lt;rect width="200" height="170" fill="linen"/&gt;</span>
   &lt;g&gt;
     <span class="example-code">&lt;adj:<a href="#L45423">telescopicTree</a> gap="5"/&gt;</span>
-    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="l-1-1"</span>/&gt;
+    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="id1"</span>/&gt;
     <span class="example-code">&lt;adj:boom/&gt;</span>
     &lt;rect width="32" height="22" fill="#222"/&gt;
     <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
     &lt;rect width="34" height="24" fill="#444"/&gt;
-    <span class="example-code">&lt;adj:boom from="l-1-1" angle="90" gap="15"/&gt;</span>
-    &lt;rect width="36" height="26" fill="#666" adj:id="l-2-1"/&gt;
+    <span class="example-code">&lt;adj:boom from="id1" angle="90" gap="15"/&gt;</span>
+    &lt;rect width="36" height="26" fill="#666" adj:id="id2"/&gt;
     &lt;adj:boom angle="10"/&gt;
     &lt;rect width="38" height="28" fill="#888"/&gt;
     &lt;rect width="40" height="30" fill="#aaa"/&gt;
-    &lt;adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/&gt;&lt;!--  --&gt;
+    &lt;adj:boom from="id2%0.5,1" to="0.5,0" angle="100" gap="~id2#h * 0.5"/&gt;&lt;!--  --&gt;
     &lt;rect width="42" height="32" fill="#bbb"/&gt;
     &lt;adj:boom angle="-10"/&gt;
     &lt;rect width="44" height="34" fill="#ccc"/&gt;
@@ -2225,21 +2225,46 @@ between individual elements of the tree.</p>
   &lt;rect width="200" height="170" fill="linen"/&gt;</span>
   &lt;g&gt;
     <span class="example-code">&lt;adj:telescopicTree gap="5"/&gt;</span>
-    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="l-1-1"</span>/&gt;
+    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="id1"</span>/&gt;
     <span class="example-code">&lt;adj:boom/&gt;</span>
     &lt;rect width="32" height="22" fill="#222"/&gt;
     <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
     &lt;rect width="34" height="24" fill="#444"/&gt;
-    <span class="example-code">&lt;adj:boom from="l-1-1" angle="90" gap="15"/&gt;</span>
-    &lt;rect width="36" height="26" fill="#666" <span class="example-code">adj:id="l-2-1"/&gt;</span>
+    <span class="example-code">&lt;adj:boom from="id1" angle="90" gap="15"/&gt;</span>
+    &lt;rect width="36" height="26" fill="#666" <span class="example-code">adj:id="id2"/&gt;</span>
     <span class="example-code">&lt;adj:boom angle="10"/&gt;</span>
     &lt;rect width="38" height="28" fill="#888"/&gt;
     &lt;rect width="40" height="30" fill="#aaa"/&gt;
-    <span class="example-code">&lt;adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/&gt;&lt;!--  --&gt;</span>
+    <span class="example-code">&lt;adj:boom from="id2%0.5,1" to="0.5,0" angle="100" gap="~id2#h * 0.5"/&gt;&lt;!--  --&gt;</span>
     &lt;rect width="42" height="32" fill="#bbb"/&gt;
     <span class="example-code">&lt;adj:boom angle="-10"/&gt;</span>
     &lt;rect width="44" height="34" fill="#ccc"/&gt;
     <span class="example-code">&lt;adj:boom angle="10"/&gt;</span>
+    &lt;rect width="46" height="36" fill="#ddd"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-076-telescopicTree-from.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="150" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:telescopicTree gap="5" from="0,0" to="0,0"/&gt;</span>
+    &lt;rect width="30" height="20" fill="#000" <span class="example-code">adj:id="id1"</span>/&gt;
+    <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
+    &lt;rect width="32" height="22" fill="#222"/&gt;
+    &lt;rect width="34" height="24" fill="#444"/&gt;
+    <span class="example-code">&lt;adj:boom from="id1" angle="south" gap="15"/&gt;</span>
+    &lt;rect width="36" height="26" fill="#666" <span class="example-code">adj:id="id2"</span>/&gt;
+    <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
+    &lt;rect width="38" height="28" fill="#888"/&gt;
+    &lt;rect width="40" height="30" fill="#aaa"/&gt;
+    <span class="example-code">&lt;adj:boom from="id2" angle="south" gap="15"/&gt;</span>
+    &lt;rect width="42" height="32" fill="#bbb"/&gt;
+    <span class="example-code">&lt;adj:boom angle="east"/&gt;</span>
+    &lt;rect width="44" height="34" fill="#ccc"/&gt;
     &lt;rect width="46" height="36" fill="#ddd"/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -2251,16 +2276,20 @@ between individual elements of the tree.</p>
 <p>Optional <code>telescopicTree</code> parameter <code>gap</code> is the
 default value for <code>boom</code> parameter <code>gap</code>.</p>
 
-<p>When no <code>boom</code> is specificed between two elements, the most
-recent <code>angle</code> will be used again, with the default
-<code>gap</code>.</p>
+<p>Optional <code>telescopicTree</code> parameters <code>from</code> and
+<code>to</code> are default values for <code>boom</code> parameters
+<code>from</code> and <code>to</code>. They default to middle
+<code>0.5,0.5</code>. An identifier must not be given to
+<code>telescopicTree</code> parameters <code>from</code> and
+<code>to</code>.</p>
 
-<p>Optional <code>boom</code> parameters <code>from</code> and <code>to</code>
-default to the middle, i.e. <code>0.5,0.5</code>. If not given an identifier,
-<code>boom</code> parameter <code>from</code> defaults to the preceeding
-element, which commonly can be anonymous. An identifier must not be given to
-<code>boom</code> parameter <code>to</code>, which always implies the following
-element.</p>
+<p>When no <code>boom</code> is specificed between two elements, the most
+recent <code>angle</code> and <code>gap</code> will be used again.</p>
+
+<p>If not given an identifier, optional <code>boom</code> parameter
+<code>from</code> defaults to the preceeding element, which commonly can be
+anonymous. An identifier must not be given to optional <code>boom</code>
+parameter <code>to</code>, which always implies the following element.</p>
 
 <p>The degree value of <code>boom</code> parameter <code>angle</code> accepts
 decimal numbers, but also recognizes some symbols (strings in JavaScript).</p>
@@ -2287,11 +2316,13 @@ decimal numbers, but also recognizes some symbols (strings in JavaScript).</p>
   </tbody>
 </table>
 
-<p>This at first experimental command works great in many circumstances. As
-implemented, command <code>telescopicTree</code> may still be subject to minor
-changes in how it places under some circumstances, because the implementation
-at the time has been optimized for speed rather than ideal coverage of all
-possible cases.</p>
+<p>This <span class="deemphasize">at first experimental</span> command works
+great for a number of uses.</p>
+
+<p>As implemented, command <code>telescopicTree</code> may still be subject to
+minor changes in how it places under some circumstances, because the
+implementation at the time has been optimized for speed rather than ideal
+coverage of all possible cases.</p>
 
 <h4 id="L94550">1.11.20. Command hide Options</h4>
 
@@ -2475,17 +2506,17 @@ possible cases.</p>
   &lt;rect width="200" height="170" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;adj:telescopicTree gap="5" <span class="example-code">explain="true"</span>/&gt;
-    &lt;rect width="30" height="20" fill="#000" adj:id="l-1-1"/&gt;
+    &lt;rect width="30" height="20" fill="#000" adj:id="id1"/&gt;
     &lt;adj:boom/&gt;
     &lt;rect width="32" height="22" fill="#222"/&gt;
     &lt;adj:boom angle="east"/&gt;
     &lt;rect width="34" height="24" fill="#444"/&gt;
-    &lt;adj:boom from="l-1-1" angle="90" gap="15"/&gt;
-    &lt;rect width="36" height="26" fill="#666" adj:id="l-2-1"/&gt;
+    &lt;adj:boom from="id1" angle="90" gap="15"/&gt;
+    &lt;rect width="36" height="26" fill="#666" adj:id="id2"/&gt;
     &lt;adj:boom angle="10"/&gt;
     &lt;rect width="38" height="28" fill="#888"/&gt;
     &lt;rect width="40" height="30" fill="#aaa"/&gt;
-    &lt;adj:boom from="l-2-1%0.5,1" to="0.5,0" angle="100" gap="~l-2-1#h * 0.5"/&gt;&lt;!--  --&gt;
+    &lt;adj:boom from="id2%0.5,1" to="0.5,0" angle="100" gap="~id2#h * 0.5"/&gt;&lt;!--  --&gt;
     &lt;rect width="42" height="32" fill="#bbb"/&gt;
     &lt;adj:boom angle="-10"/&gt;
     &lt;rect width="44" height="34" fill="#ccc"/&gt;
