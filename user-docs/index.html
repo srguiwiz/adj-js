@@ -2090,11 +2090,23 @@ href="#L12321">frameForParent</a></code>.</p>
 <table border="1">
   <tbody>
     <tr>
+      <td><img alt="example" src="adj-ex-063-zoomFrames.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;</span>
+  &lt;rect x="5" y="5" width="30" height="20" stroke="black" stroke-width="1" fill="#000"/&gt;
+  &lt;rect width="45" height="35" stroke="gray" stroke-width="1" fill="white" opacity="0.5"&gt;
+    <span class="example-code">&lt;adj:zoomFrames/&gt;</span>
+  &lt;/rect&gt;
+  &lt;rect x="135" y="65" width="60" height="50" stroke="black" stroke-width="1" fill="#888"/&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
       <td><img alt="example" src="adj-ex-064-zoomFrames-from.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;rect width="200" height="120" fill="linen"/&gt;
-  &lt;rect x="5" y="5" width="30" height="20" stroke="black" stroke-width="1" fill="#000" adj:id="small"/&gt;
+  &lt;rect x="5" y="5" width="30" height="20" stroke="black" stroke-width="1" fill="#000" <span class="example-code">adj:id="small"</span>/&gt;
   &lt;rect x="155" y="5" width="40" height="30" stroke="black" stroke-width="1" fill="#444"/&gt;
   &lt;rect x="5" y="75" width="50" height="40" stroke="black" stroke-width="1" fill="#666"/&gt;
   &lt;rect width="45" height="35" stroke="lightgray" stroke-width="1" fill="white" opacity="0.75"&gt;
@@ -2115,7 +2127,7 @@ href="#L12321">frameForParent</a></code>.</p>
   &lt;/rect&gt;
   &lt;rect x="155" y="5" width="40" height="30" stroke="black" stroke-width="1" fill="#444"/&gt;
   &lt;rect x="5" y="75" width="50" height="40" stroke="black" stroke-width="1" fill="#666"/&gt;
-  &lt;rect x="135" y="65" width="60" height="50" stroke="black" stroke-width="1" fill="#888" adj:id="big"/&gt;
+  &lt;rect x="135" y="65" width="60" height="50" stroke="black" stroke-width="1" fill="#888" <span class="example-code">adj:id="big"</span>/&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -2128,6 +2140,20 @@ href="#L12321">frameForParent</a></code>.</p>
 
 <table border="1">
   <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-066-tilt.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g adj:command="skimpyList"&gt;
+    &lt;g&gt;
+      &lt;rect width="50" height="70" stroke="black" stroke-width="1" fill="#888"&gt;
+        <span class="example-code">&lt;adj:tilt alpha="15"/&gt;</span>
+      &lt;/rect&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
     <tr>
       <td><img alt="example" src="adj-ex-067-tilt-beta.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
@@ -2649,6 +2675,11 @@ instances of command <code><a href="#L94550">hide</a></code>.</p>
     </tr>
   </tbody>
 </table>
+
+<p>The optional second parameter tells whether to invoke <code>doDoc</code>.</p>
+
+<p>Similarly there are functions <code>hideSiblingsFollowing</code> and
+<code>unhideSiblingsFollowing</code>.</p>
 
 <h3 id="L1780">1.14. Referencing By Identifier Attribute</h3>
 
