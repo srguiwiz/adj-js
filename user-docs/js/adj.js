@@ -5708,7 +5708,7 @@ Adj.hideSiblingsFollowing = function hideSiblingsFollowing (element, doDoc) {
 Adj.unhideSiblingsFollowing = function unhideSiblingsFollowing (element, doDoc) {
 	Adj.hideUnhideSiblingsFollowing(element, "unhide", doDoc);
 }
-Adj.toggleHideSiblingsFollowing = function toggleSiblingsFollowing (element, doDoc) {
+Adj.toggleHideSiblingsFollowing = function toggleHideSiblingsFollowing (element, doDoc) {
 	Adj.hideUnhideSiblingsFollowing(element, "toggle", doDoc);
 }
 
