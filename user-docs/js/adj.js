@@ -5723,7 +5723,7 @@ Adj.algorithms.paragraph = {
 						downward = true;
 					} else if (currentChild instanceof SVGAElement) {
 						downward = true;
-					}
+					} // else skip, e.g. a <title> or <desc> element
 				}
 			} else {
 				upward = false;
