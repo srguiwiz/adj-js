@@ -125,21 +125,33 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 		console.log("Adj skipping unknown algorithm name " + algorithmName);
 		return;
 	}
-	var phaseHandler = { // stuff everything needed into one phaseHandler object
-		element: element,
-		algorithm: algorithm,
-		parametersObject: parametersObject,
-	};
-	var phaseHandlerName = algorithm.phaseHandlerName;
-	//console.log("a " + element.nodeName + " element gets a " + phaseHandlerName + " handler with a " + algorithmName + " algorithm");
+	//
+	var phaseHandlerNames = algorithm.phaseHandlerNames;
+	var methods = algorithm.methods;
+	//
 	// phaseHandlers is an associative array object which for a phaseHandlerName key as value has an array of phaseHandler, if there is any
 	var phaseHandlers = target.adjPhaseHandlers;
 	phaseHandlers = phaseHandlers || {}; // if no phaseHandlers yet then new associative array object
-	var phaseHandlersForThisPhase = phaseHandlers[phaseHandlerName];
-	phaseHandlersForThisPhase = phaseHandlersForThisPhase || []; // if no phaseHandlersForThisPhase yet then new array
-	phaseHandlersForThisPhase.push(phaseHandler);
-	phaseHandlers[phaseHandlerName] = phaseHandlersForThisPhase;
 	target.adjPhaseHandlers = phaseHandlers;
+	//
+	for (var phaseHandlerIndex in phaseHandlerNames) {
+		var phaseHandlerName = phaseHandlerNames[phaseHandlerIndex];
+		var phaseHandler = { // stuff everything needed into one phaseHandler object
+			element: element,
+			algorithm: algorithm,
+			method: methods[phaseHandlerIndex],
+			parametersObject: parametersObject // shared for one element for all method invocations of one algorithm
+		};
+		//console.log("a " + element.nodeName + " element gets a " + phaseHandlerName + " handler with a " + algorithmName + " algorithm");
+		var phaseHandlersForThisPhase = phaseHandlers[phaseHandlerName];
+		phaseHandlersForThisPhase = phaseHandlersForThisPhase || []; // if no phaseHandlersForThisPhase yet then new array
+		phaseHandlersForThisPhase.push(phaseHandler);
+		phaseHandlers[phaseHandlerName] = phaseHandlersForThisPhase;
+		//
+		var ownerDocumentElement = target.ownerDocument.documentElement;
+		ownerDocumentElement.adjPhaseHandlerNamesOccurringByName[phaseHandlerName] = true;
+	}
+	//
 	if (algorithm.notAnOrder1Element) {
 		element.adjNotAnOrder1Element = true;
 		Adj.hideByDisplayAttribute(element);
@@ -151,9 +163,6 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
 		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
 	}
-	//
-	var ownerDocumentElement = target.ownerDocument.documentElement;
-	ownerDocumentElement.adjPhaseHandlerNamesOccurringByName[phaseHandlerName] = true;
 }
 
 // utility
@@ -436,7 +445,7 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 						// expect only one
 						for (var subtreeIndex in phaseHandlersForSubtreeName) {
 							var phaseHandler = phaseHandlersForSubtreeName[subtreeIndex];
-							phaseHandler.algorithm.method(phaseHandler.element, phaseHandler.parametersObject, level);
+							phaseHandler.method(phaseHandler.element, phaseHandler.parametersObject, level);
 						}
 					}
 				}
@@ -451,7 +460,7 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 		if (phaseHandlersForDownName) {
 			for (var downIndex in phaseHandlersForDownName) {
 				var phaseHandler = phaseHandlersForDownName[downIndex];
-				phaseHandler.algorithm.method(phaseHandler.element, phaseHandler.parametersObject, level);
+				phaseHandler.method(phaseHandler.element, phaseHandler.parametersObject, level);
 			}
 		}
 	}
@@ -475,7 +484,7 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 		if (phaseHandlersForUpName) {
 			for (var upIndex in phaseHandlersForUpName) {
 				var phaseHandler = phaseHandlersForUpName[upIndex];
-				phaseHandler.algorithm.method(phaseHandler.element, phaseHandler.parametersObject, level);
+				phaseHandler.method(phaseHandler.element, phaseHandler.parametersObject, level);
 			}
 		}
 	}
@@ -644,7 +653,7 @@ Adj.createExplanationLine = function createExplanationLine (x1, y1, x2, y2, stro
 
 // a specific algorithm
 Adj.algorithms.horizontalList = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap",
 				 "verticalGap", "topGap", "middleGap", "bottomGap",
@@ -652,7 +661,7 @@ Adj.algorithms.horizontalList = {
 				 "makeGrid",
 				 "hAlign", "vAlign",
 				 "explain"],
-	method: function horizontalList (element, parametersObject) {
+	methods: [function horizontalList (element, parametersObject) {
 		var usedHow = "used in a parameter for a horizontalList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
@@ -863,12 +872,12 @@ Adj.algorithms.horizontalList = {
 				}
 			}
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.verticalList = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap",
 				 "verticalGap", "topGap", "middleGap", "bottomGap",
@@ -876,7 +885,7 @@ Adj.algorithms.verticalList = {
 				 "makeGrid",
 				 "hAlign", "vAlign",
 				 "explain"],
-	method: function verticalList (element, parametersObject) {
+	methods: [function verticalList (element, parametersObject) {
 		var usedHow = "used in a parameter for a verticalList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
@@ -1087,17 +1096,17 @@ Adj.algorithms.verticalList = {
 				}
 			}
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.frameForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase5Down",
+	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["inset",
 				 "horizontalInset", "leftInset", "rightInset",
 				 "verticalInset", "topInset", "bottomInset"],
-	method: function frameForParent (element, parametersObject) {
+	methods: [function frameForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a frameForParent command";
 		var variableSubstitutionsByName = {};
 		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0.5, null, usedHow, variableSubstitutionsByName); // default inset = 0.5
@@ -1114,7 +1123,7 @@ Adj.algorithms.frameForParent = {
 		element.setAttribute("y", Adj.decimal(parentBoundingBox.y + topInset));
 		element.setAttribute("width", Adj.decimal(parentBoundingBox.width - leftInset - rightInset));
 		element.setAttribute("height", Adj.decimal(parentBoundingBox.height - topInset - bottomInset));
-	}
+	}]
 }
 
 // constants
@@ -1126,10 +1135,10 @@ Adj.lineBreakRegexp = /(?:\r?\n)/;
 // utility
 // a specific algorithm
 Adj.algorithms.textBreaks = {
-	phaseHandlerName: "adjPhase1Down",
+	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: ["wordBreaks",
 				 "lineBreaks"],
-	method: function textBreaks (element, parametersObject) {
+	methods: [function textBreaks (element, parametersObject) {
 		var wordBreaks = parametersObject.wordBreaks ? parametersObject.wordBreaks : false // default wordBreaks = false
 		var lineBreaks = parametersObject.lineBreaks ? parametersObject.lineBreaks : true // default lineBreaks = true
 		//
@@ -1157,7 +1166,7 @@ Adj.algorithms.textBreaks = {
 				}
 			}
 		}
-	}
+	}]
 }
 
 // utility
@@ -1614,11 +1623,11 @@ Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoord
 // and for general case group containing one line (or path) as vector and any number of lines and paths as children of that group
 Adj.algorithms.connection = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase5Up",
+	phaseHandlerNames: ["adjPhase5Up"],
 	parameters: ["from", "to",
 				 "vector",
 				 "explain"],
-	method: function connection (element, parametersObject) {
+	methods: [function connection (element, parametersObject) {
 		var usedHow = "used in a parameter for a connection command";
 		var variableSubstitutionsByName = {};
 		var fromParameter = parametersObject.from;
@@ -1783,7 +1792,7 @@ Adj.algorithms.connection = {
 			parent.appendChild(explanationElement);
 			parent.appendChild(Adj.createExplanationPointCircle(toPoint.x, toPoint.y, "red"));
 		}
-	}
+	}]
 }
 
 // utility
@@ -1979,7 +1988,7 @@ Adj.overlapAndDistances = function overlapAndDistances (rectangle, rectangles) {
 // and for general case given the id of a path to ride on
 Adj.algorithms.rider = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase7",
+	phaseHandlerNames: ["adjPhase7"],
 	processSubtreeOnlyInPhaseHandler: "adjPhase7",
 	parameters: ["pin",
 				 "path",
@@ -1987,7 +1996,7 @@ Adj.algorithms.rider = {
 				 "at",
 				 "gap",
 				 "steps"],
-	method: function rider (element, parametersObject, level) {
+	methods: [function rider (element, parametersObject, level) {
 		var usedHow = "used in a parameter for a rider command";
 		var variableSubstitutionsByName = {};
 		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
@@ -2275,7 +2284,7 @@ Adj.algorithms.rider = {
 				parent.appendChild(Adj.createExplanationPointCircle(pathFractionPoint.x, pathFractionPoint.y, "red"));
 			}
 		}
-	}
+	}]
 }
 
 // utility
@@ -2387,9 +2396,9 @@ Adj.relativatePath = function relativatePath (pathElement) {
 // utility
 // a specific algorithm
 Adj.algorithms.relativate = {
-	phaseHandlerName: "adjPhase1Down",
+	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: [],
-	method: function relativate (element, parametersObject) {
+	methods: [function relativate (element, parametersObject) {
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
 			// an SVG path
@@ -2409,7 +2418,7 @@ Adj.algorithms.relativate = {
 				} // else { // not a known case, as implemented not relativated
 			}
 		}
-	}
+	}]
 }
 
 // utility
@@ -2433,9 +2442,9 @@ Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
 // a specific algorithm
 Adj.algorithms.circleForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase5Down",
+	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["inset"],
-	method: function circleForParent (element, parametersObject) {
+	methods: [function circleForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a circleForParent command";
 		var variableSubstitutionsByName = {};
 		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0, null, usedHow, variableSubstitutionsByName); // default inset = 0
@@ -2446,15 +2455,15 @@ Adj.algorithms.circleForParent = {
 		element.setAttribute("cx", Adj.decimal(parentBoundingCircle.cx));
 		element.setAttribute("cy", Adj.decimal(parentBoundingCircle.cy));
 		element.setAttribute("r", Adj.decimal(parentBoundingCircle.r - inset));
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.ellipseForParent = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase5Down",
+	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["inset", "horizontalInset", "verticalInset"],
-	method: function ellipseForParent (element, parametersObject) {
+	methods: [function ellipseForParent (element, parametersObject) {
 		var usedHow = "used in a parameter for a ellipseForParent command";
 		var variableSubstitutionsByName = {};
 		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0, null, usedHow, variableSubstitutionsByName); // default inset = 0
@@ -2468,20 +2477,20 @@ Adj.algorithms.ellipseForParent = {
 		element.setAttribute("cy", Adj.decimal(parentBoundingEllipse.cy));
 		element.setAttribute("rx", Adj.decimal(parentBoundingEllipse.rx - horizontalInset));
 		element.setAttribute("ry", Adj.decimal(parentBoundingEllipse.ry - verticalInset));
-	}
+	}]
 }
 
 // a specific algorithm
 // first element is trunk in the center, could be an empty group, remaining elements are branches
 Adj.algorithms.circularList = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap", "rGap", "cGap",
 				 "fromAngle", "toAngle",
 				 "rAlign",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap",
 				 "explain"],
-	method: function circularList (element, parametersObject) {
+	methods: [function circularList (element, parametersObject) {
 		var usedHow = "used in a parameter for a circularList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
@@ -2680,19 +2689,19 @@ Adj.algorithms.circularList = {
 				element.appendChild(explanationElement);
 			}
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.verticalTree = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap", "childlessGap", "earGap",
 				 "verticalGap", "topGap", "middleGap", "bottomGap",
 				 "hAlign", "vAlign",
 				 "autoParrots",
 				 "explain"],
-	method: function verticalTree (element, parametersObject) {
+	methods: [function verticalTree (element, parametersObject) {
 		var usedHow = "used in a parameter for a verticalTree command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 10, null, usedHow, variableSubstitutionsByName); // default gap = 10
@@ -3232,7 +3241,7 @@ Adj.algorithms.verticalTree = {
 				totalHeight += rowMaxHeight;
 			}
 		}
-	}
+	}]
 }
 
 // a specific algorithm
@@ -3240,14 +3249,14 @@ Adj.algorithms.verticalTree = {
 // for the purpose of developing in parallel, naming of variables has been kept similar, which has lead to some naming oddities,
 // e.g. a row in this algorithm is vertical, still "a series of objects placed next to each other, usually in a straight line" per AHD
 Adj.algorithms.horizontalTree = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap",
 				 "verticalGap", "topGap", "middleGap", "bottomGap", "childlessGap", "earGap",
 				 "hAlign", "vAlign",
 				 "autoParrots",
 				 "explain"],
-	method: function horizontalTree (element, parametersObject) {
+	methods: [function horizontalTree (element, parametersObject) {
 		var usedHow = "used in a parameter for a horizontalTree command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 10, null, usedHow, variableSubstitutionsByName); // default gap = 10
@@ -3787,7 +3796,7 @@ Adj.algorithms.horizontalTree = {
 				totalWidth += rowMaxWidth;
 			}
 		}
-	}
+	}]
 }
 
 // utility
@@ -4197,9 +4206,9 @@ Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, default
 // note: as implemented works for path
 Adj.algorithms.vine = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase7Up",
+	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: ["explain"],
-	method: function vine (element, parametersObject) {
+	methods: [function vine (element, parametersObject) {
 		var usedHow = "used in a parameter for a vine command";
 		var variableSubstitutionsByName = {};
 		var idedElementRecordsById = {};
@@ -4231,18 +4240,18 @@ Adj.algorithms.vine = {
 				} // else { // don't explain twice
 			} // else { // not a known case, as implemented
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.floater = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase3",
+	phaseHandlerNames: ["adjPhase3"],
 	processSubtreeOnlyInPhaseHandler: "adjPhase3",
 	parameters: ["at",
 				 "pin",
 				 "explain"],
-	method: function floater (element, parametersObject, level) {
+	methods: [function floater (element, parametersObject, level) {
 		var usedHow = "used in a parameter for a floater command";
 		var variableSubstitutionsByName = {};
 		var idedElementRecordsById = {};
@@ -4299,15 +4308,15 @@ Adj.algorithms.floater = {
 			explanationElement.setAttribute("transform", elementTransformAttribute);
 			parent.appendChild(explanationElement);
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.fit = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["maxWidth", "maxHeight",
 				 "width", "height"],
-	method: function fit (element, parametersObject) {
+	methods: [function fit (element, parametersObject) {
 		var usedHow = "used in a parameter for a fit command";
 		var variableSubstitutionsByName = {};
 		var idedElementRecordsById = {};
@@ -4355,7 +4364,7 @@ Adj.algorithms.fit = {
 			}
 		}
 		element.setAttribute("transform", "scale(" + Adj.decimal(scale) + ")");
-	}
+	}]
 }
 
 // utility for use inside algorithms
@@ -4542,25 +4551,25 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 // a specific algorithm
 // note: as implemented works for path
 Adj.algorithms.explain = {
-	phaseHandlerName: "adjPhase7Up",
+	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: [],
-	method: function explain (element, parametersObject) {
+	methods: [function explain (element, parametersObject) {
 		// differntiate simplified cases
 		if (element instanceof SVGPathElement) {
 			// an SVG path
 			Adj.explainBasicGeometry(element);
 		} // else { // not a known case, as implemented
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.stackFrames = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["inset",
 				 "horizontalInset", "leftInset", "rightInset",
 				 "verticalInset", "topInset", "bottomInset",
 				 "stacking", "frame", "subject"],
-	method: function stackFrames (element, parametersObject) {
+	methods: [function stackFrames (element, parametersObject) {
 		var usedHow = "used in a parameter for a stackFrames command";
 		var variableSubstitutionsByName = {};
 		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0.5, null, usedHow, variableSubstitutionsByName); // default inset = 0.5
@@ -4630,16 +4639,16 @@ Adj.algorithms.stackFrames = {
 			clonedFrame.setAttribute("transform", "translate(" + Adj.decimal(i * stackingX) + "," + Adj.decimal(i * stackingY) + ")");
 			element.insertBefore(clonedFrame, frame);
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.zoomFrames = {
 	notAnOrder1Element: true,
-	phaseHandlerName: "adjPhase5Down",
+	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["from", "to",
 				 "step"],
-	method: function zoomFrames (element, parametersObject) {
+	methods: [function zoomFrames (element, parametersObject) {
 		var usedHow = "used in a parameter for a zoomFrames command";
 		var variableSubstitutionsByName = {};
 		var fromId = parametersObject.from;
@@ -4799,14 +4808,14 @@ Adj.algorithms.zoomFrames = {
 			clonedElement.setAttribute("height", Adj.decimal(Adj.fraction(fromH, toH, fraction)));
 			parent.insertBefore(clonedElement, nextSibling);
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.tilt = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["alpha", "beta"],
-	method: function tilt (element, parametersObject) {
+	methods: [function tilt (element, parametersObject) {
 		var usedHow = "used in a parameter for a tilt command";
 		var variableSubstitutionsByName = {};
 		var alpha = Adj.doVarsArithmetic(element, parametersObject.alpha, 30, null, usedHow, variableSubstitutionsByName); // default alpha = 30
@@ -4821,16 +4830,16 @@ Adj.algorithms.tilt = {
 		var e = 0;
 		var f = 0;
 		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.skimpyList = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap"],
-	method: function skimpyList (element, parametersObject) {
+	methods: [function skimpyList (element, parametersObject) {
 		var usedHow = "used in a parameter for a skimpyList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
@@ -4938,16 +4947,16 @@ Adj.algorithms.skimpyList = {
 			hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
 			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.pinnedList = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap"],
-	method: function pinnedList (element, parametersObject) {
+	methods: [function pinnedList (element, parametersObject) {
 		var usedHow = "used in a parameter for a pinnedList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
@@ -5150,7 +5159,7 @@ Adj.algorithms.pinnedList = {
 			hiddenRect.setAttribute("width", Adj.decimal(maxRight - minLeft));
 			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
 		}
-	}
+	}]
 }
 
 // utility
@@ -5169,11 +5178,11 @@ Adj.deepCloneObject = function deepCloneObject(object) {
 
 // a specific algorithm
 Adj.algorithms.telescopicTree = {
-	phaseHandlerName: "adjPhase1Up",
+	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "from", "to",
 				 "explain"],
-	method: function telescopicTree (element, parametersObject) {
+	methods: [function telescopicTree (element, parametersObject) {
 		var usedHow = "used in a parameter for a telescopicTree command";
 		var variableSubstitutionsByName = {};
 		var idedElementRecordsById = {};
@@ -5626,28 +5635,28 @@ Adj.algorithms.telescopicTree = {
 				}
 			}
 		}
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.boom = {
-	phaseHandlerName: "adjPhase1Down",
+	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: ["from", "to",
 				 "angle",
 				 "gap"],
-	method: function boom (element, parametersObject) {
+	methods: [function boom (element, parametersObject) {
 		// actual processing done in Adj.algorithms.telescopicTree, for now
-	}
+	}]
 }
 
 // a specific algorithm
 Adj.algorithms.hide = {
 	hiddenByCommand: true,
-	phaseHandlerName: "adjPhase1Down",
+	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: [],
-	method: function hide (element, parametersObject) {
+	methods: [function hide (element, parametersObject) {
 		// actual hiding done in Adj.setAlgorithm, for now
-	}
+	}]
 }
 
 // utility
