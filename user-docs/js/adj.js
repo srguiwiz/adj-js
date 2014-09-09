@@ -5654,7 +5654,7 @@ Adj.svgTextFixdupNewlineRegexp = /(^|\S)\n/g;
 Adj.svgTextFixdupNewlineReplacment = "$1 \n";
 Adj.svgTextNewlineRegexp = /\n+/g;
 Adj.svgTextSpacesRegexp = /[ \t]+/g;
-Adj.svgTextWhiteSpaceTruthByCode = { 32: true, 9: true, 10: true };
+Adj.svgTextWhitespaceTruthByCode = { 32: true, 9: true, 10: true };
 Adj.svgTextTickle = "\u200B\uFEFF"; // so for consistency between browsers
 
 // utility
@@ -5747,8 +5747,13 @@ Adj.algorithms.paragraph = {
 		var spaceCleanedTextContent = textContent.replace(Adj.svgTextNewlineRegexp, "").replace(Adj.svgTextSpacesRegexp, " ").trim();
 		var elementNumberOfChars = element.getNumberOfChars();
 		if (spaceCleanedTextContent.length != elementNumberOfChars) {
-			console.log("non-matching text lengths prevent paragraph formatting");
-			return; // avoid problems
+			if (spaceCleanedTextContent.length + 1 == elementNumberOfChars) {
+				// observed to get here in Internet Explorer 11 when text ends with whitespace
+				console.log("tolerating one off text lengths");
+			} else {
+				console.log("non-matching text lengths prevent paragraph formatting");
+				return; // avoid problems
+			}
 		}
 		if (!textContent.length) {
 			return; // done
@@ -5788,15 +5793,15 @@ Adj.algorithms.paragraph = {
 			if (currentCharInNodeIndex < currentNodeTextLength) {
 				//console.log("char ", currentNodeText.charAt(currentCharInNodeIndex));
 				var charCode = currentNodeText.charCodeAt(currentCharInNodeIndex);
-				var isWhiteSpace = Adj.svgTextWhiteSpaceTruthByCode[charCode];
+				var isWhitespace = Adj.svgTextWhitespaceTruthByCode[charCode];
 				if (inWord) {
-					if (isWhiteSpace) {
+					if (isWhitespace) {
 						endOfWord = true;
 						endOfWordCharIndex = currentCharIndex;
 					}
 					currentCharIndex++;
 				} else {
-					if (!isWhiteSpace) {
+					if (!isWhitespace) {
 						beginOfWord = true;
 						beginOfWordCharIndex = currentCharIndex;
 						currentCharIndex++;
