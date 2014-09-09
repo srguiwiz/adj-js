@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2013, Hans Baschy
+// Copyright (c) 2013-2014, Hans Baschy
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,9 @@
 
 // a specific algorithm
 Adj.algorithms.randomTilt = {
-	phaseHandlerName: "adjPhase7Up",
+	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: ["maxAngle"],
-	method: function randomTilt (element, parametersObject) {
+	methods: [function randomTilt (element, parametersObject) {
 		var usedHow = "used in a parameter for a randomTilt command";
 		var variableSubstitutionsByName = {};
 		var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 15, null, usedHow, variableSubstitutionsByName); // default maxAngle = 15
@@ -60,5 +60,5 @@ Adj.algorithms.randomTilt = {
 		var e = cx - a * cx - c * cy;
 		var f = cy - b * cx - d * cy;
 		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
-	}
+	}]
 }
