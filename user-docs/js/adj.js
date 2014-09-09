@@ -5837,10 +5837,10 @@ Adj.algorithms.paragraph = {
 					// don't break if first word
 				}
 				previousEndOfWordCharIndex = endOfWordCharIndex;
-				if (endOfTextNodeRecords) {
-					newLineRecords[lineNumber].lineLength =
-						Math.ceil(element.getSubStringLength(currentLineBegin, endOfWordCharIndex - currentLineBegin));
-				}
+			}
+			if (endOfTextNodeRecords) {
+				newLineRecords[lineNumber].lineLength =
+					Math.ceil(element.getSubStringLength(currentLineBegin, endOfWordCharIndex - currentLineBegin));
 			}
 		}
 		//
