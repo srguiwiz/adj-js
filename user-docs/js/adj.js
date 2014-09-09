@@ -5649,6 +5649,254 @@ Adj.algorithms.boom = {
 	}]
 }
 
+// constants
+Adj.svgTextFixdupNewlineRegexp = /(^|\S)\n/g;
+Adj.svgTextFixdupNewlineReplacment = "$1 \n";
+Adj.svgTextNewlineRegexp = /\n+/g;
+Adj.svgTextSpacesRegexp = /[ \t]+/g;
+Adj.svgTextWhiteSpaceTruthByCode = { 32: true, 9: true, 10: true };
+Adj.svgTextTickle = "\u200B\uFEFF"; // so for consistency between browsers
+
+// utility
+Adj.createTspanXYElement = function createTspanXYElement (x, y) {
+	var tspanElement = Adj.createSVGElement("tspan");
+	tspanElement.setAttribute("x", x);
+	tspanElement.setAttribute("y", y);
+	tspanElement.textContent = Adj.svgTextTickle;
+	return tspanElement;
+}
+
+// a specific algorithm
+Adj.algorithms.paragraph = {
+	phaseHandlerNames: ["adjPhase1Down", "adjPhase7Up"],
+	parameters: ["maxWidth", "lineGap", "hAlign",
+				 "explain"],
+	methods: [function paragraph1Down (element, parametersObject) {
+		// quite useful hack, if you use this code outside this source code file,
+		// please put a note into your source code, describing your derivative, such as
+		// "partially inspired by, copied from, evolved from Leo Baschy's Adj.algorithms.paragraph"
+		var usedHow = "used in a parameter for a paragraph command";
+		var variableSubstitutionsByName = {};
+		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // default maxWidth = null means no limit
+		var lineGap = Adj.doVarsArithmetic(element, parametersObject.lineGap, 2, null, usedHow, variableSubstitutionsByName); // default lineGap = 2
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
+		//
+		if (!element instanceof SVGTextElement) {
+			return; // avoid nonsense
+		}
+		//
+		var currentElement = element;
+		var currentChild = currentElement.firstChild;
+		var stack = [];
+		var downward = false;
+		var upward = false;
+		var textNodeRecords = [];
+		walkTextLoop1: while (currentChild || stack.length) {
+			if (!currentChild) {
+				var stackedPosition = stack.pop();
+				currentElement = stackedPosition.element;
+				currentChild = stackedPosition.child;
+				upward = true;
+			}
+			if (!upward) {
+				if (currentChild.nodeType == Node.TEXT_NODE) {
+					//console.log("level ", stack.length, " text node ", currentChild.nodeValue);
+					// make sure \n has a space in front of it for consistency between browsers (one violates spec)
+					var currentNodeText = currentChild.nodeValue;
+					var fixedUpNodeText = currentNodeText.replace(Adj.svgTextFixdupNewlineRegexp, Adj.svgTextFixdupNewlineReplacment);
+					if (fixedUpNodeText.length != currentNodeText.length) {
+						currentChild.nodeValue = fixedUpNodeText;
+					}
+					textNodeRecords.push( { node: currentChild } );
+				} else if (currentChild instanceof Element) {
+					if (currentChild instanceof SVGTSpanElement) {
+						// look for artifact and if so then remove
+						if (currentChild.childNodes.length == 1) {
+							if (currentChild.textContent == Adj.svgTextTickle) {
+								var childToRemove = currentChild;
+								currentChild = currentChild.nextSibling;
+								childToRemove.parentNode.removeChild(childToRemove);
+								continue walkTextLoop1;
+							}
+						}
+						downward = true;
+					} else if (currentChild instanceof SVGAElement) {
+						downward = true;
+					}
+				}
+			} else {
+				upward = false;
+			}
+			if (downward) {
+				stack.push( { element: currentElement, child: currentChild } );
+				currentElement = currentChild;
+				currentChild = currentElement.firstChild;
+				downward = false;
+				continue walkTextLoop1;
+			}
+			currentChild = currentChild.nextSibling;
+		}
+		//
+		if (!maxWidth) {
+			return; // done
+		}
+		element.setAttribute("visibility", "hidden");
+		//
+		var textContent = element.textContent;
+		var spaceCleanedTextContent = textContent.replace(Adj.svgTextNewlineRegexp, "").replace(Adj.svgTextSpacesRegexp, " ").trim();
+		var elementNumberOfChars = element.getNumberOfChars();
+		if (spaceCleanedTextContent.length != elementNumberOfChars) {
+			console.log("non-matching text lengths prevent paragraph formatting");
+			return; // avoid problems
+		}
+		if (!textContent.length) {
+			return; // done
+		}
+		//
+		var oneLineBoundingBox = element.getBBox();
+		var lineStep = Math.round(oneLineBoundingBox.height) + lineGap;
+		if (oneLineBoundingBox.width <= maxWidth) {
+			return; //done
+		}
+		//
+		// in spaceCleanedTextContent
+		var currentCharIndex = 0;
+		var currentLineBegin = currentCharIndex;
+		var endOfWordCharIndex = currentLineBegin;
+		var previousEndOfWordCharIndex = endOfWordCharIndex;
+		var lineNumber = 0;
+		var inWord = false;
+		// in textNodeRecords
+		var currentNode = textNodeRecords[0];
+		var currentCharInNodeIndex = -1;
+		var endOfTextNodeRecords = false;
+		var beginOfWordNode = null;
+		var beginOfWordCharInNodeIndex;
+		var beginOfWordCharIndex;
+		var newLineRecords = [ { textNode: element, charInNodeIndex: 0 } ];
+		for (var textNodeIndex = 0, textNodeRecordsLength = textNodeRecords.length; !endOfTextNodeRecords; ) {
+			currentCharInNodeIndex++;
+			if (currentCharInNodeIndex == 0) {
+				var textNodeRecord = textNodeRecords[textNodeIndex];
+				var currentTextNode = textNodeRecord.node;
+				var currentNodeText = currentTextNode.nodeValue;
+				var currentNodeTextLength = currentNodeText.length;
+			}
+			var endOfWord = false;
+			var beginOfWord = false;
+			if (currentCharInNodeIndex < currentNodeTextLength) {
+				//console.log("char ", currentNodeText.charAt(currentCharInNodeIndex));
+				var charCode = currentNodeText.charCodeAt(currentCharInNodeIndex);
+				var isWhiteSpace = Adj.svgTextWhiteSpaceTruthByCode[charCode];
+				if (inWord) {
+					if (isWhiteSpace) {
+						endOfWord = true;
+						endOfWordCharIndex = currentCharIndex;
+					}
+					currentCharIndex++;
+				} else {
+					if (!isWhiteSpace) {
+						beginOfWord = true;
+						beginOfWordCharIndex = currentCharIndex;
+						currentCharIndex++;
+					}
+				}
+			} else {
+				textNodeIndex++;
+				currentCharInNodeIndex = -1;
+				if (textNodeIndex >= textNodeRecordsLength) {
+					endOfTextNodeRecords = true;
+					if (inWord) {
+						endOfWord = true;
+						endOfWordCharIndex = currentCharIndex;
+					}
+				}
+			}
+			if (beginOfWord) {
+				inWord = true;
+				beginOfWordNode = currentTextNode;
+				beginOfWordCharInNodeIndex = currentCharInNodeIndex;
+			}
+			if (endOfWord) {
+				inWord = false;
+				if (beginOfWordCharIndex > currentLineBegin) {
+					var lineLengthToEndOfWord = Math.ceil(element.getSubStringLength(currentLineBegin, currentCharIndex - currentLineBegin));
+					if (lineLengthToEndOfWord > maxWidth) {
+						//console.log("needs new line at char ", currentCharIndex);
+						newLineRecords[lineNumber].lineLength =
+							Math.ceil(element.getSubStringLength(currentLineBegin, previousEndOfWordCharIndex - currentLineBegin));
+						lineNumber++;
+						currentLineBegin = beginOfWordCharIndex;
+						newLineRecords.push({
+							textNode: beginOfWordNode,
+							charInNodeIndex: beginOfWordCharInNodeIndex
+						});
+					}
+				} else {
+					// don't break if first word
+				}
+				previousEndOfWordCharIndex = endOfWordCharIndex;
+				if (endOfTextNodeRecords) {
+					newLineRecords[lineNumber].lineLength =
+						Math.ceil(element.getSubStringLength(currentLineBegin, endOfWordCharIndex - currentLineBegin));
+				}
+			}
+		}
+		//
+		for (var lineNumber = newLineRecords.length - 1; lineNumber > 0; lineNumber--) {
+			var newLineRecord = newLineRecords[lineNumber];
+			var textNode = newLineRecord.textNode;
+			var charInNodeIndex = newLineRecord.charInNodeIndex;
+			var lineLength = newLineRecord.lineLength;
+			//
+			var tspanXYElement = Adj.createTspanXYElement(Adj.fraction(0, maxWidth - lineLength, hAlign), lineNumber * lineStep);
+			var tspanXYElement2 = tspanXYElement.cloneNode(true); // so for consistency between browsers
+			if (charInNodeIndex > 0) {
+				textNode = textNode.splitText(charInNodeIndex); // var newTextNode
+			} // else == 0
+			parentNodeForInsert = textNode.parentNode;
+			parentNodeForInsert.insertBefore(tspanXYElement, textNode);
+			parentNodeForInsert.insertBefore(tspanXYElement2, textNode);
+		}
+		element.setAttribute("x", Adj.fraction(0, maxWidth - newLineRecords[0].lineLength, hAlign));
+		element.setAttribute("y", 0);
+		element.removeAttribute("visibility");
+		//
+		// explain
+		if (explain) {
+			if (maxWidth) {
+				var textBoundingBox = element.getBBox();
+				var explanationElement = Adj.createExplanationElement("rect");
+				explanationElement.setAttribute("x", Adj.decimal(textBoundingBox.x - Adj.fraction(0, maxWidth - textBoundingBox.width, hAlign)));
+				explanationElement.setAttribute("y", Adj.decimal(textBoundingBox.y));
+				explanationElement.setAttribute("width", maxWidth);
+				explanationElement.setAttribute("height", newLineRecords.length * lineStep);
+				explanationElement.setAttribute("fill", "blue");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				parametersObject.explanationElement = explanationElement; // store for a later phase
+			}
+		}
+	},
+	function paragraph7Up (element, parametersObject) {
+		// explain
+		var explanationElement = parametersObject.explanationElement;
+		if (explanationElement) {
+			// by now the necessary transform should be known
+			var transform = element.getAttribute("transform");
+			if (transform) {
+				explanationElement.setAttribute("transform", transform);
+			}
+			var parent = element.parentNode;
+			parent.appendChild(explanationElement);
+			delete parametersObject.explanationElement;
+		}
+	}]
+}
+
 // a specific algorithm
 Adj.algorithms.hide = {
 	hiddenByCommand: true,
