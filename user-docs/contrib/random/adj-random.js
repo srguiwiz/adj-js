@@ -34,7 +34,7 @@
 // a specific algorithm
 Adj.algorithms.randomTilt = {
 	phaseHandlerNames: ["adjPhase7Up"],
-	parameters: ["maxAngle"],
+	parameters: ["maxAngle", "minAngle"],
 	methods: [function randomTilt (element, parametersObject) {
 		var usedHow = "used in a parameter for a randomTilt command";
 		var variableSubstitutionsByName = {};
