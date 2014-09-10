@@ -5657,6 +5657,26 @@ Adj.svgTextSpacesRegexp = /[ \t]+/g;
 Adj.svgTextWhitespaceTruthByCode = { 32: true, 9: true, 10: true };
 Adj.svgTextTickle = "\u200B\uFEFF"; // so for consistency between browsers
 
+// utility to work around Safari 5 to 7 at \n stopping increasing getSubStringLength
+Adj.getTextSubStringLength = function getTextSubStringLength(element, begin, end, newlinesAndNodeEndsMap) {
+	if (newlinesAndNodeEndsMap && Object.getOwnPropertyNames(newlinesAndNodeEndsMap).length) {
+		var length = 0;
+		var nextBegin = begin;
+		for (var i = begin; i < end; i++) {
+			if (newlinesAndNodeEndsMap[i]) {
+				length += element.getSubStringLength(nextBegin, i + 1 - nextBegin);
+				nextBegin = i + 1;
+			}
+		}
+		if (end > nextBegin) {
+			length += element.getSubStringLength(nextBegin, end - nextBegin);
+		}
+		return length;
+	} else {
+		return element.getSubStringLength(begin, end - begin);
+	}
+}
+
 // utility
 Adj.createTspanXYElement = function createTspanXYElement (x, y) {
 	var tspanElement = Adj.createSVGElement("tspan");
@@ -5736,6 +5756,7 @@ Adj.algorithms.paragraph = {
 			currentChild = currentChild.nextSibling;
 		}
 		element.normalize(); // observed to be necessary for Safari 7.0.6 after removing artifacts
+		// second loop needed after normalize
 		var currentElement = element;
 		var currentChild = currentElement.firstChild;
 		var stack = [];
@@ -5801,12 +5822,13 @@ Adj.algorithms.paragraph = {
 		}
 		//
 		// in spaceCleanedTextContent
-		var currentCharIndex = 0;
-		var currentLineBegin = currentCharIndex;
+		var currentCharIndex = -1;
+		var currentLineBegin = 0;
 		var endOfWordCharIndex = currentLineBegin;
 		var previousEndOfWordCharIndex = endOfWordCharIndex;
 		var lineNumber = 0;
 		var inWord = false;
+		var newlinesAndNodeEndsMap = {}; // for Adj.getTextSubStringLength
 		// in textNodeRecords
 		var currentNode = textNodeRecords[0];
 		var currentCharInNodeIndex = -1;
@@ -5829,24 +5851,29 @@ Adj.algorithms.paragraph = {
 				//console.log("char ", currentNodeText.charAt(currentCharInNodeIndex));
 				var charCode = currentNodeText.charCodeAt(currentCharInNodeIndex);
 				var isWhitespace = Adj.svgTextWhitespaceTruthByCode[charCode];
+				if (charCode == 10) {
+					newlinesAndNodeEndsMap[currentCharIndex] = true;
+				}
 				if (inWord) {
+					currentCharIndex++;
 					if (isWhitespace) {
 						endOfWord = true;
 						endOfWordCharIndex = currentCharIndex;
 					}
-					currentCharIndex++;
 				} else {
 					if (!isWhitespace) {
+						currentCharIndex++;
 						beginOfWord = true;
 						beginOfWordCharIndex = currentCharIndex;
-						currentCharIndex++;
 					}
 				}
 			} else {
 				textNodeIndex++;
 				currentCharInNodeIndex = -1;
+				newlinesAndNodeEndsMap[currentCharIndex] = true;
 				if (textNodeIndex >= textNodeRecordsLength) {
 					endOfTextNodeRecords = true;
+					currentCharIndex++;
 					if (inWord) {
 						endOfWord = true;
 						endOfWordCharIndex = currentCharIndex;
@@ -5861,11 +5888,12 @@ Adj.algorithms.paragraph = {
 			if (endOfWord) {
 				inWord = false;
 				if (beginOfWordCharIndex > currentLineBegin) {
-					var lineLengthToEndOfWord = Math.ceil(element.getSubStringLength(currentLineBegin, endOfWordCharIndex - currentLineBegin));
+					var lineLengthToEndOfWord =
+						Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
 					if (lineLengthToEndOfWord > maxWidth) {
 						//console.log("needs new line at char ", currentCharIndex);
 						newLineRecords[lineNumber].lineLength =
-							Math.ceil(element.getSubStringLength(currentLineBegin, previousEndOfWordCharIndex - currentLineBegin));
+							Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, previousEndOfWordCharIndex, newlinesAndNodeEndsMap));
 						lineNumber++;
 						currentLineBegin = beginOfWordCharIndex;
 						newLineRecords.push({
@@ -5880,7 +5908,7 @@ Adj.algorithms.paragraph = {
 			}
 			if (endOfTextNodeRecords) {
 				newLineRecords[lineNumber].lineLength =
-					Math.ceil(element.getSubStringLength(currentLineBegin, endOfWordCharIndex - currentLineBegin));
+					Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
 			}
 		}
 		//
