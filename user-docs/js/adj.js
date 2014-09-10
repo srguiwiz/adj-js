@@ -5691,7 +5691,6 @@ Adj.algorithms.paragraph = {
 		var stack = [];
 		var downward = false;
 		var upward = false;
-		var textNodeRecords = [];
 		walkTextLoop1: while (currentChild || stack.length) {
 			if (!currentChild) {
 				var stackedPosition = stack.pop();
@@ -5701,14 +5700,13 @@ Adj.algorithms.paragraph = {
 			}
 			if (!upward) {
 				if (currentChild.nodeType == Node.TEXT_NODE) {
-					//console.log("level ", stack.length, " text node ", currentChild.nodeValue);
+					//console.log("walkTextLoop1 level ", stack.length, " text node ", currentChild.nodeValue);
 					// make sure \n has a space in front of it for consistency between browsers (one violates spec)
 					var currentNodeText = currentChild.nodeValue;
 					var fixedUpNodeText = currentNodeText.replace(Adj.svgTextFixdupNewlineRegexp, Adj.svgTextFixdupNewlineReplacment);
 					if (fixedUpNodeText.length != currentNodeText.length) {
 						currentChild.nodeValue = fixedUpNodeText;
 					}
-					textNodeRecords.push( { node: currentChild } );
 				} else if (currentChild instanceof Element) {
 					if (currentChild instanceof SVGTSpanElement) {
 						// look for artifact and if so then remove
@@ -5734,6 +5732,43 @@ Adj.algorithms.paragraph = {
 				currentChild = currentElement.firstChild;
 				downward = false;
 				continue walkTextLoop1;
+			}
+			currentChild = currentChild.nextSibling;
+		}
+		element.normalize(); // observed to be necessary for Safari 7.0.6 after removing artifacts
+		var currentElement = element;
+		var currentChild = currentElement.firstChild;
+		var stack = [];
+		var downward = false;
+		var upward = false;
+		var textNodeRecords = [];
+		walkTextLoop2: while (currentChild || stack.length) {
+			if (!currentChild) {
+				var stackedPosition = stack.pop();
+				currentElement = stackedPosition.element;
+				currentChild = stackedPosition.child;
+				upward = true;
+			}
+			if (!upward) {
+				if (currentChild.nodeType == Node.TEXT_NODE) {
+					//console.log("walkTextLoop2 level ", stack.length, " text node ", currentChild.nodeValue);
+					textNodeRecords.push( { node: currentChild } );
+				} else if (currentChild instanceof Element) {
+					if (currentChild instanceof SVGTSpanElement) {
+						downward = true;
+					} else if (currentChild instanceof SVGAElement) {
+						downward = true;
+					} // else skip, e.g. a <title> or <desc> element
+				}
+			} else {
+				upward = false;
+			}
+			if (downward) {
+				stack.push( { element: currentElement, child: currentChild } );
+				currentElement = currentChild;
+				currentChild = currentElement.firstChild;
+				downward = false;
+				continue walkTextLoop2;
 			}
 			currentChild = currentChild.nextSibling;
 		}
