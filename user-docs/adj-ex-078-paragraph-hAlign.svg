@@ -18,10 +18,10 @@
 	<g>
 		<adj:verticalList gap="15"/>
 		<text x="9" y="0" transform="translate(8,26)">
-			<adj:paragraph maxWidth="160" lineGap="2" hAlign="center"/>
-Source line one is here,
-source <tspan x="9" y="16">​﻿</tspan><tspan x="9" y="16">​﻿</tspan>line <tspan font-style="italic">t<tspan font-weight="bolder">w</tspan>o</tspan>
-is <a xlink:href="#"><tspan fill="blue">here</tspan></a> too.
+			<adj:paragraph maxWidth="160" lineGap="2" hAlign="center"/> 
+Source line one is here, 
+source <tspan x="9" y="16">​﻿</tspan><tspan x="9" y="16">​﻿</tspan>line <tspan font-style="italic">t<tspan font-weight="bolder">w</tspan>o</tspan> 
+is <a xlink:href="#"><tspan fill="blue">here</tspan></a> too. 
 And then <tspan x="37" y="32">​﻿</tspan><tspan x="37" y="32">​﻿</tspan>there is more text.</text>
 		<rect fill="none" stroke="lightgray" stroke-width="2" width="178" height="77" x="1" y="1">
 			<adj:frameForParent inset="1"/>

@@ -5826,7 +5826,7 @@ Adj.algorithms.paragraph = {
 			if (endOfWord) {
 				inWord = false;
 				if (beginOfWordCharIndex > currentLineBegin) {
-					var lineLengthToEndOfWord = Math.ceil(element.getSubStringLength(currentLineBegin, currentCharIndex - currentLineBegin));
+					var lineLengthToEndOfWord = Math.ceil(element.getSubStringLength(currentLineBegin, endOfWordCharIndex - currentLineBegin));
 					if (lineLengthToEndOfWord > maxWidth) {
 						//console.log("needs new line at char ", currentCharIndex);
 						newLineRecords[lineNumber].lineLength =

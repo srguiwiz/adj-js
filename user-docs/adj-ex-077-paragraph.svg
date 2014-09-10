@@ -17,9 +17,9 @@
 	<rect width="200" height="100" fill="linen"/>
 	<g>
 		<adj:verticalList/>
-		<text adj:command="paragraph" adj:maxWidth="155" x="0" y="0" transform="translate(5,14)">
-This is a sentence of text that <tspan x="0" y="16">​﻿</tspan><tspan x="0" y="16">​﻿</tspan>will wrap.
-Here is more.
+		<text adj:command="paragraph" adj:maxWidth="155" x="0" y="0" transform="translate(5,14)"> 
+This is a sentence of text that <tspan x="0" y="16">​﻿</tspan><tspan x="0" y="16">​﻿</tspan>will wrap. 
+Here is more. 
 		</text>
 		<rect fill="none" stroke="lightgray" stroke-width="2" width="152" height="37" x="1" y="1">
 			<adj:frameForParent inset="1"/>
