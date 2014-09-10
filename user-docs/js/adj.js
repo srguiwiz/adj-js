@@ -5872,16 +5872,25 @@ Adj.algorithms.paragraph = {
 		if (explain) {
 			if (maxWidth) {
 				var textBoundingBox = element.getBBox();
-				var explanationElement = Adj.createExplanationElement("rect");
-				explanationElement.setAttribute("x", Adj.decimal(textBoundingBox.x - Adj.fraction(0, maxWidth - textBoundingBox.width, hAlign)));
-				explanationElement.setAttribute("y", Adj.decimal(textBoundingBox.y));
-				explanationElement.setAttribute("width", maxWidth);
-				explanationElement.setAttribute("height", newLineRecords.length * lineStep);
-				explanationElement.setAttribute("fill", "blue");
-				explanationElement.setAttribute("fill-opacity", "0.1");
-				explanationElement.setAttribute("stroke", "blue");
-				explanationElement.setAttribute("stroke-width", "1");
-				explanationElement.setAttribute("stroke-opacity", "0.2");
+				var x = Adj.decimal(textBoundingBox.x - Adj.fraction(0, maxWidth - textBoundingBox.width, hAlign));
+				var w = maxWidth;
+				var xw = x + w;
+				var y = Adj.decimal(textBoundingBox.y);
+				var h = newLineRecords.length * lineStep;
+				var yh = y + h;
+				var explanationElement = Adj.createExplanationElement("g");
+				var explanationRect = Adj.createExplanationElement("rect");
+				explanationRect.setAttribute("x", x);
+				explanationRect.setAttribute("y", y);
+				explanationRect.setAttribute("width", w);
+				explanationRect.setAttribute("height", h);
+				explanationRect.setAttribute("fill", "blue");
+				explanationRect.setAttribute("fill-opacity", "0.1");
+				explanationRect.setAttribute("stroke", "none");
+				explanationElement.appendChild(explanationRect);
+				explanationElement.appendChild(Adj.createExplanationLine(x, yh, x, y, "blue"));
+				explanationElement.appendChild(Adj.createExplanationLine(x, y, xw, y, "blue"));
+				explanationElement.appendChild(Adj.createExplanationLine(xw, y, xw, yh, "blue"));
 				parametersObject.explanationElement = explanationElement; // store for a later phase
 			}
 		}
