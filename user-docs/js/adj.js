@@ -5995,8 +5995,8 @@ Adj.displayException = function displayException (exception, svgElement) {
 	exceptionTextElement.setAttribute("style", "fill:red;");
 	exceptionElement.appendChild(exceptionTextElement);
 	// fix up
-	Adj.algorithms.textBreaks.method(exceptionElement,{lineBreaks:true});
-	Adj.algorithms.verticalList.method(exceptionElement,{});
+	Adj.algorithms.textBreaks.methods[0](exceptionElement,{lineBreaks:true});
+	Adj.algorithms.verticalList.methods[0](exceptionElement,{});
 	var svgElementBoundingBox = svgElement.getBBox();
 	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
 	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
