@@ -5689,7 +5689,7 @@ Adj.createTspanXYElement = function createTspanXYElement (x, y) {
 // a specific algorithm
 Adj.algorithms.paragraph = {
 	phaseHandlerNames: ["adjPhase1Down", "adjPhase7Up"],
-	parameters: ["maxWidth", "lineGap", "hAlign",
+	parameters: ["maxWidth", "lineGap", "hAlign", "indent",
 				 "explain"],
 	methods: [function paragraph1Down (element, parametersObject) {
 		// quite useful hack, if you use this code outside this source code file,
@@ -5700,6 +5700,7 @@ Adj.algorithms.paragraph = {
 		var maxWidth = Adj.doVarsArithmetic(element, parametersObject.maxWidth, null, null, usedHow, variableSubstitutionsByName); // default maxWidth = null means no limit
 		var lineGap = Adj.doVarsArithmetic(element, parametersObject.lineGap, 2, null, usedHow, variableSubstitutionsByName); // default lineGap = 2
 		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
+		var indent = Adj.doVarsArithmetic(element, parametersObject.indent, 0, null, usedHow, variableSubstitutionsByName); // default indent = 0
 		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
 		if (!element instanceof SVGTextElement) {
@@ -5797,6 +5798,7 @@ Adj.algorithms.paragraph = {
 		if (!maxWidth) {
 			return; // done
 		}
+		var lineZeroMaxWidth = maxWidth - indent;
 		element.setAttribute("visibility", "hidden");
 		//
 		var textContent = element.textContent;
@@ -5817,7 +5819,7 @@ Adj.algorithms.paragraph = {
 		//
 		var oneLineBoundingBox = element.getBBox();
 		var lineStep = Math.round(oneLineBoundingBox.height) + lineGap;
-		if (oneLineBoundingBox.width <= maxWidth) {
+		if (oneLineBoundingBox.width <= lineZeroMaxWidth) {
 			return; //done
 		}
 		//
@@ -5890,7 +5892,7 @@ Adj.algorithms.paragraph = {
 				if (beginOfWordCharIndex > currentLineBegin) {
 					var lineLengthToEndOfWord =
 						Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
-					if (lineLengthToEndOfWord > maxWidth) {
+					if (lineLengthToEndOfWord > (lineNumber ? maxWidth : lineZeroMaxWidth)) {
 						//console.log("needs new line at char ", currentCharIndex);
 						newLineRecords[lineNumber].lineLength =
 							Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, previousEndOfWordCharIndex, newlinesAndNodeEndsMap));
@@ -5927,7 +5929,8 @@ Adj.algorithms.paragraph = {
 			parentNodeForInsert.insertBefore(tspanXYElement, textNode);
 			parentNodeForInsert.insertBefore(tspanXYElement2, textNode);
 		}
-		element.setAttribute("x", Adj.fraction(0, maxWidth - newLineRecords[0].lineLength, hAlign));
+		// different both how and how much for line 0
+		element.setAttribute("x", Adj.fraction(indent, maxWidth - newLineRecords[0].lineLength - indent, hAlign));
 		element.setAttribute("y", 0);
 		element.removeAttribute("visibility");
 		//
