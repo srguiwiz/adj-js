@@ -39,6 +39,11 @@
 //
 // Public repository - https://github.com/srguiwiz/adj-js
 //
+// Stable releases (recent) - https://github.com/srguiwiz/adj-js/releases
+//
+// Blog - http://leosbog.nrvr.com/category/adj/
+//
+// Commit list - https://github.com/srguiwiz/adj-js/commits/master
 
 // invoke Adj by doing Adj.processAdjElements(document);
 // e.g. <svg onload="Adj.processAdjElements(document);">
