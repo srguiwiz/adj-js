@@ -2425,6 +2425,23 @@ And then there is more text.&lt;/text&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-079-paragraph-indent.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:verticalList/&gt;
+    &lt;text <span class="example-code">adj:command="paragraph" adj:maxWidth="160" adj:indent="8"</span>&gt;
+This is a sentence of text that will wrap
+with the first line indented.
+    &lt;/text&gt;
+    &lt;rect fill="none" stroke="lightgray" stroke-width="2" width="0" height="0"&gt;
+      &lt;adj:frameForParent inset="1"/&gt;
+    &lt;/rect&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -3061,7 +3078,8 @@ decimal numbers.</p>
     </tr>
     <tr>
       <td><code>paragraph</code></td>
-      <td><code>maxWidth</code>, <code>lineGap</code>, <code>hAlign</code></td>
+      <td><code>maxWidth</code>, <code>lineGap</code>, <code>hAlign</code>,
+        <code>indent</code></td>
     </tr>
     <tr>
       <td><code>skimpyList</code></td>
