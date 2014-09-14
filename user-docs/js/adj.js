@@ -4132,7 +4132,7 @@ Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpress
 // utility
 // combine other calls,
 // return a number
-Adj.doVarsIdsArithmeticToGetNumber = function doVarsIdsArithmetic (element, originalExpression, defaultValue, usedHow, variableSubstitutionsByName, idedElementRecordsById) {
+Adj.doVarsIdsArithmeticToGetNumber = function doVarsIdsArithmeticToGetNumber (element, originalExpression, defaultValue, usedHow, variableSubstitutionsByName, idedElementRecordsById) {
 	if (typeof originalExpression == "number") { // a number already
 		return originalExpression;
 	}
@@ -4150,7 +4150,7 @@ Adj.doVarsIdsArithmeticToGetNumber = function doVarsIdsArithmetic (element, orig
 // utility
 // combine other calls,
 // return a string
-Adj.doVarsArithmetic2 = function doVarsIdsArithmetic (element, originalExpression, usedHow, variableSubstitutionsByName) {
+Adj.doVarsArithmetic2 = function doVarsArithmetic2 (element, originalExpression, usedHow, variableSubstitutionsByName) {
 	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
 	var withArithmeticEvaluated = Adj.evaluateArithmetic(withVariablesSubstituted, usedHow);
 	return withArithmeticEvaluated;
