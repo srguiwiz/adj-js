@@ -5804,140 +5804,143 @@ Adj.algorithms.paragraph = {
 			return; // done
 		}
 		var lineZeroMaxWidth = maxWidth - indent;
-		element.setAttribute("visibility", "hidden");
-		//
-		var textContent = element.textContent;
-		var spaceCleanedTextContent = textContent.replace(Adj.svgTextNewlineRegexp, "").replace(Adj.svgTextSpacesRegexp, " ").trim();
-		var elementNumberOfChars = element.getNumberOfChars();
-		if (spaceCleanedTextContent.length != elementNumberOfChars) {
-			if (spaceCleanedTextContent.length + 1 == elementNumberOfChars) {
-				// observed to get here in Internet Explorer 11 when text ends with whitespace
-				console.log("tolerating one off text lengths");
-			} else {
-				console.log("non-matching text lengths prevent paragraph formatting");
-				return; // avoid problems
-			}
-		}
-		if (!textContent.length) {
-			return; // done
-		}
-		//
-		var oneLineBoundingBox = element.getBBox();
-		var lineStep = Math.round(oneLineBoundingBox.height) + lineGap;
-		if (oneLineBoundingBox.width <= lineZeroMaxWidth) {
-			return; //done
-		}
-		//
-		// in spaceCleanedTextContent
-		var currentCharIndex = -1;
-		var currentLineBegin = 0;
-		var endOfWordCharIndex = currentLineBegin;
-		var previousEndOfWordCharIndex = endOfWordCharIndex;
-		var lineNumber = 0;
-		var inWord = false;
-		var newlinesAndNodeEndsMap = {}; // for Adj.getTextSubStringLength
-		// in textNodeRecords
-		var currentNode = textNodeRecords[0];
-		var currentCharInNodeIndex = -1;
-		var endOfTextNodeRecords = false;
-		var beginOfWordNode = null;
-		var beginOfWordCharInNodeIndex;
-		var beginOfWordCharIndex;
 		var newLineRecords = [ { textNode: element, charInNodeIndex: 0 } ];
-		for (var textNodeIndex = 0, textNodeRecordsLength = textNodeRecords.length; !endOfTextNodeRecords; ) {
-			currentCharInNodeIndex++;
-			if (currentCharInNodeIndex == 0) {
-				var textNodeRecord = textNodeRecords[textNodeIndex];
-				var currentTextNode = textNodeRecord.node;
-				var currentNodeText = currentTextNode.nodeValue;
-				var currentNodeTextLength = currentNodeText.length;
-			}
-			var endOfWord = false;
-			var beginOfWord = false;
-			if (currentCharInNodeIndex < currentNodeTextLength) {
-				//console.log("char ", currentNodeText.charAt(currentCharInNodeIndex));
-				var charCode = currentNodeText.charCodeAt(currentCharInNodeIndex);
-				var isWhitespace = Adj.svgTextWhitespaceTruthByCode[charCode];
-				if (charCode == 10) {
-					newlinesAndNodeEndsMap[currentCharIndex] = true;
-				}
-				if (inWord) {
-					currentCharIndex++;
-					if (isWhitespace) {
-						endOfWord = true;
-						endOfWordCharIndex = currentCharIndex;
-					}
-				} else {
-					if (!isWhitespace) {
-						currentCharIndex++;
-						beginOfWord = true;
-						beginOfWordCharIndex = currentCharIndex;
-					}
-				}
-			} else {
-				textNodeIndex++;
-				currentCharInNodeIndex = -1;
-				newlinesAndNodeEndsMap[currentCharIndex] = true;
-				if (textNodeIndex >= textNodeRecordsLength) {
-					endOfTextNodeRecords = true;
-					currentCharIndex++;
-					if (inWord) {
-						endOfWord = true;
-						endOfWordCharIndex = currentCharIndex;
-					}
-				}
-			}
-			if (beginOfWord) {
-				inWord = true;
-				beginOfWordNode = currentTextNode;
-				beginOfWordCharInNodeIndex = currentCharInNodeIndex;
-			}
-			if (endOfWord) {
-				inWord = false;
-				if (beginOfWordCharIndex > currentLineBegin) {
-					var lineLengthToEndOfWord =
-						Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
-					if (lineLengthToEndOfWord > (lineNumber ? maxWidth : lineZeroMaxWidth)) {
-						//console.log("needs new line at char ", currentCharIndex);
-						newLineRecords[lineNumber].lineLength =
-							Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, previousEndOfWordCharIndex, newlinesAndNodeEndsMap));
-						lineNumber++;
-						currentLineBegin = beginOfWordCharIndex;
-						newLineRecords.push({
-							textNode: beginOfWordNode,
-							charInNodeIndex: beginOfWordCharInNodeIndex
-						});
-					}
-				} else {
-					// don't break if first word
-				}
-				previousEndOfWordCharIndex = endOfWordCharIndex;
-			}
-			if (endOfTextNodeRecords) {
-				newLineRecords[lineNumber].lineLength =
-					Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
-			}
-		}
-		//
-		for (var lineNumber = newLineRecords.length - 1; lineNumber > 0; lineNumber--) {
-			var newLineRecord = newLineRecords[lineNumber];
-			var textNode = newLineRecord.textNode;
-			var charInNodeIndex = newLineRecord.charInNodeIndex;
-			var lineLength = newLineRecord.lineLength;
+		element.setAttribute("visibility", "hidden");
+		breakLinesTry: try {
 			//
-			var tspanXYElement = Adj.createTspanXYElement(Adj.fraction(0, maxWidth - lineLength, hAlign), lineNumber * lineStep);
-			var tspanXYElement2 = tspanXYElement.cloneNode(true); // so for consistency between browsers
-			if (charInNodeIndex > 0) {
-				textNode = textNode.splitText(charInNodeIndex); // var newTextNode
-			} // else == 0
-			parentNodeForInsert = textNode.parentNode;
-			parentNodeForInsert.insertBefore(tspanXYElement, textNode);
-			parentNodeForInsert.insertBefore(tspanXYElement2, textNode);
+			var textContent = element.textContent;
+			var spaceCleanedTextContent = textContent.replace(Adj.svgTextNewlineRegexp, "").replace(Adj.svgTextSpacesRegexp, " ").trim();
+			var elementNumberOfChars = element.getNumberOfChars();
+			if (spaceCleanedTextContent.length != elementNumberOfChars) {
+				if (spaceCleanedTextContent.length + 1 == elementNumberOfChars) {
+					// observed to get here in Internet Explorer 11 when text ends with whitespace
+					console.log("tolerating one off text lengths");
+				} else {
+					console.log("non-matching text lengths prevent paragraph formatting");
+					break breakLinesTry; // avoid problems
+				}
+			}
+			if (!textContent.length) {
+				break breakLinesTry; // done
+			}
+			//
+			var oneLineBoundingBox = element.getBBox();
+			var lineStep = Math.round(oneLineBoundingBox.height) + lineGap;
+			if (oneLineBoundingBox.width <= lineZeroMaxWidth) {
+				break breakLinesTry; //done
+			}
+			//
+			// in spaceCleanedTextContent
+			var currentCharIndex = -1;
+			var currentLineBegin = 0;
+			var endOfWordCharIndex = currentLineBegin;
+			var previousEndOfWordCharIndex = endOfWordCharIndex;
+			var lineNumber = 0;
+			var inWord = false;
+			var newlinesAndNodeEndsMap = {}; // for Adj.getTextSubStringLength
+			// in textNodeRecords
+			var currentNode = textNodeRecords[0];
+			var currentCharInNodeIndex = -1;
+			var endOfTextNodeRecords = false;
+			var beginOfWordNode = null;
+			var beginOfWordCharInNodeIndex;
+			var beginOfWordCharIndex;
+			for (var textNodeIndex = 0, textNodeRecordsLength = textNodeRecords.length; !endOfTextNodeRecords; ) {
+				currentCharInNodeIndex++;
+				if (currentCharInNodeIndex == 0) {
+					var textNodeRecord = textNodeRecords[textNodeIndex];
+					var currentTextNode = textNodeRecord.node;
+					var currentNodeText = currentTextNode.nodeValue;
+					var currentNodeTextLength = currentNodeText.length;
+				}
+				var endOfWord = false;
+				var beginOfWord = false;
+				if (currentCharInNodeIndex < currentNodeTextLength) {
+					//console.log("char ", currentNodeText.charAt(currentCharInNodeIndex));
+					var charCode = currentNodeText.charCodeAt(currentCharInNodeIndex);
+					var isWhitespace = Adj.svgTextWhitespaceTruthByCode[charCode];
+					if (charCode == 10) {
+						newlinesAndNodeEndsMap[currentCharIndex] = true;
+					}
+					if (inWord) {
+						currentCharIndex++;
+						if (isWhitespace) {
+							endOfWord = true;
+							endOfWordCharIndex = currentCharIndex;
+						}
+					} else {
+						if (!isWhitespace) {
+							currentCharIndex++;
+							beginOfWord = true;
+							beginOfWordCharIndex = currentCharIndex;
+						}
+					}
+				} else {
+					textNodeIndex++;
+					currentCharInNodeIndex = -1;
+					newlinesAndNodeEndsMap[currentCharIndex] = true;
+					if (textNodeIndex >= textNodeRecordsLength) {
+						endOfTextNodeRecords = true;
+						currentCharIndex++;
+						if (inWord) {
+							endOfWord = true;
+							endOfWordCharIndex = currentCharIndex;
+						}
+					}
+				}
+				if (beginOfWord) {
+					inWord = true;
+					beginOfWordNode = currentTextNode;
+					beginOfWordCharInNodeIndex = currentCharInNodeIndex;
+				}
+				if (endOfWord) {
+					inWord = false;
+					if (beginOfWordCharIndex > currentLineBegin) {
+						var lineLengthToEndOfWord =
+							Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
+						if (lineLengthToEndOfWord > (lineNumber ? maxWidth : lineZeroMaxWidth)) {
+							//console.log("needs new line at char ", currentCharIndex);
+							newLineRecords[lineNumber].lineLength =
+								Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, previousEndOfWordCharIndex, newlinesAndNodeEndsMap));
+							lineNumber++;
+							currentLineBegin = beginOfWordCharIndex;
+							newLineRecords.push({
+								textNode: beginOfWordNode,
+								charInNodeIndex: beginOfWordCharInNodeIndex
+							});
+						}
+					} else {
+						// don't break if first word
+					}
+					previousEndOfWordCharIndex = endOfWordCharIndex;
+				}
+				if (endOfTextNodeRecords) {
+					newLineRecords[lineNumber].lineLength =
+						Math.ceil(Adj.getTextSubStringLength(element, currentLineBegin, endOfWordCharIndex, newlinesAndNodeEndsMap));
+				}
+			}
+			//
+			for (var lineNumber = newLineRecords.length - 1; lineNumber > 0; lineNumber--) {
+				var newLineRecord = newLineRecords[lineNumber];
+				var textNode = newLineRecord.textNode;
+				var charInNodeIndex = newLineRecord.charInNodeIndex;
+				var lineLength = newLineRecord.lineLength;
+				//
+				var tspanXYElement = Adj.createTspanXYElement(Adj.fraction(0, maxWidth - lineLength, hAlign), lineNumber * lineStep);
+				var tspanXYElement2 = tspanXYElement.cloneNode(true); // so for consistency between browsers
+				if (charInNodeIndex > 0) {
+					textNode = textNode.splitText(charInNodeIndex); // var newTextNode
+				} // else == 0
+				parentNodeForInsert = textNode.parentNode;
+				parentNodeForInsert.insertBefore(tspanXYElement, textNode);
+				parentNodeForInsert.insertBefore(tspanXYElement2, textNode);
+			}
+			// different both how and how much for line 0
+			element.setAttribute("x", Adj.fraction(indent, maxWidth - newLineRecords[0].lineLength - indent, hAlign));
+			element.setAttribute("y", 0);
+		} finally {
+			element.removeAttribute("visibility");
 		}
-		// different both how and how much for line 0
-		element.setAttribute("x", Adj.fraction(indent, maxWidth - newLineRecords[0].lineLength - indent, hAlign));
-		element.setAttribute("y", 0);
-		element.removeAttribute("visibility");
 		//
 		// explain
 		if (explain) {
