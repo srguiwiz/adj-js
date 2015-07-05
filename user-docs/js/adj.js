@@ -252,8 +252,8 @@ Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(par
 
 // utility
 Adj.parameterParse = function parameterParse(value) {
-	var numberMatch;
-	if (numberMatch = Adj.booleanOrDecimalRegexp.exec(value)) { // !isNaN(value) would miss boolean
+	var numberMatch = Adj.booleanOrDecimalRegexp.exec(value);
+	if (numberMatch) { // !isNaN(value) would miss boolean
 		// keep booleans and decimal and integer numbers as is
 		value = numberMatch[1];
 		switch (value) {
@@ -4192,8 +4192,8 @@ Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, default
 		return defaultValue;
 	}
 	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
-	var booleanMatch;
-	if (booleanMatch = Adj.booleanRegexp.exec(withVariablesSubstituted)) {
+	var booleanMatch = Adj.booleanRegexp.exec(withVariablesSubstituted);
+	if (booleanMatch) {
 		// strict spelling of booleans
 		var booleanString = booleanMatch[1];
 		switch (booleanString) {
