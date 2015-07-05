@@ -52,11 +52,9 @@
 // newer shortcut is Adj.doDoc();
 
 // the singleton
-if (typeof Adj == "undefined") {
-	Adj = {};
-	Adj.version = { major:3, minor:5, revision:16 };
-	Adj.algorithms = {};
-}
+var Adj = {};
+Adj.version = { major:4, minor:1, revision:0 };
+Adj.algorithms = {};
 
 // constants
 Adj.SvgNamespace = "http://www.w3.org/2000/svg"
@@ -6084,3 +6082,6 @@ Adj.displayException = function displayException (exception, svgElement) {
 	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
 	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
 }
+
+// make available
+window.Adj = Adj;
