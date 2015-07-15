@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDocAndStashIfNoStashYet();" width="200" height="100">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Mono;
+		src: local("Liberation Mono"), local("Liberation Mono Regular"), local("LiberationMono-Regular"),
+			url(fonts/Liberation/LiberationMono-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Mono","Courier New";
+		font-size: 12px;
+	}
+	]]></style>
+	<rect width="200" height="100" fill="mistyrose"/>
+	<g>
+		<adj:verticalList/>
+		<text adj:command="paragraph" adj:maxWidth="155" x="0" y="0" transform="translate(5,13)"> 
+			This is a sentence of  
+			<tspan x="0" y="16">​﻿</tspan><tspan x="0" y="16">​﻿</tspan>text that will wrap. 
+			<tspan x="0" y="32">​﻿</tspan><tspan x="0" y="32">​﻿</tspan>Here is more. 
+		</text>
+		<text adj:command="paragraph" adj:maxWidth="155" x="0" y="0" transform="translate(5,62)"> 
+			This is short. 
+		</text>
+		<rect fill="none" stroke="lightgray" stroke-width="2" width="162" height="67" x="1" y="1">
+			<adj:frameForParent inset="1"/>
+		</rect>
+	</g>
+	<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doDocAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%22100%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Cstyle%20type%3D%22text%2Fcss%22%3E%3C!%5BCDATA%5B%0A%09%40font-face%20%7B%0A%09%09font-family%3A%20Liberation%20Mono%3B%0A%09%09src%3A%20local(%22Liberation%20Mono%22)%2C%20local(%22Liberation%20Mono%20Regular%22)%2C%20local(%22LiberationMono-Regular%22)%2C%0A%09%09%09url(fonts%2FLiberation%2FLiberationMono-Regular.ttf)%3B%0A%09%09font-weight%3A%20normal%3B%0A%09%09font-style%3A%20normal%3B%0A%09%7D%0A%09svg%20%7B%0A%09%09font-family%3A%20%22Liberation%20Mono%22%2C%22Courier%20New%22%3B%0A%09%09font-size%3A%2012px%3B%0A%09%7D%0A%09%5D%5D%3E%3C%2Fstyle%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22mistyrose%22%2F%3E%0A%09%3Cg%3E%0A%09%09%3Cadj%3AverticalList%2F%3E%0A%09%09%3Ctext%20adj%3Acommand%3D%22paragraph%22%20adj%3AmaxWidth%3D%22155%22%20x%3D%220%22%20y%3D%220%22%20transform%3D%22translate(5%2C13)%22%3E%20%0A%09%09%09This%20is%20a%20sentence%20of%20%20%0A%09%09%09%3Ctspan%20x%3D%220%22%20y%3D%2216%22%3E%E2%80%8B%EF%BB%BF%3C%2Ftspan%3E%3Ctspan%20x%3D%220%22%20y%3D%2216%22%3E%E2%80%8B%EF%BB%BF%3C%2Ftspan%3Etext%20that%20will%20wrap.%20%0A%09%09%09%3Ctspan%20x%3D%220%22%20y%3D%2232%22%3E%E2%80%8B%EF%BB%BF%3C%2Ftspan%3E%3Ctspan%20x%3D%220%22%20y%3D%2232%22%3E%E2%80%8B%EF%BB%BF%3C%2Ftspan%3EHere%20is%20more.%20%0A%09%09%3C%2Ftext%3E%0A%09%09%3Ctext%20adj%3Acommand%3D%22paragraph%22%20adj%3AmaxWidth%3D%22155%22%20x%3D%220%22%20y%3D%220%22%20transform%3D%22translate(5%2C62)%22%3E%20%0A%09%09%09This%20is%20short.%20%0A%09%09%3C%2Ftext%3E%0A%09%09%3Crect%20fill%3D%22none%22%20stroke%3D%22lightgray%22%20stroke-width%3D%222%22%20width%3D%22162%22%20height%3D%2267%22%20x%3D%221%22%20y%3D%221%22%3E%0A%09%09%09%3Cadj%3AframeForParent%20inset%3D%221%22%2F%3E%0A%09%09%3C%2Frect%3E%0A%09%3C%2Fg%3E%0A%3C%2Fsvg%3E-->
+</svg>
