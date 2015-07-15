@@ -53,7 +53,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:4, minor:1, revision:0 };
+Adj.version = { major:4, minor:1, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -5653,8 +5653,10 @@ Adj.algorithms.boom = {
 }
 
 // constants
-Adj.svgTextFixdupNewlineRegexp = /(^|\S)\n/g;
-Adj.svgTextFixdupNewlineReplacment = "$1 \n";
+Adj.svgTextFixedupNewlineRegexp1 = /(^|\S)\n/g;
+Adj.svgTextFixedupNewlineReplacment1 = "$1 \n";
+Adj.svgTextFixedupNewlineRegexp2 = /\n\s+/g;
+Adj.svgTextFixedupNewlineReplacment2 = "\n";
 Adj.svgTextNewlineRegexp = /\n+/g;
 Adj.svgTextSpacesRegexp = /[ \t]+/g;
 Adj.svgTextWhitespaceTruthByCode = { 32: true, 9: true, 10: true };
@@ -5725,10 +5727,13 @@ Adj.algorithms.paragraph = {
 			if (!upward) {
 				if (currentChild.nodeType == Node.TEXT_NODE) {
 					//console.log("walkTextLoop1 level ", stack.length, " text node ", currentChild.nodeValue);
-					// make sure \n has a space in front of it for consistency between browsers (one violates spec)
 					var currentNodeText = currentChild.nodeValue;
-					var fixedUpNodeText = currentNodeText.replace(Adj.svgTextFixdupNewlineRegexp, Adj.svgTextFixdupNewlineReplacment);
-					if (fixedUpNodeText.length != currentNodeText.length) {
+					// make sure \n has a space in front of it for consistency between browsers (one violates spec)
+					var fixedUpNodeText = currentNodeText.replace(Adj.svgTextFixedupNewlineRegexp1, Adj.svgTextFixedupNewlineReplacment1);
+					// make sure \n has no whitespaces behind it for consistency between browsers (one violates spec),
+					// fixes a problem observed at least in Chrome 43
+					var fixedUpNodeText = fixedUpNodeText.replace(Adj.svgTextFixedupNewlineRegexp2, Adj.svgTextFixedupNewlineReplacment2);
+					if (fixedUpNodeText != currentNodeText) {
 						currentChild.nodeValue = fixedUpNodeText;
 					}
 				} else if (currentChild instanceof Element) {
