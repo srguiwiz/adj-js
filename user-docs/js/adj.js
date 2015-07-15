@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2002-2014, Nirvana Research
+// Copyright (c) 2002-2015, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -5929,7 +5929,7 @@ Adj.algorithms.paragraph = {
 				if (charInNodeIndex > 0) {
 					textNode = textNode.splitText(charInNodeIndex); // var newTextNode
 				} // else == 0
-				parentNodeForInsert = textNode.parentNode;
+				var parentNodeForInsert = textNode.parentNode;
 				parentNodeForInsert.insertBefore(tspanXYElement, textNode);
 				parentNodeForInsert.insertBefore(tspanXYElement2, textNode);
 			}

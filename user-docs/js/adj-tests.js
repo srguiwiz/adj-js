@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2002-2013, Nirvana Research
+// Copyright (c) 2002-2015, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -527,9 +527,7 @@ Adj.doDocAndVerify = function doDocAndVerify(documentToDo, tolerance) {
 //
 
 // the singleton
-if (typeof AdjTestWindow == "undefined") {
-	AdjTestWindow = {};
-}
+var AdjTestWindow = {};
 
 // match command by itself, or command followed by one or two parameters separated by |
 AdjTestWindow.messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
