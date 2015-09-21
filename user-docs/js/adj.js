@@ -6088,5 +6088,25 @@ Adj.displayException = function displayException (exception, svgElement) {
 	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
 }
 
+// if function window.nrvrGetTextFile from file-scheme-get-from-script.xpi
+// isn't present then provide an equivalent API
+if (!window.nrvrGetTextFile) {
+  window.nrvrGetTextFile = function nrvrGetTextFile (fileUrl, gotFileCallback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onloadend = function () {
+      gotFileCallback(xhr.responseText, xhr.status);
+    };
+    try {
+      xhr.open('GET', fileUrl, true);
+      xhr.responseType = 'text';
+      xhr.send();
+    } catch (e) {
+      console.error('error attempting to GET', fileUrl.href, e);
+      gotFileCallback('', 0);
+    }
+  }
+}
+
 // make available
 window.Adj = Adj;
+
