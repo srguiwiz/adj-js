@@ -2002,7 +2002,7 @@ Adj.algorithms.rider = {
 	methods: [function rider (element, parametersObject, level) {
 		var usedHow = "used in a parameter for a rider command";
 		var variableSubstitutionsByName = {};
-		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
+		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin || "");
 		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
 		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		var pathId = parametersObject.path;
@@ -4273,7 +4273,7 @@ Adj.algorithms.floater = {
 		var atX = parseFloat(atMatch[1]);
 		var atY = parseFloat(atMatch[2]);
 		//
-		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin ? parametersObject.pin : "");
+		var pinMatch = Adj.twoRegexp.exec(parametersObject.pin || "");
 		var hFraction = pinMatch ? parseFloat(pinMatch[1]) : 0.5; // default hFraction = 0.5
 		var vFraction = pinMatch ? parseFloat(pinMatch[2]) : 0.5; // default vFraction = 0.5
 		//
@@ -4926,10 +4926,10 @@ Adj.algorithms.skimpyList = {
 				maxBottom = currentChildYH;
 			}
 		}
-		minLeft = minLeft ? minLeft : 0;
-		minTop = minTop ? minTop : 0;
-		maxRight = maxRight ? maxRight : 0;
-		maxBottom = maxBottom ? maxBottom : 0;
+		minLeft = minLeft || 0;
+		minTop = minTop || 0;
+		maxRight = maxRight || 0;
+		maxBottom = maxBottom || 0;
 		minLeft -= leftGap;
 		minTop -= topGap;
 		maxRight += rightGap;
@@ -5134,10 +5134,10 @@ Adj.algorithms.pinnedList = {
 			}
 			placedYetChilds.push(child);
 		}
-		minLeft = minLeft ? minLeft : 0;
-		minTop = minTop ? minTop : 0;
-		maxRight = maxRight ? maxRight : 0;
-		maxBottom = maxBottom ? maxBottom : 0;
+		minLeft = minLeft || 0;
+		minTop = minTop || 0;
+		maxRight = maxRight || 0;
+		maxBottom = maxBottom || 0;
 		minLeft -= leftGap;
 		minTop -= topGap;
 		maxRight += rightGap;
