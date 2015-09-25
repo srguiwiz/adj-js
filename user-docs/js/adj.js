@@ -83,7 +83,7 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement) 
 		rootElement = documentNodeOrRootElement;
 	}
 	if (!(rootElement instanceof SVGSVGElement)) {
-		console.log("Adj skipping because invoked with something other than required SVGSVGElement");
+		console.error("Adj skipping because invoked with something other than required SVGSVGElement");
 		return;
 	}
 	try {
@@ -125,7 +125,7 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	var algorithm = Adj.algorithms[algorithmName];
 	if (!algorithm) {
 		// tolerate, for now
-		console.log("Adj skipping unknown algorithm name " + algorithmName);
+		console.error("Adj skipping unknown algorithm name " + algorithmName);
 		return;
 	}
 	//
@@ -5819,7 +5819,7 @@ Adj.algorithms.paragraph = {
 					// observed to get here in Internet Explorer 11 when text ends with whitespace
 					console.log("tolerating one off text lengths");
 				} else {
-					console.log("non-matching text lengths prevent paragraph formatting");
+					console.error("non-matching text lengths prevent paragraph formatting");
 					break breakLinesTry; // avoid problems
 				}
 			}
