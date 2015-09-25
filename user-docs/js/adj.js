@@ -1142,8 +1142,8 @@ Adj.algorithms.textBreaks = {
 	parameters: ["wordBreaks",
 				 "lineBreaks"],
 	methods: [function textBreaks (element, parametersObject) {
-		var wordBreaks = parametersObject.wordBreaks ? parametersObject.wordBreaks : false // default wordBreaks = false
-		var lineBreaks = parametersObject.lineBreaks ? parametersObject.lineBreaks : true // default lineBreaks = true
+		var wordBreaks = parametersObject.wordBreaks != undefined ? parametersObject.wordBreaks : false // default wordBreaks = false
+		var lineBreaks = parametersObject.lineBreaks != undefined ? parametersObject.lineBreaks : true // default lineBreaks = true
 		//
 		// breaks, if any
 		if (wordBreaks || lineBreaks) {
