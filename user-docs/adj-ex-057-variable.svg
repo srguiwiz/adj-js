@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="160">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="100">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
-	<rect width="200" height="160" fill="linen"/>
+	<rect width="200" height="100" fill="linen"/>
 	<adj:variable name="myvar" value="10" desc="optional description of variable"/>
-	<rect adj:id="one" x="15" y="65" width="40" height="30" fill="#000"/>
-	<rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/>
-	<rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/>
-	<path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="  M 65, 80  C 65, 60  95, 55  115, 55  S 135, 110  135, 130" adj:d="  M ~one#xw + ^myvar, ~one#cy  C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar  S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/>
+	<rect adj:id="one" x="15" y="45" width="40" height="10" fill="#000"/>
+	<rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/>
+	<rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/>
+	<path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="  M 65, 50  C 65, 30  95, 35  115, 35  S 135, 60  135, 80" adj:d="  M ~one#xw + ^myvar, ~one#cy  C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar  S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/>
 </svg>

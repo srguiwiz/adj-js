@@ -2954,15 +2954,43 @@ the referencing element. That is more narrow of a search than function
     <tr>
       <td><img alt="example" src="adj-ex-057-variable.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
-  &lt;rect width="200" height="160" fill="linen"/&gt;</span>
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   <span class="example-code">&lt;adj:variable name="myvar" value="10" desc="optional description of variable"/&gt;</span>
-  &lt;rect adj:id="one" x="15" y="65" width="40" height="30" fill="#000"/&gt;
-  &lt;rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/&gt;
-  &lt;rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/&gt;
+  &lt;rect adj:id="one" x="15" y="45" width="40" height="10" fill="#000"/&gt;
+  &lt;rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/&gt;
+  &lt;rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/&gt;
   &lt;path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="M0,0" adj:d="
     M ~one#xw + <span class="example-code">^myvar</span>, ~one#cy
     C ~one#xw + <span class="example-code">^myvar</span>, ~one#cy - 20  ~other#cx - 20, ~other#yh + <span class="example-code">^myvar</span>  ~other#cx, ~other#yh + <span class="example-code">^myvar</span>
     S ~another#x - <span class="example-code">^myvar</span>, ~another#cy - 20  ~another#x - <span class="example-code">^myvar</span>, ~another#cy"/&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-057b-variable-scope.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="200" fill="linen"/&gt;</span>
+  &lt;adj:variable <span class="example-code">name="myvar" value="10"</span> desc="in outer scope"/&gt;
+  &lt;g&gt;
+    &lt;adj:variable <span class="example-code">name="myvar" value="3"</span> desc="in inner scope #1"/&gt;
+    &lt;rect adj:id="one" x="15" y="45" width="40" height="10" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/&gt;
+    &lt;rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/&gt;
+    &lt;path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="M0,0" adj:d="
+      M ~one#xw + ^myvar, ~one#cy
+      C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar
+      S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/&gt;
+  &lt;/g&gt;
+  &lt;g transform="translate(0,100)"&gt;
+    &lt;adj:variable <span class="example-code">name="myvar" value="17"</span> desc="in inner scope #2"/&gt;
+    &lt;rect adj:id="one" x="15" y="45" width="40" height="10" fill="#000"/&gt;
+    &lt;rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/&gt;
+    &lt;rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/&gt;
+    &lt;path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="M0,0" adj:d="
+      M ~one#xw + ^myvar, ~one#cy
+      C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar
+      S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/&gt;
+  &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -3593,9 +3621,6 @@ the Adj JavaScript library as needed, partially or wholly.</p>
 
 <p>One entry point could be explicit invocation with
 <code>Adj.doDoc();</code>.</p>
-
-<p>Similarly, an entry point could be explicit invocation with
-<code>Adj.doSvg(svgElement);</code>.</p>
 
 <p>Another kind of entry point could be the setting of algorithms to be applied
 to an element. E.g. the concise form Adj command</p>
