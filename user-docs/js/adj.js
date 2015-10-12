@@ -63,6 +63,8 @@ Adj.AdjNamespace = "http://www.nrvr.com/2012/adj";
 // shortcut
 // if not given a documentToDo then default to doing _the_ document
 // doDocDoneCallback is optional here and in most or all other functions defined in this library
+// will be called as doDocDoneCallback(exception, documentNodeOrRootElement)
+// also if (exception && !doDocDoneCallback) { throw exception; }
 Adj.doDoc = function doDoc(documentToDo, doDocDoneCallback) {
 	if (!doDocDoneCallback && typeof documentToDo === "function") {
 		// accommodate sloppy parameter passing
@@ -111,6 +113,7 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement, 
 		globalVariables.windowInnerHeight = function windowInnerHeight () { return window.innerHeight };
 		//
 		// for Adj.algorithms.include
+		documentNode.adjAsyncGetTextFileRequesters = documentNode.adjAsyncGetTextFileRequesters || {};
 		documentNode.adjAsyncProcessInvoker = documentNode.adjAsyncProcessInvoker || new Adj.DebouncedAsync(function () {
 			Adj.processAdjElements(documentElement, processDoneCallback);
 		});
@@ -122,9 +125,12 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement, 
 		Adj.processSvgElementWithPhaseHandlers(documentElement);
 		//
 		if (processDoneCallback) {
-			window.setTimeout(function () {
-				processDoneCallback(null, documentNodeOrRootElement);
-			}, 0);
+			if (!Object.keys(documentNode.adjAsyncGetTextFileRequesters).length) { // if 0
+				// no outstanding requests means done with all Adj.algorithms.include
+				window.setTimeout(function () {
+					processDoneCallback(null, documentNodeOrRootElement);
+				}, 0);
+			}
 		}
 	} catch (exception) {
 		Adj.displayException(exception, documentElement);
@@ -6175,6 +6181,9 @@ Adj.algorithms.include = {
 		}
 		//
 		window.nrvrGetTextFile(src, function(responseText, status) {
+			// keep track of requests
+			delete ownerDocument.adjAsyncGetTextFileRequesters[element];
+			//
 			if (status != 200) { // 200 OK
 				console.error("HTTP GET status", status, "for", src);
 				return;
@@ -6226,24 +6235,27 @@ Adj.algorithms.include = {
 			//
 			ownerDocument.adjAsyncProcessInvoker.invoke();
 		});
+		// keep track of requests
+		ownerDocument.adjAsyncGetTextFileRequesters[element] = true;
 	}]
 }
 
 // utility class
 // for Adj.algorithms.include
 Adj.DebouncedAsync = function DebouncedAsync (func, thisToUse) {
-	this.set = false;
+	this.handle = null;
 	this.func = func;
 	this.thisToUse = thisToUse;
 }
 Adj.DebouncedAsync.prototype.invoke = function () {
-	if (!this.set) {
+	if (!this.handle) {
 		var debouncedAsync = this;
-		window.setTimeout(function () {
-			debouncedAsync.set = false; // reset
+		// per https://html.spec.whatwg.org/multipage/webappapis.html#timers
+		// setTimeout returns an integer that is greater than zero
+		this.handle = window.setTimeout(function () {
+			debouncedAsync.handle = null; // reset
 			debouncedAsync.func.apply(debouncedAsync.thisToUse);
 		}, 0);
-		this.set = true;
 	}
 }
 
