@@ -5,7 +5,8 @@
 		<circle r="19" fill="#222" transform="translate(20,20)"/>
 		<circle r="19" fill="#444" transform="translate(59,20)"/>
 		<circle r="19" fill="#666" transform="translate(20,59)"/>
-		<g adj:include="adj-ex-080-include-to-include-2.svg" transform="translate(40,40)">
+		<g adj:command="include" adj:href="adj-ex-080-include-to-include-2.svg" transform="translate(40,40)">
+			<adj:variable name="dummy" value="5"/>
 			<g adj:command="circularList" adj:gap="0">
 				<path d="M0,0 l10,0 -5,-9 z" fill="#222" transform="translate(12,23)"/>
 				<path d="M0,0 l10,0 -5,-9 z" fill="#444" transform="translate(26,23)"/>

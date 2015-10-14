@@ -5,12 +5,13 @@
 	<g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1">
 		<rect width="40" height="80" fill="#222" transform="translate(2,2)"/>
 		<g transform="translate(44,2)">
-			<adj:include src="adj-ex-080-include-to-include.svg"/>
+			<adj:include href="adj-ex-080-include-to-include.svg"/>
 			<g adj:command="horizontalList" adj:gap="1" adj:itemsH2V="1">
 				<circle r="19" fill="#222" transform="translate(20,20)"/>
 				<circle r="19" fill="#444" transform="translate(59,20)"/>
 				<circle r="19" fill="#666" transform="translate(20,59)"/>
-				<g adj:include="adj-ex-080-include-to-include-2.svg" transform="translate(40,40)">
+				<g adj:command="include" adj:href="adj-ex-080-include-to-include-2.svg" transform="translate(40,40)">
+					<adj:variable name="dummy" value="5"/>
 					<g adj:command="circularList" adj:gap="0">
 						<path d="M0,0 l10,0 -5,-9 z" fill="#222" transform="translate(12,23)"/>
 						<path d="M0,0 l10,0 -5,-9 z" fill="#444" transform="translate(26,23)"/>

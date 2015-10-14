@@ -298,10 +298,9 @@ Adj.parameterParse = function parameterParse(value) {
 
 // utility
 Adj.collectParameters = function collectParameters(element) {
-	var parameters = {};
+	var parameters = { commandNode: element };
 	var attributes = element.attributes;
-	var numberOfAttributes = attributes.length;
-	for (var i = 0; i < numberOfAttributes; i++) {
+	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
 		var attribute = attributes[i];
 		if (!attribute.namespaceURI || attribute.namespaceURI === Adj.AdjNamespace) {
 			parameters[attribute.localName] = Adj.parameterParse(attribute.value);
@@ -330,11 +329,10 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	// then look for newer alternative syntex Adj commands as attributes
 	var adjAttributesByName = {};
 	var attributes = node.attributes;
-	var numberOfAttributes = attributes.length;
-	for (var i = 0; i < numberOfAttributes; i++) {
+	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
 		var attribute = attributes[i];
 		if (attribute.namespaceURI === Adj.AdjNamespace) {
-			adjAttributesByName[attribute.localName] = attribute.value;
+			adjAttributesByName[attribute.localName] = attribute;
 		}
 	}
 	// first find out which commands
@@ -342,8 +340,8 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	for (var adjAttributeName in adjAttributesByName) {
 		switch (adjAttributeName) {
 			case "command":
-				var commandName = adjAttributesByName[adjAttributeName];
-				commandParametersByName[commandName] = {};
+				var commandName = adjAttributesByName[adjAttributeName].value;
+				commandParametersByName[commandName] = { commandNode: adjAttributesByName[adjAttributeName] };
 				delete adjAttributesByName[adjAttributeName]; // done with
 				break;
 			case "textBreaks":
@@ -356,12 +354,9 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 				// these commands can coexist with another command,
 				// though only some combinations make sense, while others cause conflicts,
 				// those that do work allow nicely looking SVG/Adj source, hence keeping this, for now
-				if (Adj.doVarsBoolean(node, adjAttributesByName[adjAttributeName], false, "used as attribute adj:" + adjAttributeName)) { // must be ="true", skip if ="false"
-					commandParametersByName[adjAttributeName] = {};
+				if (Adj.doVarsBoolean(node, adjAttributesByName[adjAttributeName].value, false, "used as attribute adj:" + adjAttributeName)) { // must be ="true", skip if ="false"
+					commandParametersByName[adjAttributeName] = { commandNode: adjAttributesByName[adjAttributeName] };
 				}
-				break;
-			case "include":
-				commandParametersByName[adjAttributeName] = { src: adjAttributesByName[adjAttributeName] };
 				break;
 			default:
 				break;
@@ -371,7 +366,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	for (var adjAttributeName in adjAttributesByName) {
 		var commandNamesUsingParameterName = Adj.commandNamesUsingParameterName(adjAttributeName);
 		if (commandNamesUsingParameterName) {
-			var adjAttributeValue = Adj.parameterParse(adjAttributesByName[adjAttributeName]);
+			var adjAttributeValue = Adj.parameterParse(adjAttributesByName[adjAttributeName].value);
 			for (var i in commandNamesUsingParameterName) {
 				var commandName = commandNamesUsingParameterName[i];
 				var commandParameters = commandParametersByName[commandName];
@@ -6168,24 +6163,24 @@ Adj.displayException = function displayException (exception, svgElement) {
 // a specific algorithm
 Adj.algorithms.include = {
 	phaseHandlerNames: ["adjPhase1Down"],
-	parameters: ["src"],
+	parameters: ["href"],
 	methods: [function include (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
 		//
 		var usedHow = "used in a parameter for an include command";
-		var src = parametersObject.src;
+		var href = parametersObject.href;
 		//
 		if (element.adjIncluded) {
 			// don't include a second time
 			return;
 		}
 		//
-		window.nrvrGetTextFile(src, function(responseText, status) {
+		window.nrvrGetTextFile(href, function(responseText, status) {
 			// keep track of requests
 			delete ownerDocument.adjAsyncGetTextFileRequesters[element];
 			//
 			if (status != 200) { // 200 OK
-				console.error("HTTP GET status", status, "for", src);
+				console.error("HTTP GET status", status, "for", href);
 				return;
 			}
 			// see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
@@ -6203,18 +6198,16 @@ Adj.algorithms.include = {
 				return;
 			}
 			// remove
-			for (var child = element.firstChild, startedRemoving = false; child; ) { // because of removeChild here cannot child = child.nextSibling
-				if (child instanceof SVGElement) {
-					startedRemoving = true;
-				}
-				if (startedRemoving) {
-					var childToRemove = child;
+			var commandNode = parametersObject.commandNode;
+			for (var child = element.firstChild; child; ) { // because of removeChild here cannot child = child.nextSibling
+				if (child === commandNode) {
+					// skip if the very commandNode itself
 					child = child.nextSibling;
-					element.removeChild(childToRemove);
-				} else {
-					// skip if not an SVGElement yet, e.g. leading XML #text, #comment, or an Adj.AdjNamespace element
-					child = child.nextSibling;
+					continue;
 				}
+				var childToRemove = child;
+				child = child.nextSibling;
+				element.removeChild(childToRemove);
 			}
 			// set flag
 			element.adjIncluded = new Date();
