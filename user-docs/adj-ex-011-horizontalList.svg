@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="245" height="120">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="200" height="120">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="120" fill="linen"/>
 	<g>
@@ -9,6 +9,5 @@
 		<rect width="34" height="24" fill="#444" transform="translate(77,5)"/>
 		<rect width="36" height="26" fill="#666" transform="translate(116,5)"/>
 		<rect width="38" height="28" fill="#888" transform="translate(157,5)"/>
-		<rect width="40" height="30" fill="#aaa" transform="translate(200,5)"/>
 	</g>
 </svg>
