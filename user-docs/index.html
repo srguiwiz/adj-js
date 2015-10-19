@@ -71,10 +71,10 @@ h1,h2,h3,h4,h5,h6 {
 <h1>Adj Framework</h1>
 
 <p class="deemphasize">Note: This user guide's SVG images show in modern
-browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 9 and newer.
+browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 10 and newer.
 Older versions Internet Explorer, 8 and earlier, show the <code>alt</code> tag
 text of those <code>img</code> elements instead. Internet Explorer users will
-be <a href="#L2433">better off</a> with Internet Explorer 11 anyway.</p>
+be <a href="#L2433">better off</a> with Internet Explorer 11 and newer.</p>
 
 <div class="toc">
 <ul>
@@ -3346,7 +3346,7 @@ auxiliary authoring tools used.</p>
 <ul>
   <li>Requirements 
     <ul>
-      <li>an XML editor<span class="deemphasize">, e.g. awesome <span
+      <li>an XML editor<span class="deemphasize">, e.g. excellent <span
         class="product-name">Altova <a
         href="http://www.altova.com/xml-editor/">XMLSpy</a></span>, <span
         class="product-name">Adobe <a
@@ -3362,18 +3362,11 @@ auxiliary authoring tools used.</p>
         <ul>
           <li><span class="product-name">Auto Reload</span>, from <a
             href="https://addons.mozilla.org/en-US/firefox/addon/auto-reload/">https://addons.mozilla.org/en-US/firefox/addon/auto-reload/</a><span
-            class="deemphasize">, e.g. version 1.13</span></li>
+            class="deemphasize">, e.g. version 1.20</span></li>
           <li><span class="product-name">Save Back to File from DOM</span>, aka
             <code>save-back-to-file-from-dom.xpi</code>, from <a
             href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/">https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/</a><span
-            class="deemphasize">, e.g. 1.rev22</span></li>
-          <li>only if wanting implicit <a href="#L6329">invocation</a> then –
-            <span class="product-name">Onload Script Some Document
-            Files</span>, aka
-            <code>onload-script-some-document-files.xpi</code>, from <a
-            href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/">https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-documents/</a><span
-            class="deemphasize">, e.g. 1.rev42</span> – not needed for
-            explicit invocation</li>
+            class="deemphasize">, e.g. 1.0.26</span></li>
         </ul>
       </li>
       <li>Set up a directory which will contain files</li>
@@ -3388,10 +3381,7 @@ auxiliary authoring tools used.</p>
       <li>write SVG in XML editor</li>
       <li>save to disk</li>
       <li>open in <span class="product-name">Firefox</span> browser</li>
-      <li>watch the effects of invocation <span class="deemphasize">– if
-        implicit invocation then courtesy of the <span
-        class="product-name">Onload Script Some Document Files</span>
-        add-on</span></li>
+      <li>watch the effects of invocation</li>
       <li>keep fixing SVG in editor and saving to disk</li>
       <li>keep watching the effects of automatic reloading, courtesy of the
         <span class="product-name">Auto Reload</span> add-on</li>
@@ -3497,8 +3487,8 @@ href="https://addons.mozilla.org/en-US/firefox/addon/onload-script-some-document
 class="product-name">Onload Script Some Document Files</span></a> can do the
 necessary script injection, effecting implicit invocation.</p>
 
-<p>Implicit invocation possibly is of interest to authors who want to
-distribute processed documents only.</p>
+<p>Implicit invocation might be of interest to authors who want to distribute
+processed documents only.</p>
 
 <h3 id="L86788">1.20. More Details</h3>
 
@@ -4012,15 +4002,6 @@ version</p>
                     &lt;text&gt;Auto Reload&lt;/text&gt;
                     &lt;text&gt;add-on&lt;/text&gt;
                 &lt;/g&gt;
-                &lt;g adj:id="add-on-onload-script"&gt;
-                    &lt;adj:verticalList gap="5"/&gt;
-                    &lt;rect width="0" height="0" class="subject"&gt;
-                        &lt;adj:frameForParent inset="1"/&gt;
-                    &lt;/rect&gt;
-                    &lt;text&gt;Onload Script&lt;/text&gt;
-                    &lt;text&gt;Document Files&lt;/text&gt;
-                    &lt;text&gt;add-on&lt;/text&gt;
-                &lt;/g&gt;
                 &lt;g adj:id="add-on-save-back"&gt;
                     &lt;adj:verticalList gap="5"/&gt;
                     &lt;rect width="0" height="0" class="subject"&gt;
@@ -4059,16 +4040,6 @@ version</p>
                 &lt;adj:verticalList gap="1"/&gt;
                 &lt;text&gt;auto&lt;/text&gt;
                 &lt;text&gt;reloads&lt;/text&gt;
-            &lt;/g&gt;
-        &lt;/g&gt;
-        &lt;g&gt;
-            &lt;adj:connection from="add-on-onload-script % 0.2, -0.05" to="add-on-onload-script % 0.8, -0.05"/&gt;
-            &lt;path class="arrow" d="M0,0 q50,-50 100,0" stroke-width="3" marker-end="url(#arrowhead)"/&gt;
-            &lt;g&gt;
-                &lt;adj:rider at="0.5" pin="0.5,1"/&gt;
-                &lt;adj:verticalList gap="1"/&gt;
-                &lt;text&gt;on load&lt;/text&gt;
-                &lt;text&gt;runs script&lt;/text&gt;
             &lt;/g&gt;
         &lt;/g&gt;
         &lt;g&gt;

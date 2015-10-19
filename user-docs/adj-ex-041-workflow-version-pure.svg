@@ -82,15 +82,6 @@
 					<text>Auto Reload</text>
 					<text>add-on</text>
 				</g>
-				<g adj:id="add-on-onload-script">
-					<adj:verticalList gap="5"/>
-					<rect width="0" height="0" class="subject">
-						<adj:frameForParent inset="1"/>
-					</rect>
-					<text>Onload Script</text>
-					<text>Document Files</text>
-					<text>add-on</text>
-				</g>
 				<g adj:id="add-on-save-back">
 					<adj:verticalList gap="5"/>
 					<rect width="0" height="0" class="subject">
@@ -129,16 +120,6 @@
 				<adj:verticalList gap="1"/>
 				<text>auto</text>
 				<text>reloads</text>
-			</g>
-		</g>
-		<g>
-			<adj:connection from="add-on-onload-script % 0.2, -0.05" to="add-on-onload-script % 0.8, -0.05"/>
-			<path class="arrow" d="M0,0 q50,-50 100,0" stroke-width="3" marker-end="url(#arrowhead)"/>
-			<g>
-				<adj:rider at="0.5" pin="0.5,1"/>
-				<adj:verticalList gap="1"/>
-				<text>on load</text>
-				<text>runs script</text>
 			</g>
 		</g>
 		<g>
