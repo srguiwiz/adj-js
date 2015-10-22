@@ -57,8 +57,9 @@ Adj.version = { major:4, minor:2, revision:0 };
 Adj.algorithms = {};
 
 // constants
-Adj.SvgNamespace = "http://www.w3.org/2000/svg"
+Adj.SvgNamespace = "http://www.w3.org/2000/svg";
 Adj.AdjNamespace = "http://www.nrvr.com/2012/adj";
+Adj.XLinkNamespace = "http://www.w3.org/1999/xlink";
 
 // shortcut
 // if not given a documentToDo then default to doing _the_ document
@@ -229,9 +230,11 @@ Adj.phaseHandlerNameRegexp = /^(adjPhase[0-9])(Down|Up|)$/;
 // entry point
 Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgElement) {
 	// first clear svgElement.adjSomething properties for a new start
+	// TODO consider whether setting null is better than delete, should verify all uses
 	delete svgElement.adjIdsDictionary;
 	svgElement.adjPhaseHandlerNamesOccurringByName = {};
 	delete svgElement.adjPhaseNamesOccurring;
+	svgElement.adjIncludingElement = null;
 	//
 	// then walk
 	Adj.parseAdjElementsToPhaseHandlers(svgElement);
@@ -298,7 +301,7 @@ Adj.parameterParse = function parameterParse(value) {
 
 // utility
 Adj.collectParameters = function collectParameters(element) {
-	var parameters = { commandNode: element };
+	var parameters = { commandElement: element };
 	var attributes = element.attributes;
 	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
 		var attribute = attributes[i];
@@ -341,7 +344,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 		switch (adjAttributeName) {
 			case "command":
 				var commandName = adjAttributesByName[adjAttributeName].value;
-				commandParametersByName[commandName] = { commandNode: adjAttributesByName[adjAttributeName] };
+				commandParametersByName[commandName] = { commandElement: node };
 				delete adjAttributesByName[adjAttributeName]; // done with
 				break;
 			case "textBreaks":
@@ -355,7 +358,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 				// though only some combinations make sense, while others cause conflicts,
 				// those that do work allow nicely looking SVG/Adj source, hence keeping this, for now
 				if (Adj.doVarsBoolean(node, adjAttributesByName[adjAttributeName].value, false, "used as attribute adj:" + adjAttributeName)) { // must be ="true", skip if ="false"
-					commandParametersByName[adjAttributeName] = { commandNode: adjAttributesByName[adjAttributeName] };
+					commandParametersByName[adjAttributeName] = { commandElement: node };
 				}
 				break;
 			default:
@@ -4554,7 +4557,6 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'Q': // quadratic Bézier curveto, absolute
-
 					controlPoint.x = pathSeg.x1;
 					controlPoint.y = pathSeg.y1;
 					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
@@ -4904,6 +4906,8 @@ Adj.algorithms.skimpyList = {
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap"],
 	methods: [function skimpyList (element, parametersObject) {
+		var ownerDocument = element.ownerDocument;
+		//
 		var usedHow = "used in a parameter for a skimpyList command";
 		var variableSubstitutionsByName = {};
 		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
@@ -4928,7 +4932,7 @@ Adj.algorithms.skimpyList = {
 			}
 			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
 				// make hidden rect
-				hiddenRect = Adj.createSVGElement(element.ownerDocument, "rect", {adjPlacementArtifact:true});
+				hiddenRect = Adj.createSVGElement(ownerDocument, "rect", {adjPlacementArtifact:true});
 				hiddenRect.setAttribute("width", 0);
 				hiddenRect.setAttribute("height", 0);
 				hiddenRect.setAttribute("visibility", "hidden");
@@ -6160,18 +6164,35 @@ Adj.displayException = function displayException (exception, svgElement) {
 	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
 }
 
+Adj.toPathRegExp = /^([^?#]*)(.*)$/;
+Adj.anySlashRegExp = /^.*\//;
+Adj.schemeAuthorityPathRegExp = /^([a-zA-Z][-+.a-zA-Z0-9]*:\/\/)?([^\/]*)(.*)$/;
+Adj.dirRegExp = /^(.*\/)/;
+Adj.leadingSlashRegExp = /^\//;
+Adj.leadingDotDotSlashRegExp = /^(\.\.\/)?(.*)$/;
+Adj.tailingDirRegExp = /^(.*?)([^\/]+\/)$/;
+
 // a specific algorithm
 Adj.algorithms.include = {
-	phaseHandlerNames: ["adjPhase1Down"],
+	phaseHandlerNames: ["adjPhase1Down", "adjPhase1Up"],
 	parameters: ["href"],
-	methods: [function include (element, parametersObject) {
+	methods: [function include1Down (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
+		var documentElement = ownerDocument.documentElement;
+		var commandElement = parametersObject.commandElement;
 		//
 		var usedHow = "used in a parameter for an include command";
-		var href = parametersObject.href;
+		var href = commandElement.getAttributeNS(Adj.XLinkNamespace, "href");
+		if (!href) {
+			throw "missing parameter xlink:href= for an include command";
+		}
 		//
 		if (element.adjIncluded) {
 			// don't include a second time
+			return;
+		}
+		if (documentElement.adjIncludingElement) {
+			// prevent a concurrent nested getTextFile
 			return;
 		}
 		//
@@ -6198,10 +6219,9 @@ Adj.algorithms.include = {
 				return;
 			}
 			// remove
-			var commandNode = parametersObject.commandNode;
 			for (var child = element.firstChild; child; ) { // because of removeChild here cannot child = child.nextSibling
-				if (child === commandNode) {
-					// skip if the very commandNode itself
+				if (child === commandElement) {
+					// skip if the very commandElement itself
 					child = child.nextSibling;
 					continue;
 				}
@@ -6225,11 +6245,98 @@ Adj.algorithms.include = {
 				}
 				element.appendChild(toIncludeNode);
 			}
+			// fix up URIs
+			// terms used for three logical levels are document, include, link
+			var includeToPath = Adj.toPathRegExp.exec(href)[1] || "";
+			if (Adj.anySlashRegExp.test(includeToPath)) { // at least one slash
+				var schemeAuthorityPathRegExpMatch = Adj.schemeAuthorityPathRegExp.exec(includeToPath);
+				var includeScheme2 = schemeAuthorityPathRegExpMatch[1];
+				if (includeScheme2) {
+					var includeAuthority = schemeAuthorityPathRegExpMatch[2];
+					var includePath = schemeAuthorityPathRegExpMatch[3];
+				} else {
+					includeScheme2 = "";
+					includeAuthority = "";
+					includePath = includeToPath;
+				}
+				var includeDir = Adj.dirRegExp.exec(includePath)[1];
+				var includePathStartsAtRoot = Adj.leadingSlashRegExp.test(includePath);
+				// would have liked
+				//   var linkIterator = document.evaluate(".//@*[local-name()='href']", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+				//   var linkAttribute;
+				//   while (linkAttribute = linkIterator.iterateNext()) { // sic
+				// note first link found is from this very include, skip it by element or by initial
+				//   var linkAttribute = linkIterator.iterateNext();
+				// also couldn't use XPath because of compatibility
+				// note per https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate no Internet Explorer 11
+				// note per https://developer.mozilla.org/en-US/docs/Web/API/Attr no parentNode or ownerElement
+				// note for NODE_ITERATOR modifying a node will invalidate the iterator, would have to use NODE_SNAPSHOT and snapshot methods
+				// also considered .//@*[namespace-uri()='http://www.nrvr.com/2012/adj' and local-name()='href']
+				// now instead a "good enough" method to be compatible with Internet Explorer 11
+				var linkElements = element.querySelectorAll("[*|href]");
+				for (var i = 0, n = linkElements.length; i < n; i++) {
+					// fix up one link
+					var linkedElement = linkElements[i];
+					if (linkedElement === commandElement) {
+						// skip if the very commandElement itself
+						continue;
+					}
+					var linkNamespace = Adj.XLinkNamespace;
+					var linkLocalName = "href";
+					var linkUri = linkedElement.getAttributeNS(linkNamespace, linkLocalName);
+					if (!linkUri) { // could try other namespaces
+						continue; // but don't, for now
+					}
+					// note http://www.ietf.org/rfc/rfc3986.txt Uniform Resource Identifier (URI): Generic Syntax
+					var toPathAfterPathRegExpMatch = Adj.toPathRegExp.exec(linkUri);
+					var linkToPath = toPathAfterPathRegExpMatch[1] || "";
+					var linkAfterPath = toPathAfterPathRegExpMatch[2] || "";
+					var linkScheme2 = Adj.schemeAuthorityPathRegExp.exec(linkToPath)[1];
+					if (!linkScheme2) { // link is not absolute
+						if (Adj.leadingSlashRegExp.test(linkToPath)) { // linkToPath starts with a slash, at root
+							linkUri = includeScheme2 + includeAuthority + linkUri;
+						} else {
+							// eliminate subdir/../ if any
+							var linkPathPart1 = includeDir;
+							var linkPathPart2 = linkToPath;
+							while (true) {
+								var matchPart2 = Adj.leadingDotDotSlashRegExp.exec(linkPathPart2);
+								if (!matchPart2[1]) { // no leading ../ in linkPathPart2
+									break;
+								}
+								var matchPart1 = Adj.tailingDirRegExp.exec(linkPathPart1);
+								if (!matchPart1) { // no match
+									break;
+								}
+								var tailingDir = matchPart1[2];
+								if (tailingDir === "../" || tailingDir === "./") { // an oddball
+									break;
+								}
+								linkPathPart1 = matchPart1[1] || "";
+								linkPathPart2 = matchPart2[2] || "";
+							}
+							linkUri = includeScheme2 + includeAuthority + linkPathPart1 + linkPathPart2 + linkAfterPath;
+						}
+						linkedElement.setAttributeNS(linkNamespace, linkLocalName, linkUri);
+					//} else { // link is absolute, no fixup needed
+					}
+				}
+			//} else { // not any slash means same directory, no fixup needed
+			}
 			//
 			ownerDocument.adjAsyncProcessInvoker.invoke();
 		});
 		// keep track of requests
 		ownerDocument.adjAsyncGetTextFileRequesters[element] = true;
+		// prevent a concurrent nested getTextFile
+		documentElement.adjIncludingElement = element;
+	},
+	function include1Up (element, parametersObject) {
+		var documentElement = element.ownerDocument.documentElement;
+		//
+		if (documentElement.adjIncludingElement === element) {
+			documentElement.adjIncludingElement = null;
+		}
 	}]
 }
 

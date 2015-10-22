@@ -5,20 +5,30 @@
 	<g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1">
 		<rect width="40" height="80" fill="#222" transform="translate(2,2)"/>
 		<g transform="translate(44,2)">
-			<adj:include href="adj-ex-080-include-to-include.svg"/>
+			<adj:include xlink:href="subdir-080/adj-ex-080-include-to-include.svg"/>
 			<g adj:command="horizontalList" adj:gap="1" adj:itemsH2V="1">
 				<circle r="19" fill="#222" transform="translate(20,20)"/>
 				<circle r="19" fill="#444" transform="translate(59,20)"/>
-				<circle r="19" fill="#666" transform="translate(20,59)"/>
-				<g adj:command="include" adj:href="adj-ex-080-include-to-include-2.svg" transform="translate(40,40)">
+				<g adj:command="include" xlink:href="subdir-080/adj-ex-080-include-to-include-2.svg" transform="translate(1,40)">
 					<adj:variable name="dummy" value="5"/>
-					<g adj:command="circularList" adj:gap="0">
-						<path d="M0,0 l10,0 -5,-9 z" fill="#222" transform="translate(12,23)"/>
-						<path d="M0,0 l10,0 -5,-9 z" fill="#444" transform="translate(26,23)"/>
-						<path d="M0,0 l10,0 -5,-9 z" fill="#666" transform="translate(16,36)"/>
-						<path d="M0,0 l10,0 -5,-9 z" fill="#888" transform="translate(1,31)"/>
-						<path d="M0,0 l10,0 -5,-9 z" fill="#aaa" transform="translate(1,14)"/>
-						<path d="M0,0 l10,0 -5,-9 z" fill="#ccc" transform="translate(16,9)"/>
+					<g adj:command="circularList" adj:gap="0" adj:fromAngle="180">
+						<path d="M0,0 l0,10 9,-5 z" fill="#222" transform="translate(15,14)"/>
+						<path d="M0,0 l0,10 9,-5 z" fill="#444" transform="translate(1,14)"/>
+						<path d="M0,0 l0,10 9,-5 z" fill="#666" transform="translate(10,1)"/>
+						<path d="M0,0 l0,10 9,-5 z" fill="#888" transform="translate(26,6)"/>
+						<path d="M0,0 l0,10 9,-5 z" fill="#aaa" transform="translate(26,22)"/>
+						<path d="M0,0 l0,10 9,-5 z" fill="#ccc" transform="translate(10,27)"/>
+					</g>
+				</g>
+				<g adj:command="include" xlink:href="subdir-080/subdir-080-b/adj-ex-080-include-to-include-3.svg" transform="translate(37,40)">
+					<adj:variable name="dummy" value="5"/>
+					<g adj:command="circularList" adj:gap="0" adj:fromAngle="270">
+						<path d="M0,0 l10,0 -5,9 z" fill="#222" transform="translate(14,15)"/>
+						<path d="M0,0 l10,0 -5,9 z" fill="#444" transform="translate(14,1)"/>
+						<path d="M0,0 l10,0 -5,9 z" fill="#666" transform="translate(27,10)"/>
+						<path d="M0,0 l10,0 -5,9 z" fill="#888" transform="translate(22,26)"/>
+						<path d="M0,0 l10,0 -5,9 z" fill="#aaa" transform="translate(6,26)"/>
+						<path d="M0,0 l10,0 -5,9 z" fill="#ccc" transform="translate(1,10)"/>
 					</g>
 				</g>
 			</g>

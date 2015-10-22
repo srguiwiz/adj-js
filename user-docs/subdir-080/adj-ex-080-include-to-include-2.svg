@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (x64) (http://www.altova.com) by Leo Baschy (Niresip) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="35" height="38">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<adj:variable name="dummy" value="5"/>
+	<g adj:command="circularList" adj:gap="0" adj:fromAngle="180">
+		<path d="M0,0 l0,10 9,-5 z" fill="#222" transform="translate(15,14)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#444" transform="translate(1,14)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#666" transform="translate(10,1)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#888" transform="translate(26,6)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#aaa" transform="translate(26,22)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#ccc" transform="translate(10,27)"/>
+	</g>
+</svg>
