@@ -4,7 +4,11 @@
 	<script type="text/javascript" xlink:href="../../js/adj.js"/>
 	<adj:variable name="dummy" value="5"/>
 	<g adj:command="circularList" adj:gap="0" adj:fromAngle="270">
-		<path d="M0,0 l10,0 -5,9 z" fill="#222" transform="translate(14,15)"/>
+		<g adj:command="include" xlink:href="../subdir-080-c/adj-ex-080-include-to-include-4.svg" transform="translate(14,15)">
+			<g adj:command="skimpyList" adj:gap="0">
+				<path d="M0,0 l10,0 -5,-9 z" fill="#222" transform="translate(0,9)"/>
+			</g>
+		</g>
 		<path d="M0,0 l10,0 -5,9 z" fill="#444" transform="translate(14,1)"/>
 		<path d="M0,0 l10,0 -5,9 z" fill="#666" transform="translate(27,10)"/>
 		<path d="M0,0 l10,0 -5,9 z" fill="#888" transform="translate(22,26)"/>
