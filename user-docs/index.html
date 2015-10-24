@@ -129,6 +129,7 @@ be <a href="#L2433">better off</a> with Internet Explorer 11 and newer.</p>
           <li><a href="#L45423">1.11.19. Command telescopicTree Options</a></li>
           <li><a href="#L11198">1.11.20. Command paragraph Options</a></li>
           <li><a href="#L94550">1.11.21. Command hide Options</a></li>
+          <li><a href="#L3450">1.11.22. Command include Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a> 
@@ -242,7 +243,7 @@ be <a href="#L2433">better off</a> with Internet Explorer 11 and newer.</p>
 <h2 id="L7142">1. User Guide</h2>
 
 <h3 id="L4238">1.1. Modified BSD License</h3>
-<pre class="deemphasize">// Copyright (c) 2002-2014, Nirvana Research
+<pre class="deemphasize">// Copyright (c) 2002-2015, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -819,6 +820,21 @@ Here is more.
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444" <span class="example-code">adj:<a href="#L94550">hide</a>="true"</span>/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-080-include.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" <span class="example-code">xmlns:xlink="http://www.w3.org/1999/xlink"</span>&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1"&gt;
+    &lt;rect width="40" height="80" fill="#222"/&gt;
+    &lt;g&gt;
+      <span class="example-code">&lt;adj:<a href="#L3450">include</a> xlink:href="subdir-080/adj-ex-080-include-to-include.svg"/&gt;</span>
+    &lt;/g&gt;
+    &lt;rect width="40" height="40" fill="#444"/&gt;
+    &lt;rect width="80" height="40" fill="#888"/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
@@ -2493,6 +2509,53 @@ command <code>paragraph</code>.</p>
   </tbody>
 </table>
 
+<h4 id="L3450">1.11.22. Command include Options</h4>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-080-include.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" <span class="example-code">xmlns:xlink="http://www.w3.org/1999/xlink"</span>&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1"&gt;
+    &lt;rect width="40" height="80" fill="#222"/&gt;
+    &lt;g&gt;
+      <span class="example-code">&lt;adj:include xlink:href="subdir-080/adj-ex-080-include-to-include.svg"/&gt;</span>
+    &lt;/g&gt;
+    &lt;rect width="40" height="40" fill="#444"/&gt;
+    &lt;rect width="80" height="40" fill="#888"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Command <code>include</code> parameter <code>xlink:href</code> is required.
+Note the required <a href="http://www.w3.org/TR/xlink/">XLink</a> namespace, as
+is commonly used in <a href="http://www.w3.org/Graphics/SVG/">SVG</a>.</p>
+
+<p>Command <code>include</code> causes asynchronous execution when invoking
+<code>Adj.doDoc()</code>.</p>
+
+<p><span class="todo">TODO: write a short section in this user guide to
+describe optional asynchronous execution of <code>Adj.doDoc()</code>, which
+supports a callback function</span></p>
+
+<p>There is or should be no problem, no special attention required, with
+<code>http</code> links on the same server.</p>
+
+<p>As implemented, <code>include</code> is subject to browser imposed
+restrictions of cross-origin HTTP requests, via <code>XMLHttpRequest</code>. A
+mechanism often used in this context is Cross-Origin Resource Sharing (<a
+href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>).</p>
+
+<p>For best productivity when using URI scheme <code>file</code>, a Firefox
+add-on <span class="product-name">File URI Scheme GET from Page Script</span>,
+aka <code>file-scheme-get-from-script.xpi</code>, has been <a
+href="https://github.com/srguiwiz/file-get-xpi">made</a> and will be made
+available more easily.</p>
+
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
 <h4 id="L7602">1.12.1. Option explain</h4>
@@ -2812,7 +2875,8 @@ instances of command <code><a href="#L94550">hide</a></code>.</p>
   </tbody>
 </table>
 
-<p>The optional second parameter tells whether to invoke <code>doDoc</code>.</p>
+<p>The optional second parameter tells whether to invoke
+<code>Adj.doDoc()</code>.</p>
 
 <p>Similarly there are functions <code>hideSiblingsFollowing</code> and
 <code>unhideSiblingsFollowing</code>.</p>
