@@ -241,7 +241,7 @@ can force an
 <script type="text/javascript">
 //<![CDATA[
 //
-// Copyright (c) 2002-2014, Nirvana Research
+// Copyright (c) 2002-2015, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -364,17 +364,15 @@ can force an
 	}
 
 	// match command by itself, or command followed by one or two parameters separated by |
-	messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
+	var messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
 
-	windowReceivesMessage = function windowReceivesMessage(evt) {
+	var windowReceivesMessage = function windowReceivesMessage(evt) {
 		// accept any evt.origin
-		var messageCommand;
-		var messageParameter;
 		var messageMatch = messageRegexp.exec(evt.data);
 		if (messageMatch) {
-			messageCommand = messageMatch[1];
-			messageParameter1 = messageMatch[2];
-			messageParameter2 = messageMatch[3];
+			var messageCommand = messageMatch[1];
+			var messageParameter1 = messageMatch[2];
+			var messageParameter2 = messageMatch[3];
 		} else {
 			messageCommand = "";
 		}

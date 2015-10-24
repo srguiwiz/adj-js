@@ -145,6 +145,11 @@ Adj.stashDocumentResult = function stashDocumentResult(documentToDo) {
 // get stash, decoded,
 // if not given a documentToDo then default to doing _the_ document
 Adj.stashedDocumentResult = function stashedDocumentResult(documentToDo, removeDocumentResultStash) {
+	if (typeof removeDocumentResultStash === "undefined" && typeof documentToDo === "boolean") {
+		// accommodate sloppy parameter passing
+		removeDocumentResultStash = documentToDo;
+		documentToDo = undefined;
+	}
 	if (!documentToDo) {
 		documentToDo = document;
 	}
@@ -172,31 +177,70 @@ Adj.stashedDocumentResultAndRemove = function stashedDocumentResultAndRemove(doc
 
 // for running automated tests,
 // if not given a documentToDo then default to doing _the_ document
-Adj.doDocAndStashIfNoStashYet = function doDocAndStashIfNoStashYet(documentToDo) {
+// doDocAndStashDoneCallback is optional here and in some other functions defined in this library
+Adj.doDocAndStashIfNoStashYet = function doDocAndStashIfNoStashYet(documentToDo, doDocAndStashDoneCallback) {
+	if (!doDocAndStashDoneCallback && typeof documentToDo === "function") {
+		// accommodate sloppy parameter passing
+		doDocAndStashDoneCallback = documentToDo;
+		documentToDo = undefined;
+	}
 	if (!documentToDo) {
 		documentToDo = document;
 	}
-	if (Adj.apparentlyDocumentResultStash(documentToDo)) { // apparently not first time
-		return; // bail out
+	if (Adj.apparentlyDocumentResultStash(documentToDo)) { // if apparently not first time
+		// then do nothing, bail out
+		if (doDocAndStashDoneCallback) {
+			doDocAndStashDoneCallback(null, documentToDo);
+		}
+		return;
 	}
 	// do
-	Adj.doDoc(documentToDo);
-	// put stash
-	Adj.stashDocumentResult(documentToDo);
+	Adj.doDoc(documentToDo, function(exception, documentNodeOrRootElement) {
+		if (exception) {
+			if (doDocAndStashDoneCallback) {
+				doDocAndStashDoneCallback(exception);
+				return;
+			} else {
+				throw exception;
+			}
+		}
+		// put stash
+		Adj.stashDocumentResult(documentToDo);
+		if (doDocAndStashDoneCallback) {
+			doDocAndStashDoneCallback(exception, documentNodeOrRootElement);
+		}
+	});
 }
 
 // for running automated tests,
 // if not given a documentToDo then default to doing _the_ document
-Adj.doDocAndStash = function doDocAndStash(documentToDo) {
+Adj.doDocAndStash = function doDocAndStash(documentToDo, doDocAndStashDoneCallback) {
+	if (!doDocAndStashDoneCallback && typeof documentToDo === "function") {
+		// accommodate sloppy parameter passing
+		doDocAndStashDoneCallback = documentToDo;
+		documentToDo = undefined;
+	}
 	if (!documentToDo) {
 		documentToDo = document;
 	}
 	// remove previous stash
 	Adj.removeDocumentResultStash(documentToDo);
 	// do
-	Adj.doDoc(documentToDo);
-	// put stash
-	Adj.stashDocumentResult(documentToDo);
+	Adj.doDoc(documentToDo, function(exception, documentNodeOrRootElement) {
+		if (exception) {
+			if (doDocAndStashDoneCallback) {
+				doDocAndStashDoneCallback(exception);
+				return;
+			} else {
+				throw exception;
+			}
+		}
+		// put stash
+		Adj.stashDocumentResult(documentToDo);
+		if (doDocAndStashDoneCallback) {
+			doDocAndStashDoneCallback(exception, documentNodeOrRootElement);
+		}
+	});
 }
 
 // constants
@@ -413,9 +457,14 @@ Adj.areEqualNodes = function areEqualNodes(stashedNode, currentNode, differences
 }
 
 // for running automated tests,
-// return string describing difference == failed, or empty string if expected result == passed,
+// doDocAndVerifyDoneCallback called with string describing difference if failed,
+// or called with empty string if expected result if passed,
+// or called with exception if so,
 // if not given a documentToDo then default to doing _the_ document
-Adj.doDocAndVerify = function doDocAndVerify(documentToDo, tolerance) {
+Adj.doDocAndVerify = function doDocAndVerify(doDocAndVerifyDoneCallback, documentToDo, tolerance) {
+	if (!doDocAndVerifyDoneCallback || typeof doDocAndVerifyDoneCallback !== "function") {
+		throw "Adj.doDocAndVerify cannot run unless first parameter is a callback function";
+	}
 	if (!documentToDo) {
 		documentToDo = document;
 	}
@@ -425,99 +474,115 @@ Adj.doDocAndVerify = function doDocAndVerify(documentToDo, tolerance) {
 			ifTextFractionOfTotal: 0.05 // if at least one SVG text element
 		};
 	}
+	//
 	// get stash
 	var stashContent = Adj.stashedDocumentResultAndRemove(documentToDo);
 	if (!stashContent) { // apparently no stash
 		// cannot verify
-		throw "cannot verify because no stash found to compare against";
+		doDocAndVerifyDoneCallback("cannot verify because no stash found to compare against");
+		return;
 	}
 	// do
-	Adj.doDoc(documentToDo);
-	// convert to text
-	var serializer = new XMLSerializer();
-	var documentAsString = serializer.serializeToString(documentToDo);
-	// may have to become a bit more tolerant for different browsers and borderline cases, yet not slack
-	stashContent = stashContent.replace(Adj.whitespaceBetweenElementsRegexp, "><");
-	stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
-	stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
-	stashContent = stashContent.replace(Adj.xmlDeclarationRegexp, "");
-	documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "><");
-	documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
-	documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
-	documentAsString = documentAsString.replace(Adj.xmlDeclarationRegexp, "");
-	// compare serialized documents
-	if (documentAsString == stashContent) {
-		return "";
-	}
-	// compare as DOM
-	var parser = new DOMParser();
-	var stashedDom;
-	var currentDom;
-	var apparentlyGoodParse = false;
-	var stashedDomRootElement;
-	var currentDomRootElement;
-	try {
-		stashedDom = parser.parseFromString(stashContent, "application/xml");
-		stashedDomRootElement = stashedDom.documentElement;
-		if (stashedDomRootElement.localName != "svg") {
-			throw "not svg";
-		}
-		currentDom = parser.parseFromString(documentAsString, "application/xml");
-		currentDomRootElement = currentDom.documentElement;
-		if (currentDomRootElement.localName != "svg") {
-			throw "not svg";
-		}
-		apparentlyGoodParse = true;
-	} catch (exception) {
-		apparentlyGoodParse = false;
-	}
-	var apparentlyEqualDom = false;
-	if (apparentlyGoodParse) {
+	Adj.doDoc(documentToDo, function(exception, documentNodeOrRootElement) {
 		try {
-			apparentlyEqualDom = currentDomRootElement.isEqualNode(stashedDomRootElement);
-		} catch (exception) {
-			apparentlyEqualDom = false;
-		}
-	}
-	// custom comparison of DOM
-	var differences = [];
-	if (!apparentlyEqualDom) {
-		try {
-			stashedDom.normalize();
-			currentDom.normalize();
-			tolerance.inEffect = tolerance.generalInUnits; // default
-			if (stashedDom.getElementsByTagName("text").length) { // at least one SVG text element
-				tolerance.inEffect = tolerance.ifTextFractionOfTotal * Math.sqrt(Math.pow(parseFloat(stashedDomRootElement.getAttribute("width")),2)+Math.pow(parseFloat(stashedDomRootElement.getAttribute("height")),2));
+			if (exception) {
+				doDocAndVerifyDoneCallback(exception);
+				return;
 			}
-			apparentlyEqualDom = Adj.areEqualNodes(stashedDomRootElement, currentDomRootElement, differences, tolerance);
-		} catch (exception) {
-			apparentlyEqualDom = false;
-		}
-	}
-	if (apparentlyEqualDom) {
-		return "";
-	} else {
-		var differencesString;
-		if (differences.length) {
-			differencesString = differences.join("; ");
-		} else {
-			var sLength = stashContent.length;
-			var dLength = documentAsString.length;
-			var minLength = Math.min(sLength, dLength);
-			var firstDifference = minLength;
-			for (var i = 0; i < minLength; i++) {
-				if (documentAsString[i] != stashContent[i]) {
-					firstDifference = i;
-					break;
+			//
+			// convert to text
+			var serializer = new XMLSerializer();
+			var documentAsString = serializer.serializeToString(documentToDo);
+			// may have to become a bit more tolerant for different browsers and borderline cases, yet not slack
+			stashContent = stashContent.replace(Adj.whitespaceBetweenElementsRegexp, "><");
+			stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
+			stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
+			stashContent = stashContent.replace(Adj.xmlDeclarationRegexp, "");
+			documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "><");
+			documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
+			documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
+			documentAsString = documentAsString.replace(Adj.xmlDeclarationRegexp, "");
+			// compare serialized documents
+			if (documentAsString == stashContent) {
+				doDocAndVerifyDoneCallback("");
+				return;
+			}
+			// compare as DOM
+			var parser = new DOMParser();
+			var stashedDom;
+			var currentDom;
+			var apparentlyGoodParse = false;
+			var stashedDomRootElement;
+			var currentDomRootElement;
+			try {
+				stashedDom = parser.parseFromString(stashContent, "application/xml");
+				stashedDomRootElement = stashedDom.documentElement;
+				if (stashedDomRootElement.localName != "svg") {
+					throw "not svg";
+				}
+				currentDom = parser.parseFromString(documentAsString, "application/xml");
+				currentDomRootElement = currentDom.documentElement;
+				if (currentDomRootElement.localName != "svg") {
+					throw "not svg";
+				}
+				apparentlyGoodParse = true;
+			} catch (exception) {
+				apparentlyGoodParse = false;
+			}
+			var apparentlyEqualDom = false;
+			if (apparentlyGoodParse) {
+				try {
+					apparentlyEqualDom = currentDomRootElement.isEqualNode(stashedDomRootElement);
+				} catch (exception) {
+					apparentlyEqualDom = false;
 				}
 			}
-			var sectionFrom = Math.max(firstDifference - 10, 0);
-			var stashSection = stashContent.substring(sectionFrom, sectionFrom + 40);
-			var documentSection = documentAsString.substring(sectionFrom, sectionFrom + 40);
-			differencesString = "a difference near char " + firstDifference + ", now getting \"…" + documentSection + "…\" instead of expected \"…" + stashSection + "…\"";
+			// custom comparison of DOM
+			var differences = [];
+			if (!apparentlyEqualDom) {
+				try {
+					stashedDom.normalize();
+					currentDom.normalize();
+					tolerance.inEffect = tolerance.generalInUnits; // default
+					if (stashedDom.getElementsByTagName("text").length) { // at least one SVG text element
+						tolerance.inEffect = tolerance.ifTextFractionOfTotal * Math.sqrt(Math.pow(parseFloat(stashedDomRootElement.getAttribute("width")),2)+Math.pow(parseFloat(stashedDomRootElement.getAttribute("height")),2));
+					}
+					apparentlyEqualDom = Adj.areEqualNodes(stashedDomRootElement, currentDomRootElement, differences, tolerance);
+				} catch (exception) {
+					apparentlyEqualDom = false;
+				}
+			}
+			if (apparentlyEqualDom) {
+				doDocAndVerifyDoneCallback("");
+				return;
+			} else {
+				var differencesString;
+				if (differences.length) {
+					differencesString = differences.join("; ");
+				} else {
+					var sLength = stashContent.length;
+					var dLength = documentAsString.length;
+					var minLength = Math.min(sLength, dLength);
+					var firstDifference = minLength;
+					for (var i = 0; i < minLength; i++) {
+						if (documentAsString[i] != stashContent[i]) {
+							firstDifference = i;
+							break;
+						}
+					}
+					var sectionFrom = Math.max(firstDifference - 10, 0);
+					var stashSection = stashContent.substring(sectionFrom, sectionFrom + 40);
+					var documentSection = documentAsString.substring(sectionFrom, sectionFrom + 40);
+					differencesString = "a difference near char " + firstDifference + ", now getting \"…" + documentSection + "…\" instead of expected \"…" + stashSection + "…\"";
+				}
+				doDocAndVerifyDoneCallback(differencesString);
+				return;
+			}
+		} catch (exception) {
+			doDocAndVerifyDoneCallback(exception);
+			return;
 		}
-		return differencesString;
-	}
+	});
 }
 
 // ==============================================================================
@@ -553,17 +618,22 @@ AdjTestWindow.receivesMessage = function receivesMessage(evt) {
 		case "Adj.doDocAndVerify":
 			try {
 				// do
-				var commandResult = Adj.doDocAndVerify();
-				// reply
-				evt.source.postMessage("Adj.didDocAndVerify|" + window.location.href + "|" + commandResult, "*");
+				Adj.doDocAndVerify(function(resultOfVerification) {
+					console.log("Adj.doDocAndVerify done");
+					// reply
+					evt.source.postMessage("Adj.didDocAndVerify|" + window.location.href + "|" + resultOfVerification, "*");
+				});
 			} catch (exception) {
+				console.error("Adj.doDocAndVerify exception", exception);
 				exceptionString = exception.toString();
 				// reply
 				evt.source.postMessage("Adj.didDocAndVerifyException|" + window.location.href + "|" + exceptionString, "*");
 			}
 			break;
 		case "Adj.doDoc":
-			var commandResult = Adj.doDoc();
+			Adj.doDoc(function(exception, documentNodeOrRootElement) {
+				console.log('Adj.doDoc done');
+			});
 			break;
 		default:
 	}

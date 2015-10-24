@@ -6197,133 +6197,139 @@ Adj.algorithms.include = {
 		}
 		//
 		window.nrvrGetTextFile(href, function(responseText, status) {
-			// keep track of requests
-			delete ownerDocument.adjAsyncGetTextFileRequesters[element];
-			//
-			if (status != 200) { // 200 OK
-				console.error("HTTP GET status", status, "for", href);
-				return;
-			}
-			// see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
-			// and https://w3c.github.io/DOM-Parsing/#the-domparser-interface
-			var domParser = new DOMParser();
-			try {
-				var textFileDom = domParser.parseFromString(responseText, "image/svg+xml");
-			} catch (exception) {
-				console.error(exception);
-				return;
-			}
-			var documentElementToIncludeFrom = textFileDom.documentElement;
-			if (documentElementToIncludeFrom.nodeName === "parsererror") {
-				console.error(textFileDom.documentElement);
-				return;
-			}
-			// remove
-			for (var child = element.firstChild; child; ) { // because of removeChild here cannot child = child.nextSibling
-				if (child === commandElement) {
-					// skip if the very commandElement itself
-					child = child.nextSibling;
-					continue;
+			(function() {
+				// keep track of requests
+				delete ownerDocument.adjAsyncGetTextFileRequesters[element];
+				//
+				if (status != 200) { // 200 OK
+					var errorMessage = "HTTP GET status " + status + " for " + href;
+					element.adjIncluded = errorMessage; // prevent endless loop
+					console.error(errorMessage);
+					return;
 				}
-				var childToRemove = child;
-				child = child.nextSibling;
-				element.removeChild(childToRemove);
-			}
-			// set flag
-			element.adjIncluded = new Date();
-			// insert
-			var toIncludeFromNodes = documentElementToIncludeFrom.childNodes;
-			for (var i = 0; i < toIncludeFromNodes.length; ) {
-				var toIncludeNode = toIncludeFromNodes[i];
-				if (toIncludeNode instanceof Element) {
-					if (toIncludeNode.nodeName === "script") {
-						// e.g. <script type="text/javascript" xlink:href="js/adj.js"/>
-						// skip
-						i++;
-						continue;
-					}
+				// see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
+				// and https://w3c.github.io/DOM-Parsing/#the-domparser-interface
+				var domParser = new DOMParser();
+				try {
+					var textFileDom = domParser.parseFromString(responseText, "image/svg+xml");
+				} catch (exception) {
+					element.adjIncluded = exception; // prevent endless loop
+					console.error(exception);
+					return;
 				}
-				element.appendChild(toIncludeNode);
-			}
-			// fix up URIs
-			// terms used for three logical levels are document, include, link
-			var includeToPath = Adj.toPathRegExp.exec(href)[1] || "";
-			if (Adj.anySlashRegExp.test(includeToPath)) { // at least one slash
-				var schemeAuthorityPathRegExpMatch = Adj.schemeAuthorityPathRegExp.exec(includeToPath);
-				var includeScheme2 = schemeAuthorityPathRegExpMatch[1];
-				if (includeScheme2) {
-					var includeAuthority = schemeAuthorityPathRegExpMatch[2];
-					var includePath = schemeAuthorityPathRegExpMatch[3];
-				} else {
-					includeScheme2 = "";
-					includeAuthority = "";
-					includePath = includeToPath;
+				var documentElementToIncludeFrom = textFileDom.documentElement;
+				if (documentElementToIncludeFrom.nodeName === "parsererror") {
+					element.adjIncluded = documentElementToIncludeFrom; // prevent endless loop
+					console.error(documentElementToIncludeFrom);
+					return;
 				}
-				var includeDir = Adj.dirRegExp.exec(includePath)[1];
-				var includePathStartsAtRoot = Adj.leadingSlashRegExp.test(includePath);
-				// would have liked
-				//   var linkIterator = document.evaluate(".//@*[local-name()='href']", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-				//   var linkAttribute;
-				//   while (linkAttribute = linkIterator.iterateNext()) { // sic
-				// note first link found is from this very include, skip it by element or by initial
-				//   var linkAttribute = linkIterator.iterateNext();
-				// also couldn't use XPath because of compatibility
-				// note per https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate no Internet Explorer 11
-				// note per https://developer.mozilla.org/en-US/docs/Web/API/Attr no parentNode or ownerElement
-				// note for NODE_ITERATOR modifying a node will invalidate the iterator, would have to use NODE_SNAPSHOT and snapshot methods
-				// also considered .//@*[namespace-uri()='http://www.nrvr.com/2012/adj' and local-name()='href']
-				// now instead a "good enough" method to be compatible with Internet Explorer 11
-				var linkElements = element.querySelectorAll("[*|href]");
-				for (var i = 0, n = linkElements.length; i < n; i++) {
-					// fix up one link
-					var linkedElement = linkElements[i];
-					if (linkedElement === commandElement) {
+				// set flag
+				element.adjIncluded = new Date();
+				// remove
+				for (var child = element.firstChild; child; ) { // because of removeChild here cannot child = child.nextSibling
+					if (child === commandElement) {
 						// skip if the very commandElement itself
+						child = child.nextSibling;
 						continue;
 					}
-					var linkNamespace = Adj.XLinkNamespace;
-					var linkLocalName = "href";
-					var linkUri = linkedElement.getAttributeNS(linkNamespace, linkLocalName);
-					if (!linkUri) { // could try other namespaces
-						continue; // but don't, for now
-					}
-					// note http://www.ietf.org/rfc/rfc3986.txt Uniform Resource Identifier (URI): Generic Syntax
-					var toPathAfterPathRegExpMatch = Adj.toPathRegExp.exec(linkUri);
-					var linkToPath = toPathAfterPathRegExpMatch[1] || "";
-					var linkAfterPath = toPathAfterPathRegExpMatch[2] || "";
-					var linkScheme2 = Adj.schemeAuthorityPathRegExp.exec(linkToPath)[1];
-					if (!linkScheme2) { // link is not absolute
-						if (Adj.leadingSlashRegExp.test(linkToPath)) { // linkToPath starts with a slash, at root
-							linkUri = includeScheme2 + includeAuthority + linkUri;
-						} else {
-							// eliminate subdir/../ if any
-							var linkPathPart1 = includeDir;
-							var linkPathPart2 = linkToPath;
-							while (true) {
-								var matchPart2 = Adj.leadingDotDotSlashRegExp.exec(linkPathPart2);
-								if (!matchPart2[1]) { // no leading ../ in linkPathPart2
-									break;
-								}
-								var matchPart1 = Adj.tailingDirRegExp.exec(linkPathPart1);
-								if (!matchPart1) { // no match
-									break;
-								}
-								var tailingDir = matchPart1[2];
-								if (tailingDir === "../" || tailingDir === "./") { // an oddball
-									break;
-								}
-								linkPathPart1 = matchPart1[1] || "";
-								linkPathPart2 = matchPart2[2] || "";
-							}
-							linkUri = includeScheme2 + includeAuthority + linkPathPart1 + linkPathPart2 + linkAfterPath;
-						}
-						linkedElement.setAttributeNS(linkNamespace, linkLocalName, linkUri);
-					//} else { // link is absolute, no fixup needed
-					}
+					var childToRemove = child;
+					child = child.nextSibling;
+					element.removeChild(childToRemove);
 				}
-			//} else { // not any slash means same directory, no fixup needed
-			}
-			//
+				// insert
+				var toIncludeFromNodes = documentElementToIncludeFrom.childNodes;
+				for (var i = 0; i < toIncludeFromNodes.length; ) {
+					var toIncludeNode = toIncludeFromNodes[i];
+					if (toIncludeNode instanceof Element) {
+						if (toIncludeNode.nodeName === "script") {
+							// e.g. <script type="text/javascript" xlink:href="js/adj.js"/>
+							// skip
+							i++;
+							continue;
+						}
+					}
+					element.appendChild(toIncludeNode);
+				}
+				// fix up URIs
+				// terms used for three logical levels are document, include, link
+				var includeToPath = Adj.toPathRegExp.exec(href)[1] || "";
+				if (Adj.anySlashRegExp.test(includeToPath)) { // at least one slash
+					var schemeAuthorityPathRegExpMatch = Adj.schemeAuthorityPathRegExp.exec(includeToPath);
+					var includeScheme2 = schemeAuthorityPathRegExpMatch[1];
+					if (includeScheme2) {
+						var includeAuthority = schemeAuthorityPathRegExpMatch[2];
+						var includePath = schemeAuthorityPathRegExpMatch[3];
+					} else {
+						includeScheme2 = "";
+						includeAuthority = "";
+						includePath = includeToPath;
+					}
+					var includeDir = Adj.dirRegExp.exec(includePath)[1];
+					var includePathStartsAtRoot = Adj.leadingSlashRegExp.test(includePath);
+					// would have liked
+					//   var linkIterator = document.evaluate(".//@*[local-name()='href']", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+					//   var linkAttribute;
+					//   while (linkAttribute = linkIterator.iterateNext()) { // sic
+					// note first link found is from this very include, skip it by element or by initial
+					//   var linkAttribute = linkIterator.iterateNext();
+					// also couldn't use XPath because of compatibility
+					// note per https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate no Internet Explorer 11
+					// note per https://developer.mozilla.org/en-US/docs/Web/API/Attr no parentNode or ownerElement
+					// note for NODE_ITERATOR modifying a node will invalidate the iterator, would have to use NODE_SNAPSHOT and snapshot methods
+					// also considered .//@*[namespace-uri()='http://www.nrvr.com/2012/adj' and local-name()='href']
+					// now instead a "good enough" method to be compatible with Internet Explorer 11
+					var linkElements = element.querySelectorAll("[*|href]");
+					for (var i = 0, n = linkElements.length; i < n; i++) {
+						// fix up one link
+						var linkedElement = linkElements[i];
+						if (linkedElement === commandElement) {
+							// skip if the very commandElement itself
+							continue;
+						}
+						var linkNamespace = Adj.XLinkNamespace;
+						var linkLocalName = "href";
+						var linkUri = linkedElement.getAttributeNS(linkNamespace, linkLocalName);
+						if (!linkUri) { // could try other namespaces
+							continue; // but don't, for now
+						}
+						// note http://www.ietf.org/rfc/rfc3986.txt Uniform Resource Identifier (URI): Generic Syntax
+						var toPathAfterPathRegExpMatch = Adj.toPathRegExp.exec(linkUri);
+						var linkToPath = toPathAfterPathRegExpMatch[1] || "";
+						var linkAfterPath = toPathAfterPathRegExpMatch[2] || "";
+						var linkScheme2 = Adj.schemeAuthorityPathRegExp.exec(linkToPath)[1];
+						if (!linkScheme2) { // link is not absolute
+							if (Adj.leadingSlashRegExp.test(linkToPath)) { // linkToPath starts with a slash, at root
+								linkUri = includeScheme2 + includeAuthority + linkUri;
+							} else {
+								// eliminate subdir/../ if any
+								var linkPathPart1 = includeDir;
+								var linkPathPart2 = linkToPath;
+								while (true) {
+									var matchPart2 = Adj.leadingDotDotSlashRegExp.exec(linkPathPart2);
+									if (!matchPart2[1]) { // no leading ../ in linkPathPart2
+										break;
+									}
+									var matchPart1 = Adj.tailingDirRegExp.exec(linkPathPart1);
+									if (!matchPart1) { // no match
+										break;
+									}
+									var tailingDir = matchPart1[2];
+									if (tailingDir === "../" || tailingDir === "./") { // an oddball
+										break;
+									}
+									linkPathPart1 = matchPart1[1] || "";
+									linkPathPart2 = matchPart2[2] || "";
+								}
+								linkUri = includeScheme2 + includeAuthority + linkPathPart1 + linkPathPart2 + linkAfterPath;
+							}
+							linkedElement.setAttributeNS(linkNamespace, linkLocalName, linkUri);
+						//} else { // link is absolute, no fixup needed
+						}
+					}
+				//} else { // not any slash means same directory, no fixup needed
+				}
+			})();
+			// above in a function to make sure all non-exceptional exits proceed here
 			ownerDocument.adjAsyncProcessInvoker.invoke();
 		});
 		// keep track of requests
@@ -6367,7 +6373,12 @@ if (!window.nrvrGetTextFile) {
 		try {
 			var xhr = new XMLHttpRequest();
 			xhr.onloadend = function () {
-				gotFileCallback(xhr.responseText, xhr.status);
+				// Chrome 46 has been observed to return synchronously to report
+				// XMLHttpRequest cannot load file:// … Cross origin requests are only supported for protocol schemes: http, …
+				// therefore we wrap with what otherwise could appear a frivolous setTimeout
+				window.setTimeout(function () {
+					gotFileCallback(xhr.responseText, xhr.status);
+				}, 0);
 			};
 			xhr.open('GET', fileUrl, true);
 			xhr.responseType = 'text';
