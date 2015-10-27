@@ -53,7 +53,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:4, minor:3, revision:0 };
+Adj.version = { major:4, minor:3, revision:1 };
 Adj.algorithms = {};
 
 // constants
@@ -6165,6 +6165,7 @@ Adj.displayException = function displayException (exception, svgElement) {
 }
 
 Adj.toPathRegExp = /^([^?#]*)(.*)$/;
+Adj.fragmentsSplitRegExp = /#/;
 Adj.anySlashRegExp = /^.*\//;
 Adj.schemeAuthorityPathRegExp = /^([a-zA-Z][-+.a-zA-Z0-9]*:\/\/)?([^\/]*)(.*)$/;
 Adj.dirRegExp = /^(.*\/)/;
@@ -6196,7 +6197,12 @@ Adj.algorithms.include = {
 			return;
 		}
 		//
-		window.nrvrGetTextFile(href, function(responseText, status) {
+		var includeFragments = href.split(Adj.fragmentsSplitRegExp);
+		var hrefToQuery = includeFragments[0];
+		if (!hrefToQuery) {
+			throw "missing path in include attribute xlink:href=\"" + href + "\"";
+		}
+		window.nrvrGetTextFile(hrefToQuery, function(responseText, status) {
 			(function() {
 				// keep track of requests
 				delete ownerDocument.adjAsyncGetTextFileRequesters[element];
@@ -6223,32 +6229,59 @@ Adj.algorithms.include = {
 					console.error(documentElementToIncludeFrom);
 					return;
 				}
-				// set flag
-				element.adjIncluded = new Date();
-				// remove
-				for (var child = element.firstChild; child; ) { // because of removeChild here cannot child = child.nextSibling
-					if (child === commandElement) {
-						// skip if the very commandElement itself
-						child = child.nextSibling;
-						continue;
-					}
-					var childToRemove = child;
-					child = child.nextSibling;
-					element.removeChild(childToRemove);
-				}
-				// insert
-				var toIncludeFromNodes = documentElementToIncludeFrom.childNodes;
-				for (var i = 0; i < toIncludeFromNodes.length; ) {
-					var toIncludeNode = toIncludeFromNodes[i];
-					if (toIncludeNode instanceof Element) {
-						if (toIncludeNode.nodeName === "script") {
-							// e.g. <script type="text/javascript" xlink:href="js/adj.js"/>
-							// skip
-							i++;
-							continue;
+				try {
+					// first resolve fragment ids, if any
+					if (includeFragments.length > 1) {
+						// include fragment of document
+						var toIncludeElement = documentElementToIncludeFrom;
+						for (var i = 1, n = includeFragments.length; i < n; i++) {
+							var id = includeFragments[i];
+							toIncludeElement = Adj.getElementByIdNearby(id, toIncludeElement);
+							if (!toIncludeElement) {
+								var errorMessage = "nonresolving id \"" + id + "\" used in include attribute xlink:href=\"" + href + "\"";
+								element.adjIncluded = errorMessage; // prevent endless loop
+								console.error(errorMessage);
+								return;
+							}
 						}
 					}
-					element.appendChild(toIncludeNode);
+					// should only get here if content has been retrieved and is ready to insert
+					// remove
+					for (var child = element.firstChild; child; ) { // because of removeChild here cannot child = child.nextSibling
+						if (child === commandElement) {
+							// skip if the very commandElement itself
+							child = child.nextSibling;
+							continue;
+						}
+						var childToRemove = child;
+						child = child.nextSibling;
+						element.removeChild(childToRemove);
+					}
+					// insert
+					if (includeFragments.length === 1) { // no fragment in URI
+						// include all content of document
+						var toIncludeFromNodes = documentElementToIncludeFrom.childNodes;
+						for (var i = 0; i < toIncludeFromNodes.length; ) {
+							var toIncludeNode = toIncludeFromNodes[i];
+							if (toIncludeNode instanceof Element) {
+								if (toIncludeNode.nodeName === "script") {
+									// e.g. <script type="text/javascript" xlink:href="js/adj.js"/>
+									// skip
+									i++;
+									continue;
+								}
+							}
+							element.appendChild(toIncludeNode);
+						}
+					} else {
+						// include fragment of document
+						toIncludeElement.parentNode.removeChild(toIncludeElement);
+						toIncludeElement.removeAttribute("transform");
+						element.appendChild(toIncludeElement);
+					}
+				} finally {
+					// prevent endless loop
+					element.adjIncluded = element.adjIncluded || new Date();
 				}
 				// fix up URIs
 				// terms used for three logical levels are document, include, link
