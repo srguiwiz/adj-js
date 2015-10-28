@@ -5,7 +5,7 @@
 	<rect width="200" height="140" fill="linen"/>
 	<g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1">
 		<rect width="40" height="80" fill="#222" transform="translate(2,2)"/>
-		<g transform="translate(63,21)">
+		<g>
 			<adj:include xlink:href="test-subdir-081/test-adj-ex-081-include-to-include.svg#four"/>
 		</g>
 		<rect width="40" height="40" fill="#666" transform="translate(2,84)"/>
