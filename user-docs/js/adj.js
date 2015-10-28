@@ -53,7 +53,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:4, minor:3, revision:1 };
+Adj.version = { major:4, minor:3, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -6261,21 +6261,21 @@ Adj.algorithms.include = {
 					if (includeFragments.length === 1) { // no fragment in URI
 						// include all content of document
 						var toIncludeFromNodes = documentElementToIncludeFrom.childNodes;
-						for (var i = 0; i < toIncludeFromNodes.length; ) {
+						for (var i = 0, n = toIncludeFromNodes.length; i < n; i++) {
 							var toIncludeNode = toIncludeFromNodes[i];
 							if (toIncludeNode instanceof Element) {
 								if (toIncludeNode.nodeName === "script") {
 									// e.g. <script type="text/javascript" xlink:href="js/adj.js"/>
 									// skip
-									i++;
 									continue;
 								}
 							}
+							toIncludeNode = ownerDocument.importNode(toIncludeNode, true); // leave original for potential future reuse
 							element.appendChild(toIncludeNode);
 						}
 					} else {
 						// include fragment of document
-						toIncludeElement.parentNode.removeChild(toIncludeElement);
+						toIncludeElement = ownerDocument.importNode(toIncludeElement, true); // leave original for potential future reuse
 						toIncludeElement.removeAttribute("transform");
 						element.appendChild(toIncludeElement);
 					}
