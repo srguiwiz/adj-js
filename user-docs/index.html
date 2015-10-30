@@ -71,10 +71,9 @@ h1,h2,h3,h4,h5,h6 {
 <h1>Adj Framework</h1>
 
 <p class="deemphasize">Note: This user guide's SVG images show in modern
-browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 10 and newer.
-Older versions Internet Explorer, 8 and earlier, show the <code>alt</code> tag
-text of those <code>img</code> elements instead. Internet Explorer users will
-be <a href="#L2433">better off</a> with Internet Explorer 11 and newer.</p>
+browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 11 or newer.
+Older versions IE, <a href="#L2433">8</a> and earlier, show the
+<code>alt</code> tag text of those <code>img</code> elements instead.</p>
 
 <div class="toc">
 <ul>
@@ -172,9 +171,9 @@ be <a href="#L2433">better off</a> with Internet Explorer 11 and newer.</p>
       <li><a href="#L6329">1.19. Invocation</a> 
         <ul>
           <li><a href="#L6331">1.19.1. Explicit Invocation</a></li>
-          <li><a href="#L6345">1.19.2. No Invocation – If Saving Processed
+          <li><a href="#L3737">1.19.2. Explicit Invocation And Saving Processed
             Document</a></li>
-          <li><a href="#L3737">1.19.3. Explicit Invocation And Saving Processed
+          <li><a href="#L6345">1.19.3. No Invocation – If Saving Processed
             Document</a></li>
           <li><a href="#L">1.19.4. Implicit Invocation</a></li>
         </ul>
@@ -287,8 +286,8 @@ be <a href="#L2433">better off</a> with Internet Explorer 11 and newer.</p>
 
 <h3 id="L38358">1.5. For The Impatient</h3>
 
-<p>If you have seen a demo, or attended a class, and quickly want to get
-started on your own, these three points may be for you:</p>
+<p>If you have seen a demo or attended a class, and quickly want to get started
+on your own, consider:</p>
 <ul>
   <li>a discussion of <a href="#L6329">Invocation</a></li>
   <li>a <a href="#L1888">Complete Authoring Workflow</a></li>
@@ -2567,7 +2566,7 @@ href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">COR
 
 <p>For best productivity when using URI scheme <code>file</code>, a Firefox
 add-on <span class="product-name">File URI Scheme GET from Page Script</span>,
-aka <code>file-scheme-get-from-script.xpi</code>, from <a
+from <a
 href="https://addons.mozilla.org/en-US/firefox/addon/file-scheme-get-from-script/">https://addons.mozilla.org/en-US/firefox/addon/file-scheme-get-from-script/</a><span
 class="deemphasize">, e.g. 1.0.2,</span> is available.</p>
 
@@ -3413,13 +3412,11 @@ attribute name must not appear more than once in the same element.</p>
 
 <h3 id="L1888">1.18. Complete Authoring Workflow</h3>
 
-<p>An author may increase productivity by using browser add-ons.</p>
+<p>An author can increase productivity by using browser add-ons.</p>
 
-<p>It is noted that those who don't like using existing Firefox add-ons could
-implement alternate workflows and tools to support such workflows. E.g. Chrome
-extensions. The product of authoring should not depend on the brand of
-auxiliary authoring tools used.</p>
-<a name="example-workflow-description"></a> 
+<p>Those who don't like using existing Firefox add-ons could implement
+alternate workflows and tools, e.g. Chrome extensions. Resulting images should
+not depend on the brand authoring tools used.</p>
 
 <p>An example workflow:</p>
 <ul>
@@ -3427,32 +3424,32 @@ auxiliary authoring tools used.</p>
     <ul>
       <li>an XML editor<span class="deemphasize">, e.g. excellent <span
         class="product-name">Altova <a
-        href="http://www.altova.com/xml-editor/">XMLSpy</a></span>, <span
-        class="product-name">Adobe <a
-        href="http://www.adobe.com/products/dreamweaver.html">Dreamweaver</a></span>,
-        free <span class="product-name">ActiveState <a
-        href="http://www.activestate.com/komodo-edit">Komodo Edit</a></span>
-        for Windows, Mac, Linux</span></li>
+        href="http://www.altova.com/xml-editor/">XMLSpy</a></span></span></li>
       <li>a <span class="product-name"><a
         href="https://www.mozilla.org/firefox/#desktop">Firefox</a></span><span
-        class="deemphasize">, e.g. version 16 in Windows, version 10 in
+        class="deemphasize">, e.g. version 41 in Windows, version 38 in
         Linux</span></li>
-      <li>Firefox add-ons 
+      <li>Firefox add-ons <a
+        href="https://addons.mozilla.org/en-US/firefox/collections/srguiwiz/adj-helpers/">https://addons.mozilla.org/en-US/firefox/collections/srguiwiz/adj-helpers/</a><br
+        />
+
         <ul>
+          <li>Either get all three from that collection <br />
+            OR at least</li>
           <li><span class="product-name">Auto Reload</span>, from <a
             href="https://addons.mozilla.org/en-US/firefox/addon/auto-reload/">https://addons.mozilla.org/en-US/firefox/addon/auto-reload/</a><span
             class="deemphasize">, e.g. version 1.20</span></li>
-          <li><span class="product-name">Save Back to File from DOM</span>, aka
-            <code>save-back-to-file-from-dom.xpi</code>, from <a
+          <li><span class="product-name">Save Back to File from DOM</span>,
+            from <a
             href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/">https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/</a><span
             class="deemphasize">, e.g. 1.0.26</span></li>
         </ul>
       </li>
       <li>Set up a directory which will contain files</li>
       <li>Make sure that directory contains a subdirectory with a file
-        <code>.adj-js/adj.js</code>, which is a copy of <span
-        class="emphasize">the essential <code><a
-        href="js/adj.js">adj.js</a></code> file from this project</span></li>
+        <code>js/adj.js</code>, which is a copy of <span class="emphasize">the
+        essential <code><a href="js/adj.js">adj.js</a></code> file from this
+        project</span></li>
     </ul>
   </li>
   <li>Steps 
@@ -3465,14 +3462,14 @@ auxiliary authoring tools used.</p>
       <li>keep watching the effects of automatic reloading, courtesy of the
         <span class="product-name">Auto Reload</span> add-on</li>
       <li>when done click the <span class="product-name">Save Back to File from
-        DOM</span> add-on icon or select the <span class="product-name">Save
-        Back to File from DOM</span> context menu item to save the Adj modified
-        SVG back into the file, for document distribution without the Adj
-        JavaScript library</li>
+        DOM</span> add-on icon <span class="deemphasize">or select the <span
+        class="product-name">Save Back to File from DOM</span> context menu
+        item</span> to save the Adj modified SVG back into the file<span
+        class="deemphasize">, for most compatible document
+      distribution</span></li>
     </ul>
   </li>
 </ul>
-<a name="example-workflow"></a> 
 
 <p>A diagram of this <a href="#example-workflow-description">example
 workflow</a>:</p>
@@ -3487,15 +3484,19 @@ is to use <span class="deemphasize">and to set up</span></span></p>
 
 <h3 id="L6329">1.19. Invocation</h3>
 
-<p>Invoking Adj is relatively simple, once you have decided which option works
-best for you.</p>
+<p>Invoking Adj is relatively simple<span class="deemphasize">, once you decide
+which option works best for you</span>.</p>
+<ul>
+  <li>You could use Adj most simply: With mere <a href="#L6331">explicit
+    invocation</a>,<br />
+    OR</li>
+  <li>you could use Adj like many SVG files in this documentation have been
+    made: <a href="#L3737">Explicit invocation <span
+    class="emphasize">and</span> saving processed document</a>. Look at their
+    source code.</li>
+</ul>
 
-<p>You could use Adj the same way many SVG files in this documentation are
-using it: <a href="#L3737">Explicit invocation <span
-class="emphasize">and</span> saving processed document</a>. Look at their
-source code.</p>
-
-<p>Here, however, for the sake of completeness, more choices are explained.</p>
+<p>For the sake of completeness, other choices are explained too.</p>
 
 <h4 id="L6331">1.19.1. Explicit Invocation</h4>
 
@@ -3511,7 +3512,35 @@ Adj can be invoked explicitly, e.g. like</p>
 class="emphasize">the essential <code><a href="js/adj.js">adj.js</a></code>
 file from this project</span>.</p>
 
-<h4 id="L6345">1.19.2. No Invocation – If Saving Processed Document</h4>
+<h4 id="L3737">1.19.2. Explicit Invocation And Saving Processed Document</h4>
+
+<p>For best results for most users, Adj can be invoked <a
+href="#L6331">explicitely</a> <span class="emphasize">and</span> the processed
+document <span class="emphasize">can be saved</span>.</p>
+
+<p>Benefits:</p>
+<ul>
+  <li>Users that are set <span class="emphasize">not</span> to allow script
+    invocation will see an image that in case it isn't perfect still should be
+    acceptable.</li>
+  <li>All other users, hopefully <span class="emphasize">most or all</span>
+    users, will get the benefit of dynamic adjustment.</li>
+</ul>
+
+<p>Most SVG files in this documentation have been processed this way. You can
+look at their source code.</p>
+
+<p>SVG files in this documentation so far have been finalized with the help of
+Firefox add-on <a
+href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/"><span
+class="product-name">Save Back to File from DOM</span></a>. It has become an
+easy habit to work this way.</p>
+
+<p>An <a href="#example-workflow-description">example workflow</a> combining
+explicit invocation and saving processed documents has been described <a
+href="#example-workflow-description">above</a>.</p>
+
+<h4 id="L6345">1.19.3. No Invocation – If Saving Processed Document</h4>
 
 <p>If chosen to do so, with an author saving a processed document, <span
 class="emphasize">invocation in users' browsers can be avoided</span>.</p>
@@ -3520,11 +3549,6 @@ class="emphasize">invocation in users' browsers can be avoided</span>.</p>
 href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/"><span
 class="product-name">Save Back to File from DOM</span></a> can do the necessary
 saving, obviating invocation.</p>
-
-<p>An <a href="#example-workflow-description">example workflow</a> combining
-implicit invocation and <span class="emphasize">saving processed
-documents</span> has been described <a
-href="#example-workflow-description">above</a>.</p>
 
 <p>Avoiding invocation in users' browsers may mean less problems with viewing
 in users' browsers that are set not to allow script invocation.</p>
@@ -3535,27 +3559,6 @@ need to distribute the Adj JavaScript library</span>.</p>
 <p>One downside, however, of not distributing the Adj JavaScript library is
 inability to dynamically adjust, e.g. to different fonts available in a
 different browser instance. This may be an acceptable compromise.</p>
-
-<h4 id="L3737">1.19.3. Explicit Invocation And Saving Processed Document</h4>
-
-<p>For best results for most users, Adj can be invoked <a
-href="#L6331">explicitely</a> <span class="emphasize">and</span> the processed
-document can be saved.</p>
-<ul>
-  <li>Users that are set <span class="emphasize">not</span> to allow script
-    invocation will see an image that in case it isn't perfect still should be
-    acceptable.</li>
-  <li>All other users, that hopefully being <span class="emphasize">most</span>
-    users, will get the benefit of dynamic adjustment.</li>
-</ul>
-
-<p>Most SVG files in this documentation have been processed this way. You can
-look at their source code.</p>
-
-<p>It has become an easy habit to work this way. SVG files in this
-documentation so far have been finalized with the help of Firefox add-on <a
-href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/"><span
-class="product-name">Save Back to File from DOM</span></a>.</p>
 
 <h4 id="L">1.19.4. Implicit Invocation</h4>
 
