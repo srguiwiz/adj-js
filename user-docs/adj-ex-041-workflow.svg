@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc();" width="570.629" height="796">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="570.629" height="796">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<title>Example Workflow</title>
 	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->

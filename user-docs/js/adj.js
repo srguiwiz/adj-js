@@ -42,28 +42,30 @@
 //
 // Commit list - https://github.com/srguiwiz/adj-js/commits/master
 
-// invoke Adj by doing Adj.processAdjElements(document);
-// e.g. <svg onload="Adj.processAdjElements(document);">
-// optionally try{Adj.processAdjElements(document);}catch(e){};
-//
-// newer shortcut is Adj.doDoc();
+// invoke Adj by doing Adj.doSvg(theSvgElement);
+// e.g. <svg onload="Adj.doSvg(this);">
+// optionally even shorter Adj.doSvg();
+// optionally try{Adj.doSvg();}catch(e){console.error(e)};
 
 // the singleton
 var Adj = {};
-Adj.version = { major:4, minor:3, revision:3 };
+Adj.version = { major:5, minor:0, revision:0 };
 Adj.algorithms = {};
 
 // constants
 Adj.SvgNamespace = "http://www.w3.org/2000/svg";
 Adj.AdjNamespace = "http://www.nrvr.com/2012/adj";
 Adj.XLinkNamespace = "http://www.w3.org/1999/xlink";
+//
+Adj.AdjNamespacePrefix = "adj";
+Adj.XLinkNamespacePrefix = "xlink";
 
 // shortcut
 // if not given a documentToDo then default to doing _the_ document
 // doDocDoneCallback is optional here and in most or all other functions defined in this library
-// will be called as doDocDoneCallback(exception, documentNodeOrRootElement)
+// will be called as doDocDoneCallback(exception, documentNodeOrTheSvgElement)
 // also if (exception && !doDocDoneCallback) { throw exception; }
-Adj.doDoc = function doDoc(documentToDo, doDocDoneCallback) {
+Adj.doDoc = function doDoc (documentToDo, doDocDoneCallback) {
 	if (!doDocDoneCallback && typeof documentToDo === "function") {
 		// accommodate sloppy parameter passing
 		doDocDoneCallback = documentToDo;
@@ -75,67 +77,116 @@ Adj.doDoc = function doDoc(documentToDo, doDocDoneCallback) {
 	Adj.processAdjElements(documentToDo, doDocDoneCallback);
 }
 
+// shortcut
+// if not given a theSvgElement then default to doing all SVG elements in the document
+// doSvgDoneCallback is optional here and in most or all other functions defined in this library
+// will be called as doSvgDoneCallback(exception, oneSvgElementOrSvgElements)
+// also if (exception && !doSvgDoneCallback) { throw exception; }
+Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
+	if (!doSvgDoneCallback && typeof theSvgElement === "function") {
+		// accommodate sloppy parameter passing
+		doSvgDoneCallback = theSvgElement;
+		theSvgElement = undefined;
+	}
+	if (theSvgElement) {
+		// simple original intent
+		Adj.processAdjElements(theSvgElement, doSvgDoneCallback);
+	} else {
+		// supposed to work for all instances of SVG elements inlined in an HTML document
+		var svgElements = document.getElementsByTagName("svg");
+		var processing = {};
+		var exceptions = new Array(svgElements.lnegth);
+		for (var i = 0, n = svgElements.length; i < n; i++) {
+			var oneSvgElement = svgElements[i];
+			Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (exception, oneSvgElement) {
+				// keep track of elements processing
+				delete processing[Adj.runtimeId(oneSvgElement)];
+				//
+				if (exception) {
+					if (doSvgDoneCallback) {
+						window.setTimeout(function () {
+							doSvgDoneCallback(exception, oneSvgElement);
+						}, 0);
+						return;
+					} else {
+						throw exception;
+					}
+				}
+				//
+				if (doSvgDoneCallback) {
+					if (!Object.keys(processing).length) { // if 0
+						// no outstanding processing means done with all Adj.processAdjElements
+						window.setTimeout(function () {
+							doSvgDoneCallback(null, svgElements);
+						}, 0);
+					}
+				}
+			});
+			// keep track of elements processing
+			processing[Adj.runtimeId(oneSvgElement)] = oneSvgElement;
+		}
+	}
+}
+
 // complete processing of all phases
-Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement, processDoneCallback) {
-	// under the document node, which isn't an element, is one root element, the documentElement
-	var documentElement = documentNodeOrRootElement.documentElement || documentNodeOrRootElement;
-	var documentNode = documentElement.parentNode;
+Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElement, processDoneCallback) {
+	// under the document node, which isn't an element, is one root element, in an SVG document an <svg> element
+	var theSvgElement = documentNodeOrTheSvgElement.documentElement || documentNodeOrTheSvgElement;
 	//
-	if (!(documentElement instanceof SVGSVGElement)) {
+	if (!(theSvgElement instanceof SVGSVGElement)) {
 		var error = "Adj skipping because invoked with something other than required SVGSVGElement";
 		console.error(error);
 		if (processDoneCallback) {
-			processDoneCallback(error, documentNodeOrRootElement);
+			window.setTimeout(function () {
+				processDoneCallback(error, documentNodeOrTheSvgElement);
+			}, 0);
+			return;
+		} else {
+			throw error;
 		}
-		return;
 	}
 	try {
 		//
 		// remove certain nodes for a new start, in case any such are present from earlier processing
 		Adj.modifyMaybeRemoveChildren
-		(documentElement,
-		 function(node,child) {
-			if (child.adjPermanentArtifact || child.getAttributeNS(Adj.AdjNamespace, "artifact")) {
+		(theSvgElement,
+		 function (node,child) {
+			if (child.adjPermanentArtifact || Adj.elementGetAttributeInAdjNS(child, "artifact")) {
 				child.adjPermanentArtifact = true;
 				child.adjRemoveElement = true;
 			}
-			if (child.adjExplanationArtifact || child.getAttributeNS(Adj.AdjNamespace, "explanation")) {
+			if (child.adjExplanationArtifact || Adj.elementGetAttributeInAdjNS(child, "explanation")) {
 				child.adjExplanationArtifact = true;
 				child.adjRemoveElement = true;
 			}
 		 });
 		//
-		// define some global adjVariables
-		var globalVariables = documentNode.adjVariables = {};
-		globalVariables.windowInnerWidth = function windowInnerWidth () { return window.innerWidth };
-		globalVariables.windowInnerHeight = function windowInnerHeight () { return window.innerHeight };
-		//
 		// for Adj.algorithms.include
-		documentNode.adjAsyncGetTextFileRequesters = documentNode.adjAsyncGetTextFileRequesters || {};
-		documentNode.adjAsyncProcessInvoker = documentNode.adjAsyncProcessInvoker || new Adj.DebouncedAsync(function () {
-			Adj.processAdjElements(documentElement, processDoneCallback);
+		theSvgElement.adjAsyncGetTextFileRequesters = theSvgElement.adjAsyncGetTextFileRequesters || {};
+		theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker || new Adj.DebouncedAsync(function () {
+			Adj.processAdjElements(documentNodeOrTheSvgElement, processDoneCallback);
 		});
 		//
 		// read Adj elements and make or update phase handlers
-		Adj.parseSvgElementForAdjElements(documentElement);
+		Adj.parseTheSvgElementForAdjElements(theSvgElement);
 		//
 		// then process
-		Adj.processSvgElementWithPhaseHandlers(documentElement);
+		Adj.processTheSvgElementWithPhaseHandlers(theSvgElement);
 		//
 		if (processDoneCallback) {
-			if (!Object.keys(documentNode.adjAsyncGetTextFileRequesters).length) { // if 0
+			if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
 				// no outstanding requests means done with all Adj.algorithms.include
 				window.setTimeout(function () {
-					processDoneCallback(null, documentNodeOrRootElement);
+					processDoneCallback(null, documentNodeOrTheSvgElement);
 				}, 0);
 			}
 		}
 	} catch (exception) {
-		Adj.displayException(exception, documentElement);
+		Adj.displayException(exception, theSvgElement);
 		//
 		if (processDoneCallback) {
 			window.setTimeout(function () {
-				processDoneCallback(exception, documentNodeOrRootElement);
+				processDoneCallback(exception, documentNodeOrTheSvgElement);
 			}, 0);
 		} else {
 			throw exception;
@@ -145,7 +196,7 @@ Adj.processAdjElements = function processAdjElements(documentNodeOrRootElement, 
 
 // generic installer
 Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObject, element) {
-	var documentElement = target.ownerDocument.documentElement;
+	var theSvgElement = target.ownerSVGElement || target;
 	//
 	parametersObject = parametersObject || {}; // if no parametersObject given then empty object
 	element = element || target; // if no element given then same as target, element === target is normal
@@ -178,7 +229,7 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 		phaseHandlersForThisPhase.push(phaseHandler);
 		phaseHandlers[phaseHandlerName] = phaseHandlersForThisPhase;
 		//
-		documentElement.adjPhaseHandlerNamesOccurringByName[phaseHandlerName] = true;
+		theSvgElement.adjPhaseHandlerNamesOccurringByName[phaseHandlerName] = true;
 	}
 	//
 	if (algorithm.notAnOrder1Element) {
@@ -225,19 +276,20 @@ Adj.phaseHandlerNameRegexp = /^(adjPhase[0-9])(Down|Up|)$/;
 
 // read Adj elements and make or update phase handlers,
 // entry point
-Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgElement) {
-	// first clear svgElement.adjSomething properties for a new start
-	// TODO consider whether setting null is better than delete, should verify all uses
-	delete svgElement.adjIdsDictionary;
-	svgElement.adjPhaseHandlerNamesOccurringByName = {};
-	delete svgElement.adjPhaseNamesOccurring;
-	svgElement.adjIncludingElement = null;
+Adj.parseTheSvgElementForAdjElements = function parseTheSvgElementForAdjElements (theSvgElement) {
+	// first clear theSvgElement.adjSomething properties for a new start
+	// TODO consider whether setting undefined or null is better than delete, should verify all uses,
+	// also see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in#Using_in_with_deleted_or_undefined_properties
+	theSvgElement.adjIdsDictionary = undefined;
+	theSvgElement.adjPhaseHandlerNamesOccurringByName = {};
+	theSvgElement.adjPhaseNamesOccurring = undefined;
+	theSvgElement.adjIncludingElement = undefined;
 	//
 	// then walk
-	Adj.parseAdjElementsToPhaseHandlers(svgElement);
+	Adj.parseAdjElementsToPhaseHandlers(theSvgElement);
 	//
 	// determine which phases are occurring in this document
-	var phaseHandlerNamesOccurringByName = svgElement.adjPhaseHandlerNamesOccurringByName;
+	var phaseHandlerNamesOccurringByName = theSvgElement.adjPhaseHandlerNamesOccurringByName;
 	var phaseNamesOccurringByName = {};
 	for (var phaseHandlerName in phaseHandlerNamesOccurringByName) {
 		var nameMatch = Adj.phaseHandlerNameRegexp.exec(phaseHandlerName);
@@ -251,11 +303,17 @@ Adj.parseSvgElementForAdjElements = function parseSvgElementForAdjElements(svgEl
 		phaseNamesOccurringInOrder.push(phaseName);
 	}
 	phaseNamesOccurringInOrder.sort();
-	svgElement.adjPhaseNamesOccurring = phaseNamesOccurringInOrder;
+	theSvgElement.adjPhaseNamesOccurring = phaseNamesOccurringInOrder;
+	//
+	// define some global adjVariables
+	// intentionally here to avoid many conditional evaluations
+	var globalVariables = theSvgElement.adjVariables = theSvgElement.adjVariables || {};
+	globalVariables.windowInnerWidth = globalVariables.windowInnerWidth || function windowInnerWidth () { return window.innerWidth };
+	globalVariables.windowInnerHeight = globalVariables.windowInnerHeight || function windowInnerHeight () { return window.innerHeight };
 }
 
 // build on first use, so any algorithms added e.g. from other source files will be considered too
-Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(parameterNameToMatch) {
+Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName (parameterNameToMatch) {
 	var commandNamesByParameterName = Adj.commandNamesByParameterName;
 	if (!commandNamesByParameterName) {
 		commandNamesByParameterName = Adj.commandNamesByParameterName = {};
@@ -277,7 +335,7 @@ Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName(par
 }
 
 // utility
-Adj.parameterParse = function parameterParse(value) {
+Adj.parameterParse = function parameterParse (value) {
 	var numberMatch = Adj.booleanOrDecimalRegexp.exec(value);
 	if (numberMatch) { // !isNaN(value) would miss boolean
 		// keep booleans and decimal and integer numbers as is
@@ -297,21 +355,53 @@ Adj.parameterParse = function parameterParse(value) {
 }
 
 // utility
-Adj.collectParameters = function collectParameters(element) {
+// expects element to be an Adj element
+Adj.collectParameters = function collectParameters (element) {
+	var adjNamespaceNormal = Adj.namespaceNormal(element.ownerDocument);  // no-namespace-workaround
+	//
 	var parameters = { commandElement: element };
 	var attributes = element.attributes;
 	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
 		var attribute = attributes[i];
-		if (!attribute.namespaceURI || attribute.namespaceURI === Adj.AdjNamespace) {
-			parameters[attribute.localName] = Adj.parameterParse(attribute.value);
+		if (adjNamespaceNormal) { // normal-namespace-intent
+			if (!attribute.namespaceURI || attribute.namespaceURI === Adj.AdjNamespace) {
+				parameters[Adj.mixedCasedName(attribute.localName)] = Adj.parameterParse(attribute.value);
+			}
+		} else { // no-namespace-workaround
+			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
+			if (!splitAttributeName.prefix || splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
+				parameters[Adj.mixedCasedName(splitAttributeName.localPart)] = Adj.parameterParse(attribute.value);
+			}
 		}
 	}
 	return parameters;
 }
 
+// abstraction
+// returns local name, i.e. without prefix, or returns null if not an Adj element,
+// implemented with an assumption an Adj element has to be a child of an SVG element,
+// hence if that assumption would not hold true then implementation should be changed
+Adj.elementNameInAdjNS = function elementNameInAdjNS (element) {
+	var elementName = null;
+	if (Adj.namespaceNormal(element.ownerDocument)) { // normal-namespace-intent
+		if (element.namespaceURI === Adj.AdjNamespace) { // if an Adj element
+			elementName = Adj.mixedCasedName(element.localName);
+		}
+	} else { // no-namespace-workaround
+		var splitElementName = Adj.nameSplitByColon(element.tagName);
+		if (splitElementName.prefix === Adj.AdjNamespacePrefix) {
+			elementName = Adj.mixedCasedName(splitElementName.localPart);
+		}
+	}
+	return elementName;
+}
+
 // read Adj elements and make or update phase handlers,
-// recursive walking of the tree
+// recursive walking of the tree,
+// expects node to be an SVG element, not to be an Adj element, but a child can be an Adj element
 Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (node) {
+	var adjNamespaceNormal = Adj.namespaceNormal(node.ownerDocument);  // no-namespace-workaround
+	//
 	// first clear node.adjSomething properties for a new start
 	delete node.adjPhaseHandlers;
 	delete node.adjProcessSubtreeOnlyInPhaseHandler;
@@ -326,13 +416,19 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjVariables;
 	//delete node.adjIncluded; // intentionally not clearing flag, include only first time
 	//
-	// then look for newer alternative syntex Adj commands as attributes
+	// then look for newer alternative syntax Adj commands as attributes
 	var adjAttributesByName = {};
 	var attributes = node.attributes;
 	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
 		var attribute = attributes[i];
+		// normal-namespace-intent
 		if (attribute.namespaceURI === Adj.AdjNamespace) {
-			adjAttributesByName[attribute.localName] = attribute;
+			adjAttributesByName[Adj.mixedCasedName(attribute.localName)] = attribute;
+		} else if (!adjNamespaceNormal) { // no-namespace-workaround
+			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
+			if (splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
+				adjAttributesByName[Adj.mixedCasedName(splitAttributeName.localPart)] = attribute;
+			}
 		}
 	}
 	// first find out which commands
@@ -384,8 +480,8 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	// then walk
 	for (var child = node.firstChild; child; child = child.nextSibling) {
 		if (child instanceof Element) { // if an XML element, e.g. not an XML #text
-			if (child.namespaceURI === Adj.AdjNamespace) { // if an Adj element
-				var algorithmName = child.localName;
+			var algorithmName = Adj.elementNameInAdjNS(child);
+			if (algorithmName) { // if an Adj element
 				var parameters = Adj.collectParameters(child);
 				switch (algorithmName) {
 					case "variable":
@@ -421,16 +517,16 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 }
 
 // complete processing of all phases
-Adj.processSvgElementWithPhaseHandlers = function processSvgElementWithPhaseHandlers(svgElement) {
-	Adj.processElementWithPhaseHandlers(svgElement);
+Adj.processTheSvgElementWithPhaseHandlers = function processTheSvgElementWithPhaseHandlers (theSvgElement) {
+	Adj.processElementWithPhaseHandlers(theSvgElement);
 	// a singleton
-	var svgElementBoundingBox = svgElement.getBBox();
-	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.x + svgElementBoundingBox.width));
-	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.y + svgElementBoundingBox.height));
+	var svgElementBoundingBox = theSvgElement.getBBox();
+	theSvgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.x + svgElementBoundingBox.width));
+	theSvgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.y + svgElementBoundingBox.height));
 	// necessary cleanup
 	Adj.modifyMaybeRemoveChildren
-	(svgElement,
-	 function(node,child) {
+	(theSvgElement,
+	 function (node,child) {
 		if (child.adjPlacementArtifact) {
 			// remove certain nodes that have been created for use during processing
 			child.adjRemoveElement = true;
@@ -446,10 +542,13 @@ Adj.processSvgElementWithPhaseHandlers = function processSvgElementWithPhaseHand
 }
 
 // complete processing of all phases
-Adj.processElementWithPhaseHandlers = function processElementWithPhaseHandlers(element, thisTimeFullyProcessSubtree, level) {
-	var documentElement = element.ownerDocument.documentElement;
+Adj.processElementWithPhaseHandlers = function processElementWithPhaseHandlers (element, thisTimeFullyProcessSubtree, level) {
+	// every SVGElement has an .ownerElement except theSvgElement itself as an SVGSVGElement doesn't have an .ownerElement,
+	// therefore, in order to avoid null, this library often writes theSvgElement = element.ownerSVGElement || element,
+	// but more correct logic would be theSvgElement = element instanceof SVGSVGElement ? element : element.ownerSVGElement
+	var theSvgElement = element instanceof SVGSVGElement ? element : element.ownerSVGElement;
 	//
-	var phaseNamesOccurring = documentElement.adjPhaseNamesOccurring;
+	var phaseNamesOccurring = theSvgElement.adjPhaseNamesOccurring;
 	for (var i = 0, n = phaseNamesOccurring.length; i < n; i++) {
 		var phaseName = phaseNamesOccurring[i];
 		Adj.walkNodes(element, phaseName, thisTimeFullyProcessSubtree, level);
@@ -581,24 +680,88 @@ Adj.decimal = function decimal (number, decimalDigits) {
 }
 
 // utility
-Adj.qualifyName = function qualifyName (element, namespaceURI, name) {
-	var prefix = element.lookupPrefix(namespaceURI);
+// optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
+Adj.qualifyName = function qualifyName (element, namespaceURI, localName, elementToLookupPrefix) {
+	var prefix = (elementToLookupPrefix || element).lookupPrefix(namespaceURI);
 	if (prefix) {
-		return prefix + ":" + name;
+		return prefix + ":" + localName;
 	} else {
-		return name;
+		return localName;
 	}
 }
 
 // utility
-Adj.createSVGElement = function createSVGElement (ownerDocument, name, additionalProperties) {
-	var svgElement = ownerDocument.createElementNS(Adj.SvgNamespace, name);
+// as implemented caches
+Adj.prefixName = (function () {
+	var prefixedNamesByPrefix = {};
+	return function prefixName (namespacePrefix, name) {
+		var prefixedNamesForPrefix =
+			prefixedNamesByPrefix[namespacePrefix] || (prefixedNamesByPrefix[namespacePrefix] = {});
+		var prefixedName =
+			prefixedNamesForPrefix[name] || (prefixedNamesForPrefix[name] = namespacePrefix + ":" + name);
+		return prefixedName;
+	};
+})();
+
+// abstraction
+Adj.elementGetAttributeInAdjNS = function elementGetAttributeInAdjNS (element, name) {
+	if (Adj.namespaceNormal(element.ownerDocument)) {
+		// normal-namespace-intent
+		return element.getAttributeNS(Adj.AdjNamespace, name);
+	} else { // no-namespace-workaround
+		return element.getAttribute(Adj.prefixName(Adj.AdjNamespacePrefix, name));
+	}
+}
+// abstraction
+Adj.elementGetAttributeInXLinkNS = function elementGetAttributeInXLinkNS (element, name) {
+	if (Adj.namespaceNormal(element.ownerDocument)) {
+		// normal-namespace-intent
+		return element.getAttributeNS(Adj.XLinkNamespace, name);
+	} else { // no-namespace-workaround
+		return element.getAttribute(Adj.prefixName(Adj.XLinkNamespacePrefix, name));
+	}
+}
+
+// abstraction
+// optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
+Adj.elementSetAttributeInAdjNS = function elementSetAttributeInAdjNS (element, name, value, elementToLookupPrefix) {
+	if (Adj.namespaceNormal(element.ownerDocument)) {
+		// normal-namespace-intent
+		element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, name, elementToLookupPrefix), value);
+	} else { // no-namespace-workaround
+		element.setAttribute(Adj.prefixName(Adj.AdjNamespacePrefix, name), value);
+	}
+}
+// abstraction
+// optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
+Adj.elementSetAttributeInXLinkNS = function elementSetAttributeInXLinkNS (element, name, value, elementToLookupPrefix) {
+	if (Adj.namespaceNormal(element.ownerDocument)) {
+		// normal-namespace-intent
+		element.setAttributeNS(Adj.XLinkNamespace, Adj.qualifyName(element, Adj.XLinkNamespace, name, elementToLookupPrefix), value);
+	} else { // no-namespace-workaround
+		element.setAttribute(Adj.prefixName(Adj.XLinkNamespacePrefix, name), value);
+	}
+}
+
+// abstraction
+Adj.elementRemoveAttributeInAdjNS = function elementRemoveAttributeInAdjNS (element, name) {
+	if (Adj.namespaceNormal(element.ownerDocument)) {
+		// normal-namespace-intent
+		element.removeAttributeNS(Adj.AdjNamespace, name);
+	} else { // no-namespace-workaround
+		element.removeAttribute(Adj.prefixName(Adj.AdjNamespacePrefix, name));
+	}
+}
+
+// utility
+Adj.createSVGElement = function createSVGElement (ownerDocument, elementName, additionalProperties) {
+	var element = ownerDocument.createElementNS(Adj.SvgNamespace, elementName);
 	if (additionalProperties) {
-		for (name in additionalProperties) {
-			svgElement[name] = additionalProperties[name];
+		for (var propertyName in additionalProperties) {
+			element[propertyName] = additionalProperties[propertyName];
 		}
 	}
-	return svgElement;
+	return element;
 }
 
 // utility
@@ -609,7 +772,7 @@ Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
 	}
 	if (!element.adjOriginalDisplay) {
 		element.adjOriginalDisplay = originalDisplay;
-		element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, "originalDisplay"), element.adjOriginalDisplay);
+		Adj.elementSetAttributeInAdjNS(element, "originalDisplay", element.adjOriginalDisplay);
 	}
 	element.setAttribute("display", "none");
 }
@@ -618,7 +781,7 @@ Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
 Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenIfNoOriginalDisplay) {
 	var originalDisplay = element.adjOriginalDisplay;
 	if (!originalDisplay) {
-		originalDisplay = element.getAttributeNS(Adj.AdjNamespace, "originalDisplay");
+		originalDisplay = Adj.elementGetAttributeInAdjNS(element, "originalDisplay");
 	}
 	if (originalDisplay) {
 		if (originalDisplay !== "-") {
@@ -630,27 +793,28 @@ Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenI
 		element.removeAttribute("display");
 	}
 	delete element.adjOriginalDisplay;
-	element.removeAttributeNS(Adj.AdjNamespace, "originalDisplay");
+	Adj.elementRemoveAttributeInAdjNS(element, "originalDisplay");
 }
 
 // utility
 Adj.createArtifactElement = function createArtifactElement (name, parent) {
 	var artifactElement = Adj.createSVGElement(parent.ownerDocument, name, {adjPermanentArtifact:true});
-	artifactElement.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(artifactElement, Adj.AdjNamespace, "artifact"), "true");
+	Adj.elementSetAttributeInAdjNS(artifactElement, "artifact", "true", parent);
 	return artifactElement;
 }
 // utility
 Adj.cloneArtifactElement = function cloneArtifactElement (element, deep) {
 	deep = deep != undefined ? deep : true; // default deep = true
 	var clone = element.cloneNode(deep);
-	clone.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, "artifact"), "true");
+	Adj.elementSetAttributeInAdjNS(clone, "artifact", "true", element);
 	return clone;
 }
 
 // utility
-Adj.createExplanationElement = function createExplanationElement (ownerDocument, name, dontDisplayNone) {
-	var explanationElement = Adj.createSVGElement(ownerDocument, name, {adjExplanationArtifact:true});
-	explanationElement.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(explanationElement, Adj.AdjNamespace, "explanation"), "true");
+Adj.createExplanationElement = function createExplanationElement (expectedAncestor, name, dontDisplayNone) {
+	var explanationElement = Adj.createSVGElement(expectedAncestor.ownerDocument, name, {adjExplanationArtifact:true});
+	// expectedAncestor is used as elementSetAttributeInAdjNS argument elementToLookupPrefix
+	Adj.elementSetAttributeInAdjNS(explanationElement, "explanation", "true", expectedAncestor);
 	if (!dontDisplayNone) {
 		Adj.hideByDisplayAttribute(explanationElement);
 	}
@@ -658,8 +822,8 @@ Adj.createExplanationElement = function createExplanationElement (ownerDocument,
 }
 
 // utility
-Adj.createExplanationPointCircle = function createExplanationPointCircle (ownerDocument, x, y, fill) {
-	var explanationElement = Adj.createExplanationElement(ownerDocument, "circle");
+Adj.createExplanationPointCircle = function createExplanationPointCircle (expectedAncestor, x, y, fill) {
+	var explanationElement = Adj.createExplanationElement(expectedAncestor, "circle");
 	explanationElement.setAttribute("cx", Adj.decimal(x));
 	explanationElement.setAttribute("cy", Adj.decimal(y));
 	explanationElement.setAttribute("r", 3);
@@ -670,8 +834,8 @@ Adj.createExplanationPointCircle = function createExplanationPointCircle (ownerD
 }
 
 // utility
-Adj.createExplanationLine = function createExplanationLine (ownerDocument, x1, y1, x2, y2, stroke) {
-	var explanationElement = Adj.createExplanationElement(ownerDocument, "line");
+Adj.createExplanationLine = function createExplanationLine (expectedAncestor, x1, y1, x2, y2, stroke) {
+	var explanationElement = Adj.createExplanationElement(expectedAncestor, "line");
 	explanationElement.setAttribute("x1", Adj.decimal(x1));
 	explanationElement.setAttribute("y1", Adj.decimal(y1));
 	explanationElement.setAttribute("x2", Adj.decimal(x2));
@@ -682,8 +846,42 @@ Adj.createExplanationLine = function createExplanationLine (ownerDocument, x1, y
 	return explanationElement;
 }
 
+// lower case element.tagName instead of mixed case element.tagName has been
+// observed when parsing Adj in SVG inline in HTML,
+// hence we are tolerating lower case, implemented by converting to intended mixed case,
+// furthermore one has to expect lower case to be written back to disk by authors
+// to "pollute" bodies of documents, both HTML and potentially also SVG
+//
+// throughout Adj source code, a comment may or may not be used for clarity:
+// lowercase-names-workaround
+Adj.mixedCasedNames = {}; // by lower case name, only if mixed case, for now
+Adj.registerMixedCasedName = function registerMixedCasedName(nameToRegister) {
+	var nameToRegisterLowerCase = nameToRegister.toLowerCase();
+	if (nameToRegisterLowerCase !== nameToRegister) {
+		Adj.mixedCasedNames[nameToRegisterLowerCase] = nameToRegister;
+	}
+}
+//
+Adj.mixedCasedName = function mixedCasedName (uncertainlyCasedName) {
+	// looked up or as is
+	return Adj.mixedCasedNames[uncertainlyCasedName] || uncertainlyCasedName;
+};
+
+// essential wrapper
+Adj.defineCommandForAlgorithm = function defineCommandForAlgorithm (algorithm) {
+	var algorithmName = algorithm.algorithmName;
+	Adj.algorithms[algorithmName] = algorithm;
+	//
+	Adj.registerMixedCasedName(algorithmName);
+	var parameterNames = algorithm.parameters;
+	for (var i in parameterNames) {
+		Adj.registerMixedCasedName(parameterNames[i]);
+	}
+}
+
 // a specific algorithm
-Adj.algorithms.horizontalList = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "horizontalList",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap",
@@ -875,7 +1073,7 @@ Adj.algorithms.horizontalList = {
 		// explain
 		if (explain) {
 			if (hiddenRect) {
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(element, "rect");
 				explanationElement.setAttribute("x", 0);
 				explanationElement.setAttribute("y", 0);
 				explanationElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
@@ -891,7 +1089,7 @@ Adj.algorithms.horizontalList = {
 				var childRecord = childRecords[childRecordIndex];
 				var explainRect = childRecord.explainRect;
 				if (explainRect) {
-					var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+					var explanationElement = Adj.createExplanationElement(element, "rect");
 					explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
 					explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
 					explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
@@ -906,10 +1104,11 @@ Adj.algorithms.horizontalList = {
 			}
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.verticalList = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "verticalList",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap",
@@ -1101,7 +1300,7 @@ Adj.algorithms.verticalList = {
 		// explain
 		if (explain) {
 			if (hiddenRect) {
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(element, "rect");
 				explanationElement.setAttribute("x", 0);
 				explanationElement.setAttribute("y", 0);
 				explanationElement.setAttribute("width", Adj.decimal(maxRight + rightGap));
@@ -1117,7 +1316,7 @@ Adj.algorithms.verticalList = {
 				var childRecord = childRecords[childRecordIndex];
 				var explainRect = childRecord.explainRect;
 				if (explainRect) {
-					var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+					var explanationElement = Adj.createExplanationElement(element, "rect");
 					explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
 					explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
 					explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
@@ -1132,10 +1331,11 @@ Adj.algorithms.verticalList = {
 			}
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.frameForParent = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "frameForParent",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["inset",
@@ -1159,7 +1359,7 @@ Adj.algorithms.frameForParent = {
 		element.setAttribute("width", Adj.decimal(parentBoundingBox.width - leftInset - rightInset));
 		element.setAttribute("height", Adj.decimal(parentBoundingBox.height - topInset - bottomInset));
 	}]
-}
+});
 
 // constants
 // parse word breaks, intentionally treat as one any number of spaces and line breaks
@@ -1169,7 +1369,8 @@ Adj.lineBreakRegexp = /(?:\r?\n)/;
 
 // utility
 // a specific algorithm
-Adj.algorithms.textBreaks = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "textBreaks",
 	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: ["wordBreaks",
 				 "lineBreaks"],
@@ -1202,7 +1403,7 @@ Adj.algorithms.textBreaks = {
 			}
 		}
 	}]
-}
+});
 
 // utility
 Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, level) {
@@ -1210,7 +1411,7 @@ Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, le
 	level = level || 1; // if no level given then 1
 	// chose to implement to recognize more than one kind of id
 	var ids = {};
-	var adjId = element.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+	var adjId = Adj.elementGetAttributeInAdjNS(element, "id"); // first check for preferred attribute adj:id
 	if (adjId) {
 		ids[adjId] = true;
 	}
@@ -1242,19 +1443,17 @@ Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, le
 // could be useful to call more than once if new ids have been created by code running or
 // if document structure has changed in a way that would affect outcomes,
 // could be expensive for a huge document, hence while itself O(n) nevertheless to avoid O(n^2) call sparingly
-Adj.buildIdsDictionaryForDocument = function buildIdsDictionaryForDocument(documentNodeOrRootElement) {
-	var documentElement = documentNodeOrRootElement.documentElement || documentNodeOrRootElement;
-	//
-	return documentElement.adjIdsDictionary = Adj.buildIdsDictionary(documentElement);
+Adj.buildIdsDictionaryForTheSvgElement = function buildIdsDictionaryForTheSvgElement (theSvgElement) {
+	return theSvgElement.adjIdsDictionary = Adj.buildIdsDictionary(theSvgElement);
 }
 
 // utility
-Adj.elementLevel = function elementLevel(element) {
+Adj.elementLevel = function elementLevel (element) {
 	var level = element.adjLevel;
 	if (!level) {
 		level = 1;
 		var parent = element.parentNode;
-		while (parent.nodeType === Node.ELEMENT_NODE) {
+		while (parent instanceof SVGElement) {
 			var parentLevel = parent.adjLevel;
 			if (parentLevel) {
 				level += parentLevel;
@@ -1271,9 +1470,9 @@ Adj.elementLevel = function elementLevel(element) {
 // utility
 Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
 	// note: any change in implementation still should keep intact deterministic behavior
-	var documentElement = startingElement.ownerDocument.documentElement;
+	var theSvgElement = startingElement.ownerSVGElement || startingElement;
 	//
-	var adjIdsDictionary = documentElement.adjIdsDictionary || Adj.buildIdsDictionaryForDocument(documentElement); // ensure there is an adjIdsDictionary
+	var adjIdsDictionary = theSvgElement.adjIdsDictionary || Adj.buildIdsDictionaryForTheSvgElement(theSvgElement); // ensure there is an adjIdsDictionary
 	var elementsWithThisId = adjIdsDictionary[id];
 	if (!elementsWithThisId) {
 		return null;
@@ -1386,19 +1585,19 @@ Adj.twoRegexpNoMatch = [null, null, null];
 // note: as implemented tolerates extra parameters
 Adj.threeRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
 
-// note: documentElement.createSVGPoint() used because createSVGPoint() only implemented in SVG element,
+// note: theSvgElement.createSVGPoint() used because createSVGPoint() only implemented in SVG element,
 // same for createSVGRect(), createSVGMatrix()
 
 // utility
 Adj.endPoints = function endPoints (element) {
-	var documentElement = element.ownerDocument.documentElement;
+	var theSvgElement = element.ownerSVGElement || element;
 	//
 	if (element instanceof SVGLineElement) {
 		// get static base values as floating point values, before animation
-		var fromPoint = documentElement.createSVGPoint();
+		var fromPoint = theSvgElement.createSVGPoint();
 		fromPoint.x = element.x1.baseVal.value;
 		fromPoint.y = element.y1.baseVal.value;
-		var toPoint = documentElement.createSVGPoint();
+		var toPoint = theSvgElement.createSVGPoint();
 		toPoint.x = element.x2.baseVal.value;
 		toPoint.y = element.y2.baseVal.value;
 		return {fromPoint:fromPoint, toPoint:toPoint};
@@ -1425,14 +1624,14 @@ Adj.displacementAndAngle = function displacementAndAngle (fromPoint, toPoint) {
 
 // utility
 Adj.transformLine = function transformLine (lineElement, matrix) {
-	var documentElement = lineElement.ownerDocument.documentElement;
+	var theSvgElement = lineElement.ownerSVGElement || lineElement;
 	//
 	// get static base values as floating point values, before animation
-	var point1 = documentElement.createSVGPoint();
+	var point1 = theSvgElement.createSVGPoint();
 	point1.x = lineElement.x1.baseVal.value;
 	point1.y = lineElement.y1.baseVal.value;
 	point1 = point1.matrixTransform(matrix);
-	var point2 = documentElement.createSVGPoint();
+	var point2 = theSvgElement.createSVGPoint();
 	point2.x = lineElement.x2.baseVal.value;
 	point2.y = lineElement.y2.baseVal.value;
 	point2 = point2.matrixTransform(matrix);
@@ -1445,21 +1644,21 @@ Adj.transformLine = function transformLine (lineElement, matrix) {
 // utility
 // note: as implemented if path contains an elliptical arc curve segment then it is replaced by a line
 Adj.transformPath = function transformPath (pathElement, matrix) {
-	var documentElement = pathElement.ownerDocument.documentElement;
+	var theSvgElement = pathElement.ownerSVGElement || pathElement;
 	//
 	// get static base values as floating point values, before animation
 	var pathSegList = pathElement.pathSegList;
 	var numberOfPathSegs = pathSegList.numberOfItems;
 	// relative coordinates must be transformed without translation's e and f
 	var absoluteMatrix = matrix;
-	var relativeMatrix = documentElement.createSVGMatrix();
+	var relativeMatrix = theSvgElement.createSVGMatrix();
 	relativeMatrix.a = absoluteMatrix.a;
 	relativeMatrix.b = absoluteMatrix.b;
 	relativeMatrix.c = absoluteMatrix.c;
 	relativeMatrix.d = absoluteMatrix.d;
 	// loop
-	var coordinates = documentElement.createSVGPoint(); // to hold coordinates to be transformed
-	var previousOriginalCoordinates = documentElement.createSVGPoint(); // hold in case needed for absolute horizontal or vertical lineto
+	var coordinates = theSvgElement.createSVGPoint(); // to hold coordinates to be transformed
+	var previousOriginalCoordinates = theSvgElement.createSVGPoint(); // hold in case needed for absolute horizontal or vertical lineto
 	var d = "";
 	for (var index = 0; index < numberOfPathSegs; index++) {
 		var pathSeg = pathSegList.getItem(index);
@@ -1631,13 +1830,13 @@ Adj.transformPath = function transformPath (pathElement, matrix) {
 
 // utility
 Adj.restoreAndStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribute (element, name) {
-	var value = element.getAttributeNS(Adj.AdjNamespace, name);
+	var value = Adj.elementGetAttributeInAdjNS(element, name);
 	if (value) { // restore if any
 		element.setAttribute(name, value);
 	} else {
 		value = element.getAttribute(name);
 		if (value) { // store if any
-			element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, name), value);
+			Adj.elementSetAttributeInAdjNS(element, name, value);
 		}
 	}
 }
@@ -1659,7 +1858,8 @@ Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoord
 // a specific algorithm
 // note: as implemented works for simplified cases line and path,
 // and for general case group containing one line (or path) as vector and any number of lines and paths as children of that group
-Adj.algorithms.connection = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "connection",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase5Up"],
 	parameters: ["from", "to",
@@ -1667,7 +1867,7 @@ Adj.algorithms.connection = {
 				 "explain"],
 	methods: [function connection (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
-		var documentElement = ownerDocument.documentElement;
+		var theSvgElement = element.ownerSVGElement || element;
 		//
 		var usedHow = "used in a parameter for a connection command";
 		var variableSubstitutionsByName = {};
@@ -1699,7 +1899,7 @@ Adj.algorithms.connection = {
 		}
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
-		var fromPoint = documentElement.createSVGPoint();
+		var fromPoint = theSvgElement.createSVGPoint();
 		fromPoint.x = fromBoundingBox.x + fromBoundingBox.width * fromX;
 		fromPoint.y = fromBoundingBox.y + fromBoundingBox.height * fromY;
 		fromPoint = fromPoint.matrixTransform(matrixFromFromElement);
@@ -1710,14 +1910,14 @@ Adj.algorithms.connection = {
 		}
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
-		var toPoint = documentElement.createSVGPoint();
+		var toPoint = theSvgElement.createSVGPoint();
 		toPoint.x = toBoundingBox.x + toBoundingBox.width * toX;
 		toPoint.y = toBoundingBox.y + toBoundingBox.height * toY;
 		toPoint = toPoint.matrixTransform(matrixFromToElement);
 		//
 		var neededDisplacementAndAngle = Adj.displacementAndAngle(fromPoint, toPoint);
 		//
-		// differntiate simplified cases
+		// differentiate simplified cases
 		if (element instanceof SVGLineElement) {
 			// an SVG line
 			// simple process
@@ -1735,7 +1935,7 @@ Adj.algorithms.connection = {
 			var pathToPoint = pathEndPoints.toPoint;
 			var pathDisplacementAndAngle = Adj.displacementAndAngle(pathFromPoint, pathToPoint);
 			// the necessary matrix
-			var matrix = documentElement.createSVGMatrix();
+			var matrix = theSvgElement.createSVGMatrix();
 			// backwards order
 			matrix = matrix.translate(fromPoint.x, fromPoint.y);
 			matrix = matrix.rotate(neededDisplacementAndAngle.angle);
@@ -1781,7 +1981,7 @@ Adj.algorithms.connection = {
 			var vectorToPoint = vectorEndPoints.toPoint;
 			var vectorDisplacementAndAngle = Adj.displacementAndAngle(vectorFromPoint, vectorToPoint);
 			// the necessary matrix
-			var matrix = documentElement.createSVGMatrix();
+			var matrix = theSvgElement.createSVGMatrix();
 			// backwards order
 			matrix = matrix.translate(fromPoint.x, fromPoint.y);
 			matrix = matrix.rotate(neededDisplacementAndAngle.angle);
@@ -1806,44 +2006,44 @@ Adj.algorithms.connection = {
 		// explain
 		if (explain) {
 			var parent = element.parentNode;
-			var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+			var explanationElement = Adj.createExplanationElement(parent, "rect");
 			explanationElement.setAttribute("x", Adj.decimal(fromBoundingBox.x));
 			explanationElement.setAttribute("y", Adj.decimal(fromBoundingBox.y));
 			explanationElement.setAttribute("width", Adj.decimal(fromBoundingBox.width));
 			explanationElement.setAttribute("height", Adj.decimal(fromBoundingBox.height));
-			explanationElement.transform.baseVal.initialize(documentElement.createSVGTransformFromMatrix(matrixFromFromElement));
+			explanationElement.transform.baseVal.initialize(theSvgElement.createSVGTransformFromMatrix(matrixFromFromElement));
 			explanationElement.setAttribute("fill", "green");
 			explanationElement.setAttribute("fill-opacity", "0.1");
 			explanationElement.setAttribute("stroke", "green");
 			explanationElement.setAttribute("stroke-width", "1");
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
-			parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, fromPoint.x, fromPoint.y, "green"));
-			var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+			parent.appendChild(Adj.createExplanationPointCircle(parent, fromPoint.x, fromPoint.y, "green"));
+			var explanationElement = Adj.createExplanationElement(parent, "rect");
 			explanationElement.setAttribute("x", Adj.decimal(toBoundingBox.x));
 			explanationElement.setAttribute("y", Adj.decimal(toBoundingBox.y));
 			explanationElement.setAttribute("width", Adj.decimal(toBoundingBox.width));
 			explanationElement.setAttribute("height", Adj.decimal(toBoundingBox.height));
-			explanationElement.transform.baseVal.initialize(documentElement.createSVGTransformFromMatrix(matrixFromToElement));
+			explanationElement.transform.baseVal.initialize(theSvgElement.createSVGTransformFromMatrix(matrixFromToElement));
 			explanationElement.setAttribute("fill", "red");
 			explanationElement.setAttribute("fill-opacity", "0.1");
 			explanationElement.setAttribute("stroke", "red");
 			explanationElement.setAttribute("stroke-width", "1");
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
-			parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, toPoint.x, toPoint.y, "red"));
+			parent.appendChild(Adj.createExplanationPointCircle(parent, toPoint.x, toPoint.y, "red"));
 		}
 	}]
-}
+});
 
 // utility
 Adj.fractionPoint = function fractionPoint (element, pathFraction) {
-	var documentElement = element.ownerDocument.documentElement;
+	var theSvgElement = element.ownerSVGElement || element;
 	//
 	var pathFractionPoint;
 	if (element instanceof SVGLineElement) {
 		// an SVG line
-		pathFractionPoint = documentElement.createSVGPoint();
+		pathFractionPoint = theSvgElement.createSVGPoint();
 		// get static base values as floating point values, before animation
 		pathFractionPoint.x = Adj.fraction(element.x1.baseVal.value, element.x2.baseVal.value, pathFraction);
 		pathFractionPoint.y = Adj.fraction(element.y1.baseVal.value, element.y2.baseVal.value, pathFraction);
@@ -1959,7 +2159,7 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 // utility
 // note: as implemented only works well for translation and scaling but gives distorted answers for rotation
 Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
-	var documentElement = element.ownerDocument.documentElement;
+	var theSvgElement = element.ownerSVGElement || element;
 	//
 	var parent = element.parentNode;
 	var relativeBoundingBoxes = [];
@@ -1980,11 +2180,11 @@ Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
 			continue; // skip
 		}
 		var matrixFromOneElement = oneElement.getTransformToElement(parent);
-		var topLeftPoint = documentElement.createSVGPoint();
+		var topLeftPoint = theSvgElement.createSVGPoint();
 		topLeftPoint.x = oneBoundingBoxX;
 		topLeftPoint.y = oneBoundingBoxY;
 		topLeftPoint = topLeftPoint.matrixTransform(matrixFromOneElement);
-		var bottomRightPoint = documentElement.createSVGPoint();
+		var bottomRightPoint = theSvgElement.createSVGPoint();
 		bottomRightPoint.x = oneBoundingBoxX + oneBoundingBoxWidth;
 		bottomRightPoint.y = oneBoundingBoxY + oneBoundingBoxHeight;
 		bottomRightPoint = bottomRightPoint.matrixTransform(matrixFromOneElement);
@@ -2031,7 +2231,8 @@ Adj.overlapAndDistances = function overlapAndDistances (rectangle, rectangles) {
 // a specific algorithm
 // note: as implemented works for simplified case being in group of which first element is a path (or line) to ride on,
 // and for general case given the id of a path to ride on
-Adj.algorithms.rider = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "rider",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase7"],
 	processSubtreeOnlyInPhaseHandler: "adjPhase7",
@@ -2298,7 +2499,7 @@ Adj.algorithms.rider = {
 			if (considerElementsToAvoid) {
 				for (var oneRelativeBoundingBoxIndex in relativeBoundingBoxes) {
 					var oneRelativeBoundingBox = relativeBoundingBoxes[oneRelativeBoundingBoxIndex];
-					var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+					var explanationElement = Adj.createExplanationElement(parent, "rect");
 					explanationElement.setAttribute("x", Adj.decimal(oneRelativeBoundingBox.x));
 					explanationElement.setAttribute("y", Adj.decimal(oneRelativeBoundingBox.y));
 					explanationElement.setAttribute("width", Adj.decimal(oneRelativeBoundingBox.width));
@@ -2311,7 +2512,7 @@ Adj.algorithms.rider = {
 					parent.appendChild(explanationElement);
 				}
 			}
-			var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+			var explanationElement = Adj.createExplanationElement(parent, "rect");
 			explanationElement.setAttribute("x", Adj.decimal(boundingBox.x));
 			explanationElement.setAttribute("y", Adj.decimal(boundingBox.y));
 			explanationElement.setAttribute("width", Adj.decimal(boundingBox.width));
@@ -2323,26 +2524,26 @@ Adj.algorithms.rider = {
 			explanationElement.setAttribute("stroke-width", "1");
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
-			parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, pinX, pinY, "blue"));
+			parent.appendChild(Adj.createExplanationPointCircle(parent, pinX, pinY, "blue"));
 			if (considerElementsToAvoid) {
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit);
-				parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, pathFractionPoint.x, pathFractionPoint.y, "green"));
+				parent.appendChild(Adj.createExplanationPointCircle(parent, pathFractionPoint.x, pathFractionPoint.y, "green"));
 				var pathFractionPoint = Adj.fractionPoint(path, pathFractionLimit2);
-				parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, pathFractionPoint.x, pathFractionPoint.y, "red"));
+				parent.appendChild(Adj.createExplanationPointCircle(parent, pathFractionPoint.x, pathFractionPoint.y, "red"));
 			}
 		}
 	}]
-}
+});
 
 // utility
 Adj.relativatePath = function relativatePath (pathElement) {
-	var documentElement = pathElement.ownerDocument.documentElement;
+	var theSvgElement = pathElement.ownerSVGElement || pathElement;
 	//
 	// get static base values as floating point values, before animation
 	var pathSegList = pathElement.pathSegList;
 	var numberOfPathSegs = pathSegList.numberOfItems;
 	// loop
-	var previousCoordinates = documentElement.createSVGPoint(); // keep current coordinates
+	var previousCoordinates = theSvgElement.createSVGPoint(); // keep current coordinates
 	var d = "";
 	for (var index = 0; index < numberOfPathSegs; index++) {
 		var pathSeg = pathSegList.getItem(index);
@@ -2444,11 +2645,12 @@ Adj.relativatePath = function relativatePath (pathElement) {
 
 // utility
 // a specific algorithm
-Adj.algorithms.relativate = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "relativate",
 	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: [],
 	methods: [function relativate (element, parametersObject) {
-		// differntiate simplified cases
+		// differentiate simplified cases
 		if (element instanceof SVGPathElement) {
 			// an SVG path
 			Adj.relativatePath(element);
@@ -2468,7 +2670,7 @@ Adj.algorithms.relativate = {
 			}
 		}
 	}]
-}
+});
 
 // utility
 Adj.circleAroundRect = function circleAroundRect (rect) {
@@ -2489,7 +2691,8 @@ Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
 }
 
 // a specific algorithm
-Adj.algorithms.circleForParent = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "circleForParent",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["inset"],
@@ -2505,10 +2708,11 @@ Adj.algorithms.circleForParent = {
 		element.setAttribute("cy", Adj.decimal(parentBoundingCircle.cy));
 		element.setAttribute("r", Adj.decimal(parentBoundingCircle.r - inset));
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.ellipseForParent = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "ellipseForParent",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["inset", "horizontalInset", "verticalInset"],
@@ -2527,11 +2731,12 @@ Adj.algorithms.ellipseForParent = {
 		element.setAttribute("rx", Adj.decimal(parentBoundingEllipse.rx - horizontalInset));
 		element.setAttribute("ry", Adj.decimal(parentBoundingEllipse.ry - verticalInset));
 	}]
-}
+});
 
 // a specific algorithm
 // first element is trunk in the center, could be an empty group, remaining elements are branches
-Adj.algorithms.circularList = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "circularList",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap", "rGap", "cGap",
 				 "fromAngle", "toAngle",
@@ -2715,7 +2920,7 @@ Adj.algorithms.circularList = {
 		//
 		// explain
 		if (explain) {
-			var explanationElement = Adj.createExplanationElement(ownerDocument, "circle");
+			var explanationElement = Adj.createExplanationElement(element, "circle");
 			explanationElement.setAttribute("cx", Adj.decimal(treeCenterX - topLeftAlignmentFixX));
 			explanationElement.setAttribute("cy", Adj.decimal(treeCenterY - topLeftAlignmentFixY));
 			explanationElement.setAttribute("r", Adj.decimal(treeRadius + maxBranchRadius));
@@ -2728,7 +2933,7 @@ Adj.algorithms.circularList = {
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
 				var explainCircle = childRecord.explainCircle;
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "circle");
+				var explanationElement = Adj.createExplanationElement(element, "circle");
 				explanationElement.setAttribute("cx", Adj.decimal(explainCircle.cx - topLeftAlignmentFixX));
 				explanationElement.setAttribute("cy", Adj.decimal(explainCircle.cy - topLeftAlignmentFixY));
 				explanationElement.setAttribute("r", Adj.decimal(explainCircle.r));
@@ -2741,10 +2946,11 @@ Adj.algorithms.circularList = {
 			}
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.verticalTree = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "verticalTree",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap", "childlessGap", "earGap",
@@ -2819,7 +3025,7 @@ Adj.algorithms.verticalTree = {
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
-			var adjId = child.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+			var adjId = Adj.elementGetAttributeInAdjNS(child, "id"); // first check for preferred attribute adj:id
 			if (adjId && !idsDictionary[adjId]) { // new
 				idsDictionary[adjId] = childRecord;
 			}
@@ -2853,7 +3059,7 @@ Adj.algorithms.verticalTree = {
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
-			var treeParentId = child.getAttributeNS(Adj.AdjNamespace, "treeParent");
+			var treeParentId = Adj.elementGetAttributeInAdjNS(child, "treeParent");
 			if (treeParentId) {
 				var treeParentRecord = idsDictionary[treeParentId];
 				if (treeParentRecord) { // an element found with an id matching attribute adj:treeParent, as expected
@@ -3101,7 +3307,7 @@ Adj.algorithms.verticalTree = {
 				var suspectChild = childRecord.node;
 				// first check for preferred attribute adj:id
 				// second check for acceptable attribute id
-				var suspectId = suspectChild.getAttributeNS(Adj.AdjNamespace, "id") || suspectChild.getAttribute("id");
+				var suspectId = Adj.elementGetAttributeInAdjNS(suspectChild, "id") || suspectChild.getAttribute("id");
 				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with a verticalTree unreachable element";
 			}
 		}
@@ -3220,7 +3426,7 @@ Adj.algorithms.verticalTree = {
 		// explain
 		if (explain) {
 			if (hiddenRect) {
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(element, "rect");
 				explanationElement.setAttribute("x", 0);
 				explanationElement.setAttribute("y", 0);
 				explanationElement.setAttribute("width", Adj.decimal(totalWidth));
@@ -3256,7 +3462,7 @@ Adj.algorithms.verticalTree = {
 							Adj.decimal(-familyBox.width) + "," + Adj.decimal(0) + " L" +
 							Adj.decimal(familyBox.x) + "," + Adj.decimal(rowShoulderTop) + " " +
 							Adj.decimal(positioningBox.x) + "," + Adj.decimal(rowHeadBottom) + " z";
-						var explanationElement = Adj.createExplanationElement(ownerDocument, "path");
+						var explanationElement = Adj.createExplanationElement(element, "path");
 						explanationElement.setAttribute("d", explainPathData);
 						explanationElement.setAttribute("fill", "white");
 						explanationElement.setAttribute("fill-opacity", "0.1");
@@ -3265,7 +3471,7 @@ Adj.algorithms.verticalTree = {
 						explanationElement.setAttribute("stroke-opacity", "0.2");
 						element.appendChild(explanationElement);
 					} else {
-						var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+						var explanationElement = Adj.createExplanationElement(element, "rect");
 						explanationElement.setAttribute("x", Adj.decimal(familyBox.x));
 						explanationElement.setAttribute("y", Adj.decimal(familyBox.y));
 						explanationElement.setAttribute("width", Adj.decimal(familyBox.width));
@@ -3278,7 +3484,7 @@ Adj.algorithms.verticalTree = {
 						element.appendChild(explanationElement);
 					}
 					//
-					var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+					var explanationElement = Adj.createExplanationElement(element, "rect");
 					explanationElement.setAttribute("x", Adj.decimal(positioningBox.x));
 					explanationElement.setAttribute("y", Adj.decimal(positioningBox.y));
 					explanationElement.setAttribute("width", Adj.decimal(positioningBox.width));
@@ -3295,13 +3501,14 @@ Adj.algorithms.verticalTree = {
 			}
 		}
 	}]
-}
+});
 
 // a specific algorithm
 // note: has been made from a copy of verticalTree,
 // for the purpose of developing in parallel, naming of variables has been kept similar, which has lead to some naming oddities,
 // e.g. a row in this algorithm is vertical, still "a series of objects placed next to each other, usually in a straight line" per AHD
-Adj.algorithms.horizontalTree = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "horizontalTree",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "centerGap", "rightGap",
@@ -3376,7 +3583,7 @@ Adj.algorithms.horizontalTree = {
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
-			var adjId = child.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+			var adjId = Adj.elementGetAttributeInAdjNS(child, "id"); // first check for preferred attribute adj:id
 			if (adjId && !idsDictionary[adjId]) { // new
 				idsDictionary[adjId] = childRecord;
 			}
@@ -3410,7 +3617,7 @@ Adj.algorithms.horizontalTree = {
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
-			var treeParentId = child.getAttributeNS(Adj.AdjNamespace, "treeParent");
+			var treeParentId = Adj.elementGetAttributeInAdjNS(child, "treeParent");
 			if (treeParentId) {
 				var treeParentRecord = idsDictionary[treeParentId];
 				if (treeParentRecord) { // an element found with an id matching attribute adj:treeParent, as expected
@@ -3658,7 +3865,7 @@ Adj.algorithms.horizontalTree = {
 				var suspectChild = childRecord.node;
 				// first check for preferred attribute adj:id
 				// second check for acceptable attribute id
-				var suspectId = suspectChild.getAttributeNS(Adj.AdjNamespace, "id") || suspectChild.getAttribute("id");
+				var suspectId = Adj.elementGetAttributeInAdjNS(suspectChild, "id") || suspectChild.getAttribute("id");
 				throw "suspect id \"" + suspectId + "\" used as attribute adj:treeParent= in a loop with a horizontalTree unreachable element";
 			}
 		}
@@ -3777,7 +3984,7 @@ Adj.algorithms.horizontalTree = {
 		// explain
 		if (explain) {
 			if (hiddenRect) {
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(element, "rect");
 				explanationElement.setAttribute("x", 0);
 				explanationElement.setAttribute("y", 0);
 				explanationElement.setAttribute("width", Adj.decimal(totalWidth));
@@ -3813,7 +4020,7 @@ Adj.algorithms.horizontalTree = {
 							Adj.decimal(0) + "," + Adj.decimal(-familyBox.height) + " L" +
 							Adj.decimal(rowShoulderLeft) + "," + Adj.decimal(familyBox.y) + " " +
 							Adj.decimal(rowHeadRight) + "," + Adj.decimal(positioningBox.y) + " z";
-						var explanationElement = Adj.createExplanationElement(ownerDocument, "path");
+						var explanationElement = Adj.createExplanationElement(element, "path");
 						explanationElement.setAttribute("d", explainPathData);
 						explanationElement.setAttribute("fill", "white");
 						explanationElement.setAttribute("fill-opacity", "0.1");
@@ -3822,7 +4029,7 @@ Adj.algorithms.horizontalTree = {
 						explanationElement.setAttribute("stroke-opacity", "0.2");
 						element.appendChild(explanationElement);
 					} else {
-						var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+						var explanationElement = Adj.createExplanationElement(element, "rect");
 						explanationElement.setAttribute("x", Adj.decimal(familyBox.x));
 						explanationElement.setAttribute("y", Adj.decimal(familyBox.y));
 						explanationElement.setAttribute("width", Adj.decimal(familyBox.width));
@@ -3835,7 +4042,7 @@ Adj.algorithms.horizontalTree = {
 						element.appendChild(explanationElement);
 					}
 					//
-					var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+					var explanationElement = Adj.createExplanationElement(element, "rect");
 					explanationElement.setAttribute("x", Adj.decimal(positioningBox.x));
 					explanationElement.setAttribute("y", Adj.decimal(positioningBox.y));
 					explanationElement.setAttribute("width", Adj.decimal(positioningBox.width));
@@ -3852,15 +4059,15 @@ Adj.algorithms.horizontalTree = {
 			}
 		}
 	}]
-}
+});
 
 // utility
 Adj.firstTimeStoreAuthoringAttribute = function firstTimeStoreAuthoringAttribute (element, name) {
-	var value = element.getAttributeNS(Adj.AdjNamespace, name);
+	var value = Adj.elementGetAttributeInAdjNS(element, name);
 	if (!value) { // not any yet
 		value = element.getAttribute(name);
 		if (value) { // store if any
-			element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, name), value);
+			Adj.elementSetAttributeInAdjNS(element, name, value);
 		}
 	}
 }
@@ -3911,7 +4118,7 @@ Adj.substituteVariables = function substituteVariables (element, originalExpress
 					variableValue = variablesAtElement[variableName];
 				}
 				elementToLookUpIn = elementToLookUpIn.parentNode;
-			} while (variableValue === undefined && elementToLookUpIn);
+			} while (variableValue === undefined && elementToLookUpIn instanceof SVGElement);
 			if (variableValue === undefined) {
 				throw "nonresolving ^ variable name \"" + variableName + "\" " + usedHow;
 			}
@@ -3945,7 +4152,7 @@ Adj.substituteVariables = function substituteVariables (element, originalExpress
 // essential
 // resolve id arithmetic
 Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpression, usedHow, idedElementRecordsById) {
-	var documentElement = element.ownerDocument.documentElement;
+	var theSvgElement = element.ownerSVGElement || element;
 	//
 	Adj.idArithmeticRegexp.lastIndex = 0; // be safe
 	var idArithmeticMatch = Adj.idArithmeticRegexp.exec(originalExpression);
@@ -4034,7 +4241,7 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 		}
 		var arithmeticBoundingBox = idedElementRecord.boundingBox;
 		var matrixFromIdedElement = idedElementRecord.matrixFrom;
-		var arithmeticPoint = documentElement.createSVGPoint();
+		var arithmeticPoint = theSvgElement.createSVGPoint();
 		if (!withoutEF) {
 			if (isNaN(arithmeticX)) { // unknown for now
 				arithmeticX = 0.5;
@@ -4049,7 +4256,7 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 			// relative coordinates must be transformed without translation's e and f
 			var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF;
 			if (matrixFromIdedElementWithoutEF === undefined) {
-				var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF = documentElement.createSVGMatrix();
+				var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF = theSvgElement.createSVGMatrix();
 				matrixFromIdedElementWithoutEF.a = matrixFromIdedElement.a;
 				matrixFromIdedElementWithoutEF.b = matrixFromIdedElement.b;
 				matrixFromIdedElementWithoutEF.c = matrixFromIdedElement.c;
@@ -4261,7 +4468,8 @@ Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, default
 
 // a specific algorithm
 // note: as implemented works for path
-Adj.algorithms.vine = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "vine",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: ["explain"],
@@ -4273,13 +4481,13 @@ Adj.algorithms.vine = {
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
-		// differntiate simplified cases
+		// differentiate simplified cases
 		if (element instanceof SVGPathElement) {
 			// an SVG path
 			// first time store if first time
 			Adj.firstTimeStoreAuthoringCoordinates(element);
 			//
-			var authoringD = element.getAttributeNS(Adj.AdjNamespace, "d");
+			var authoringD = Adj.elementGetAttributeInAdjNS(element, "d");
 			if (!authoringD) {
 				authoringD = "";
 			}
@@ -4298,10 +4506,11 @@ Adj.algorithms.vine = {
 			} // else { // not a known case, as implemented
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.floater = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "floater",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase3"],
 	processSubtreeOnlyInPhaseHandler: "adjPhase3",
@@ -4350,7 +4559,7 @@ Adj.algorithms.floater = {
 		if (explain) {
 			var parent = element.parentNode;
 			var elementTransformAttribute = element.getAttribute("transform");
-			var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+			var explanationElement = Adj.createExplanationElement(parent, "rect");
 			explanationElement.setAttribute("x", Adj.decimal(boundingBox.x));
 			explanationElement.setAttribute("y", Adj.decimal(boundingBox.y));
 			explanationElement.setAttribute("width", Adj.decimal(boundingBox.width));
@@ -4363,15 +4572,16 @@ Adj.algorithms.floater = {
 			explanationElement.setAttribute("stroke-opacity", "0.2");
 			parent.appendChild(explanationElement);
 			//
-			var explanationElement = Adj.createExplanationPointCircle(ownerDocument, pinX, pinY, "blue");
+			var explanationElement = Adj.createExplanationPointCircle(parent, pinX, pinY, "blue");
 			explanationElement.setAttribute("transform", elementTransformAttribute);
 			parent.appendChild(explanationElement);
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.fit = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "fit",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["maxWidth", "maxHeight",
 				 "width", "height"],
@@ -4424,18 +4634,18 @@ Adj.algorithms.fit = {
 		}
 		element.setAttribute("transform", "scale(" + Adj.decimal(scale) + ")");
 	}]
-}
+});
 
 // utility for use inside algorithms
 Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 	var ownerDocument = element.ownerDocument;
-	var documentElement = ownerDocument.documentElement;
+	var theSvgElement = element.ownerSVGElement || element;
 	//
 	var parent = element.parentNode;
 	if (element instanceof SVGPathElement) {
 		// an SVG path
 		var explainPathData = element.getAttribute("d");
-		var explanationElement = Adj.createExplanationElement(ownerDocument, "path");
+		var explanationElement = Adj.createExplanationElement(parent, "path");
 		explanationElement.setAttribute("d", explainPathData);
 		explanationElement.setAttribute("fill", "none");
 		explanationElement.setAttribute("fill-opacity", "0.1");
@@ -4448,9 +4658,9 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 		var pathSegList = element.pathSegList;
 		var numberOfPathSegs = pathSegList.numberOfItems;
 		var numberOfLastPathSeg = numberOfPathSegs - 1;
-		var coordinates = documentElement.createSVGPoint();
-		var initialCoordinates = documentElement.createSVGPoint(); // per sub-path
-		var controlPoint = documentElement.createSVGPoint();
+		var coordinates = theSvgElement.createSVGPoint();
+		var initialCoordinates = theSvgElement.createSVGPoint(); // per sub-path
+		var controlPoint = theSvgElement.createSVGPoint();
 		for (var index = 0; index < numberOfPathSegs; index++) {
 			var pathSeg = pathSegList.getItem(index);
 			var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
@@ -4466,142 +4676,142 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 					coordinates.y = pathSeg.y;
 					initialCoordinates.x = coordinates.x;
 					initialCoordinates.y = coordinates.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'm': // moveto, relative
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
 					initialCoordinates.x = coordinates.x;
 					initialCoordinates.y = coordinates.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'L': // lineto, absolute
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'l': // lineto, relative
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'H': // horizontal lineto, absolute
 					coordinates.x = pathSeg.x;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'h': // horizontal lineto, relative
 					coordinates.x += pathSeg.x;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'V': // vertical lineto, absolute
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'v': // vertical lineto, relative
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'C': // cubic Bézier curveto, absolute
 					controlPoint.x = pathSeg.x1;
 					controlPoint.y = pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = pathSeg.x2;
 					controlPoint.y = pathSeg.y2;
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'c': // cubic Bézier curveto, relative
 					controlPoint.x = coordinates.x + pathSeg.x1;
 					controlPoint.y = coordinates.y + pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = coordinates.x + pathSeg.x2;
 					controlPoint.y = coordinates.y + pathSeg.y2;
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'S': // smooth cubic curveto, absolute
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = pathSeg.x2;
 					controlPoint.y = pathSeg.y2;
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 's': // smooth cubic curveto, relative
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = coordinates.x + pathSeg.x2;
 					controlPoint.y = coordinates.y + pathSeg.y2;
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'Q': // quadratic Bézier curveto, absolute
 					controlPoint.x = pathSeg.x1;
 					controlPoint.y = pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'q': // quadratic Bézier curveto, relative
 					controlPoint.x = coordinates.x + pathSeg.x1;
 					controlPoint.y = coordinates.y + pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'T': // smooth quadratic curveto, absolute
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 't': // smooth quadratic curveto, relative
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(ownerDocument, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'A': // elliptical arc, absolute
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'a': // elliptical arc, relative
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(ownerDocument, coordinates.x, coordinates.y, pointCircleFill));
+					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				default:
 			}
@@ -4611,20 +4821,22 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 
 // a specific algorithm
 // note: as implemented works for path
-Adj.algorithms.explain = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "explain",
 	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: [],
 	methods: [function explain (element, parametersObject) {
-		// differntiate simplified cases
+		// differentiate simplified cases
 		if (element instanceof SVGPathElement) {
 			// an SVG path
 			Adj.explainBasicGeometry(element);
 		} // else { // not a known case, as implemented
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.stackFrames = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "stackFrames",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["inset",
 				 "horizontalInset", "leftInset", "rightInset",
@@ -4701,16 +4913,17 @@ Adj.algorithms.stackFrames = {
 			element.insertBefore(clonedFrame, frame);
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.zoomFrames = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "zoomFrames",
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase5Down"],
 	parameters: ["from", "to",
 				 "step"],
 	methods: [function zoomFrames (element, parametersObject) {
-		var documentElement = element.ownerDocument.documentElement;
+		var theSvgElement = element.ownerSVGElement || element;
 		//
 		var usedHow = "used in a parameter for a zoomFrames command";
 		var variableSubstitutionsByName = {};
@@ -4783,38 +4996,38 @@ Adj.algorithms.zoomFrames = {
 		//
 		var fromBoundingBox = fromElement.getBBox();
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
-		var fromTopLeft = documentElement.createSVGPoint();
+		var fromTopLeft = theSvgElement.createSVGPoint();
 		fromTopLeft.x = fromBoundingBox.x;
 		fromTopLeft.y = fromBoundingBox.y;
 		fromTopLeft = fromTopLeft.matrixTransform(matrixFromFromElement);
-		var fromTopRight = documentElement.createSVGPoint();
+		var fromTopRight = theSvgElement.createSVGPoint();
 		fromTopRight.x = fromBoundingBox.x + fromBoundingBox.width;
 		fromTopRight.y = fromBoundingBox.y;
 		fromTopRight = fromTopRight.matrixTransform(matrixFromFromElement);
-		var fromBottomLeft = documentElement.createSVGPoint();
+		var fromBottomLeft = theSvgElement.createSVGPoint();
 		fromBottomLeft.x = fromBoundingBox.x;
 		fromBottomLeft.y = fromBoundingBox.y + fromBoundingBox.height;
 		fromBottomLeft = fromBottomLeft.matrixTransform(matrixFromFromElement);
-		var fromBottomRight = documentElement.createSVGPoint();
+		var fromBottomRight = theSvgElement.createSVGPoint();
 		fromBottomRight.x = fromBoundingBox.x + fromBoundingBox.width;
 		fromBottomRight.y = fromBoundingBox.y + fromBoundingBox.height;
 		fromBottomRight = fromBottomRight.matrixTransform(matrixFromFromElement);
 		//
 		var toBoundingBox = toElement.getBBox();
 		var matrixFromToElement = toElement.getTransformToElement(element);
-		var toTopLeft = documentElement.createSVGPoint();
+		var toTopLeft = theSvgElement.createSVGPoint();
 		toTopLeft.x = toBoundingBox.x;
 		toTopLeft.y = toBoundingBox.y;
 		toTopLeft = toTopLeft.matrixTransform(matrixFromToElement);
-		var toTopRight = documentElement.createSVGPoint();
+		var toTopRight = theSvgElement.createSVGPoint();
 		toTopRight.x = toBoundingBox.x + toBoundingBox.width;
 		toTopRight.y = toBoundingBox.y;
 		toTopRight = toTopRight.matrixTransform(matrixFromToElement);
-		var toBottomLeft = documentElement.createSVGPoint();
+		var toBottomLeft = theSvgElement.createSVGPoint();
 		toBottomLeft.x = toBoundingBox.x;
 		toBottomLeft.y = toBoundingBox.y + toBoundingBox.height;
 		toBottomLeft = toBottomLeft.matrixTransform(matrixFromToElement);
-		var toBottomRight = documentElement.createSVGPoint();
+		var toBottomRight = theSvgElement.createSVGPoint();
 		toBottomRight.x = toBoundingBox.x + toBoundingBox.width;
 		toBottomRight.y = toBoundingBox.y + toBoundingBox.height;
 		toBottomRight = toBottomRight.matrixTransform(matrixFromToElement);
@@ -4872,10 +5085,11 @@ Adj.algorithms.zoomFrames = {
 			parent.insertBefore(clonedElement, nextSibling);
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.tilt = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "tilt",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["alpha", "beta"],
 	methods: [function tilt (element, parametersObject) {
@@ -4894,10 +5108,11 @@ Adj.algorithms.tilt = {
 		var f = 0;
 		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.skimpyList = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "skimpyList",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
@@ -5013,17 +5228,18 @@ Adj.algorithms.skimpyList = {
 			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.pinnedList = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "pinnedList",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap"],
 	methods: [function pinnedList (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
-		var documentElement = ownerDocument.documentElement;
+		var theSvgElement = element.ownerSVGElement || element;
 		//
 		var usedHow = "used in a parameter for a pinnedList command";
 		var variableSubstitutionsByName = {};
@@ -5084,8 +5300,8 @@ Adj.algorithms.pinnedList = {
 			var currentChildXW = currentChildX + childBoundingBox.width;
 			var currentChildYH = currentChildY + childBoundingBox.height;
 			//
-			var pinThisParameter = child.getAttributeNS(Adj.AdjNamespace, "pinThis");
-			var pinToParameter = child.getAttributeNS(Adj.AdjNamespace, "pinTo");
+			var pinThisParameter = Adj.elementGetAttributeInAdjNS(child, "pinThis");
+			var pinToParameter = Adj.elementGetAttributeInAdjNS(child, "pinTo");
 			if (pinThisParameter || pinToParameter) { // this child to be pinned
 				if (childRecordIndex < 1) {
 					throw "cannot pin first element inside a pinnedList";
@@ -5147,14 +5363,14 @@ Adj.algorithms.pinnedList = {
 				//
 				var pinToBoundingBox = pinToElement.getBBox();
 				var matrixFromPinToElement = pinToElement.getTransformToElement(pinToSibling);
-				var pinToPoint = documentElement.createSVGPoint();
+				var pinToPoint = theSvgElement.createSVGPoint();
 				pinToPoint.x = pinToBoundingBox.x + pinToBoundingBox.width * pinToX;
 				pinToPoint.y = pinToBoundingBox.y + pinToBoundingBox.height * pinToY;
 				pinToPoint = pinToPoint.matrixTransform(matrixFromPinToElement);
 				//
 				var pinThisBoundingBox = pinThisElement.getBBox();
 				var matrixFromPinThisElement = pinThisElement.getTransformToElement(pinThisSibling);
-				var pinThisPoint = documentElement.createSVGPoint();
+				var pinThisPoint = theSvgElement.createSVGPoint();
 				pinThisPoint.x = pinThisBoundingBox.x + pinThisBoundingBox.width * pinThisX;
 				pinThisPoint.y = pinThisBoundingBox.y + pinThisBoundingBox.height * pinThisY;
 				pinThisPoint = pinThisPoint.matrixTransform(matrixFromPinThisElement);
@@ -5228,11 +5444,11 @@ Adj.algorithms.pinnedList = {
 			hiddenRect.setAttribute("height", Adj.decimal(maxBottom - minTop));
 		}
 	}]
-}
+});
 
 // utility
 // as implemented would loop infinitely on a circular reference, but is good enough for here
-Adj.deepCloneObject = function deepCloneObject(object) {
+Adj.deepCloneObject = function deepCloneObject (object) {
 	var clone = (object instanceof Array) ? [] : {};
 	for (var i in object) {
 		if (object[i] && typeof object[i] === "object") {
@@ -5245,7 +5461,8 @@ Adj.deepCloneObject = function deepCloneObject(object) {
 };
 
 // a specific algorithm
-Adj.algorithms.telescopicTree = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "telescopicTree",
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "from", "to",
@@ -5296,8 +5513,9 @@ Adj.algorithms.telescopicTree = {
 		var childRecords = [];
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (child instanceof Element) { // if an XML element, e.g. not an XML #text
-				if (child.namespaceURI === Adj.AdjNamespace) { // if an Adj element
-					if (child.localName === "boom") {
+				var childName = Adj.elementNameInAdjNS(child);
+				if (childName) { // if an Adj element
+					if (childName === "boom") {
 						var boomParametersObject = Adj.collectParameters(child);
 						var previousBoomConfiguration = currentBoomConfiguration;
 						currentBoomConfiguration = {};
@@ -5385,7 +5603,7 @@ Adj.algorithms.telescopicTree = {
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
-			var adjId = child.getAttributeNS(Adj.AdjNamespace, "id"); // first check for preferred attribute adj:id
+			var adjId = Adj.elementGetAttributeInAdjNS(child, "id"); // first check for preferred attribute adj:id
 			if (adjId && !idsDictionary[adjId]) { // new
 				idsDictionary[adjId] = childRecord;
 			}
@@ -5649,7 +5867,7 @@ Adj.algorithms.telescopicTree = {
 		// explain
 		if (explain) {
 			if (hiddenRect) {
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(element, "rect");
 				explanationElement.setAttribute("x", 0);
 				explanationElement.setAttribute("y", 0);
 				explanationElement.setAttribute("width", Adj.decimal(hiddenRectWidth));
@@ -5664,7 +5882,7 @@ Adj.algorithms.telescopicTree = {
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
 				var explainRect = childRecord.positioningBox;
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(element, "rect");
 				explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
 				explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
 				explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
@@ -5691,7 +5909,7 @@ Adj.algorithms.telescopicTree = {
 					var fromPointY = treeParentPositioningBox.y + treeParentPositioningBox.height * fromY;
 					var toPointX = childPositioningBox.x + childPositioningBox.width * toX;
 					var toPointY = childPositioningBox.y + childPositioningBox.height * toY;
-					var explanationElement = Adj.createExplanationElement(ownerDocument, "line");
+					var explanationElement = Adj.createExplanationElement(element, "line");
 					explanationElement.setAttribute("x1", Adj.decimal(fromPointX));
 					explanationElement.setAttribute("y1", Adj.decimal(fromPointY));
 					explanationElement.setAttribute("x2", Adj.decimal(toPointX));
@@ -5700,16 +5918,17 @@ Adj.algorithms.telescopicTree = {
 					explanationElement.setAttribute("stroke-width", "1");
 					explanationElement.setAttribute("stroke-opacity", "0.2");
 					element.appendChild(explanationElement);
-					element.appendChild(Adj.createExplanationPointCircle(ownerDocument, fromPointX, fromPointY, "green"));
-					element.appendChild(Adj.createExplanationPointCircle(ownerDocument, toPointX, toPointY, "red"));
+					element.appendChild(Adj.createExplanationPointCircle(element, fromPointX, fromPointY, "green"));
+					element.appendChild(Adj.createExplanationPointCircle(element, toPointX, toPointY, "red"));
 				}
 			}
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.boom = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "boom",
 	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: ["from", "to",
 				 "angle",
@@ -5717,7 +5936,7 @@ Adj.algorithms.boom = {
 	methods: [function boom (element, parametersObject) {
 		// actual processing done in Adj.algorithms.telescopicTree, for now
 	}]
-}
+});
 
 // constants
 Adj.svgTextFixedupNewlineRegexp1 = /(^|\S)\n/g;
@@ -5730,7 +5949,7 @@ Adj.svgTextWhitespaceTruthByCode = { 32: true, 9: true, 10: true };
 Adj.svgTextTickle = "\u200B\uFEFF"; // so for consistency between browsers
 
 // utility to work around Safari 5 to 7 at \n stopping increasing getSubStringLength
-Adj.getTextSubStringLength = function getTextSubStringLength(element, begin, end, newlinesAndNodeEndsMap) {
+Adj.getTextSubStringLength = function getTextSubStringLength (element, begin, end, newlinesAndNodeEndsMap) {
 	if (newlinesAndNodeEndsMap && Object.getOwnPropertyNames(newlinesAndNodeEndsMap).length) {
 		var length = 0;
 		var nextBegin = begin;
@@ -5759,7 +5978,8 @@ Adj.createTspanXYElement = function createTspanXYElement (ownerDocument, x, y) {
 }
 
 // a specific algorithm
-Adj.algorithms.paragraph = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "paragraph",
 	phaseHandlerNames: ["adjPhase1Down", "adjPhase7Up"],
 	parameters: ["maxWidth", "lineGap", "hAlign", "indent",
 				 "explain"],
@@ -6026,8 +6246,8 @@ Adj.algorithms.paragraph = {
 				var y = Adj.decimal(textBoundingBox.y);
 				var h = newLineRecords.length * lineStep;
 				var yh = y + h;
-				var explanationElement = Adj.createExplanationElement(ownerDocument, "g");
-				var explanationRect = Adj.createExplanationElement(ownerDocument, "rect");
+				var explanationElement = Adj.createExplanationElement(parent, "g");
+				var explanationRect = Adj.createExplanationElement(parent, "rect");
 				explanationRect.setAttribute("x", x);
 				explanationRect.setAttribute("y", y);
 				explanationRect.setAttribute("width", w);
@@ -6036,9 +6256,9 @@ Adj.algorithms.paragraph = {
 				explanationRect.setAttribute("fill-opacity", "0.1");
 				explanationRect.setAttribute("stroke", "none");
 				explanationElement.appendChild(explanationRect);
-				explanationElement.appendChild(Adj.createExplanationLine(ownerDocument, x, yh, x, y, "blue"));
-				explanationElement.appendChild(Adj.createExplanationLine(ownerDocument, x, y, xw, y, "blue"));
-				explanationElement.appendChild(Adj.createExplanationLine(ownerDocument, xw, y, xw, yh, "blue"));
+				explanationElement.appendChild(Adj.createExplanationLine(parent, x, yh, x, y, "blue"));
+				explanationElement.appendChild(Adj.createExplanationLine(parent, x, y, xw, y, "blue"));
+				explanationElement.appendChild(Adj.createExplanationLine(parent, xw, y, xw, yh, "blue"));
 				parametersObject.explanationElement = explanationElement; // store for a later phase
 			}
 		}
@@ -6057,20 +6277,21 @@ Adj.algorithms.paragraph = {
 			delete parametersObject.explanationElement;
 		}
 	}]
-}
+});
 
 // a specific algorithm
-Adj.algorithms.hide = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "hide",
 	hiddenByCommand: true,
 	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: [],
 	methods: [function hide (element, parametersObject) {
 		// actual hiding done in Adj.setAlgorithm, for now
 	}]
-}
+});
 
 // utility
-Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element, hide, doDoc) {
+Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element, hide, doSvg) {
 	switch (hide) {
 		case "hide":
 		case "unhide":
@@ -6111,32 +6332,31 @@ Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element,
 				}
 			}
 			if (hide === "hide") {
-				sibling.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(sibling, Adj.AdjNamespace, "hide"), "true");
+				Adj.elementSetAttributeInAdjNS(sibling, "hide", "true");
 			} else { // "unhide"
-				sibling.removeAttributeNS(Adj.AdjNamespace, "hide");
+				Adj.elementRemoveAttributeInAdjNS(sibling, "hide");
 			}
 		}
 	}
-	if (doDoc) {
-		Adj.doDoc();
+	if (doSvg) {
+		Adj.doSvg(element.ownerSVGElement);
 	}
 }
-Adj.hideSiblingsFollowing = function hideSiblingsFollowing (element, doDoc) {
-	Adj.hideUnhideSiblingsFollowing(element, "hide", doDoc);
+Adj.hideSiblingsFollowing = function hideSiblingsFollowing (element, doSvg) {
+	Adj.hideUnhideSiblingsFollowing(element, "hide", doSvg);
 }
-Adj.unhideSiblingsFollowing = function unhideSiblingsFollowing (element, doDoc) {
-	Adj.hideUnhideSiblingsFollowing(element, "unhide", doDoc);
+Adj.unhideSiblingsFollowing = function unhideSiblingsFollowing (element, doSvg) {
+	Adj.hideUnhideSiblingsFollowing(element, "unhide", doSvg);
 }
-Adj.toggleHideSiblingsFollowing = function toggleHideSiblingsFollowing (element, doDoc) {
-	Adj.hideUnhideSiblingsFollowing(element, "toggle", doDoc);
+Adj.toggleHideSiblingsFollowing = function toggleHideSiblingsFollowing (element, doSvg) {
+	Adj.hideUnhideSiblingsFollowing(element, "toggle", doSvg);
 }
 
 // visual exception display
-Adj.displayException = function displayException (exception, svgElement) {
-	var ownerDocument = svgElement.ownerDocument;
-	var documentElement = ownerDocument.documentElement;
+Adj.displayException = function displayException (exception, theSvgElement) {
+	var ownerDocument = theSvgElement.ownerDocument;
 	//
-	for (var child = documentElement.firstChild; child; child = child.nextSibling) {
+	for (var child = theSvgElement.firstChild; child; child = child.nextSibling) {
 		if (!(child instanceof SVGElement)) {
 			continue; // skip if not an SVGElement, e.g. an XML #text
 		}
@@ -6146,8 +6366,8 @@ Adj.displayException = function displayException (exception, svgElement) {
 		Adj.hideByDisplayAttribute(child); // make invisible but don't delete
 	}
 	var exceptionString = exception.toString();
-	var exceptionElement = Adj.createExplanationElement(ownerDocument, "g", true);
-	documentElement.appendChild(exceptionElement);
+	var exceptionElement = Adj.createExplanationElement(theSvgElement, "g", true);
+	theSvgElement.appendChild(exceptionElement);
 	var exceptionTextElement = Adj.createSVGElement(ownerDocument, "text");
 	exceptionTextElement.appendChild(ownerDocument.createTextNode(exceptionString));
 	exceptionTextElement.setAttribute("fill", "red");
@@ -6156,9 +6376,9 @@ Adj.displayException = function displayException (exception, svgElement) {
 	// fix up
 	Adj.algorithms.textBreaks.methods[0](exceptionElement,{lineBreaks:true});
 	Adj.algorithms.verticalList.methods[0](exceptionElement,{});
-	var svgElementBoundingBox = svgElement.getBBox();
-	svgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
-	svgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
+	var svgElementBoundingBox = theSvgElement.getBBox();
+	theSvgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
+	theSvgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
 }
 
 Adj.toPathRegExp = /^([^?#]*)(.*)$/;
@@ -6171,16 +6391,16 @@ Adj.leadingDotDotSlashRegExp = /^(\.\.\/)?(.*)$/;
 Adj.tailingDirRegExp = /^(.*?)([^\/]+\/)$/;
 
 // a specific algorithm
-Adj.algorithms.include = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "include",
 	phaseHandlerNames: ["adjPhase1Down", "adjPhase1Up"],
 	parameters: ["href"],
 	methods: [function include1Down (element, parametersObject) {
-		var ownerDocument = element.ownerDocument;
-		var documentElement = ownerDocument.documentElement;
+		var theSvgElement = element.ownerSVGElement || element;
 		var commandElement = parametersObject.commandElement;
 		//
 		var usedHow = "used in a parameter for an include command";
-		var href = commandElement.getAttributeNS(Adj.XLinkNamespace, "href");
+		var href = Adj.elementGetAttributeInXLinkNS(commandElement, "href");
 		if (!href) {
 			throw "missing parameter xlink:href= for an include command";
 		}
@@ -6189,7 +6409,7 @@ Adj.algorithms.include = {
 			// don't include a second time
 			return;
 		}
-		if (documentElement.adjIncludingElement) {
+		if (theSvgElement.adjIncludingElement) {
 			// prevent a concurrent nested getTextFile
 			return;
 		}
@@ -6199,10 +6419,10 @@ Adj.algorithms.include = {
 		if (!hrefToQuery) {
 			throw "missing path in include attribute xlink:href=\"" + href + "\"";
 		}
-		window.nrvrGetTextFile(hrefToQuery, function(responseText, status) {
-			(function() {
+		window.nrvrGetTextFile(hrefToQuery, function (responseText, status) {
+			(function () {
 				// keep track of requests
-				delete ownerDocument.adjAsyncGetTextFileRequesters[element];
+				delete theSvgElement.adjAsyncGetTextFileRequesters[Adj.runtimeId(element)];
 				//
 				if (status != 200) { // 200 OK
 					var errorMessage = "HTTP GET status " + status + " for " + href;
@@ -6224,6 +6444,13 @@ Adj.algorithms.include = {
 				if (documentElementToIncludeFrom.nodeName === "parsererror") {
 					element.adjIncluded = documentElementToIncludeFrom; // prevent endless loop
 					console.error(documentElementToIncludeFrom);
+					return;
+				}
+				var ownerDocument = element.ownerDocument;
+				if (!ownerDocument) { // defensive check for asynchronous removal
+					var errorMessage = "apparently element has been removed";
+					element.adjIncluded = errorMessage; // prevent endless loop
+					console.error(errorMessage);
 					return;
 				}
 				try {
@@ -6316,9 +6543,7 @@ Adj.algorithms.include = {
 							// skip if the very commandElement itself
 							continue;
 						}
-						var linkNamespace = Adj.XLinkNamespace;
-						var linkLocalName = "href";
-						var linkUri = linkedElement.getAttributeNS(linkNamespace, linkLocalName);
+						var linkUri = Adj.elementGetAttributeInXLinkNS(linkedElement, "href");
 						if (!linkUri) { // could try other namespaces
 							continue; // but don't, for now
 						}
@@ -6352,7 +6577,7 @@ Adj.algorithms.include = {
 								}
 								linkUri = includeScheme2 + includeAuthority + linkPathPart1 + linkPathPart2 + linkAfterPath;
 							}
-							linkedElement.setAttributeNS(linkNamespace, linkLocalName, linkUri);
+							Adj.elementSetAttributeInXLinkNS(linkedElement, "href", linkUri);
 						//} else { // link is absolute, no fixup needed
 						}
 					}
@@ -6360,21 +6585,21 @@ Adj.algorithms.include = {
 				}
 			})();
 			// above in a function to make sure all non-exceptional exits proceed here
-			ownerDocument.adjAsyncProcessInvoker.invoke();
+			theSvgElement.adjAsyncProcessAdjElementsInvoker.invoke();
 		});
 		// keep track of requests
-		ownerDocument.adjAsyncGetTextFileRequesters[element] = true;
+		theSvgElement.adjAsyncGetTextFileRequesters[Adj.runtimeId(element)] = element;
 		// prevent a concurrent nested getTextFile
-		documentElement.adjIncludingElement = element;
+		theSvgElement.adjIncludingElement = element;
 	},
 	function include1Up (element, parametersObject) {
-		var documentElement = element.ownerDocument.documentElement;
+		var theSvgElement = element.ownerSVGElement || element;
 		//
-		if (documentElement.adjIncludingElement === element) {
-			documentElement.adjIncludingElement = null;
+		if (theSvgElement.adjIncludingElement === element) {
+			theSvgElement.adjIncludingElement = undefined;
 		}
 	}]
-}
+});
 
 // utility class
 // for Adj.algorithms.include
@@ -6421,6 +6646,54 @@ if (!window.nrvrGetTextFile) {
 		}
 	}
 }
+
+// deal with namespaces not being implemented fully when parsing Adj in SVG inline in HTML,
+// aka no-namespace-workaround,
+// to be clear: this is because of browsers having limited namespace support in SVG inline in HTML
+//
+// throughout Adj source code, two comments are used, by convention:
+// normal-namespace-intent versus no-namespace-workaround
+//
+// https://www.google.com/search?q=other+namespaces+in+svg+in+html5
+// http://stackoverflow.com/questions/23319537/html-5-inline-svg-and-namespace-awareness-for-svg-dom
+// http://dev.w3.org/SVG/proposals/svg-html/svg-html-proposal.html
+Adj.namespaceNormal = function namespaceNormal (document) {
+	var adjNamespaceNormal = document.adjNamespaceNormal;
+	if (typeof adjNamespaceNormal === "boolean") { // cached
+		return adjNamespaceNormal; // quick return
+	}
+	// determine
+	if (document.documentElement.tagName === "svg") {
+		// assume normality
+		document.adjNamespaceNormal = true;
+	} else {
+		// test Adj in SVG inline in HTML
+		var domParser = new DOMParser();
+		var dummyDom = domParser.parseFromString(
+'<!DOCTYPE html><html><body><svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"><adj:dummy/><rect width="30" height="20"/></svg></body></html>',
+			"text/html");
+		document.adjNamespaceNormal = dummyDom.getElementsByTagName('svg')[0].firstElementChild.namespaceURI === Adj.AdjNamespace;
+	}
+	return document.adjNamespaceNormal;
+}
+//
+Adj.nameSplitByColonRegexp = /^(?:(.*?):)?(.*)$/;
+Adj.nameSplitByColon = function nameSplitByColon (name) {
+	var match = Adj.nameSplitByColonRegexp.exec(name);
+	return {
+		prefix: match[1],
+		localPart: match[2],
+	};
+}
+
+// utility
+// intended for use as key
+Adj.runtimeId = (function () {
+	var nextRuntimeId = 1;
+	return function runtimeId (object) {
+		return object.adjRuntimeId || (object.adjRuntimeId = nextRuntimeId++);
+	};
+})();
 
 // make available
 window.Adj = Adj;

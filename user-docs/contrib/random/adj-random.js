@@ -1,7 +1,7 @@
 ﻿//
 // Simplified BSD License
 //
-// Copyright (c) 2013-2014, Hans Baschy
+// Copyright (c) 2013-2015, Hans Baschy
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,8 @@
 //
 
 // a specific algorithm
-Adj.algorithms.randomTilt = {
+Adj.defineCommandForAlgorithm({
+	algorithmName: "randomTilt",
 	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: ["maxAngle", "minAngle"],
 	methods: [function randomTilt (element, parametersObject) {
@@ -58,4 +59,4 @@ Adj.algorithms.randomTilt = {
 		var f = cy - b * cx - d * cy;
 		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
 	}]
-}
+});

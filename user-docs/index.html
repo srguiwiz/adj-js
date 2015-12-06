@@ -72,8 +72,8 @@ h1,h2,h3,h4,h5,h6 {
 
 <p class="deemphasize">Note: This user guide's SVG images show in modern
 browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 11 or newer.
-Older versions IE, <a href="#L2433">8</a> and earlier, show the
-<code>alt</code> tag text of those <code>img</code> elements instead.</p>
+Very old browsers show the <code>alt</code> tag text of those <code>img</code>
+elements instead.</p>
 
 <div class="toc">
 <ul>
@@ -226,12 +226,13 @@ Older versions IE, <a href="#L2433">8</a> and earlier, show the
           <li><a href="#L46669">1.27.5. Firefox 32</a></li>
         </ul>
       </li>
-      <li><a href="#L1688">1.28. Example Files</a> 
+      <li><a href="#L11982">1.28. SVG inline in HTML</a></li>
+      <li><a href="#L1688">1.29. Example Files</a> 
         <ul>
-          <li><a href="#L5397">1.28.1. Example File 001 Source Code</a></li>
-          <li><a href="#L5412">1.28.2. Example File 002</a></li>
-          <li><a href="#L1730">1.28.3. Example File 003</a></li>
-          <li><a href="#L5916">1.28.4. Example File 004</a></li>
+          <li><a href="#L5397">1.29.1. Example File 001 Source Code</a></li>
+          <li><a href="#L5412">1.29.2. Example File 002</a></li>
+          <li><a href="#L1730">1.29.3. Example File 003</a></li>
+          <li><a href="#L5916">1.29.4. Example File 004</a></li>
         </ul>
       </li>
     </ul>
@@ -2547,10 +2548,10 @@ Note the required <a href="http://www.w3.org/TR/xlink/">XLink</a> namespace, as
 is commonly used in <a href="http://www.w3.org/Graphics/SVG/">SVG</a>.</p>
 
 <p>Command <code>include</code> causes asynchronous execution when invoking
-<code>Adj.doDoc()</code>.</p>
+<code>Adj.doSvg()</code>.</p>
 
 <p><span class="todo">TODO: write a short section in this user guide to
-describe sometimes asynchronous execution of <code>Adj.doDoc()</code>, which
+describe sometimes asynchronous execution of <code>Adj.doSvg()</code>, which
 supports a callback function</span></p>
 
 <p>There is or should be no problem, no special attention required, with
@@ -2887,7 +2888,7 @@ instances of command <code><a href="#L94550">hide</a></code>.</p>
 </table>
 
 <p>The optional second parameter tells whether to invoke
-<code>Adj.doDoc()</code>.</p>
+<code>Adj.doSvg()</code>.</p>
 
 <p>Similarly there are functions <code>hideSiblingsFollowing</code> and
 <code>unhideSiblingsFollowing</code>.</p>
@@ -3501,7 +3502,7 @@ which option works best for you</span>.</p>
 Adj can be invoked explicitly, e.g. like</p>
 <pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-flat-20030114.dtd"&gt;
-&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" <span class="example-code">onload="Adj.doDoc();"</span>&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" <span class="example-code">onload="Adj.doSvg();"</span>&gt;
   <span class="example-code">&lt;script type="text/javascript" xlink:href="js/adj.js"/&gt;</span>
   &lt;g&gt;…</pre>
 
@@ -3630,7 +3631,7 @@ lines. This could be improved depending on user feedback.</p>
 <h4 id="L4599">1.20.4. Exception Handling</h4>
 
 <p>A visual display is provided instead of the expected SVG in case a
-JavaScript exception occurs in an invocation of <code>Adj.doDoc();</code>.</p>
+JavaScript exception occurs in an invocation of <code>Adj.doSvg();</code>.</p>
 
 <h4 id="L2915">1.20.5. Bad Command Handling</h4>
 
@@ -3688,7 +3689,7 @@ function calls.</p>
 the Adj JavaScript library as needed, partially or wholly.</p>
 
 <p>One entry point could be explicit invocation with
-<code>Adj.doDoc();</code>.</p>
+<code>Adj.doSvg();</code>.</p>
 
 <p>Another kind of entry point could be the setting of algorithms to be applied
 to an element. E.g. the concise form Adj command</p>
@@ -3926,8 +3927,8 @@ please use contact and/or repository info provided <a
 href="#L4276">above</a>.</p>
 
 <p><span class="todo">TODO: describe use of
-<code>Adj.doDocAndStashIfNoStashYet()</code> instead of
-<code>Adj.doDoc()</code> for preparing documents for testing</span></p>
+<code>Adj.doSvgAndStashIfNoStashYet()</code> instead of
+<code>Adj.doSvg()</code> for preparing documents for testing</span></p>
 
 <h3 id="L2374">1.27. Compatibility Issues</h3>
 
@@ -3992,9 +3993,19 @@ suite</a>.</p>
 hyperlink <code>a</code> element can cause line height calculation on Firefox
 to be wrong. See command <code><a href="#L11198">paragraph</a></code>.</p>
 
-<h3 id="L1688">1.28. Example Files</h3>
+<h3 id="L11982">1.28. SVG inline in HTML</h3>
 
-<h4 id="L5397">1.28.1. Example File 001 Source Code</h4>
+<p>Support for SVG inline in HTML is a relatively new addition since Adj
+5.0.</p>
+
+<p>Documentation, examples, and description of limitations and caveats should
+be provided in time.</p>
+
+<p><span class="todo">TODO: document Adj in SVG inline in HTML</span></p>
+
+<h3 id="L1688">1.29. Example Files</h3>
+
+<h4 id="L5397">1.29.1. Example File 001 Source Code</h4>
 
 <p>The source code, before <a
 href="adj-ex-041-workflow-version-pure.svg">processing</a>, of this older
@@ -4004,7 +4015,7 @@ version</p>
 <p>of <a href="#example-workflow">above</a> diagram of the example workflow:</p>
 <pre class="example-listing">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink"
-     onload="Adj.doDoc();" width="200" height="120"&gt;
+     onload="Adj.doSvg();" width="200" height="120"&gt;
     &lt;script type="text/javascript" xlink:href="js/adj.js"/&gt;
     &lt;title&gt;Example Workflow&lt;/title&gt;
     &lt;!-- Illustration idea and first version - Leo Baschy &lt;srguiwiz12 AT nrvr DOT com&gt; --&gt;
@@ -4153,19 +4164,19 @@ version</p>
     &lt;/g&gt;
 &lt;/svg&gt;</pre>
 
-<h4 id="L5412">1.28.2. Example File 002</h4>
+<h4 id="L5412">1.29.2. Example File 002</h4>
 
 <p>An example:</p>
 <img alt="example image 002" src="adj-ex-042-image.svg"
 style="max-width:95%;max-height:auto;"></img> 
 
-<h4 id="L1730">1.28.3. Example File 003</h4>
+<h4 id="L1730">1.29.3. Example File 003</h4>
 
 <p>An example:</p>
 <img alt="example image 003" src="adj-ex-043-image.svg"
 style="max-width:95%;max-height:auto;"></img> 
 
-<h4 id="L5916">1.28.4. Example File 004</h4>
+<h4 id="L5916">1.29.4. Example File 004</h4>
 
 <p>An example:</p>
 <img alt="example image 004" src="adj-ex-044-image.svg"

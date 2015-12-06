@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doDoc(function(){console.log('Adj.doDoc done')});" width="200" height="140">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg(function(){console.log('Adj.doSvg done')});" width="200" height="140">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<rect width="200" height="140" fill="linen"/>
 	<g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1">

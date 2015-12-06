@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<script src="js/adj.js"></script>
+		<script src="js/adj-tests.js"></script>
+	</head>
+	<body onload="Adj.doSvgAndStashIfNoStashYet();">
+		<p>an example of Adj in SVG inline in HTML</p>
+		<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns="http://www.w3.org/2000/svg" width="195" height="115">
+			<rect fill="#000" stroke-width="1" stroke="black" height="20" width="30" y="5" x="5"/>
+			<rect y="9" x="14" opacity="0.5" fill="white" stroke-width="1" stroke="gray" height="22" width="32">
+				<adj:zoomframes adj:step="20"/>
+			</rect>
+			<rect y="13" x="18" opacity="0.5" fill="white" stroke-width="1" stroke="gray" height="26" width="36" adj:artifact="true"/>
+			<rect y="17" x="22" opacity="0.5" fill="white" stroke-width="1" stroke="gray" height="30" width="40" adj:artifact="true"/>
+			<rect fill="#888" stroke-width="1" stroke="black" height="50" width="60" y="65" x="135"/>
+		</svg>
+	</body>
+	<!--ExpectedResultForTestAutomation:%3C!DOCTYPE%20html%3E%0D%0A%3Chtml%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Chead%3E%0A%09%09%3Cmeta%20charset%3D%22UTF-8%22%20%2F%3E%0A%09%09%3Cscript%20src%3D%22js%2Fadj.js%22%3E%3C%2Fscript%3E%0A%09%09%3Cscript%20src%3D%22js%2Fadj-tests.js%22%3E%3C%2Fscript%3E%0A%09%3C%2Fhead%3E%0A%09%3Cbody%20onload%3D%22Adj.doSvgAndStashIfNoStashYet()%3B%22%3E%0A%09%09%3Cp%3Ean%20example%20of%20Adj%20in%20SVG%20inline%20in%20HTML%3C%2Fp%3E%0A%09%09%3Csvg%20height%3D%22115%22%20width%3D%22195%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%0A%09%09%09%3Crect%20x%3D%225%22%20y%3D%225%22%20width%3D%2230%22%20height%3D%2220%22%20stroke%3D%22black%22%20stroke-width%3D%221%22%20fill%3D%22%23000%22%2F%3E%0A%09%09%09%3Crect%20width%3D%2232%22%20height%3D%2222%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%2214%22%20y%3D%229%22%3E%0A%09%09%09%09%3Cadj%3Azoomframes%20adj%3Astep%3D%2220%22%2F%3E%0A%09%09%09%3C%2Frect%3E%3Crect%20width%3D%2236%22%20height%3D%2226%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%2230%22%20y%3D%2217%22%20adj%3Aartifact%3D%22true%22%2F%3E%3Crect%20width%3D%2240%22%20height%3D%2230%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%2246%22%20y%3D%2224%22%20adj%3Aartifact%3D%22true%22%2F%3E%3Crect%20width%3D%2243%22%20height%3D%2233%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%2262%22%20y%3D%2231%22%20adj%3Aartifact%3D%22true%22%2F%3E%3Crect%20width%3D%2247%22%20height%3D%2237%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%2278%22%20y%3D%2239%22%20adj%3Aartifact%3D%22true%22%2F%3E%3Crect%20width%3D%2250%22%20height%3D%2240%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%2294%22%20y%3D%2246%22%20adj%3Aartifact%3D%22true%22%2F%3E%3Crect%20width%3D%2254%22%20height%3D%2244%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%22110%22%20y%3D%2253%22%20adj%3Aartifact%3D%22true%22%2F%3E%3Crect%20width%3D%2258%22%20height%3D%2248%22%20stroke%3D%22gray%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20opacity%3D%220.5%22%20x%3D%22126%22%20y%3D%2261%22%20adj%3Aartifact%3D%22true%22%2F%3E%0A%09%09%09%0A%09%09%09%0A%09%09%09%3Crect%20x%3D%22135%22%20y%3D%2265%22%20width%3D%2260%22%20height%3D%2250%22%20stroke%3D%22black%22%20stroke-width%3D%221%22%20fill%3D%22%23888%22%2F%3E%0A%09%09%3C%2Fsvg%3E%0A%09%0A%0A%3C%2Fbody%3E%3C%2Fhtml%3E-->
+</html>

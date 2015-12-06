@@ -68,24 +68,26 @@ h1,h2,h3,h4,h5,h6 {
 </head>
 
 <body>
-<h1>Adj Framework – <a href="../index.html">Contributions</a> – Random Tilt</h1>
+<h1>Adj Framework – <a href="../index.html">Contributions</a> – Random
+Tilt</h1>
 
-<p class="deemphasize">For more about Adj, see the <a href="../../index.html">user
-guide</a>.</p>
+<p class="deemphasize">For more about Adj, see the <a
+href="../../index.html">user guide</a>.</p>
 
 <p>A first example of extending Adj with commands, command
 <code>randomTilt</code>.</p>
 
 <p>Source code listing, from <code><a
 href="adj-random.js">adj-random.js</a></code>:</p>
-<pre><span class="example-code">Adj.algorithms.randomTilt</span> = {
+<pre><span class="example-code">Adj.defineCommandForAlgorithm</span>({
+  algorithmName: "<span class="example-code">randomTilt</span>",
   phaseHandlerName: "adjPhase7Up",
   parameters: ["maxAngle"],
   method: function randomTilt (element, parametersObject) {
     var usedHow = "used in a parameter for a randomTilt command";
     var variableSubstitutionsByName = {};
-    var maxAngle = Adj.doVarsArithmetic(element, parametersObject.maxAngle, 15, null, usedHow, variableSubstitutionsByName); // default maxAngle = 15
-    var minAngle = Adj.doVarsArithmetic(element, parametersObject.minAngle, 0, null, usedHow, variableSubstitutionsByName); // default minAngle = 0
+    var maxAngle = Adj.doVarsArithmetic(element, parametersObject.<span class="example-code">maxAngle</span>, 15, null, usedHow, variableSubstitutionsByName); // default maxAngle = 15
+    var minAngle = Adj.doVarsArithmetic(element, parametersObject.<span class="example-code">minAngle</span>, 0, null, usedHow, variableSubstitutionsByName); // default minAngle = 0
     //
     var angle = (maxAngle - minAngle) * (2 * Math.random() - 1);
     if (angle &gt;= 0) {
