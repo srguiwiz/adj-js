@@ -7,7 +7,7 @@ One significant feature is "relative constraints".
 The original purpose of the Adj framework has been to facilitate
 creation and long term maintenance of system diagrams.
 Adj has been designed specifically for diagrams of large complexity.
-Other uses are possible and are expected.
+Quite unrelated uses are expected.
 
 Start by reading the User Guide at **user-docs/index.html**, also
 [online here](http://srguiwiz.github.com/adj-js/user-docs/).
