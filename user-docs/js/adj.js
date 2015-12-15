@@ -88,6 +88,7 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 		doSvgDoneCallback = theSvgElement;
 		theSvgElement = undefined;
 	}
+	// main-SVG-intent versus inlined-SVG-workaround
 	if (theSvgElement) {
 		// simple original intent
 		Adj.processAdjElements(theSvgElement, doSvgDoneCallback);
@@ -1573,14 +1574,14 @@ Adj.idXYRegexp = /^\s*([^%\s]+)\s*(?:%\s*([^,\s]+)\s*)?(?:,\s*([^,\s]+)\s*)?(?:,
 // parse an optional id and optionally two more parameters, e.g. full "obj1 % 0.5, 1" or less specific "obj1" or "0.5, 1" or "% 0.5, 1" or "obj1 %"
 // note: as implemented does not tolerate extra parameters
 Adj.idXYRegexp2 = /^\s*([^%,\s]*?)\s*%?\s*(?:([^%,\s]+)\s*,\s*([^%,\s]+))?\s*$/;
-Adj.idXYRegexp2NoMatch = [null, null, null, null];
+Adj.idXYRegexp2NoMatch = [ null, null, null, null ];
 // parse one or two parameters, e.g. "0.5, 1" or only "0.3"
 // note: as implemented tolerates extra parameters
 Adj.oneOrTwoRegexp = /^\s*([^,\s]+)\s*(?:,\s*([^,\s]+)\s*)?(?:,.*)?$/;
 // parse two parameters, e.g. "0.5, 1"
 // note: as implemented tolerates extra parameters
 Adj.twoRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
-Adj.twoRegexpNoMatch = [null, null, null];
+Adj.twoRegexpNoMatch = [ null, null, null ];
 // parse three parameters, e.g. "3, -4, 4"
 // note: as implemented tolerates extra parameters
 Adj.threeRegexp = /^\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*(?:,.*)?$/;
@@ -6389,6 +6390,7 @@ Adj.dirRegExp = /^(.*\/)/;
 Adj.leadingSlashRegExp = /^\//;
 Adj.leadingDotDotSlashRegExp = /^(\.\.\/)?(.*)$/;
 Adj.tailingDirRegExp = /^(.*?)([^\/]+\/)$/;
+Adj.firstTagRegExp = /^(?:[\s\S]*?<)([A-Za-z0-9]+)/;
 
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
@@ -6430,11 +6432,23 @@ Adj.defineCommandForAlgorithm({
 					console.error(errorMessage);
 					return;
 				}
+				// main-SVG-intent versus inlined-SVG-workaround
+				var matchFirstTag = Adj.firstTagRegExp.exec(responseText);
+				if (matchFirstTag) {
+					var firstTag = matchFirstTag[1];
+				} else {
+					firstTag = null;
+				}
+				var isMainSvg = firstTag === "svg"; // versus e.g. "HTML"
 				// see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
 				// and https://w3c.github.io/DOM-Parsing/#the-domparser-interface
 				var domParser = new DOMParser();
 				try {
-					var textFileDom = domParser.parseFromString(responseText, "image/svg+xml");
+					if (isMainSvg) { // main-SVG-intent
+						var textFileDom = domParser.parseFromString(responseText, "image/svg+xml");
+					} else { // inlined-SVG-workaround
+						textFileDom = domParser.parseFromString(responseText, "text/html");
+					}
 				} catch (exception) {
 					element.adjIncluded = exception; // prevent endless loop
 					console.error(exception);
@@ -6456,17 +6470,32 @@ Adj.defineCommandForAlgorithm({
 				try {
 					// first resolve fragment ids, if any
 					if (includeFragments.length > 1) {
-						// include fragment of document
-						var toIncludeElement = documentElementToIncludeFrom;
-						for (var i = 1, n = includeFragments.length; i < n; i++) {
-							var id = includeFragments[i];
-							toIncludeElement = Adj.getElementByIdNearby(id, toIncludeElement);
-							if (!toIncludeElement) {
-								var errorMessage = "nonresolving id \"" + id + "\" used in include attribute xlink:href=\"" + href + "\"";
-								element.adjIncluded = errorMessage; // prevent endless loop
-								console.error(errorMessage);
-								return;
+						if (isMainSvg) { // main-SVG-intent
+							var svgElementsToIncludeFrom = [ documentElementToIncludeFrom ];
+						} else { // inlined-SVG-workaround
+							svgElementsToIncludeFrom = documentElementToIncludeFrom.getElementsByTagName("svg");
+						}
+						// both main-SVG-intent and inlined-SVG-workaround
+						for (var i = 0, n = svgElementsToIncludeFrom.length; i < n; i++) {
+							var oneSvgElementToIncludeFrom = svgElementsToIncludeFrom[i];
+							// include fragment of document
+							var toIncludeElement = oneSvgElementToIncludeFrom;
+							for (var j = 1, n = includeFragments.length; j < n; j++) {
+								var id = includeFragments[j];
+								toIncludeElement = Adj.getElementByIdNearby(id, toIncludeElement);
+								if (!toIncludeElement) { // not resolving in this context
+									break;
+								}
 							}
+							if (toIncludeElement) { // resolved
+								break;
+							}
+						}
+						if (!toIncludeElement) {
+							var errorMessage = "nonresolving id in include attribute xlink:href=\"" + href + "\"";
+							element.adjIncluded = errorMessage; // prevent endless loop
+							console.error(errorMessage);
+							return;
 						}
 					}
 					// should only get here if content has been retrieved and is ready to insert
@@ -6490,8 +6519,7 @@ Adj.defineCommandForAlgorithm({
 							if (toIncludeNode instanceof Element) {
 								if (toIncludeNode.nodeName === "script") {
 									// e.g. <script type="text/javascript" xlink:href="js/adj.js"/>
-									// skip
-									continue;
+									continue; // skip
 								}
 							}
 							toIncludeNode = ownerDocument.importNode(toIncludeNode, true); // leave original for potential future reuse
