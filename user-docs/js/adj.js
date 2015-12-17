@@ -2871,7 +2871,7 @@ Adj.defineCommandForAlgorithm({
 		toAngle = fromAngle + angleCovered;
 		var numberOfSteps = fullCircle ? numberOfBranches : numberOfBranches - 1;
 		var angleStep;
-		if (numberOfSteps >= 1) {
+		if (numberOfBranches > 1) {
 			angleStep = angleCovered / numberOfSteps;
 		} else {
 			angleStep = 180; // defensive default for later /sin(angleStep/2)
