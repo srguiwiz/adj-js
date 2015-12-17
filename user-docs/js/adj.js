@@ -358,20 +358,27 @@ Adj.parameterParse = function parameterParse (value) {
 // utility
 // expects element to be an Adj element
 Adj.collectParameters = function collectParameters (element) {
-	var adjNamespaceNormal = Adj.namespaceNormal(element.ownerDocument);  // no-namespace-workaround
+	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
 	//
 	var parameters = { commandElement: element };
 	var attributes = element.attributes;
 	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
 		var attribute = attributes[i];
-		if (adjNamespaceNormal) { // normal-namespace-intent
+		if (namespaceImplementation === "full") { // normal-namespace-intent
 			if (!attribute.namespaceURI || attribute.namespaceURI === Adj.AdjNamespace) {
 				parameters[Adj.mixedCasedName(attribute.localName)] = Adj.parameterParse(attribute.value);
 			}
-		} else { // no-namespace-workaround
+		} else if (namespaceImplementation === "obtuse") { // no-namespace-workaround
 			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
 			if (!splitAttributeName.prefix || splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
 				parameters[Adj.mixedCasedName(splitAttributeName.localPart)] = Adj.parameterParse(attribute.value);
+			}
+		} else { // holstein-namespace-workaround
+			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
+			if (!splitAttributeName.prefix || splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
+				parameters[Adj.mixedCasedName(splitAttributeName.localPart)] = Adj.parameterParse(attribute.value);
+			} else if (!attribute.namespaceURI || attribute.namespaceURI === Adj.AdjNamespace) {
+				parameters[Adj.mixedCasedName(attribute.localName)] = Adj.parameterParse(attribute.value);
 			}
 		}
 	}
@@ -383,15 +390,24 @@ Adj.collectParameters = function collectParameters (element) {
 // implemented with an assumption an Adj element has to be a child of an SVG element,
 // hence if that assumption would not hold true then implementation should be changed
 Adj.elementNameInAdjNS = function elementNameInAdjNS (element) {
+	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
+	//
 	var elementName = null;
-	if (Adj.namespaceNormal(element.ownerDocument)) { // normal-namespace-intent
+	if (namespaceImplementation === "full") { // normal-namespace-intent
 		if (element.namespaceURI === Adj.AdjNamespace) { // if an Adj element
 			elementName = Adj.mixedCasedName(element.localName);
 		}
-	} else { // no-namespace-workaround
+	} else if (namespaceImplementation === "obtuse") { // no-namespace-workaround
 		var splitElementName = Adj.nameSplitByColon(element.tagName);
 		if (splitElementName.prefix === Adj.AdjNamespacePrefix) {
 			elementName = Adj.mixedCasedName(splitElementName.localPart);
+		}
+	} else { // holstein-namespace-workaround
+		var splitElementName = Adj.nameSplitByColon(element.tagName);
+		if (splitElementName.prefix === Adj.AdjNamespacePrefix) {
+			elementName = Adj.mixedCasedName(splitElementName.localPart);
+		} else if (element.namespaceURI === Adj.AdjNamespace) { // if an Adj element
+			elementName = Adj.mixedCasedName(element.localName);
 		}
 	}
 	return elementName;
@@ -401,7 +417,7 @@ Adj.elementNameInAdjNS = function elementNameInAdjNS (element) {
 // recursive walking of the tree,
 // expects node to be an SVG element, not to be an Adj element, but a child can be an Adj element
 Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (node) {
-	var adjNamespaceNormal = Adj.namespaceNormal(node.ownerDocument);  // no-namespace-workaround
+	var namespaceImplementation = Adj.namespaceImplementation(node.ownerDocument); // no-namespace-workaround
 	//
 	// first clear node.adjSomething properties for a new start
 	delete node.adjPhaseHandlers;
@@ -425,7 +441,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 		// normal-namespace-intent
 		if (attribute.namespaceURI === Adj.AdjNamespace) {
 			adjAttributesByName[Adj.mixedCasedName(attribute.localName)] = attribute;
-		} else if (!adjNamespaceNormal) { // no-namespace-workaround
+		} else if (namespaceImplementation !== "full") { // no-namespace-workaround
 			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
 			if (splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
 				adjAttributesByName[Adj.mixedCasedName(splitAttributeName.localPart)] = attribute;
@@ -705,53 +721,78 @@ Adj.prefixName = (function () {
 })();
 
 // abstraction
-Adj.elementGetAttributeInAdjNS = function elementGetAttributeInAdjNS (element, name) {
-	if (Adj.namespaceNormal(element.ownerDocument)) {
+Adj.elementGetAttributeInNS = function elementGetAttributeInNS (element, namespace, prefix, name) {
+	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
+	if (namespaceImplementation === "full") {
 		// normal-namespace-intent
-		return element.getAttributeNS(Adj.AdjNamespace, name);
-	} else { // no-namespace-workaround
-		return element.getAttribute(Adj.prefixName(Adj.AdjNamespacePrefix, name));
+		return element.getAttributeNS(namespace, name);
+	} else if (namespaceImplementation === "obtuse") { // no-namespace-workaround
+		return element.getAttribute(Adj.prefixName(prefix, name));
+	} else { // holstein-namespace-workaround
+		return element.getAttributeNS(namespace, name)
+			|| element.getAttribute(Adj.prefixName(prefix, name));
 	}
 }
 // abstraction
+Adj.elementGetAttributeInAdjNS = function elementGetAttributeInAdjNS (element, name) {
+	return Adj.elementGetAttributeInNS(element, Adj.AdjNamespace, Adj.AdjNamespacePrefix, name);
+}
+// abstraction
 Adj.elementGetAttributeInXLinkNS = function elementGetAttributeInXLinkNS (element, name) {
-	if (Adj.namespaceNormal(element.ownerDocument)) {
-		// normal-namespace-intent
-		return element.getAttributeNS(Adj.XLinkNamespace, name);
-	} else { // no-namespace-workaround
-		return element.getAttribute(Adj.prefixName(Adj.XLinkNamespacePrefix, name));
-	}
+	return Adj.elementGetAttributeInNS(element, Adj.XLinkNamespace, Adj.XLinkNamespacePrefix, name);
 }
 
 // abstraction
 // optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
-Adj.elementSetAttributeInAdjNS = function elementSetAttributeInAdjNS (element, name, value, elementToLookupPrefix) {
-	if (Adj.namespaceNormal(element.ownerDocument)) {
+Adj.elementSetAttributeInNS = function elementSetAttributeInNS (element, namespace, prefix, name, value, elementToLookupPrefix) {
+	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
+	if (namespaceImplementation === "full") {
 		// normal-namespace-intent
-		element.setAttributeNS(Adj.AdjNamespace, Adj.qualifyName(element, Adj.AdjNamespace, name, elementToLookupPrefix), value);
-	} else { // no-namespace-workaround
-		element.setAttribute(Adj.prefixName(Adj.AdjNamespacePrefix, name), value);
+		element.setAttributeNS(namespace, Adj.qualifyName(element, namespace, name, elementToLookupPrefix), value);
+	} else if (namespaceImplementation === "obtuse") { // no-namespace-workaround
+		element.setAttribute(Adj.prefixName(prefix, name), value);
+	} else { // holstein-namespace-workaround
+		// trying to be clever and safely cover all cases,
+		// admittedly not yet fully tested in all possible situations and browsers
+		if (element.getAttributeNS(namespace, name)) { // this kind pre-existing
+			element.setAttributeNS(namespace, Adj.qualifyName(element, namespace, name, elementToLookupPrefix), value);
+		} else if (element.getAttribute(Adj.prefixName(prefix, name))) { // that kind pre-existing
+			element.setAttribute(Adj.prefixName(prefix, name), value);
+		} else { // otherwise
+			Adj.elementRemoveAttributeInNS(element, namespace, prefix, name); // cover all possibilities
+			// if no other reason then do the preferred kind
+			element.setAttributeNS(namespace, Adj.qualifyName(element, namespace, name, elementToLookupPrefix), value);
+		}
 	}
+}
+// abstraction
+// optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
+Adj.elementSetAttributeInAdjNS = function elementSetAttributeInAdjNS (element, name, value, elementToLookupPrefix) {
+	Adj.elementSetAttributeInNS(element, Adj.AdjNamespace, Adj.AdjNamespacePrefix, name, value, elementToLookupPrefix);
 }
 // abstraction
 // optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
 Adj.elementSetAttributeInXLinkNS = function elementSetAttributeInXLinkNS (element, name, value, elementToLookupPrefix) {
-	if (Adj.namespaceNormal(element.ownerDocument)) {
-		// normal-namespace-intent
-		element.setAttributeNS(Adj.XLinkNamespace, Adj.qualifyName(element, Adj.XLinkNamespace, name, elementToLookupPrefix), value);
-	} else { // no-namespace-workaround
-		element.setAttribute(Adj.prefixName(Adj.XLinkNamespacePrefix, name), value);
-	}
+	Adj.elementSetAttributeInNS(element, Adj.XLinkNamespace, Adj.XLinkNamespacePrefix, name, value, elementToLookupPrefix);
 }
 
 // abstraction
-Adj.elementRemoveAttributeInAdjNS = function elementRemoveAttributeInAdjNS (element, name) {
-	if (Adj.namespaceNormal(element.ownerDocument)) {
+Adj.elementRemoveAttributeInNS = function elementRemoveAttributeInNS (element, namespace, prefix, name) {
+	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
+	if (namespaceImplementation === "full") {
 		// normal-namespace-intent
-		element.removeAttributeNS(Adj.AdjNamespace, name);
-	} else { // no-namespace-workaround
-		element.removeAttribute(Adj.prefixName(Adj.AdjNamespacePrefix, name));
+		element.removeAttributeNS(namespace, name);
+	} else if (namespaceImplementation === "obtuse") { // no-namespace-workaround
+		element.removeAttribute(Adj.prefixName(prefix, name));
+	} else { // holstein-namespace-workaround
+		// cover all possibilities
+		element.removeAttributeNS(namespace, name);
+		element.removeAttribute(Adj.prefixName(prefix, name));
 	}
+}
+// abstraction
+Adj.elementRemoveAttributeInAdjNS = function elementRemoveAttributeInAdjNS (element, name) {
+	Adj.elementRemoveAttributeInNS(element, Adj.AdjNamespace, Adj.AdjNamespacePrefix, name);
 }
 
 // utility
@@ -6510,6 +6551,13 @@ Adj.defineCommandForAlgorithm({
 						child = child.nextSibling;
 						element.removeChild(childToRemove);
 					}
+					// if necessary then fix up ownerDocument.adjNamespaceImplementation
+					var ownerDocumentNamespaceImplementation = Adj.namespaceImplementation(ownerDocument);
+					var textFileDomNamespaceImplementation = Adj.namespaceImplementation(textFileDom);
+					if (ownerDocumentNamespaceImplementation === "full" && textFileDomNamespaceImplementation === "obtuse") {
+						// e.g. an SVG document includes a fragment from SVG inline in an HTML document
+						ownerDocument.adjNamespaceImplementation = "fullYetSomeObtuse"; // trigger holstein-namespace-workaround
+					}
 					// insert
 					if (includeFragments.length === 1) { // no fragment in URI
 						// include all content of document
@@ -6680,29 +6728,37 @@ if (!window.nrvrGetTextFile) {
 // to be clear: this is because of browsers having limited namespace support in SVG inline in HTML
 //
 // throughout Adj source code, two comments are used, by convention:
-// normal-namespace-intent versus no-namespace-workaround
+// normal-namespace-intent versus no-namespace-workaround,
+// and sometimes thirdly holstein-namespace-workaround (spotted within one document)
 //
 // https://www.google.com/search?q=other+namespaces+in+svg+in+html5
 // http://stackoverflow.com/questions/23319537/html-5-inline-svg-and-namespace-awareness-for-svg-dom
 // http://dev.w3.org/SVG/proposals/svg-html/svg-html-proposal.html
-Adj.namespaceNormal = function namespaceNormal (document) {
-	var adjNamespaceNormal = document.adjNamespaceNormal;
-	if (typeof adjNamespaceNormal === "boolean") { // cached
-		return adjNamespaceNormal; // quick return
+//
+// "full", "obtuse", or "fullYetSomeObtuse"
+Adj.namespaceImplementation = function namespaceImplementation (document) {
+	var documentNamespaceImplementation = document.adjNamespaceImplementation;
+	if (documentNamespaceImplementation) { // cached
+		return documentNamespaceImplementation; // quick return
 	}
 	// determine
 	if (document.documentElement.tagName === "svg") {
 		// assume normality
-		document.adjNamespaceNormal = true;
+		documentNamespaceImplementation = "full";
 	} else {
 		// test Adj in SVG inline in HTML
 		var domParser = new DOMParser();
 		var dummyDom = domParser.parseFromString(
 '<!DOCTYPE html><html><body><svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"><adj:dummy/><rect width="30" height="20"/></svg></body></html>',
 			"text/html");
-		document.adjNamespaceNormal = dummyDom.getElementsByTagName('svg')[0].firstElementChild.namespaceURI === Adj.AdjNamespace;
+		if (dummyDom.getElementsByTagName("svg")[0].firstElementChild.namespaceURI === Adj.AdjNamespace) { // maybe someday will be lucky
+			documentNamespaceImplementation = "full";
+		} else { // Adj.SvgNamespace commonly observed
+			documentNamespaceImplementation = "obtuse";
+		};
 	}
-	return document.adjNamespaceNormal;
+	document.adjNamespaceImplementation = documentNamespaceImplementation;
+	return documentNamespaceImplementation;
 }
 //
 Adj.nameSplitByColonRegexp = /^(?:(.*?):)?(.*)$/;
