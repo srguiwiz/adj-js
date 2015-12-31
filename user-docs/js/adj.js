@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:0, revision:1 };
+Adj.version = { major:5, minor:0, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -1097,7 +1097,7 @@ Adj.defineCommandForAlgorithm({
 				}
 			}
 			if (anyMadeWider // fyi anyMadeWider only should occur if makeGrid
-				|| (anyMadeTaller && vAlign != 0)) { // anyMadeTaller only should matter if vAlign != 0
+				|| (anyMadeTaller && vAlign !== 0)) { // anyMadeTaller only should matter if vAlign !== 0
 				// try again with known columnWidths and rowHeights
 				continue tryToFitLoop;
 			}
@@ -1324,7 +1324,7 @@ Adj.defineCommandForAlgorithm({
 				}
 			}
 			if (anyMadeTaller // fyi anyMadeTaller only should occur if makeGrid
-				|| (anyMadeWider && hAlign != 0)) { // anyMadeWider only should matter if hAlign != 0
+				|| (anyMadeWider && hAlign !== 0)) { // anyMadeWider only should matter if hAlign !== 0
 				// try again with known columnWidths and rowHeights
 				continue tryToFitLoop;
 			}
@@ -1683,24 +1683,243 @@ Adj.transformLine = function transformLine (lineElement, matrix) {
 	lineElement.setAttribute("y2", Adj.decimal(point2.y));
 }
 
+// utility class
+// for Adj.transformPathSegList
+Adj.PathSegList = function PathSegList (array) {
+	this.array = array;
+	this.numberOfItems = array.length;
+}
+Adj.PathSegList.prototype.getItem = function getItem (index) {
+	return this.array[index];
+}
+
+// utility class
+// for Adj.transformPathSegList, to avoid needing createSVGPoint()
+Adj.Point = function Point (x, y) {
+	this.x = x;
+	this.y = y;
+}
+Adj.Point.prototype.matrixTransform = function matrixTransform (matrix) {
+	return {
+		x: matrix.a * this.x + matrix.c * this.y + matrix.e,
+		y: matrix.b * this.x + matrix.d * this.y + matrix.f };
+}
+
 // utility
+// returns an array
 // note: as implemented if path contains an elliptical arc curve segment then it is replaced by a line
-Adj.transformPath = function transformPath (pathElement, matrix) {
-	var theSvgElement = pathElement.ownerSVGElement || pathElement;
-	//
-	// get static base values as floating point values, before animation
-	var pathSegList = pathElement.pathSegList;
+Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 	var numberOfPathSegs = pathSegList.numberOfItems;
 	// relative coordinates must be transformed without translation's e and f
 	var absoluteMatrix = matrix;
-	var relativeMatrix = theSvgElement.createSVGMatrix();
-	relativeMatrix.a = absoluteMatrix.a;
-	relativeMatrix.b = absoluteMatrix.b;
-	relativeMatrix.c = absoluteMatrix.c;
-	relativeMatrix.d = absoluteMatrix.d;
+	// identity transform into a new copy, to avoid needing createSVGMatrix()
+	var relativeMatrix = absoluteMatrix.scale(1);
+	// keep a, b, c, d
+	relativeMatrix.e = 0;
+	relativeMatrix.f = 0;
 	// loop
-	var coordinates = theSvgElement.createSVGPoint(); // to hold coordinates to be transformed
-	var previousOriginalCoordinates = theSvgElement.createSVGPoint(); // hold in case needed for absolute horizontal or vertical lineto
+	var previousOriginalCoordinates = new Adj.Point(); // hold in case needed for absolute horizontal or vertical lineto
+	var transformedPathSegList = [];
+	for (var index = 0; index < numberOfPathSegs; index++) {
+		var pathSeg = pathSegList.getItem(index);
+		var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
+		var coordinates;
+		var coordinates1;
+		var coordinates2;
+		switch (pathSegTypeAsLetter) {
+			case 'Z':  // closepath
+			case 'z':
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter });
+				break;
+			case 'M': // moveto
+			case 'L': // lineto
+			case 'T': // smooth quadratic curveto
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x = pathSeg.x;
+				previousOriginalCoordinates.y = pathSeg.y;
+				break;
+			case 'm': // moveto
+			case 'l': // lineto
+			case 't': // smooth quadratic curveto
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				if (index !== 0) {
+					coordinates = coordinates.matrixTransform(relativeMatrix);
+				} else {
+					// first command in path data must be moveto and is absolute even if lowercase m would indicate relative
+					coordinates = coordinates.matrixTransform(absoluteMatrix);
+				}
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x += pathSeg.x;
+				previousOriginalCoordinates.y += pathSeg.y;
+				break;
+			case 'Q': // quadratic Bézier curveto
+				coordinates1 = new Adj.Point(pathSeg.x1, pathSeg.y1);
+				coordinates1 = coordinates1.matrixTransform(absoluteMatrix);
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x1: coordinates1.x,
+				   y1: coordinates1.y,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x = pathSeg.x;
+				previousOriginalCoordinates.y = pathSeg.y;
+				break;
+			case 'q': // quadratic Bézier curveto
+				coordinates1 = new Adj.Point(pathSeg.x1, pathSeg.y1);
+				coordinates1 = coordinates1.matrixTransform(relativeMatrix);
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(relativeMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x1: coordinates1.x,
+				   y1: coordinates1.y,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x += pathSeg.x;
+				previousOriginalCoordinates.y += pathSeg.y;
+				break;
+			case 'C': // cubic Bézier curveto
+				coordinates1 = new Adj.Point(pathSeg.x1, pathSeg.y1);
+				coordinates1 = coordinates1.matrixTransform(absoluteMatrix);
+				coordinates2 = new Adj.Point(pathSeg.x2, pathSeg.y2);
+				coordinates2 = coordinates2.matrixTransform(absoluteMatrix);
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x1: coordinates1.x,
+				   y1: coordinates1.y,
+				   x2: coordinates2.x,
+				   y2: coordinates2.y,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x = pathSeg.x;
+				previousOriginalCoordinates.y = pathSeg.y;
+				break;
+			case 'c': // cubic Bézier curveto
+				coordinates1 = new Adj.Point(pathSeg.x1, pathSeg.y1);
+				coordinates1 = coordinates1.matrixTransform(relativeMatrix);
+				coordinates2 = new Adj.Point(pathSeg.x2, pathSeg.y2);
+				coordinates2 = coordinates2.matrixTransform(relativeMatrix);
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(relativeMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x1: coordinates1.x,
+				   y1: coordinates1.y,
+				   x2: coordinates2.x,
+				   y2: coordinates2.y,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x += pathSeg.x;
+				previousOriginalCoordinates.y += pathSeg.y;
+				break;
+			case 'S': // smooth cubic curveto
+				coordinates2 = new Adj.Point(pathSeg.x2, pathSeg.y2);
+				coordinates2 = coordinates2.matrixTransform(absoluteMatrix);
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x2: coordinates2.x,
+				   y2: coordinates2.y,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x = pathSeg.x;
+				previousOriginalCoordinates.y = pathSeg.y;
+				break;
+			case 's': // smooth cubic curveto
+				coordinates2 = new Adj.Point(pathSeg.x2, pathSeg.y2);
+				coordinates2 = coordinates2.matrixTransform(relativeMatrix);
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(relativeMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x2: coordinates2.x,
+				   y2: coordinates2.y,
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x += pathSeg.x;
+				previousOriginalCoordinates.y += pathSeg.y;
+				break;
+			case 'H': // horizontal lineto
+				coordinates = new Adj.Point(pathSeg.x, previousOriginalCoordinates.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: 'L',
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x = pathSeg.x;
+				break;
+			case 'h': // horizontal lineto
+				coordinates = new Adj.Point(pathSeg.x, 0);
+				coordinates = coordinates.matrixTransform(relativeMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: 'l',
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x += pathSeg.x;
+				break;
+			case 'V': // vertical lineto
+				coordinates = new Adj.Point(previousOriginalCoordinates.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: 'L',
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.y = pathSeg.y;
+				break;
+			case 'v': // vertical lineto
+				coordinates = new Adj.Point(0, pathSeg.y);
+				coordinates = coordinates.matrixTransform(relativeMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: 'l',
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.y += pathSeg.y;
+				break;
+			case 'A': // elliptical arc, as implemented replace by a line
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(absoluteMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: 'L',
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x = pathSeg.x;
+				previousOriginalCoordinates.y = pathSeg.y;
+				break;
+			case 'a': // elliptical arc, as implemented replace by a line
+				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
+				coordinates = coordinates.matrixTransform(relativeMatrix);
+				transformedPathSegList.push
+				({ pathSegTypeAsLetter: 'l',
+				   x: coordinates.x,
+				   y: coordinates.y });
+				previousOriginalCoordinates.x += pathSeg.x;
+				previousOriginalCoordinates.y += pathSeg.y;
+				break;
+			default:
+		}
+	}
+	return transformedPathSegList;
+}
+
+// utility
+// returns an array
+// note: as implemented if path contains an elliptical arc curve segment then it is replaced by a line
+Adj.pathSegListToDString = function pathSegListToDString (pathSegList) {
+	var numberOfPathSegs = pathSegList.numberOfItems;
 	var d = "";
 	for (var index = 0; index < numberOfPathSegs; index++) {
 		var pathSeg = pathSegList.getItem(index);
@@ -1713,160 +1932,51 @@ Adj.transformPath = function transformPath (pathElement, matrix) {
 			case 'M': // moveto
 			case 'L': // lineto
 			case 'T': // smooth quadratic curveto
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x = pathSeg.x;
-				previousOriginalCoordinates.y = pathSeg.y;
-				break;
 			case 'm': // moveto
 			case 'l': // lineto
 			case 't': // smooth quadratic curveto
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				if (index != 0) {
-					coordinates = coordinates.matrixTransform(relativeMatrix);
-				} else {
-					// first command in path data must be moveto and is absolute even if lowercase m would indicate relative
-					coordinates = coordinates.matrixTransform(absoluteMatrix);
-				}
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x += pathSeg.x;
-				previousOriginalCoordinates.y += pathSeg.y;
+				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.x) + "," + Adj.decimal(pathSeg.y);
 				break;
 			case 'Q': // quadratic Bézier curveto
-				coordinates.x = pathSeg.x1;
-				coordinates.y = pathSeg.y1;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x = pathSeg.x;
-				previousOriginalCoordinates.y = pathSeg.y;
-				break;
 			case 'q': // quadratic Bézier curveto
-				coordinates.x = pathSeg.x1;
-				coordinates.y = pathSeg.y1;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x += pathSeg.x;
-				previousOriginalCoordinates.y += pathSeg.y;
+				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.x1) + "," + Adj.decimal(pathSeg.y1) + " " + Adj.decimal(pathSeg.x) + "," + Adj.decimal(pathSeg.y);
 				break;
 			case 'C': // cubic Bézier curveto
-				coordinates.x = pathSeg.x1;
-				coordinates.y = pathSeg.y1;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x2;
-				coordinates.y = pathSeg.y2;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x = pathSeg.x;
-				previousOriginalCoordinates.y = pathSeg.y;
-				break;
 			case 'c': // cubic Bézier curveto
-				coordinates.x = pathSeg.x1;
-				coordinates.y = pathSeg.y1;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x2;
-				coordinates.y = pathSeg.y2;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x += pathSeg.x;
-				previousOriginalCoordinates.y += pathSeg.y;
+				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.x1) + "," + Adj.decimal(pathSeg.y1) + " " + Adj.decimal(pathSeg.x2) + "," + Adj.decimal(pathSeg.y2) + " " + Adj.decimal(pathSeg.x) + "," + Adj.decimal(pathSeg.y);
 				break;
 			case 'S': // smooth cubic curveto
-				coordinates.x = pathSeg.x2;
-				coordinates.y = pathSeg.y2;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x = pathSeg.x;
-				previousOriginalCoordinates.y = pathSeg.y;
-				break;
 			case 's': // smooth cubic curveto
-				coordinates.x = pathSeg.x2;
-				coordinates.y = pathSeg.y2;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += pathSegTypeAsLetter + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += " " + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x += pathSeg.x;
-				previousOriginalCoordinates.y += pathSeg.y;
+				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.x2) + "," + Adj.decimal(pathSeg.y2) + " " + Adj.decimal(pathSeg.x) + "," + Adj.decimal(pathSeg.y);
 				break;
 			case 'H': // horizontal lineto
-				coordinates.x = pathSeg.x;
-				coordinates.y = previousOriginalCoordinates.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += "L" + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x = pathSeg.x;
-				break;
 			case 'h': // horizontal lineto
-				coordinates.x = pathSeg.x;
-				coordinates.y = 0;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += "l" + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x += pathSeg.x;
+				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.x);
 				break;
 			case 'V': // vertical lineto
-				coordinates.x = previousOriginalCoordinates.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += "L" + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.y = pathSeg.y;
-				break;
 			case 'v': // vertical lineto
-				coordinates.x = 0;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(relativeMatrix);
-				d += "l" + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.y += pathSeg.y;
+				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.y);
 				break;
-			case 'A': // elliptical arc, as implemented replaced by a line
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				d += 'L' + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x = pathSeg.x;
-				previousOriginalCoordinates.y = pathSeg.y;
+			case 'A': // elliptical arc, as implemented replace by a line
+				d += "L" + Adj.decimal(pathSeg.x) + "," + Adj.decimal(pathSeg.y);
 				break;
-			case 'a': // elliptical arc, as implemented replaced by a line
-				coordinates.x = pathSeg.x;
-				coordinates.y = pathSeg.y;
-				if (index != 0) {
-					coordinates = coordinates.matrixTransform(relativeMatrix);
-				} else {
-					// first command in path data must be moveto and is absolute even if lowercase m would indicate relative
-					coordinates = coordinates.matrixTransform(absoluteMatrix);
-				}
-				d += 'l' + Adj.decimal(coordinates.x) + "," + Adj.decimal(coordinates.y);
-				previousOriginalCoordinates.x += pathSeg.x;
-				previousOriginalCoordinates.y += pathSeg.y;
+			case 'a': // elliptical arc, as implemented replace by a line
+				d += "l" + Adj.decimal(pathSeg.x) + "," + Adj.decimal(pathSeg.y);
 				break;
 			default:
 		}
+		d += " ";
 	}
+	return d;
+}
+
+// utility
+// note: as implemented if path contains an elliptical arc curve segment then it is replaced by a line
+Adj.transformPath = function transformPath (pathElement, matrix) {
+	// get static base values as floating point values, before animation
+	var transformedPathSegList = Adj.transformPathSegList(pathElement.pathSegList, matrix);
+	transformedPathSegList = new Adj.PathSegList(transformedPathSegList);
+	var d = Adj.pathSegListToDString(transformedPathSegList);
 	pathElement.setAttribute("d", d);
 }
 
@@ -2141,20 +2251,20 @@ Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
 	} else {
 		dy = 0;
 	}
-	if (dx == 0 && dy == 0) { // overlap
+	if (dx === 0 && dy === 0) { // overlap
 		var ox1 = r1x1 > r2x1 ? r1x1 : r2x1;
 		var ox2 = r1x2 < r2x2 ? r1x2 : r2x2;
 		var oy1 = r1y1 > r2y1 ? r1y1 : r2y1;
 		var oy2 = r1y2 < r2y2 ? r1y2 : r2y2;
 		overlap = (ox2 - ox1) * (oy2 - oy1);
 		distance = 0; // if overlap then distance = 0
-	} else if (dx == 0) { // dy != 0
+	} else if (dx === 0) { // dy !== 0
 		overlap = 0;
 		distance = dy;
-	} else if (dy == 0) { // dx != 0
+	} else if (dy === 0) { // dx !== 0
 		overlap = 0;
 		distance = dx;
-	} else { // dx != 0 && dy != 0
+	} else { // dx !== 0 && dy !== 0
 		overlap = 0;
 		distance = Math.sqrt(dx * dx + dy * dy);
 	}
@@ -2381,7 +2491,7 @@ Adj.defineCommandForAlgorithm({
 				}
 				// found it
 				path = sibling;
-				break; // findFirstSiblingLoop
+				break; // find first sibling loop
 			}
 			//
 			if (considerElementsToAvoid) {
@@ -2878,7 +2988,7 @@ Adj.defineCommandForAlgorithm({
 		}
 		// figure radius
 		var treeRadius = trunkRecord.boundingCircle.r + rGap + maxBranchRadius;
-		var necessaryRadius = Math.ceil((maxBranchRadius + cGap / 2) / Math.sin(Math.abs(angleStep) / 2 / 180 * Math.PI));
+		var necessaryRadius = Math.ceil((maxBranchRadius + cGap / 2) / Math.sin(Math.abs(angleStep) / 2 * Math.PI / 180));
 		if (necessaryRadius > treeRadius) {
 			treeRadius = necessaryRadius;
 		}
@@ -2904,8 +3014,8 @@ Adj.defineCommandForAlgorithm({
 			} else {
 				var wiggleR = maxBranchRadius - childBoundingCircleR;
 				var currentRadius = treeRadius - wiggleR + rAlign * 2 * wiggleR;
-				placedChildCx = treeCenterX + currentRadius * Math.cos(currentAngle / 180 * Math.PI);
-				placedChildCy = treeCenterY + currentRadius * Math.sin(currentAngle / 180 * Math.PI);
+				placedChildCx = treeCenterX + currentRadius * Math.cos(currentAngle * Math.PI / 180);
+				placedChildCy = treeCenterY + currentRadius * Math.sin(currentAngle * Math.PI / 180);
 				currentAngle += angleStep; // increment
 			}
 			// now we know where to put it
@@ -4529,10 +4639,7 @@ Adj.defineCommandForAlgorithm({
 			// first time store if first time
 			Adj.firstTimeStoreAuthoringCoordinates(element);
 			//
-			var authoringD = Adj.elementGetAttributeInAdjNS(element, "d");
-			if (!authoringD) {
-				authoringD = "";
-			}
+			var authoringD = Adj.elementGetAttributeInAdjNS(element, "d") || "";
 			var dWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(element, authoringD, "used in attribute adj:d= for a path element", variableSubstitutionsByName, idedElementRecordsById);
 			//
 			element.setAttribute("d", dWithArithmeticEvaluated);
@@ -5140,8 +5247,8 @@ Adj.defineCommandForAlgorithm({
 		var alpha = Adj.doVarsArithmetic(element, parametersObject.alpha, 30, null, usedHow, variableSubstitutionsByName); // default alpha = 30
 		var beta = Adj.doVarsArithmetic(element, parametersObject.beta, 0, null, usedHow, variableSubstitutionsByName); // default beta = 0
 		//
-		alpha = alpha / 180 * Math.PI;
-		beta = beta / 180 * Math.PI;
+		alpha = alpha * Math.PI / 180;
+		beta = beta * Math.PI / 180;
 		var a = Math.cos(alpha);
 		var b = Math.sin(alpha);
 		var c = -Math.sin(beta);
@@ -5746,9 +5853,9 @@ Adj.defineCommandForAlgorithm({
 				var toPointRelativeY = currentChildPositioningBox.height * toY;
 				//
 				var boomAngle = boomConfiguration.angle;
-				// note: % 180 to avoid result 6.123233995736766e-17 != 0
-				var cosine = (boomAngle - 90) % 180 ? Math.cos(boomAngle / 180 * Math.PI) : 0;
-				var sine = boomAngle % 180 ? Math.sin(boomAngle / 180 * Math.PI) : 0;
+				// note: % 180 to avoid result 6.123233995736766e-17 !== 0
+				var cosine = (boomAngle - 90) % 180 ? Math.cos(boomAngle * Math.PI / 180) : 0;
+				var sine = boomAngle % 180 ? Math.sin(boomAngle * Math.PI / 180) : 0;
 				var boomGap = boomConfiguration.gap;
 				//
 				var currentTreeParentBranchBox = currentTreeParentRecord.branchBox; // from
@@ -6778,6 +6885,612 @@ Adj.runtimeId = (function () {
 		return object.adjRuntimeId || (object.adjRuntimeId = nextRuntimeId++);
 	};
 })();
+
+// utility
+Adj.normalizeDirection = function normalizeDirection(direction) {
+	if (isNaN(direction.l)) {
+		// l as in length of direction vector
+		var l = Math.sqrt(Math.pow(direction.x, 2) + Math.pow(direction.y, 2));
+		direction.x /= l;
+		direction.y /= l;
+		direction.l = 1;
+		direction.o = l; // o as in original length of direction vector
+		if (isFinite(direction.x) && isFinite(direction.y)) { // normal case
+			return;
+		} else if (isFinite(direction.x)) {
+			direction.x = 0;
+			direction.y = Math.sign(direction.y);
+		} else if (isFinite(direction.y)) {
+			direction.x = Math.sign(direction.x);
+			direction.y = 0;
+		} else {
+			direction.l = 0; // no identifiable direction
+			direction.x = 0;
+			direction.y = 0;
+		}
+	}
+}
+
+// utility
+// returns new objects
+Adj.rightAndLeftOffsetPoints = function rightAndLeftOffsetPoints (point, offset, direction1) {
+	var directionArgument = 2;
+	var argumentsLength = arguments.length;
+	var numberOfDirectionArguments = argumentsLength - directionArgument;
+	var directionX = 0;
+	var directionY = 0;
+	var identifiableDirections = 0;
+	for (var i = directionArgument; i < argumentsLength; i++) { // any number of directions
+		var d = arguments[i];
+		Adj.normalizeDirection(d);
+		directionX += d.x;
+		directionY += d.y;
+		identifiableDirections += d.l;
+	}
+	var direction = { x: directionX, y:  directionY };
+	Adj.normalizeDirection(direction);
+	//
+	if (numberOfDirectionArguments === 2 && identifiableDirections === 2) { // if exactly two directions
+		// determine angle between directions
+		var secantOfHalfAngle = identifiableDirections / direction.o;
+		// make offset longer, e.g. 90°/2 == 45° gets *√2, yet limit to not too long
+		offset *= Math.min(secantOfHalfAngle, 2.0);
+	}
+	//
+	var offsetX = - offset * direction.y;
+	var offsetY = offset * direction.x;
+	return {
+		right: { x: point.x + offsetX, y: point.y + offsetY },
+		left: { x: point.x - offsetX, y: point.y - offsetY },
+		direction: direction
+	};
+}
+
+// utility
+// modifies point
+Adj.shiftPoint = function shiftPoint (point, offset, direction) {
+	Adj.normalizeDirection(direction);
+	point.x += offset * direction.x;
+	point.y += offset * direction.y;
+}
+
+// utility
+// assumes pathSegList to be absolute segments only of types M, L, C, Q
+Adj.reversePathSegList = function reversePathSegList (pathSegList) {
+	var numberOfPathSegs = pathSegList.numberOfItems;
+	var reversedPathSegList = [];
+	var pathSeg = pathSegList.getItem(numberOfPathSegs - 1);
+	reversedPathSegList.push({ pathSegTypeAsLetter: 'M', x: pathSeg.x, y: pathSeg.y });
+	for (var index = numberOfPathSegs - 2; index >= 0; index--) {
+		var precedingPathSeg = pathSegList.getItem(index);
+		var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
+		switch (pathSegTypeAsLetter) {
+			case 'M':
+			case 'L':
+				reversedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x: precedingPathSeg.x, y: precedingPathSeg.y });
+				break;
+			case 'C':
+				reversedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x1: pathSeg.x2, y1: pathSeg.y2,
+				   x2: pathSeg.x1, y2: pathSeg.y1,
+				   x: precedingPathSeg.x, y: precedingPathSeg.y });
+				break;
+			case 'Q':
+				reversedPathSegList.push
+				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+				   x1: pathSeg.x1, y1: pathSeg.y1,
+				   x: precedingPathSeg.x, y: precedingPathSeg.y });
+				break;
+			default:
+				// not dealing with other types, for now
+		}
+		pathSeg = precedingPathSeg;
+	}
+	return reversedPathSegList;
+}
+
+// a specific algorithm
+// note: as implemented only some kinds of path segments are supported
+Adj.defineCommandForAlgorithm({
+	algorithmName: "pathArrow",
+	notAnOrder1Element: true,
+	phaseHandlerNames: ["adjPhase7Up"],
+	parameters: ["path",
+				 "setback", "nockSetback", "pointSetback"],
+	methods: [function pathArrow (element, parametersObject) {
+		var theSvgElement = element.ownerSVGElement || element;
+		//
+		var usedHow = "used in a parameter for a pathArrow command";
+		var variableSubstitutionsByName = {};
+		var idedElementRecordsById = {};
+		var pathId = parametersObject.path;
+		var setback = Adj.doVarsArithmetic(element, parametersObject.setback, 0, null, usedHow, variableSubstitutionsByName); // default setback = 0
+		var nockSetback = Adj.doVarsArithmetic(element, parametersObject.nockSetback, setback, null, usedHow, variableSubstitutionsByName); // default nockSetback = setback
+		var pointSetback = Adj.doVarsArithmetic(element, parametersObject.pointSetback, setback, null, usedHow, variableSubstitutionsByName); // default pointSetback = setback
+		//
+		var arrowElement = element; // the arrow shape, a path itself, part of which will be bent
+		if (!(arrowElement instanceof SVGPathElement)) {
+			throw "not a path given as arrow shape for a pathArrow command";
+		}
+		//
+		var pathElement; // the path to follow
+		if (pathId) { // path id given
+			// general case
+			pathElement = Adj.getElementByIdNearby(pathId, element);
+			if (!pathElement) {
+				throw "nonresolving id \"" + pathId + "\" used in parameter path= for a pathArrow command";
+			}
+			if (!(pathElement instanceof SVGPathElement)) {
+				throw "not a path at id \"" + pathId + "\" used in parameter path= for a pathArrow command";
+			}
+		} else { // no path id given
+			// simplified case
+			var pathElement = element.previousElementSibling;
+			if (!(pathElement instanceof SVGPathElement)) { // also if !pathElement
+				throw "no path to follow given for a pathArrow command";
+			}
+		}
+		//
+		// first time store if first time
+		Adj.firstTimeStoreAuthoringCoordinates(arrowElement);
+		var authoringD = Adj.elementGetAttributeInAdjNS(arrowElement, "d") || "";
+		var dWithArithmeticEvaluated = Adj.doVarsIdsArithmetic(arrowElement, authoringD, "used in attribute adj:d= for a path element", variableSubstitutionsByName, idedElementRecordsById);
+		arrowElement.setAttribute("d", dWithArithmeticEvaluated);
+		//
+		// nock, left line forward, point, right line backward
+		var arrowPathSegListParts = [ [], [], [], [] ];
+		// loop to parse into pieces
+		// get static base values as floating point values, before animation
+		var pathSegList = arrowElement.pathSegList; // the arrow shape, a path to bend
+		var numberOfPathSegs = pathSegList.numberOfItems;
+		var pathSegListParts = arrowPathSegListParts;
+		var previousCoordinates = theSvgElement.createSVGPoint(); // keep track for when needed for converting absolute to relative, initialized to 0,0
+		for (var index = 0, partNumber = 0, pathSegListPart = pathSegListParts[partNumber]; index < numberOfPathSegs; index++) {
+			var pathSeg = pathSegList.getItem(index);
+			var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
+			switch (pathSegTypeAsLetter) {
+				case 'Z':  // closepath
+				case 'z':
+					if (index < numberOfPathSegs - 1) {
+						throw "premature use of path segment type '" + pathSegTypeAsLetter + "' in arrow shape for a pathArrow command";
+					}
+					pathSegListPart.push({ pathSegTypeAsLetter: pathSegTypeAsLetter });
+					break;
+				case 'M': // moveto
+				case 'L': // lineto
+				case 'T': // smooth quadratic curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y });
+					previousCoordinates.x = pathSeg.x;
+					previousCoordinates.y = pathSeg.y;
+					break;
+				case 'm': // moveto
+				case 'l': // lineto
+				case 't': // smooth quadratic curveto
+					if (pathSegTypeAsLetter === 'l') {
+						if (pathSeg.x == 0 && pathSeg.y == 0) { // 'l' relative line to 0,0 marker to indicate next part
+							partNumber++;
+							if (partNumber >= pathSegListParts.length) {
+								throw "too many 'l' relative line to 0,0 markers in arrow shape for a pathArrow command";
+							}
+							pathSegListPart = pathSegListParts[partNumber];
+							pathSegListPart.push
+							({ pathSegTypeAsLetter: 'M',
+							   x: previousCoordinates.x, y: previousCoordinates.y });
+							break;
+						}
+					}
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y });
+					previousCoordinates.x += pathSeg.x;
+					previousCoordinates.y += pathSeg.y;
+					break;
+				case 'Q': // quadratic Bézier curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y,
+					   x1: pathSeg.x1, y1: pathSeg.y1 });
+					previousCoordinates.x = pathSeg.x;
+					previousCoordinates.y = pathSeg.y;
+					break;
+				case 'q': // quadratic Bézier curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y,
+					   x1: pathSeg.x1, y1: pathSeg.y1 });
+					previousCoordinates.x += pathSeg.x;
+					previousCoordinates.y += pathSeg.y;
+					break;
+				case 'C': // cubic Bézier curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y,
+					   x1: pathSeg.x1, y1: pathSeg.y1,
+					   x2: pathSeg.x2, y2: pathSeg.y2 });
+					previousCoordinates.x = pathSeg.x;
+					previousCoordinates.y = pathSeg.y;
+					break;
+				case 'c': // cubic Bézier curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y,
+					   x1: pathSeg.x1, y1: pathSeg.y1,
+					   x2: pathSeg.x2, y2: pathSeg.y2 });
+					previousCoordinates.x += pathSeg.x;
+					previousCoordinates.y += pathSeg.y;
+					break;
+				case 'S': // smooth cubic curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y,
+					   x2: pathSeg.x2, y2: pathSeg.y2 });
+					previousCoordinates.x = pathSeg.x;
+					previousCoordinates.y = pathSeg.y;
+					break;
+				case 's': // smooth cubic curveto
+					pathSegListPart.push
+					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+					   x: pathSeg.x, y: pathSeg.y,
+					   x2: pathSeg.x2, y2: pathSeg.y2 });
+					previousCoordinates.x += pathSeg.x;
+					previousCoordinates.y += pathSeg.y;
+					break;
+				default:
+					throw "unsupported path segment type '" + pathSegTypeAsLetter + "' used in arrow shape for a pathArrow command";
+			}
+		}
+		if (partNumber < pathSegListParts.length - 1) {
+			throw "not enough 'l' relative line to 0,0 markers in arrow shape for a pathArrow command";
+		}
+		var nockPathSegList = arrowPathSegListParts[0];
+		var leftPathSegList = arrowPathSegListParts[1];
+		var pointPathSegList = arrowPathSegListParts[2];
+		var rightPathSegList = arrowPathSegListParts[3];
+		var nockRightCorner = nockPathSegList[0]; // while a PathSeg nevertheless has .x and .y like a point
+		var nockLeftCorner = leftPathSegList[0];
+		var pointLeftCorner = pointPathSegList[0];
+		var pointRightCorner = rightPathSegList[0];
+		var nockBaseWidth = Adj.decimal(Math.sqrt(Math.pow(nockLeftCorner.x - nockRightCorner.x, 2) + Math.pow(nockLeftCorner.y - nockRightCorner.y, 2)), 3);
+		var pointBaseWidth = Adj.decimal(Math.sqrt(Math.pow(pointRightCorner.x - pointLeftCorner.x, 2) + Math.pow(pointRightCorner.y - pointLeftCorner.y, 2)), 3);
+		if (nockBaseWidth !== pointBaseWidth) {
+			throw "mismatched nock width and point width in arrow shape for a pathArrow command";
+		}
+		var lineOffset = nockBaseWidth / 2;
+		//
+		var pathSegList = pathElement.pathSegList;
+		var numberOfPathSegs = pathSegList.numberOfItems;
+		if (numberOfPathSegs < 2) {
+			throw "not enough path segments in path to follow for a pathArrow command";
+		}
+		var leftPathSegList = [];
+		var rightPathSegList = [];
+		var previousCoordinates = theSvgElement.createSVGPoint(); // keep track for when needed for converting absolute to relative, initialized to 0,0
+		var previousDirection;
+		var previousLeftCoordinates = theSvgElement.createSVGPoint(); // initialized to 0,0
+		var previousRightCoordinates = theSvgElement.createSVGPoint(); // initialized to 0,0
+		var nextPathSeg = pathSegList.getItem(0);
+		// first command in path data must be moveto and is absolute even if lowercase m would indicate relative
+		if (nextPathSeg.pathSegTypeAsLetter.toUpperCase() === 'M') {
+			nextPathSeg = { pathSegTypeAsLetter: 'M', x: nextPathSeg.x, y: nextPathSeg.y }; // normalize
+		} else {
+			throw "missing initial path segment type 'M' in path to follow for a pathArrow command";
+		}
+		for (var index = 0; index < numberOfPathSegs; index++) {
+			var pathSeg = nextPathSeg;
+			var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
+			//
+			// need exitCoordinates to be able to determine all kinds of nextDirection
+			var exitCoordinates;
+			switch (pathSegTypeAsLetter) {
+				case 'M':
+				case 'L':
+				case 'C':
+				case 'Q':
+					exitCoordinates = { x: pathSeg.x, y: pathSeg.y };
+					break;
+					// if relative then would be
+					//exitCoordinates = { x: previousCoordinates.x + pathSeg.x, y: previousCoordinates.y + pathSeg.y };
+				default:
+					// other and unsupported path segment types dealt with by nextPathSegTypeAsLetter
+			}
+			var nextDirection;
+			var nextIndex = index + 1;
+			if (nextIndex < numberOfPathSegs) {
+				var nextPathSeg = pathSegList.getItem(nextIndex);
+				var nextPathSegTypeAsLetter = nextPathSeg.pathSegTypeAsLetter;
+				// while at it, make all absolute to ease reversing;
+				// other sections of this method now depend on this section making all absolute
+				switch (nextPathSegTypeAsLetter) {
+					case 'L':
+						nextDirection = { x: nextPathSeg.x - exitCoordinates.x, y: nextPathSeg.y - exitCoordinates.y };
+						break;
+					case 'C':
+					case 'Q':
+						nextDirection = { x: nextPathSeg.x1 - exitCoordinates.x, y: nextPathSeg.y1 - exitCoordinates.y };
+						break;
+					case 'l':
+						nextDirection = { x: nextPathSeg.x, y: nextPathSeg.y };
+						// make absolute
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'L',
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'c':
+						nextDirection = { x: nextPathSeg.x1, y: nextPathSeg.y1 };
+						// make absolute
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'C',
+						  x1: exitCoordinates.x + nextPathSeg.x1, y1: exitCoordinates.y + nextPathSeg.y1,
+						  x2: exitCoordinates.x + nextPathSeg.x2, y2: exitCoordinates.y + nextPathSeg.y2,
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'q':
+						nextDirection = { x: nextPathSeg.x1, y: nextPathSeg.y1 };
+						// make absolute
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'Q',
+						  x1: exitCoordinates.x + nextPathSeg.x1, y1: exitCoordinates.y + nextPathSeg.y1,
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'S':
+						nextDirection = { x: pathSeg.x - pathSeg.x2, y: pathSeg.y - pathSeg.y2 };
+						// replace shorthand to ease reversing
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'C',
+						  x1: exitCoordinates.x + nextDirection.x, y1: exitCoordinates.y + nextDirection.y,
+						  x2: nextPathSeg.x2, y2: nextPathSeg.y2,
+						  x: nextPathSeg.x, y: nextPathSeg.y };
+						break;
+					case 's':
+						nextDirection = { x: pathSeg.x - pathSeg.x2, y: pathSeg.y - pathSeg.y2 };
+						// replace shorthand to ease reversing
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'C',
+						  x1: exitCoordinates.x + nextDirection.x, y1: exitCoordinates.y + nextDirection.y,
+						  x2: exitCoordinates.x + nextPathSeg.x2, y2: exitCoordinates.y + nextPathSeg.y2,
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'T':
+						nextDirection = { x: pathSeg.x - pathSeg.x1, y: pathSeg.y - pathSeg.y1 };
+						// replace shorthand to ease reversing
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'Q',
+						  x1: exitCoordinates.x + nextDirection.x, y1: exitCoordinates.y + nextDirection.y,
+						  x: nextPathSeg.x, y: nextPathSeg.y };
+						break;
+					case 't':
+						nextDirection = { x: pathSeg.x - pathSeg.x1, y: pathSeg.y - pathSeg.y1 };
+						// replace shorthand to ease reversing
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'Q',
+						  x1: exitCoordinates.x + nextDirection.x, y1: exitCoordinates.y + nextDirection.y,
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'H':
+						nextDirection = { x: nextPathSeg.x - exitCoordinates.x, y: 0 };
+						// replace shorthand
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'L',
+						  x: nextPathSeg.x, y: exitCoordinates.y };
+						break;
+					case 'h':
+						nextDirection = { x: nextPathSeg.x, y: 0 };
+						// replace shorthand
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'L',
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y };
+						break;
+					case 'V':
+						nextDirection = { x: 0, y: nextPathSeg.y - exitCoordinates.y };
+						// replace shorthand
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'L',
+						  x: exitCoordinates.x, y: nextPathSeg.y };
+						break;
+					case 'v':
+						nextDirection = { x: 0, y: nextPathSeg.y };
+						// replace shorthand
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'L',
+						  x: exitCoordinates.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'A': // elliptical arc, as implemented replace by a line
+						nextDirection = { x: nextPathSeg.x - exitCoordinates.x, y: nextPathSeg.y - exitCoordinates.y };
+						// replace
+						nextPathSeg = { pathSegTypeAsLetter: 'L', x: exitCoordinates.x, y: exitCoordinates.y };
+						break;
+					case 'a': // elliptical arc, as implemented replace by a line
+						nextDirection = { x: nextPathSeg.x, y: nextPathSeg.y };
+						// replace
+						nextPathSeg =
+						{ pathSegTypeAsLetter: 'L',
+						  x: exitCoordinates.x + nextPathSeg.x, y: exitCoordinates.y + nextPathSeg.y };
+						break;
+					case 'M': // moveto
+					case 'm': // moveto
+						throw "unsupported use of path segment type '" + nextPathSegTypeAsLetter + "' in path to follow for a pathArrow command";
+					case 'Z':  // closepath
+					case 'z':
+						// no support for closepath, for now at least
+					default:
+						throw "unsupported path segment type '" + nextPathSegTypeAsLetter + "' used in path to follow for a pathArrow command";
+				}
+			} else { // nextIndex === numberOfPathSegs
+				nextDirection = { x: 0, y: 0 };
+			}
+			//
+			//var entryDirection;
+			var exitDirection;
+			var overallDirection;
+			var coordinates1;
+			var coordinates2;
+			var rightAndLeftCoordinates;
+			var rightAndLeftCoordinates1;
+			var rightAndLeftCoordinates2;
+			var rightCoordinates;
+			var rightCoordinates1;
+			var rightCoordinates2;
+			var leftCoordinates;
+			var leftCoordinates1;
+			var leftCoordinates2;
+			var nockRightAndLeftCoordinates;
+			var pointRightAndLeftCoordinates;
+			switch (pathSegTypeAsLetter) {
+				case 'L': // lineto
+					exitDirection = { x: exitCoordinates.x - previousCoordinates.x, y: exitCoordinates.y - previousCoordinates.y };
+					if (nextIndex === numberOfPathSegs && pointSetback) {
+						Adj.shiftPoint(exitCoordinates, -pointSetback, exitDirection);
+					}
+					//
+					rightAndLeftCoordinates =
+						Adj.rightAndLeftOffsetPoints
+						(exitCoordinates, lineOffset, exitDirection, nextDirection);
+					rightCoordinates = rightAndLeftCoordinates.right;
+					leftCoordinates = rightAndLeftCoordinates.left;
+					//
+					leftPathSegList.push
+					({ pathSegTypeAsLetter: 'L',
+					   x: leftCoordinates.x, y: leftCoordinates.y });
+					rightPathSegList.push
+					({ pathSegTypeAsLetter: 'L',
+					   x: rightCoordinates.x, y: rightCoordinates.y });
+					break;
+				case 'C': // cubic Bézier curveto
+					exitDirection = { x: exitCoordinates.x - pathSeg.x2, y: exitCoordinates.y - pathSeg.y2 };
+					overallDirection = { x: exitCoordinates.x - previousCoordinates.x, y: exitCoordinates.y - previousCoordinates.y };
+					coordinates1 = new Adj.Point(pathSeg.x1, pathSeg.y1);
+					coordinates2 = new Adj.Point(pathSeg.x2, pathSeg.y2);
+					if (nextIndex === numberOfPathSegs && pointSetback) {
+						Adj.shiftPoint(exitCoordinates, -pointSetback, exitDirection);
+					}
+					//
+					rightAndLeftCoordinates =
+						Adj.rightAndLeftOffsetPoints
+						(exitCoordinates, lineOffset, exitDirection, nextDirection);
+					rightCoordinates = rightAndLeftCoordinates.right;
+					leftCoordinates = rightAndLeftCoordinates.left;
+					//
+					rightAndLeftCoordinates1 =
+						Adj.rightAndLeftOffsetPoints
+						(coordinates1, lineOffset, overallDirection);
+					rightCoordinates1 = rightAndLeftCoordinates1.right;
+					leftCoordinates1 = rightAndLeftCoordinates1.left;
+					//
+					rightAndLeftCoordinates2 =
+						Adj.rightAndLeftOffsetPoints
+						(coordinates2, lineOffset, overallDirection);
+					rightCoordinates2 = rightAndLeftCoordinates2.right;
+					leftCoordinates2 = rightAndLeftCoordinates2.left;
+					//
+					leftPathSegList.push
+					({ pathSegTypeAsLetter: 'C',
+					   x1: leftCoordinates1.x, y1: leftCoordinates1.y,
+					   x2: leftCoordinates2.x, y2: leftCoordinates2.y,
+					   x: leftCoordinates.x, y: leftCoordinates.y });
+					rightPathSegList.push
+					({ pathSegTypeAsLetter: 'C',
+					   x1: rightCoordinates1.x, y1: rightCoordinates1.y,
+					   x2: rightCoordinates2.x, y2: rightCoordinates2.y,
+					   x: rightCoordinates.x, y: rightCoordinates.y });
+					break;
+				case 'Q': // quadratic Bézier curveto
+					exitDirection = { x: exitCoordinates.x - pathSeg.x1, y: exitCoordinates.y - pathSeg.y1 };
+					overallDirection = { x: exitCoordinates.x - previousCoordinates.x, y: exitCoordinates.y - previousCoordinates.y };
+					coordinates1 = new Adj.Point(pathSeg.x1, pathSeg.y1);
+					if (nextIndex === numberOfPathSegs && pointSetback) {
+						Adj.shiftPoint(exitCoordinates, -pointSetback, exitDirection);
+					}
+					//
+					rightAndLeftCoordinates =
+						Adj.rightAndLeftOffsetPoints
+						(exitCoordinates, lineOffset, exitDirection, nextDirection);
+					rightCoordinates = rightAndLeftCoordinates.right;
+					leftCoordinates = rightAndLeftCoordinates.left;
+					//
+					rightAndLeftCoordinates1 =
+						Adj.rightAndLeftOffsetPoints
+						(coordinates1, lineOffset, overallDirection);
+					rightCoordinates1 = rightAndLeftCoordinates1.right;
+					leftCoordinates1 = rightAndLeftCoordinates1.left;
+					//
+					leftPathSegList.push
+					({ pathSegTypeAsLetter: 'Q',
+					   x1: leftCoordinates1.x, y1: leftCoordinates1.y,
+					   x: leftCoordinates.x, y: leftCoordinates.y });
+					rightPathSegList.push
+					({ pathSegTypeAsLetter: 'Q',
+					   x1: rightCoordinates1.x, y1: rightCoordinates1.y,
+					   x: rightCoordinates.x, y: rightCoordinates.y });
+					break;
+				case 'M': // moveto
+					// as implemented getting here means first path segment
+					exitDirection = nextDirection;
+					if (index === 0 && nockSetback) {
+						Adj.shiftPoint(exitCoordinates, nockSetback, nextDirection);
+					}
+					//
+					rightAndLeftCoordinates =
+						Adj.rightAndLeftOffsetPoints
+						(exitCoordinates, lineOffset, nextDirection);
+					rightCoordinates = rightAndLeftCoordinates.right;
+					leftCoordinates = rightAndLeftCoordinates.left;
+					//
+					leftPathSegList.push
+					({ pathSegTypeAsLetter: 'M',
+					   x: leftCoordinates.x, y: leftCoordinates.y });
+					rightPathSegList.push
+					({ pathSegTypeAsLetter: 'M',
+					   x: rightCoordinates.x, y: rightCoordinates.y });
+					if (index === 0) {
+						nockRightAndLeftCoordinates = rightAndLeftCoordinates;
+					}
+					break;
+				default:
+					// other and unsupported path segment types dealt with by nextPathSegTypeAsLetter
+			}
+			pointRightAndLeftCoordinates = rightAndLeftCoordinates;
+			//
+			// iterate
+			previousCoordinates = exitCoordinates;
+			previousDirection = exitDirection;
+			previousLeftCoordinates = leftCoordinates;
+			previousRightCoordinates = rightCoordinates;
+		}
+		//
+		rightPathSegList = Adj.reversePathSegList(new Adj.PathSegList(rightPathSegList));
+		//
+		var nockRightCornerOnPath = nockRightAndLeftCoordinates.right;
+		var nockDirection = nockRightAndLeftCoordinates.direction;
+		var nockPlacementMatrix =
+			theSvgElement.createSVGMatrix()
+			.translate(nockRightCornerOnPath.x, nockRightCornerOnPath.y)
+			.rotate(Math.atan2(nockDirection.y, nockDirection.x) * 180 / Math.PI)
+			.translate(-nockRightCorner.x, -nockRightCorner.y);
+		nockPathSegList = Adj.transformPathSegList(new Adj.PathSegList(nockPathSegList), nockPlacementMatrix);
+		//
+		var pointLeftCornerOnPath = pointRightAndLeftCoordinates.left;
+		var pointDirection = pointRightAndLeftCoordinates.direction;
+		var pointPlacementMatrix =
+			theSvgElement.createSVGMatrix()
+			.translate(pointLeftCornerOnPath.x, pointLeftCornerOnPath.y)
+			.rotate(Math.atan2(pointDirection.y, pointDirection.x) * 180 / Math.PI)
+			.translate(-pointLeftCorner.x, -pointLeftCorner.y);
+		pointPathSegList = Adj.transformPathSegList(new Adj.PathSegList(pointPathSegList), pointPlacementMatrix);
+		//
+		leftPathSegList[0].pathSegTypeAsLetter = 'L';
+		pointPathSegList[0].pathSegTypeAsLetter = 'L';
+		rightPathSegList[0].pathSegTypeAsLetter = 'L';
+		var pathSegList = nockPathSegList.concat(leftPathSegList, pointPathSegList, rightPathSegList);
+		pathSegList = new Adj.PathSegList(pathSegList);
+		var d = Adj.pathSegListToDString(pathSegList);
+		arrowElement.setAttribute("d", d);
+	}]
+});
 
 // make available
 window.Adj = Adj;

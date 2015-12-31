@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvgAndStashIfNoStashYet();" width="200" height="80">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="80" fill="linen"/>
+	<path d="M15,20 q30,0 30,30 l50,0 30,-30 30,0" stroke="none" fill="none"/>
+	<path d="M0,0" adj:d="M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z" stroke="black" stroke-width="1" fill="white">
+		<adj:pathArrow/>
+	</path>
+	<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doSvgAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%2280%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%2280%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cpath%20d%3D%22M15%2C20%20q30%2C0%2030%2C30%20l50%2C0%2030%2C-30%2030%2C0%22%20stroke%3D%22none%22%20fill%3D%22none%22%2F%3E%0A%09%3Cpath%20d%3D%22M15%2C25%20l5%2C-5%20l-5%2C-5%20L15%2C15%20Q48.536%2C16.464%2050%2C45%20L92.929%2C45%20L122.929%2C15%20L155%2C15%20L155%2C15%20l5%2C5%20l-5%2C5%20L155%2C25%20L127.071%2C25%20L97.071%2C55%20L40%2C55%20Q41.464%2C23.536%2015%2C25%20%22%20adj%3Ad%3D%22M50%2C25%20l5%2C-5%20%2C-5%2C-5%200%2C0%2020%2C0%200%2C0%205%2C5%20%2C-5%2C5%200%2C0%20z%22%20stroke%3D%22black%22%20stroke-width%3D%221%22%20fill%3D%22white%22%3E%0A%09%09%3Cadj%3ApathArrow%2F%3E%0A%09%3C%2Fpath%3E%0A%3C%2Fsvg%3E-->
+</svg>

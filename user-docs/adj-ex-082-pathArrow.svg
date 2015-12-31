@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="80">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<rect width="200" height="80" fill="linen"/>
+	<path d="M15,20 q30,0 30,30 l50,0 30,-30 30,0" stroke="none" fill="none"/>
+	<path d="M15,25 l5,-5 l-5,-5 L15,15 Q48.536,16.464 50,45 L92.929,45 L122.929,15 L155,15 L155,15 l5,5 l-5,5 L155,25 L127.071,25 L97.071,55 L40,55 Q41.464,23.536 15,25 " adj:d="M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z" stroke="black" stroke-width="1" fill="white">
+		<adj:pathArrow/>
+	</path>
+</svg>
