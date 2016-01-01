@@ -1,7 +1,7 @@
 ﻿//
 // Simplified BSD License
 //
-// Copyright (c) 2002-2015, Nirvana Research
+// Copyright (c) 2002-2016, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -193,6 +193,10 @@ Adj.whitespaceBetweenElementsRegexp = />\s+</g;
 Adj.whitespaceAtEndRegexp = /\s+$/g;
 Adj.whitespacesRegexp = /\s+/g;
 Adj.xmlDeclarationRegexp = /^\s*<\?xml[^>]*>/;
+// in Internet Explorer after an SVG document includes a fragment from SVG inline in an HTML document
+// seen <g xmlns:NS1="" NS1:adj:command="horizontalList"> and test hence has failed
+Adj.useOfEmptilyDeclaredXmlnsRegexp = /(xmlns:(NS[0-9]+)="".*?)\2:/g;
+Adj.emptilyDeclaredXmlnsRegexp = /xmlns:NS[0-9]+=""/g;
 //
 Adj.commasRegexp = /,/g;
 Adj.letterDecimalsRegexp = /([A-Za-z])([0-9.+-])/g;
@@ -486,10 +490,14 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 			stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
 			stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
 			stashContent = stashContent.replace(Adj.xmlDeclarationRegexp, "");
+			//stashContent = stashContent.replace(Adj.useOfEmptilyDeclaredXmlnsRegexp, "$1");
+			//stashContent = stashContent.replace(Adj.emptilyDeclaredXmlnsRegexp, "");
 			documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "> <");
 			documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
 			documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
 			documentAsString = documentAsString.replace(Adj.xmlDeclarationRegexp, "");
+			documentAsString = documentAsString.replace(Adj.useOfEmptilyDeclaredXmlnsRegexp, "$1");
+			documentAsString = documentAsString.replace(Adj.emptilyDeclaredXmlnsRegexp, "");
 			// compare serialized documents
 			if (documentAsString === stashContent) {
 				doSvgAndVerifyDoneCallback("");

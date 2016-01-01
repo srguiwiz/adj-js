@@ -1,7 +1,7 @@
 ﻿//
 // Simplified BSD License
 //
-// Copyright (c) 2002-2015, Nirvana Research
+// Copyright (c) 2002-2016, Nirvana Research
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:0, revision:2 };
+Adj.version = { major:5, minor:1, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -6686,6 +6686,8 @@ Adj.defineCommandForAlgorithm({
 						toIncludeElement.removeAttribute("transform");
 						element.appendChild(toIncludeElement);
 					}
+					// clean up to avoid problems in other code
+					element.normalize();
 				} finally {
 					// prevent endless loop
 					element.adjIncluded = element.adjIncluded || new Date();
