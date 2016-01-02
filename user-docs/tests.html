@@ -5,6 +5,8 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Adj Framework - Test Suite</title>
+  <script type="text/javascript" src="js/adj.js">
+  </script>
   <style type="text/css">
 td {
   padding: 1.0ex;
@@ -103,6 +105,9 @@ href="index.html#L3450"><code>include</code></a>)</span> <strong>often succed
 when run a second time</strong>.</p>
 
 <h2 id="L2744">2. Run</h2>
+
+<p>Testing Adj <a href="https://github.com/srguiwiz/adj-js">version</a> <code
+id="adjversion">?</code>.</p>
 <iframe id="tif" name="tif" src="test-adj-ex-002-verticalList.svg" width="600"
 height="300">
 If you see this text then your browser doesn't support iframes.</iframe>
@@ -405,6 +410,7 @@ however, is not currently verified.</p>
 //
 // Public repository - https://github.com/srguiwiz/adj-js
 //
+	document.getElementById('adjversion').innerHTML=Adj.version.major+'.'+Adj.version.minor+'.'+Adj.version.revision;
 
 	var testIframe = document.getElementById("tif");
 	var tbody = document.getElementById("tb");
