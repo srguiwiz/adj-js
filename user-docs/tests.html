@@ -70,11 +70,13 @@ h1,h2,h3,h4,h5,h6 {
 
 <h2 id="L3557">1. Compatibility</h2>
 
-<p>This <a href="index.html#L2357">test suite</a> so far <a
-href="#L2744">runs</a> in contemporary Firefox 43 (Windows, Linux), Chrome 47
-(Windows, Mac OS X, Android 4.4), Safari 9 (Mac OS X, iOS 9.1 on iPhone and
-iPad), Opera 34 (Windows) and Internet Explorer 11. Do you have other browsers
-<a href="index.html#L4276">to report</a>?</p>
+<p>This <a href="index.html#L2357">test suite</a> for Adj <a
+href="https://github.com/srguiwiz/adj-js">version</a> <strong
+class="adjversion">?</strong> so far <a href="#L2744">runs</a> in contemporary
+Firefox 43 (Windows, Linux), Chrome 47 (Windows, Mac OS X, Android 4.4), Safari
+9 (Mac OS X, iOS 9.1 on iPhone and iPad), Opera 34 (Windows) and Internet
+Explorer 11. Do you have other browsers <a href="index.html#L4276">to
+report</a>?</p>
 
 <p>Starting in 2015 we <strong>have observed computer virus protection
 injecting scripts into web pages</strong>. Such extraneous elements cause this
@@ -105,9 +107,6 @@ href="index.html#L3450"><code>include</code></a>)</span> <strong>often succed
 when run a second time</strong>.</p>
 
 <h2 id="L2744">2. Run</h2>
-
-<p>Testing Adj <a href="https://github.com/srguiwiz/adj-js">version</a> <code
-id="adjversion">?</code>.</p>
 <iframe id="tif" name="tif" src="test-adj-ex-002-verticalList.svg" width="600"
 height="300">
 If you see this text then your browser doesn't support iframes.</iframe>
@@ -128,6 +127,12 @@ can force an
 />.</p>
 
 <table border="1">
+  <thead>
+    <tr>
+      <th colspan="2"><p>Adj version <strong class="adjversion">?</strong></p>
+      </th>
+    </tr>
+  </thead>
   <tbody id="tb">
     <tr>
       <td><a href="test-adj-ex-002-verticalList.svg"
@@ -410,7 +415,10 @@ however, is not currently verified.</p>
 //
 // Public repository - https://github.com/srguiwiz/adj-js
 //
-	document.getElementById('adjversion').innerHTML=Adj.version.major+'.'+Adj.version.minor+'.'+Adj.version.revision;
+	var versionInstances = document.querySelectorAll('.adjversion');
+	for (var i = 0, n = versionInstances.length; i < n; i++) {
+		versionInstances[i].innerHTML=Adj.version.major+'.'+Adj.version.minor+'.'+Adj.version.revision;
+	}
 
 	var testIframe = document.getElementById("tif");
 	var tbody = document.getElementById("tb");
