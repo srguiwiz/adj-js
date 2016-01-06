@@ -60,239 +60,6 @@ Adj.XLinkNamespace = "http://www.w3.org/1999/xlink";
 Adj.AdjNamespacePrefix = "adj";
 Adj.XLinkNamespacePrefix = "xlink";
 
-// polyfill for missing method getTransformToElement
-// necessary e.g. from Chrome 48 onward
-// https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/SeGqJ2YZSnk
-// http://ww.w3.org/TR/SVG/types.html
-if (!SVGElement.prototype.getTransformToElement) {
-	(function() {
-		SVGElement.prototype.getTransformToElement = function getTransformToElement (element) {
-			return element.getScreenCTM().inverse().multiply(this.getScreenCTM());
-		};
-	})();
-}
-
-// polyfill for missing property pathSegList
-// necessary e.g. from Chrome 48 onward
-// https://code.google.com/p/chromium/issues/detail?id=539385
-// SVG 1.1. http://www.w3.org/TR/SVG/paths.html
-// SVG 2 https://svgwg.org/svg2-draft/paths.html
-// changes http://www.w3.org/TR/SVG2/changes.html
-// implemented about 2016-01-03 after reading https://github.com/progers/pathseg
-if (!window.SVGPathSegList) {
-	(function() {
-		var mutationObserverInit = { "attributes": true, "attributeFilter": ["d"] };
-		var isWhitespace = { ' ': true, '\t': true, '\n': true, '\r': true, '\f': true };
-		var isNumberDigit = {
-			'+': true, '-': true, '.': true, 'e': true,
-			'0': true, '1': true, '2': true, '3': true, '4': true,
-			'5': true, '6': true, '7': true, '8': true, '9': true
-		};
-		var isPathSegType = {
-			'Z': true, 'z': true, 'M': true, 'm': true, 'L': true, 'l': true,
-			'Q': true, 'q': true, 'C': true, 'c': true, 'T': true, 't': true, 'S': true, 's': true,
-			'H': true, 'h': true, 'V': true, 'v': true, 'A': true, 'a': true
-		};
-		var parseDString = function parseDString (dString) {
-			var pathSegArray = [];
-			if (!dString || !dString.length) { // empty, is allowed
-				return pathSegArray;
-			}
-			//
-			var index = 0; // character in dString
-			var dStringLength = dString.length;
-			//
-			var skipSpaces = function skipSpaces () {
-				while (index < dStringLength && isWhitespace[dString[index]]) {
-					index++;
-				}
-			};
-			var skipSpacesAndComma = function skipSpacesAndComma () {
-				while (index < dStringLength && isWhitespace[dString[index]]) {
-					index++;
-				}
-				if (index < dStringLength && dString[index] === ',') {
-					index++;
-					while (index < dStringLength && isWhitespace[dString[index]]) {
-						index++;
-					}
-				}
-			};
-			var parseNumber = function parseNumber () {
-				skipSpaces();
-				var startIndex = index;
-				while (index < dStringLength && isNumberDigit[dString[index]]) {
-					index++;
-				}
-				var number = parseFloat(dString.substring(startIndex, index));
-				if (isNaN(number)) {
-					throw "pathSegList parseNumber isNaN";
-				}
-				skipSpacesAndComma();
-				return number;
-			};
-			var parseArcFlag = function parseArcFlag () {
-				skipSpaces();
-				var character = ''; // use '' for none
-				if (index < dStringLength) {
-					character = dString[index++];
-				}
-				var arcFlag;
-				switch (character) {
-					case '0':
-						arcFlag = false;
-						break;
-					case '1':
-						arcFlag = true;
-						break;
-					default:
-						throw "pathSegList parseArcFlag not a flag";
-				}
-				skipSpacesAndComma();
-				return arcFlag;
-			};
-			//
-			skipSpaces();
-			if (index >= dStringLength) { // empty, is allowed
-				return pathSegArray;
-			}
-			var character = dString[index];
-			if (character !== 'M' && character !== 'm') { // first must be 'M' or 'm'
-				throw "pathSegList first neither 'M' nor 'm'";
-			}
-			//
-			var previousPathSegTypeAsLetter = ' '; // use ' ' for unknown
-			while (index < dStringLength) {
-				character = dString[index];
-				var pathSegTypeAsLetter;
-				if (isPathSegType[character]) {
-					pathSegTypeAsLetter = character;
-					index++;
-				} else {
-					if (isNumberDigit[character]) { // same type segment again, without letter
-						if (previousPathSegTypeAsLetter === 'M') {
-							pathSegTypeAsLetter = 'L';
-						} else if (previousPathSegTypeAsLetter === 'm') {
-							pathSegTypeAsLetter = 'l';
-						} else { // simply same type segment again, without letter
-							pathSegTypeAsLetter = previousPathSegTypeAsLetter;
-						}
-					} else {
-						throw "pathSegList unsupported segment type '" + character + "'";
-					}
-				}
-				switch (pathSegTypeAsLetter) {
-					case 'Z':
-					case 'z':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter });
-						skipSpaces();
-						break;
-					case 'M':
-					case 'L':
-					case 'T':
-					case 'm':
-					case 'l':
-					case 't':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   x: parseNumber(),
-						   y: parseNumber() });
-						break;
-					case 'Q':
-					case 'q':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   x1: parseNumber(),
-						   y1: parseNumber(),
-						   x: parseNumber(),
-						   y: parseNumber() });
-						break;
-					case 'C':
-					case 'c':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   x1: parseNumber(),
-						   y1: parseNumber(),
-						   x2: parseNumber(),
-						   y2: parseNumber(),
-						   x: parseNumber(),
-						   y: parseNumber() });
-						break;
-					case 'S':
-					case 's':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   x2: parseNumber(),
-						   y2: parseNumber(),
-						   x: parseNumber(),
-						   y: parseNumber() });
-						break;
-					case 'H':
-					case 'h':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   x: parseNumber() });
-						break;
-					case 'V':
-					case 'v':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   y: parseNumber() });
-						break;
-					case 'A':
-					case 'a':
-						pathSegArray.push
-						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
-						   x1: parseNumber(),
-						   y1: parseNumber(),
-						   arcAngle: parseNumber(),
-						   arcLarge: parseArcFlag(),
-						   arcSweep: parseArcFlag(),
-						   x: parseNumber(),
-						   y: parseNumber() });
-						break;
-					default:
-						throw "pathSegList unsupported segment type '" + character + "'";
-				}
-				previousPathSegTypeAsLetter = pathSegTypeAsLetter;
-			}
-			return pathSegArray;
-		};
-		Object.defineProperty(SVGPathElement.prototype, "pathSegList", {
-			get: function() {
-				if (this.adjPathSegListDStringMutationCallback && this.adjPathSegListDStringMutationObserver) {
-					// first process pending asynchronous mutations, if any
-					this.adjPathSegListDStringMutationCallback(this.adjPathSegListDStringMutationObserver.takeRecords());
-				}
-				var adjPathSegList = this.adjPathSegList;
-				if (adjPathSegList) { // cached
-					return adjPathSegList; // quick return
-				}
-				// determine
-				if (!this.adjPathSegListDStringMutationObserver) {
-					this.adjPathSegListDStringMutationCallback =
-						(function adjPathSegListDStringMutationCallback (mutationRecords) {
-							for (var i = 0, n = mutationRecords.length; i < n; i++) {
-								if (mutationRecords[i].attributeName === "d") {
-									this.adjPathSegList = null; // reset
-									break;
-								}
-							}
-						}).bind(this);
-					this.adjPathSegListDStringMutationObserver =
-						new MutationObserver(this.adjPathSegListDStringMutationCallback);
-					this.adjPathSegListDStringMutationObserver.observe(this, mutationObserverInit);
-				}
-				adjPathSegList = new Adj.PathSegList(parseDString(this.getAttribute("d")));
-				this.adjPathSegList = adjPathSegList;
-				return adjPathSegList;
-			},
-			enumerable: true
-		});
-	})();
-}
-
 // shortcut
 // if not given a documentToDo then default to doing _the_ document
 // doDocDoneCallback is optional here and in most or all other functions defined in this library
@@ -7725,6 +7492,239 @@ Adj.defineCommandForAlgorithm({
 		arrowElement.setAttribute("d", d);
 	}]
 });
+
+// polyfill for missing method getTransformToElement
+// necessary e.g. from Chrome 48 onward
+// https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/SeGqJ2YZSnk
+// http://ww.w3.org/TR/SVG/types.html
+if (!SVGElement.prototype.getTransformToElement) {
+	(function() {
+		SVGElement.prototype.getTransformToElement = function getTransformToElement (element) {
+			return element.getScreenCTM().inverse().multiply(this.getScreenCTM());
+		};
+	})();
+}
+
+// polyfill for missing property pathSegList
+// necessary e.g. from Chrome 48 onward
+// https://code.google.com/p/chromium/issues/detail?id=539385
+// SVG 1.1. http://www.w3.org/TR/SVG/paths.html
+// SVG 2 https://svgwg.org/svg2-draft/paths.html
+// changes http://www.w3.org/TR/SVG2/changes.html
+// implemented about 2016-01-03 after reading https://github.com/progers/pathseg
+if (!window.SVGPathSegList) {
+	(function() {
+		var mutationObserverInit = { "attributes": true, "attributeFilter": ["d"] };
+		var isWhitespace = { ' ': true, '\t': true, '\n': true, '\r': true, '\f': true };
+		var isNumberDigit = {
+			'+': true, '-': true, '.': true, 'e': true,
+			'0': true, '1': true, '2': true, '3': true, '4': true,
+			'5': true, '6': true, '7': true, '8': true, '9': true
+		};
+		var isPathSegType = {
+			'Z': true, 'z': true, 'M': true, 'm': true, 'L': true, 'l': true,
+			'Q': true, 'q': true, 'C': true, 'c': true, 'T': true, 't': true, 'S': true, 's': true,
+			'H': true, 'h': true, 'V': true, 'v': true, 'A': true, 'a': true
+		};
+		var parseDString = function parseDString (dString) {
+			var pathSegArray = [];
+			if (!dString || !dString.length) { // empty, is allowed
+				return pathSegArray;
+			}
+			//
+			var index = 0; // character in dString
+			var dStringLength = dString.length;
+			//
+			var skipSpaces = function skipSpaces () {
+				while (index < dStringLength && isWhitespace[dString[index]]) {
+					index++;
+				}
+			};
+			var skipSpacesAndComma = function skipSpacesAndComma () {
+				while (index < dStringLength && isWhitespace[dString[index]]) {
+					index++;
+				}
+				if (index < dStringLength && dString[index] === ',') {
+					index++;
+					while (index < dStringLength && isWhitespace[dString[index]]) {
+						index++;
+					}
+				}
+			};
+			var parseNumber = function parseNumber () {
+				skipSpaces();
+				var startIndex = index;
+				while (index < dStringLength && isNumberDigit[dString[index]]) {
+					index++;
+				}
+				var number = parseFloat(dString.substring(startIndex, index));
+				if (isNaN(number)) {
+					throw "pathSegList parseNumber isNaN";
+				}
+				skipSpacesAndComma();
+				return number;
+			};
+			var parseArcFlag = function parseArcFlag () {
+				skipSpaces();
+				var character = ''; // use '' for none
+				if (index < dStringLength) {
+					character = dString[index++];
+				}
+				var arcFlag;
+				switch (character) {
+					case '0':
+						arcFlag = false;
+						break;
+					case '1':
+						arcFlag = true;
+						break;
+					default:
+						throw "pathSegList parseArcFlag not a flag";
+				}
+				skipSpacesAndComma();
+				return arcFlag;
+			};
+			//
+			skipSpaces();
+			if (index >= dStringLength) { // empty, is allowed
+				return pathSegArray;
+			}
+			var character = dString[index];
+			if (character !== 'M' && character !== 'm') { // first must be 'M' or 'm'
+				throw "pathSegList first neither 'M' nor 'm'";
+			}
+			//
+			var previousPathSegTypeAsLetter = ' '; // use ' ' for unknown
+			while (index < dStringLength) {
+				character = dString[index];
+				var pathSegTypeAsLetter;
+				if (isPathSegType[character]) {
+					pathSegTypeAsLetter = character;
+					index++;
+				} else {
+					if (isNumberDigit[character]) { // same type segment again, without letter
+						if (previousPathSegTypeAsLetter === 'M') {
+							pathSegTypeAsLetter = 'L';
+						} else if (previousPathSegTypeAsLetter === 'm') {
+							pathSegTypeAsLetter = 'l';
+						} else { // simply same type segment again, without letter
+							pathSegTypeAsLetter = previousPathSegTypeAsLetter;
+						}
+					} else {
+						throw "pathSegList unsupported segment type '" + character + "'";
+					}
+				}
+				switch (pathSegTypeAsLetter) {
+					case 'Z':
+					case 'z':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter });
+						skipSpaces();
+						break;
+					case 'M':
+					case 'L':
+					case 'T':
+					case 'm':
+					case 'l':
+					case 't':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'Q':
+					case 'q':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x1: parseNumber(),
+						   y1: parseNumber(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'C':
+					case 'c':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x1: parseNumber(),
+						   y1: parseNumber(),
+						   x2: parseNumber(),
+						   y2: parseNumber(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'S':
+					case 's':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x2: parseNumber(),
+						   y2: parseNumber(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'H':
+					case 'h':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x: parseNumber() });
+						break;
+					case 'V':
+					case 'v':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   y: parseNumber() });
+						break;
+					case 'A':
+					case 'a':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x1: parseNumber(),
+						   y1: parseNumber(),
+						   arcAngle: parseNumber(),
+						   arcLarge: parseArcFlag(),
+						   arcSweep: parseArcFlag(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					default:
+						throw "pathSegList unsupported segment type '" + character + "'";
+				}
+				previousPathSegTypeAsLetter = pathSegTypeAsLetter;
+			}
+			return pathSegArray;
+		};
+		Object.defineProperty(SVGPathElement.prototype, "pathSegList", {
+			get: function() {
+				if (this.adjPathSegListDStringMutationCallback && this.adjPathSegListDStringMutationObserver) {
+					// first process pending asynchronous mutations, if any
+					this.adjPathSegListDStringMutationCallback(this.adjPathSegListDStringMutationObserver.takeRecords());
+				}
+				var adjPathSegList = this.adjPathSegList;
+				if (adjPathSegList) { // cached
+					return adjPathSegList; // quick return
+				}
+				// determine
+				if (!this.adjPathSegListDStringMutationObserver) {
+					this.adjPathSegListDStringMutationCallback =
+						(function adjPathSegListDStringMutationCallback (mutationRecords) {
+							for (var i = 0, n = mutationRecords.length; i < n; i++) {
+								if (mutationRecords[i].attributeName === "d") {
+									this.adjPathSegList = null; // reset
+									break;
+								}
+							}
+						}).bind(this);
+					this.adjPathSegListDStringMutationObserver =
+						new MutationObserver(this.adjPathSegListDStringMutationCallback);
+					this.adjPathSegListDStringMutationObserver.observe(this, mutationObserverInit);
+				}
+				adjPathSegList = new Adj.PathSegList(parseDString(this.getAttribute("d")));
+				this.adjPathSegList = adjPathSegList;
+				return adjPathSegList;
+			},
+			enumerable: true
+		});
+	})();
+}
 
 // make available
 window.Adj = Adj;
