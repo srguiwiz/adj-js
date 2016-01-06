@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:1, revision:0 };
+Adj.version = { major:5, minor:2, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -59,6 +59,239 @@ Adj.XLinkNamespace = "http://www.w3.org/1999/xlink";
 //
 Adj.AdjNamespacePrefix = "adj";
 Adj.XLinkNamespacePrefix = "xlink";
+
+// polyfill for missing method getTransformToElement
+// necessary e.g. from Chrome 48 onward
+// https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/SeGqJ2YZSnk
+// http://ww.w3.org/TR/SVG/types.html
+if (!SVGElement.prototype.getTransformToElement) {
+	(function() {
+		SVGElement.prototype.getTransformToElement = function getTransformToElement (element) {
+			return element.getScreenCTM().inverse().multiply(this.getScreenCTM());
+		};
+	})();
+}
+
+// polyfill for missing property pathSegList
+// necessary e.g. from Chrome 48 onward
+// https://code.google.com/p/chromium/issues/detail?id=539385
+// SVG 1.1. http://www.w3.org/TR/SVG/paths.html
+// SVG 2 https://svgwg.org/svg2-draft/paths.html
+// changes http://www.w3.org/TR/SVG2/changes.html
+// implemented about 2016-01-03 after reading https://github.com/progers/pathseg
+if (!window.SVGPathSegList) {
+	(function() {
+		var mutationObserverInit = { "attributes": true, "attributeFilter": ["d"] };
+		var isWhitespace = { ' ': true, '\t': true, '\n': true, '\r': true, '\f': true };
+		var isNumberDigit = {
+			'+': true, '-': true, '.': true, 'e': true,
+			'0': true, '1': true, '2': true, '3': true, '4': true,
+			'5': true, '6': true, '7': true, '8': true, '9': true
+		};
+		var isPathSegType = {
+			'Z': true, 'z': true, 'M': true, 'm': true, 'L': true, 'l': true,
+			'Q': true, 'q': true, 'C': true, 'c': true, 'T': true, 't': true, 'S': true, 's': true,
+			'H': true, 'h': true, 'V': true, 'v': true, 'A': true, 'a': true
+		};
+		var parseDString = function parseDString (dString) {
+			var pathSegArray = [];
+			if (!dString || !dString.length) { // empty, is allowed
+				return pathSegArray;
+			}
+			//
+			var index = 0; // character in dString
+			var dStringLength = dString.length;
+			//
+			var skipSpaces = function skipSpaces () {
+				while (index < dStringLength && isWhitespace[dString[index]]) {
+					index++;
+				}
+			};
+			var skipSpacesAndComma = function skipSpacesAndComma () {
+				while (index < dStringLength && isWhitespace[dString[index]]) {
+					index++;
+				}
+				if (index < dStringLength && dString[index] === ',') {
+					index++;
+					while (index < dStringLength && isWhitespace[dString[index]]) {
+						index++;
+					}
+				}
+			};
+			var parseNumber = function parseNumber () {
+				skipSpaces();
+				var startIndex = index;
+				while (index < dStringLength && isNumberDigit[dString[index]]) {
+					index++;
+				}
+				var number = parseFloat(dString.substring(startIndex, index));
+				if (isNaN(number)) {
+					throw "pathSegList parseNumber isNaN";
+				}
+				skipSpacesAndComma();
+				return number;
+			};
+			var parseArcFlag = function parseArcFlag () {
+				skipSpaces();
+				var character = ''; // use '' for none
+				if (index < dStringLength) {
+					character = dString[index++];
+				}
+				var arcFlag;
+				switch (character) {
+					case '0':
+						arcFlag = false;
+						break;
+					case '1':
+						arcFlag = true;
+						break;
+					default:
+						throw "pathSegList parseArcFlag not a flag";
+				}
+				skipSpacesAndComma();
+				return arcFlag;
+			};
+			//
+			skipSpaces();
+			if (index >= dStringLength) { // empty, is allowed
+				return pathSegArray;
+			}
+			var character = dString[index];
+			if (character !== 'M' && character !== 'm') { // first must be 'M' or 'm'
+				throw "pathSegList first neither 'M' nor 'm'";
+			}
+			//
+			var previousPathSegTypeAsLetter = ' '; // use ' ' for unknown
+			while (index < dStringLength) {
+				character = dString[index];
+				var pathSegTypeAsLetter;
+				if (isPathSegType[character]) {
+					pathSegTypeAsLetter = character;
+					index++;
+				} else {
+					if (isNumberDigit[character]) { // same type segment again, without letter
+						if (previousPathSegTypeAsLetter === 'M') {
+							pathSegTypeAsLetter = 'L';
+						} else if (previousPathSegTypeAsLetter === 'm') {
+							pathSegTypeAsLetter = 'l';
+						} else { // simply same type segment again, without letter
+							pathSegTypeAsLetter = previousPathSegTypeAsLetter;
+						}
+					} else {
+						throw "pathSegList unsupported segment type '" + character + "'";
+					}
+				}
+				switch (pathSegTypeAsLetter) {
+					case 'Z':
+					case 'z':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter });
+						skipSpaces();
+						break;
+					case 'M':
+					case 'L':
+					case 'T':
+					case 'm':
+					case 'l':
+					case 't':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'Q':
+					case 'q':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x1: parseNumber(),
+						   y1: parseNumber(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'C':
+					case 'c':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x1: parseNumber(),
+						   y1: parseNumber(),
+						   x2: parseNumber(),
+						   y2: parseNumber(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'S':
+					case 's':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x2: parseNumber(),
+						   y2: parseNumber(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					case 'H':
+					case 'h':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x: parseNumber() });
+						break;
+					case 'V':
+					case 'v':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   y: parseNumber() });
+						break;
+					case 'A':
+					case 'a':
+						pathSegArray.push
+						({ pathSegTypeAsLetter: pathSegTypeAsLetter,
+						   x1: parseNumber(),
+						   y1: parseNumber(),
+						   arcAngle: parseNumber(),
+						   arcLarge: parseArcFlag(),
+						   arcSweep: parseArcFlag(),
+						   x: parseNumber(),
+						   y: parseNumber() });
+						break;
+					default:
+						throw "pathSegList unsupported segment type '" + character + "'";
+				}
+				previousPathSegTypeAsLetter = pathSegTypeAsLetter;
+			}
+			return pathSegArray;
+		};
+		Object.defineProperty(SVGPathElement.prototype, "pathSegList", {
+			get: function() {
+				if (this.adjPathSegListDStringMutationCallback && this.adjPathSegListDStringMutationObserver) {
+					// first process pending asynchronous mutations, if any
+					this.adjPathSegListDStringMutationCallback(this.adjPathSegListDStringMutationObserver.takeRecords());
+				}
+				var adjPathSegList = this.adjPathSegList;
+				if (adjPathSegList) { // cached
+					return adjPathSegList; // quick return
+				}
+				// determine
+				if (!this.adjPathSegListDStringMutationObserver) {
+					this.adjPathSegListDStringMutationCallback =
+						(function adjPathSegListDStringMutationCallback (mutationRecords) {
+							for (var i = 0, n = mutationRecords.length; i < n; i++) {
+								if (mutationRecords[i].attributeName === "d") {
+									this.adjPathSegList = null; // reset
+									break;
+								}
+							}
+						}).bind(this);
+					this.adjPathSegListDStringMutationObserver =
+						new MutationObserver(this.adjPathSegListDStringMutationCallback);
+					this.adjPathSegListDStringMutationObserver.observe(this, mutationObserverInit);
+				}
+				adjPathSegList = new Adj.PathSegList(parseDString(this.getAttribute("d")));
+				this.adjPathSegList = adjPathSegList;
+				return adjPathSegList;
+			},
+			enumerable: true
+		});
+	})();
+}
 
 // shortcut
 // if not given a documentToDo then default to doing _the_ document
@@ -75,7 +308,7 @@ Adj.doDoc = function doDoc (documentToDo, doDocDoneCallback) {
 		documentToDo = document;
 	}
 	Adj.processAdjElements(documentToDo, doDocDoneCallback);
-}
+};
 
 // shortcut
 // if not given a theSvgElement then default to doing all SVG elements in the document
@@ -127,7 +360,7 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 			processing[Adj.runtimeId(oneSvgElement)] = oneSvgElement;
 		}
 	}
-}
+};
 
 // complete processing of all phases
 Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElement, processDoneCallback) {
@@ -193,7 +426,7 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 			throw exception;
 		}
 	}
-}
+};
 
 // generic installer
 Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObject, element) {
@@ -244,7 +477,7 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 	if (algorithm.processSubtreeOnlyInPhaseHandler) {
 		element.adjProcessSubtreeOnlyInPhaseHandler = algorithm.processSubtreeOnlyInPhaseHandler; // try being cleverer ?
 	}
-}
+};
 
 // utility
 Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForName (target, algorithmName) {
@@ -265,7 +498,7 @@ Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForNa
 		}
 	}
 	return matchingPhaseHandlers;
-}
+};
 
 // constants
 // recognize a boolean or decimal
@@ -309,9 +542,9 @@ Adj.parseTheSvgElementForAdjElements = function parseTheSvgElementForAdjElements
 	// define some global adjVariables
 	// intentionally here to avoid many conditional evaluations
 	var globalVariables = theSvgElement.adjVariables = theSvgElement.adjVariables || {};
-	globalVariables.windowInnerWidth = globalVariables.windowInnerWidth || function windowInnerWidth () { return window.innerWidth };
-	globalVariables.windowInnerHeight = globalVariables.windowInnerHeight || function windowInnerHeight () { return window.innerHeight };
-}
+	globalVariables.windowInnerWidth = globalVariables.windowInnerWidth || function windowInnerWidth () { return window.innerWidth; };
+	globalVariables.windowInnerHeight = globalVariables.windowInnerHeight || function windowInnerHeight () { return window.innerHeight; };
+};
 
 // build on first use, so any algorithms added e.g. from other source files will be considered too
 Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName (parameterNameToMatch) {
@@ -333,7 +566,7 @@ Adj.commandNamesUsingParameterName = function commandNamesUsingParameterName (pa
 		}
 	}
 	return commandNamesByParameterName[parameterNameToMatch];
-}
+};
 
 // utility
 Adj.parameterParse = function parameterParse (value) {
@@ -353,7 +586,7 @@ Adj.parameterParse = function parameterParse (value) {
 		}
 	}
 	return value;
-}
+};
 
 // utility
 // expects element to be an Adj element
@@ -383,7 +616,7 @@ Adj.collectParameters = function collectParameters (element) {
 		}
 	}
 	return parameters;
-}
+};
 
 // abstraction
 // returns local name, i.e. without prefix, or returns null if not an Adj element,
@@ -411,7 +644,7 @@ Adj.elementNameInAdjNS = function elementNameInAdjNS (element) {
 		}
 	}
 	return elementName;
-}
+};
 
 // read Adj elements and make or update phase handlers,
 // recursive walking of the tree,
@@ -531,7 +764,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 		}
 		Adj.parseAdjElementsToPhaseHandlers(child); // recursion
 	}
-}
+};
 
 // complete processing of all phases
 Adj.processTheSvgElementWithPhaseHandlers = function processTheSvgElementWithPhaseHandlers (theSvgElement) {
@@ -556,7 +789,7 @@ Adj.processTheSvgElementWithPhaseHandlers = function processTheSvgElementWithPha
 			Adj.unhideByDisplayAttribute(child, true);
 		}
 	 });
-}
+};
 
 // complete processing of all phases
 Adj.processElementWithPhaseHandlers = function processElementWithPhaseHandlers (element, thisTimeFullyProcessSubtree, level) {
@@ -570,7 +803,7 @@ Adj.processElementWithPhaseHandlers = function processElementWithPhaseHandlers (
 		var phaseName = phaseNamesOccurring[i];
 		Adj.walkNodes(element, phaseName, thisTimeFullyProcessSubtree, level);
 	}
-}
+};
 
 // recursive walking of the tree
 Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree, level) {
@@ -636,7 +869,7 @@ Adj.walkNodes = function walkNodes (node, phaseName, thisTimeFullyProcessSubtree
 		}
 	}
 	//console.log("phase " + phaseName + " level " + level + " cming outa " + node.nodeName);
-}
+};
 
 // modification and selective removing
 Adj.modifyMaybeRemoveChildren = function modifyMaybeRemoveChildren (node, modifyMaybeMarkFunctionOfNodeAndChild) {
@@ -659,7 +892,7 @@ Adj.modifyMaybeRemoveChildren = function modifyMaybeRemoveChildren (node, modify
 		Adj.modifyMaybeRemoveChildren(child, modifyMaybeMarkFunctionOfNodeAndChild); // recursion
 		child = child.nextSibling;
 	}
-}
+};
 
 // constants
 Adj.leftCenterRight = { left:0, center:0.5, right:1 };
@@ -687,14 +920,14 @@ Adj.fraction = function fraction (one, other, fraction, roundNoCloser, roundIfIn
 	} else { // don't round ever
 		return fraction;
 	}
-}
+};
 
 // utility
 Adj.decimal = function decimal (number, decimalDigits) {
 	decimalDigits = decimalDigits != undefined ? decimalDigits : 3; // default decimal = 3
 	var factor = Math.pow(10, decimalDigits);
 	return Math.round(number * factor) / factor;
-}
+};
 
 // utility
 // optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
@@ -705,7 +938,7 @@ Adj.qualifyName = function qualifyName (element, namespaceURI, localName, elemen
 	} else {
 		return localName;
 	}
-}
+};
 
 // utility
 // as implemented caches
@@ -732,15 +965,15 @@ Adj.elementGetAttributeInNS = function elementGetAttributeInNS (element, namespa
 		return element.getAttributeNS(namespace, name)
 			|| element.getAttribute(Adj.prefixName(prefix, name));
 	}
-}
+};
 // abstraction
 Adj.elementGetAttributeInAdjNS = function elementGetAttributeInAdjNS (element, name) {
 	return Adj.elementGetAttributeInNS(element, Adj.AdjNamespace, Adj.AdjNamespacePrefix, name);
-}
+};
 // abstraction
 Adj.elementGetAttributeInXLinkNS = function elementGetAttributeInXLinkNS (element, name) {
 	return Adj.elementGetAttributeInNS(element, Adj.XLinkNamespace, Adj.XLinkNamespacePrefix, name);
-}
+};
 
 // abstraction
 // optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
@@ -764,17 +997,17 @@ Adj.elementSetAttributeInNS = function elementSetAttributeInNS (element, namespa
 			element.setAttributeNS(namespace, Adj.qualifyName(element, namespace, name, elementToLookupPrefix), value);
 		}
 	}
-}
+};
 // abstraction
 // optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
 Adj.elementSetAttributeInAdjNS = function elementSetAttributeInAdjNS (element, name, value, elementToLookupPrefix) {
 	Adj.elementSetAttributeInNS(element, Adj.AdjNamespace, Adj.AdjNamespacePrefix, name, value, elementToLookupPrefix);
-}
+};
 // abstraction
 // optional elementToLookupPrefix apparently needed at least in some versions Chrome and Internet Explorer
 Adj.elementSetAttributeInXLinkNS = function elementSetAttributeInXLinkNS (element, name, value, elementToLookupPrefix) {
 	Adj.elementSetAttributeInNS(element, Adj.XLinkNamespace, Adj.XLinkNamespacePrefix, name, value, elementToLookupPrefix);
-}
+};
 
 // abstraction
 Adj.elementRemoveAttributeInNS = function elementRemoveAttributeInNS (element, namespace, prefix, name) {
@@ -789,11 +1022,11 @@ Adj.elementRemoveAttributeInNS = function elementRemoveAttributeInNS (element, n
 		element.removeAttributeNS(namespace, name);
 		element.removeAttribute(Adj.prefixName(prefix, name));
 	}
-}
+};
 // abstraction
 Adj.elementRemoveAttributeInAdjNS = function elementRemoveAttributeInAdjNS (element, name) {
 	Adj.elementRemoveAttributeInNS(element, Adj.AdjNamespace, Adj.AdjNamespacePrefix, name);
-}
+};
 
 // utility
 Adj.createSVGElement = function createSVGElement (ownerDocument, elementName, additionalProperties) {
@@ -804,7 +1037,7 @@ Adj.createSVGElement = function createSVGElement (ownerDocument, elementName, ad
 		}
 	}
 	return element;
-}
+};
 
 // utility
 Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
@@ -817,7 +1050,7 @@ Adj.hideByDisplayAttribute = function hideByDisplayAttribute (element) {
 		Adj.elementSetAttributeInAdjNS(element, "originalDisplay", element.adjOriginalDisplay);
 	}
 	element.setAttribute("display", "none");
-}
+};
 
 // utility
 Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenIfNoOriginalDisplay) {
@@ -836,21 +1069,21 @@ Adj.unhideByDisplayAttribute = function unhideByDisplayAttribute (element, evenI
 	}
 	delete element.adjOriginalDisplay;
 	Adj.elementRemoveAttributeInAdjNS(element, "originalDisplay");
-}
+};
 
 // utility
 Adj.createArtifactElement = function createArtifactElement (name, parent) {
 	var artifactElement = Adj.createSVGElement(parent.ownerDocument, name, {adjPermanentArtifact:true});
 	Adj.elementSetAttributeInAdjNS(artifactElement, "artifact", "true", parent);
 	return artifactElement;
-}
+};
 // utility
 Adj.cloneArtifactElement = function cloneArtifactElement (element, deep) {
 	deep = deep != undefined ? deep : true; // default deep = true
 	var clone = element.cloneNode(deep);
 	Adj.elementSetAttributeInAdjNS(clone, "artifact", "true", element);
 	return clone;
-}
+};
 
 // utility
 Adj.createExplanationElement = function createExplanationElement (expectedAncestor, name, dontDisplayNone) {
@@ -861,7 +1094,7 @@ Adj.createExplanationElement = function createExplanationElement (expectedAncest
 		Adj.hideByDisplayAttribute(explanationElement);
 	}
 	return explanationElement;
-}
+};
 
 // utility
 Adj.createExplanationPointCircle = function createExplanationPointCircle (expectedAncestor, x, y, fill) {
@@ -873,7 +1106,7 @@ Adj.createExplanationPointCircle = function createExplanationPointCircle (expect
 	explanationElement.setAttribute("fill-opacity", "0.2");
 	explanationElement.setAttribute("stroke", "none");
 	return explanationElement;
-}
+};
 
 // utility
 Adj.createExplanationLine = function createExplanationLine (expectedAncestor, x1, y1, x2, y2, stroke) {
@@ -886,7 +1119,7 @@ Adj.createExplanationLine = function createExplanationLine (expectedAncestor, x1
 	explanationElement.setAttribute("stroke-width", "1");
 	explanationElement.setAttribute("stroke-opacity", "0.2");
 	return explanationElement;
-}
+};
 
 // lower case element.tagName instead of mixed case element.tagName has been
 // observed when parsing Adj in SVG inline in HTML,
@@ -902,7 +1135,7 @@ Adj.registerMixedCasedName = function registerMixedCasedName(nameToRegister) {
 	if (nameToRegisterLowerCase !== nameToRegister) {
 		Adj.mixedCasedNames[nameToRegisterLowerCase] = nameToRegister;
 	}
-}
+};
 //
 Adj.mixedCasedName = function mixedCasedName (uncertainlyCasedName) {
 	// looked up or as is
@@ -919,7 +1152,7 @@ Adj.defineCommandForAlgorithm = function defineCommandForAlgorithm (algorithm) {
 	for (var i in parameterNames) {
 		Adj.registerMixedCasedName(parameterNames[i]);
 	}
-}
+};
 
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
@@ -1417,8 +1650,8 @@ Adj.defineCommandForAlgorithm({
 	parameters: ["wordBreaks",
 				 "lineBreaks"],
 	methods: [function textBreaks (element, parametersObject) {
-		var wordBreaks = parametersObject.wordBreaks != undefined ? parametersObject.wordBreaks : false // default wordBreaks = false
-		var lineBreaks = parametersObject.lineBreaks != undefined ? parametersObject.lineBreaks : true // default lineBreaks = true
+		var wordBreaks = parametersObject.wordBreaks != undefined ? parametersObject.wordBreaks : false; // default wordBreaks = false
+		var lineBreaks = parametersObject.lineBreaks != undefined ? parametersObject.lineBreaks : true; // default lineBreaks = true
 		//
 		// breaks, if any
 		if (wordBreaks || lineBreaks) {
@@ -1449,7 +1682,7 @@ Adj.defineCommandForAlgorithm({
 
 // utility
 Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, level) {
-	if (idsDictionary === undefined) { idsDictionary = {}; }; // ensure there is an idsDictionary
+	if (idsDictionary === undefined) { idsDictionary = {}; } // ensure there is an idsDictionary
 	level = level || 1; // if no level given then 1
 	// chose to implement to recognize more than one kind of id
 	var ids = {};
@@ -1478,7 +1711,7 @@ Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, le
 		Adj.buildIdsDictionary(child, idsDictionary, level + 1); // recursion
 	}
 	return idsDictionary;
-}
+};
 
 // utility
 // this specific function builds on invocation even if a dictionary exists already,
@@ -1487,7 +1720,7 @@ Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, le
 // could be expensive for a huge document, hence while itself O(n) nevertheless to avoid O(n^2) call sparingly
 Adj.buildIdsDictionaryForTheSvgElement = function buildIdsDictionaryForTheSvgElement (theSvgElement) {
 	return theSvgElement.adjIdsDictionary = Adj.buildIdsDictionary(theSvgElement);
-}
+};
 
 // utility
 Adj.elementLevel = function elementLevel (element) {
@@ -1507,7 +1740,7 @@ Adj.elementLevel = function elementLevel (element) {
 		element.adjLevel = level;
 	}
 	return level;
-}
+};
 
 // utility
 Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
@@ -1606,7 +1839,7 @@ Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
 		return otherToReturn.element;
 	}
 	return null; // failed to find any
-}
+};
 
 // constants
 // parse an id and optionally two more parameters, e.g. full "obj1 % 0.5, 1" or less specific "obj2"
@@ -1653,7 +1886,7 @@ Adj.endPoints = function endPoints (element) {
 		// other types of elements not implemented at this time
 		return null;
 	}
-}
+};
 
 // utility
 Adj.displacementAndAngle = function displacementAndAngle (fromPoint, toPoint) {
@@ -1662,7 +1895,7 @@ Adj.displacementAndAngle = function displacementAndAngle (fromPoint, toPoint) {
 	var displacement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	var angle = Math.atan2(deltaY, deltaX) / Math.PI * 180;
 	return {displacement:displacement, angle:angle};
-}
+};
 
 // utility
 Adj.transformLine = function transformLine (lineElement, matrix) {
@@ -1681,29 +1914,29 @@ Adj.transformLine = function transformLine (lineElement, matrix) {
 	lineElement.setAttribute("y1", Adj.decimal(point1.y));
 	lineElement.setAttribute("x2", Adj.decimal(point2.x));
 	lineElement.setAttribute("y2", Adj.decimal(point2.y));
-}
+};
 
 // utility class
 // for Adj.transformPathSegList
-Adj.PathSegList = function PathSegList (array) {
-	this.array = array;
-	this.numberOfItems = array.length;
-}
+Adj.PathSegList = function PathSegList (pathSegArray) {
+	this.pathSegArray = pathSegArray;
+	this.numberOfItems = pathSegArray.length;
+};
 Adj.PathSegList.prototype.getItem = function getItem (index) {
-	return this.array[index];
-}
+	return this.pathSegArray[index];
+};
 
 // utility class
 // for Adj.transformPathSegList, to avoid needing createSVGPoint()
 Adj.Point = function Point (x, y) {
 	this.x = x;
 	this.y = y;
-}
+};
 Adj.Point.prototype.matrixTransform = function matrixTransform (matrix) {
 	return {
 		x: matrix.a * this.x + matrix.c * this.y + matrix.e,
 		y: matrix.b * this.x + matrix.d * this.y + matrix.f };
-}
+};
 
 // utility
 // returns an array
@@ -1719,7 +1952,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 	relativeMatrix.f = 0;
 	// loop
 	var previousOriginalCoordinates = new Adj.Point(); // hold in case needed for absolute horizontal or vertical lineto
-	var transformedPathSegList = [];
+	var transformedPathSegArray = [];
 	for (var index = 0; index < numberOfPathSegs; index++) {
 		var pathSeg = pathSegList.getItem(index);
 		var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
@@ -1729,7 +1962,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 		switch (pathSegTypeAsLetter) {
 			case 'Z':  // closepath
 			case 'z':
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter });
 				break;
 			case 'M': // moveto
@@ -1737,7 +1970,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'T': // smooth quadratic curveto
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1754,7 +1987,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 					// first command in path data must be moveto and is absolute even if lowercase m would indicate relative
 					coordinates = coordinates.matrixTransform(absoluteMatrix);
 				}
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1766,7 +1999,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 				coordinates1 = coordinates1.matrixTransform(absoluteMatrix);
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x1: coordinates1.x,
 				   y1: coordinates1.y,
@@ -1780,7 +2013,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 				coordinates1 = coordinates1.matrixTransform(relativeMatrix);
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(relativeMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x1: coordinates1.x,
 				   y1: coordinates1.y,
@@ -1796,7 +2029,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 				coordinates2 = coordinates2.matrixTransform(absoluteMatrix);
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x1: coordinates1.x,
 				   y1: coordinates1.y,
@@ -1814,7 +2047,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 				coordinates2 = coordinates2.matrixTransform(relativeMatrix);
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(relativeMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x1: coordinates1.x,
 				   y1: coordinates1.y,
@@ -1830,7 +2063,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 				coordinates2 = coordinates2.matrixTransform(absoluteMatrix);
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x2: coordinates2.x,
 				   y2: coordinates2.y,
@@ -1844,7 +2077,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 				coordinates2 = coordinates2.matrixTransform(relativeMatrix);
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(relativeMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x2: coordinates2.x,
 				   y2: coordinates2.y,
@@ -1856,7 +2089,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'H': // horizontal lineto
 				coordinates = new Adj.Point(pathSeg.x, previousOriginalCoordinates.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: 'L',
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1865,7 +2098,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'h': // horizontal lineto
 				coordinates = new Adj.Point(pathSeg.x, 0);
 				coordinates = coordinates.matrixTransform(relativeMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: 'l',
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1874,7 +2107,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'V': // vertical lineto
 				coordinates = new Adj.Point(previousOriginalCoordinates.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: 'L',
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1883,7 +2116,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'v': // vertical lineto
 				coordinates = new Adj.Point(0, pathSeg.y);
 				coordinates = coordinates.matrixTransform(relativeMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: 'l',
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1892,7 +2125,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'A': // elliptical arc, as implemented replace by a line
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(absoluteMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: 'L',
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1902,7 +2135,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			case 'a': // elliptical arc, as implemented replace by a line
 				coordinates = new Adj.Point(pathSeg.x, pathSeg.y);
 				coordinates = coordinates.matrixTransform(relativeMatrix);
-				transformedPathSegList.push
+				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: 'l',
 				   x: coordinates.x,
 				   y: coordinates.y });
@@ -1912,11 +2145,10 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 			default:
 		}
 	}
-	return transformedPathSegList;
-}
+	return transformedPathSegArray;
+};
 
 // utility
-// returns an array
 // note: as implemented if path contains an elliptical arc curve segment then it is replaced by a line
 Adj.pathSegListToDString = function pathSegListToDString (pathSegList) {
 	var numberOfPathSegs = pathSegList.numberOfItems;
@@ -1968,17 +2200,17 @@ Adj.pathSegListToDString = function pathSegListToDString (pathSegList) {
 		d += " ";
 	}
 	return d;
-}
+};
 
 // utility
 // note: as implemented if path contains an elliptical arc curve segment then it is replaced by a line
 Adj.transformPath = function transformPath (pathElement, matrix) {
 	// get static base values as floating point values, before animation
-	var transformedPathSegList = Adj.transformPathSegList(pathElement.pathSegList, matrix);
-	transformedPathSegList = new Adj.PathSegList(transformedPathSegList);
+	var transformedPathSegArray = Adj.transformPathSegList(pathElement.pathSegList, matrix);
+	var transformedPathSegList = new Adj.PathSegList(transformedPathSegArray);
 	var d = Adj.pathSegListToDString(transformedPathSegList);
 	pathElement.setAttribute("d", d);
-}
+};
 
 // utility
 Adj.restoreAndStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribute (element, name) {
@@ -1991,7 +2223,7 @@ Adj.restoreAndStoreAuthoringAttribute = function restoreAndStoreAuthoringAttribu
 			Adj.elementSetAttributeInAdjNS(element, name, value);
 		}
 	}
-}
+};
 
 // utility
 Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoordinates (element) {
@@ -2005,7 +2237,7 @@ Adj.restoreAndStoreAuthoringCoordinates = function restoreAndStoreAuthoringCoord
 	} else {
 		// other types of elements not implemented at this time
 	}
-}
+};
 
 // a specific algorithm
 // note: as implemented works for simplified cases line and path,
@@ -2206,7 +2438,7 @@ Adj.fractionPoint = function fractionPoint (element, pathFraction) {
 		pathFractionPoint = element.getPointAtLength(totalLength * pathFraction);
 	} // else { // not a known case, as implemented not transformed
 	return pathFractionPoint;
-}
+};
 
 // utility
 Adj.totalLength = function totalLength (element) {
@@ -2221,7 +2453,7 @@ Adj.totalLength = function totalLength (element) {
 		// presumably static base values as floating point values, before animation
 		return element.getTotalLength();
 	} // else { // not a known case, as implemented
-}
+};
 
 // utility
 Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
@@ -2272,12 +2504,12 @@ Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
 		overlap: overlap,
 		distance: distance
 	};
-}
+};
 
 // utility
 Adj.addElementToAvoid = function addElementToAvoid (avoidList, element) {
 	avoidList.push(element);
-}
+};
 
 // utility
 Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
@@ -2306,7 +2538,7 @@ Adj.addSiblingsToAvoid = function addSiblingsToAvoid (avoidList, element) {
 		}
 		avoidList.push(sibling);
 	}
-}
+};
 
 // utility
 // note: as implemented only works well for translation and scaling but gives distorted answers for rotation
@@ -2362,7 +2594,7 @@ Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
 		});
 	}
 	return relativeBoundingBoxes;
-}
+};
 
 // utility
 Adj.overlapAndDistances = function overlapAndDistances (rectangle, rectangles) {
@@ -2378,7 +2610,7 @@ Adj.overlapAndDistances = function overlapAndDistances (rectangle, rectangles) {
 		overlaps: overlaps,
 		distances: distances
 	};
-}
+};
 
 // a specific algorithm
 // note: as implemented works for simplified case being in group of which first element is a path (or line) to ride on,
@@ -2418,7 +2650,7 @@ Adj.defineCommandForAlgorithm({
 					adjust = Adj.noneClearNear["none"]; // default adjust none
 				}
 			}
-		};
+		}
 		// further operations need pathFraction etc as number
 		pathFraction = parseFloat(pathFraction);
 		pathFraction2 = parseFloat(pathFraction2);
@@ -2763,7 +2995,7 @@ Adj.relativatePath = function relativatePath (pathElement) {
 				break;
 			case 'h': // horizontal lineto
 				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.x);
-				previousOriginalCoordinates.x += pathSeg.x;
+				previousCoordinates.x += pathSeg.x;
 				break;
 			case 'V': // vertical lineto
 				d += pathSegTypeAsLetter.toLowerCase() + Adj.decimal(pathSeg.y - previousCoordinates.y);
@@ -2771,7 +3003,7 @@ Adj.relativatePath = function relativatePath (pathElement) {
 				break;
 			case 'v': // vertical lineto
 				d += pathSegTypeAsLetter + Adj.decimal(pathSeg.y);
-				previousOriginalCoordinates.y += pathSeg.y;
+				previousCoordinates.y += pathSeg.y;
 				break;
 			case 'A': // elliptical arc
 				d += pathSegTypeAsLetter.toLowerCase() + Adj.decimal(pathSeg.r1) + "," + Adj.decimal(pathSeg.r2) +
@@ -2793,7 +3025,7 @@ Adj.relativatePath = function relativatePath (pathElement) {
 		}
 	}
 	pathElement.setAttribute("d", d);
-}
+};
 
 // utility
 // a specific algorithm
@@ -2831,7 +3063,7 @@ Adj.circleAroundRect = function circleAroundRect (rect) {
 	var width = rect.width;
 	var height = rect.height;
 	return {cx: x + width / 2, cy: y + height / 2, r: Math.sqrt(width * width + height * height) / 2};
-}
+};
 
 // utility
 Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
@@ -2840,7 +3072,7 @@ Adj.ellipseAroundRect = function ellipseAroundRect (rect) {
 	var width = rect.width;
 	var height = rect.height;
 	return {cx: x + width / 2, cy: y + height / 2, rx: width * Math.SQRT1_2, ry: height * Math.SQRT1_2};
-}
+};
 
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
@@ -2967,7 +3199,7 @@ Adj.defineCommandForAlgorithm({
 		//
 		// process
 		// figure angles
-		var angleCovered = toAngle - fromAngle
+		var angleCovered = toAngle - fromAngle;
 		var clockwise = angleCovered >= 0;
 		angleCovered = angleCovered % 360;
 		var fullCircle = angleCovered == 0;
@@ -3207,7 +3439,7 @@ Adj.defineCommandForAlgorithm({
 				width: 0,
 				height: 0
 			}
-		}
+		};
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
@@ -3281,7 +3513,7 @@ Adj.defineCommandForAlgorithm({
 						y: 0,
 						width: boundingBox.width,
 						height: boundingBox.height
-					}
+					};
 				}
 			} else { // onWayBack
 				//console.log("walkTreeLoop1 on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
@@ -3404,7 +3636,7 @@ Adj.defineCommandForAlgorithm({
 					y: 0,
 					width: familyBoxWidth,
 					height: 0 // cannot reckon height yet, descendants not enough, further nodes in same rows could be larger
-				}
+				};
 				//
 				positioningBox.x = Adj.fraction(0, familyBoxWidth - positioningBoxWidth, hAlign);
 				//
@@ -3765,7 +3997,7 @@ Adj.defineCommandForAlgorithm({
 				width: 0,
 				height: 0
 			}
-		}
+		};
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
@@ -3839,7 +4071,7 @@ Adj.defineCommandForAlgorithm({
 						y: 0,
 						width: boundingBox.width,
 						height: boundingBox.height
-					}
+					};
 				}
 			} else { // onWayBack
 				//console.log("walkTreeLoop1 on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
@@ -3962,7 +4194,7 @@ Adj.defineCommandForAlgorithm({
 					y: 0,
 					width: 0, // cannot reckon width yet, descendants not enough, further nodes in same rows could be larger
 					height: familyBoxHeight
-				}
+				};
 				//
 				positioningBox.y = Adj.fraction(0, familyBoxHeight - positioningBoxHeight, vAlign);
 				//
@@ -4206,7 +4438,7 @@ Adj.defineCommandForAlgorithm({
 					explanationElement.setAttribute("stroke-opacity", "0.2");
 					element.appendChild(explanationElement);
 				}
-				familyBoxY = rowMaxWidth + centerGap; // for next row
+				familyBoxX = rowMaxWidth + centerGap; // for next row
 				totalWidth += rowMaxWidth;
 			}
 		}
@@ -4222,7 +4454,7 @@ Adj.firstTimeStoreAuthoringAttribute = function firstTimeStoreAuthoringAttribute
 			Adj.elementSetAttributeInAdjNS(element, name, value);
 		}
 	}
-}
+};
 
 // utility
 Adj.firstTimeStoreAuthoringCoordinates = function firstTimeStoreAuthoringCoordinates (element) {
@@ -4231,7 +4463,7 @@ Adj.firstTimeStoreAuthoringCoordinates = function firstTimeStoreAuthoringCoordin
 	} else {
 		// other types of elements not implemented at this time
 	}
-}
+};
 
 // constants
 // parse a ^ prefix and a variable name, e.g. "^distance"
@@ -4299,7 +4531,7 @@ Adj.substituteVariables = function substituteVariables (element, originalExpress
 	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
 	var substitutedExpression = replacementSegments.join("");
 	return substitutedExpression;
-}
+};
 
 // essential
 // resolve id arithmetic
@@ -4445,7 +4677,7 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
 	var resolvedExpression = replacementSegments.join("");
 	return resolvedExpression;
-}
+};
 
 // essential
 // evaluate simple arithmetic
@@ -4528,7 +4760,7 @@ Adj.evaluateArithmetic = function evaluateArithmetic (originalExpression, usedHo
 	replacementSegments.push(originalExpression.substring(previousIndex, originalExpression.length));
 	var evaluatedExpression = replacementSegments.join("");
 	return evaluatedExpression;
-}
+};
 
 // utility
 // combine other calls,
@@ -4538,7 +4770,7 @@ Adj.doVarsIdsArithmetic = function doVarsIdsArithmetic (element, originalExpress
 	var withIdsResolved = Adj.resolveIdArithmetic(element, withVariablesSubstituted, usedHow, idedElementRecordsById);
 	var withArithmeticEvaluated = Adj.evaluateArithmetic(withIdsResolved, usedHow);
 	return withArithmeticEvaluated;
-}
+};
 
 // utility
 // combine other calls,
@@ -4556,7 +4788,7 @@ Adj.doVarsIdsArithmeticToGetNumber = function doVarsIdsArithmeticToGetNumber (el
 		throw "expression \"" + originalExpression + "\" does not evaluate to a number (\"" + withArithmeticEvaluated + "\") " + usedHow;
 	}
 	return number;
-}
+};
 
 // utility
 // combine other calls,
@@ -4565,7 +4797,7 @@ Adj.doVarsArithmetic2 = function doVarsArithmetic2 (element, originalExpression,
 	var withVariablesSubstituted = Adj.substituteVariables(element, originalExpression, usedHow, variableSubstitutionsByName);
 	var withArithmeticEvaluated = Adj.evaluateArithmetic(withVariablesSubstituted, usedHow);
 	return withArithmeticEvaluated;
-}
+};
 
 // utility
 // combine other calls,
@@ -4590,7 +4822,7 @@ Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, d
 		throw "expression \"" + originalExpression + "\" does not evaluate to a number (\"" + withArithmeticEvaluated + "\") " + usedHow;
 	}
 	return number;
-}
+};
 
 // utility
 // combine other calls,
@@ -4616,7 +4848,7 @@ Adj.doVarsBoolean = function doVarsBoolean (element, originalExpression, default
 		}
 	}
 	throw "expression \"" + originalExpression + "\" does not evaluate to a boolean (\"" + withVariablesSubstituted + "\") " + usedHow;
-}
+};
 
 // a specific algorithm
 // note: as implemented works for path
@@ -4966,7 +5198,7 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 			}
 		}
 	}
-}
+};
 
 // a specific algorithm
 // note: as implemented works for path
@@ -5674,7 +5906,7 @@ Adj.defineCommandForAlgorithm({
 						if (!boomFromParameter) {
 							boomFromParameter = "";
 						}
-						var boomFromMatch = Adj.idXYRegexp2.exec(boomFromParameter)
+						var boomFromMatch = Adj.idXYRegexp2.exec(boomFromParameter);
 						if (!boomFromMatch) {
 							boomFromMatch = Adj.idXYRegexp2NoMatch;
 						}
@@ -6115,7 +6347,7 @@ Adj.getTextSubStringLength = function getTextSubStringLength (element, begin, en
 	} else {
 		return element.getSubStringLength(begin, end - begin);
 	}
-}
+};
 
 // utility
 Adj.createTspanXYElement = function createTspanXYElement (ownerDocument, x, y) {
@@ -6124,7 +6356,7 @@ Adj.createTspanXYElement = function createTspanXYElement (ownerDocument, x, y) {
 	tspanElement.setAttribute("y", y);
 	tspanElement.textContent = Adj.svgTextTickle;
 	return tspanElement;
-}
+};
 
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
@@ -6490,16 +6722,16 @@ Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element,
 	if (doSvg) {
 		Adj.doSvg(element.ownerSVGElement);
 	}
-}
+};
 Adj.hideSiblingsFollowing = function hideSiblingsFollowing (element, doSvg) {
 	Adj.hideUnhideSiblingsFollowing(element, "hide", doSvg);
-}
+};
 Adj.unhideSiblingsFollowing = function unhideSiblingsFollowing (element, doSvg) {
 	Adj.hideUnhideSiblingsFollowing(element, "unhide", doSvg);
-}
+};
 Adj.toggleHideSiblingsFollowing = function toggleHideSiblingsFollowing (element, doSvg) {
 	Adj.hideUnhideSiblingsFollowing(element, "toggle", doSvg);
-}
+};
 
 // visual exception display
 Adj.displayException = function displayException (exception, theSvgElement) {
@@ -6528,7 +6760,7 @@ Adj.displayException = function displayException (exception, theSvgElement) {
 	var svgElementBoundingBox = theSvgElement.getBBox();
 	theSvgElement.setAttribute("width", Adj.decimal(svgElementBoundingBox.width));
 	theSvgElement.setAttribute("height", Adj.decimal(svgElementBoundingBox.height));
-}
+};
 
 Adj.toPathRegExp = /^([^?#]*)(.*)$/;
 Adj.fragmentsSplitRegExp = /#/;
@@ -6792,7 +7024,7 @@ Adj.DebouncedAsync = function DebouncedAsync (func, thisToUse) {
 	this.handle = null;
 	this.func = func;
 	this.thisToUse = thisToUse;
-}
+};
 Adj.DebouncedAsync.prototype.invoke = function () {
 	if (!this.handle) {
 		var debouncedAsync = this;
@@ -6803,7 +7035,7 @@ Adj.DebouncedAsync.prototype.invoke = function () {
 			debouncedAsync.func.apply(debouncedAsync.thisToUse);
 		}, 0);
 	}
-}
+};
 
 // if function window.nrvrGetTextFile from file-scheme-get-from-script.xpi
 // isn't present then provide an equivalent API
@@ -6829,7 +7061,7 @@ if (!window.nrvrGetTextFile) {
 				gotFileCallback('', 0);
 			}, 0);
 		}
-	}
+	};
 }
 
 // deal with namespaces not being implemented fully when parsing Adj in SVG inline in HTML,
@@ -6864,11 +7096,11 @@ Adj.namespaceImplementation = function namespaceImplementation (document) {
 			documentNamespaceImplementation = "full";
 		} else { // Adj.SvgNamespace commonly observed
 			documentNamespaceImplementation = "obtuse";
-		};
+		}
 	}
 	document.adjNamespaceImplementation = documentNamespaceImplementation;
 	return documentNamespaceImplementation;
-}
+};
 //
 Adj.nameSplitByColonRegexp = /^(?:(.*?):)?(.*)$/;
 Adj.nameSplitByColon = function nameSplitByColon (name) {
@@ -6877,7 +7109,7 @@ Adj.nameSplitByColon = function nameSplitByColon (name) {
 		prefix: match[1],
 		localPart: match[2],
 	};
-}
+};
 
 // utility
 // intended for use as key
@@ -6911,7 +7143,7 @@ Adj.normalizeDirection = function normalizeDirection(direction) {
 			direction.y = 0;
 		}
 	}
-}
+};
 
 // utility
 // returns new objects
@@ -6946,7 +7178,7 @@ Adj.rightAndLeftOffsetPoints = function rightAndLeftOffsetPoints (point, offset,
 		left: { x: point.x - offsetX, y: point.y - offsetY },
 		direction: direction
 	};
-}
+};
 
 // utility
 // modifies point
@@ -6954,34 +7186,35 @@ Adj.shiftPoint = function shiftPoint (point, offset, direction) {
 	Adj.normalizeDirection(direction);
 	point.x += offset * direction.x;
 	point.y += offset * direction.y;
-}
+};
 
 // utility
+// returns an array
 // assumes pathSegList to be absolute segments only of types M, L, C, Q
 Adj.reversePathSegList = function reversePathSegList (pathSegList) {
 	var numberOfPathSegs = pathSegList.numberOfItems;
-	var reversedPathSegList = [];
+	var reversedPathSegArray = [];
 	var pathSeg = pathSegList.getItem(numberOfPathSegs - 1);
-	reversedPathSegList.push({ pathSegTypeAsLetter: 'M', x: pathSeg.x, y: pathSeg.y });
+	reversedPathSegArray.push({ pathSegTypeAsLetter: 'M', x: pathSeg.x, y: pathSeg.y });
 	for (var index = numberOfPathSegs - 2; index >= 0; index--) {
 		var precedingPathSeg = pathSegList.getItem(index);
 		var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
 		switch (pathSegTypeAsLetter) {
 			case 'M':
 			case 'L':
-				reversedPathSegList.push
+				reversedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x: precedingPathSeg.x, y: precedingPathSeg.y });
 				break;
 			case 'C':
-				reversedPathSegList.push
+				reversedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x1: pathSeg.x2, y1: pathSeg.y2,
 				   x2: pathSeg.x1, y2: pathSeg.y1,
 				   x: precedingPathSeg.x, y: precedingPathSeg.y });
 				break;
 			case 'Q':
-				reversedPathSegList.push
+				reversedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 				   x1: pathSeg.x1, y1: pathSeg.y1,
 				   x: precedingPathSeg.x, y: precedingPathSeg.y });
@@ -6991,8 +7224,8 @@ Adj.reversePathSegList = function reversePathSegList (pathSegList) {
 		}
 		pathSeg = precedingPathSeg;
 	}
-	return reversedPathSegList;
-}
+	return reversedPathSegArray;
+};
 
 // a specific algorithm
 // note: as implemented only some kinds of path segments are supported
@@ -7043,14 +7276,14 @@ Adj.defineCommandForAlgorithm({
 		arrowElement.setAttribute("d", dWithArithmeticEvaluated);
 		//
 		// nock, left line forward, point, right line backward
-		var arrowPathSegListParts = [ [], [], [], [] ];
+		var arrowPathSegArrayParts = [ [], [], [], [] ];
 		// loop to parse into pieces
 		// get static base values as floating point values, before animation
 		var pathSegList = arrowElement.pathSegList; // the arrow shape, a path to bend
 		var numberOfPathSegs = pathSegList.numberOfItems;
-		var pathSegListParts = arrowPathSegListParts;
+		var pathSegArrayParts = arrowPathSegArrayParts;
 		var previousCoordinates = theSvgElement.createSVGPoint(); // keep track for when needed for converting absolute to relative, initialized to 0,0
-		for (var index = 0, partNumber = 0, pathSegListPart = pathSegListParts[partNumber]; index < numberOfPathSegs; index++) {
+		for (var index = 0, partNumber = 0, pathSegArrayPart = pathSegArrayParts[partNumber]; index < numberOfPathSegs; index++) {
 			var pathSeg = pathSegList.getItem(index);
 			var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
 			switch (pathSegTypeAsLetter) {
@@ -7059,12 +7292,12 @@ Adj.defineCommandForAlgorithm({
 					if (index < numberOfPathSegs - 1) {
 						throw "premature use of path segment type '" + pathSegTypeAsLetter + "' in arrow shape for a pathArrow command";
 					}
-					pathSegListPart.push({ pathSegTypeAsLetter: pathSegTypeAsLetter });
+					pathSegArrayPart.push({ pathSegTypeAsLetter: pathSegTypeAsLetter });
 					break;
 				case 'M': // moveto
 				case 'L': // lineto
 				case 'T': // smooth quadratic curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y });
 					previousCoordinates.x = pathSeg.x;
@@ -7076,24 +7309,24 @@ Adj.defineCommandForAlgorithm({
 					if (pathSegTypeAsLetter === 'l') {
 						if (pathSeg.x == 0 && pathSeg.y == 0) { // 'l' relative line to 0,0 marker to indicate next part
 							partNumber++;
-							if (partNumber >= pathSegListParts.length) {
+							if (partNumber >= pathSegArrayParts.length) {
 								throw "too many 'l' relative line to 0,0 markers in arrow shape for a pathArrow command";
 							}
-							pathSegListPart = pathSegListParts[partNumber];
-							pathSegListPart.push
+							pathSegArrayPart = pathSegArrayParts[partNumber];
+							pathSegArrayPart.push
 							({ pathSegTypeAsLetter: 'M',
 							   x: previousCoordinates.x, y: previousCoordinates.y });
 							break;
 						}
 					}
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y });
 					previousCoordinates.x += pathSeg.x;
 					previousCoordinates.y += pathSeg.y;
 					break;
 				case 'Q': // quadratic Bézier curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y,
 					   x1: pathSeg.x1, y1: pathSeg.y1 });
@@ -7101,7 +7334,7 @@ Adj.defineCommandForAlgorithm({
 					previousCoordinates.y = pathSeg.y;
 					break;
 				case 'q': // quadratic Bézier curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y,
 					   x1: pathSeg.x1, y1: pathSeg.y1 });
@@ -7109,7 +7342,7 @@ Adj.defineCommandForAlgorithm({
 					previousCoordinates.y += pathSeg.y;
 					break;
 				case 'C': // cubic Bézier curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y,
 					   x1: pathSeg.x1, y1: pathSeg.y1,
@@ -7118,7 +7351,7 @@ Adj.defineCommandForAlgorithm({
 					previousCoordinates.y = pathSeg.y;
 					break;
 				case 'c': // cubic Bézier curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y,
 					   x1: pathSeg.x1, y1: pathSeg.y1,
@@ -7127,7 +7360,7 @@ Adj.defineCommandForAlgorithm({
 					previousCoordinates.y += pathSeg.y;
 					break;
 				case 'S': // smooth cubic curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y,
 					   x2: pathSeg.x2, y2: pathSeg.y2 });
@@ -7135,7 +7368,7 @@ Adj.defineCommandForAlgorithm({
 					previousCoordinates.y = pathSeg.y;
 					break;
 				case 's': // smooth cubic curveto
-					pathSegListPart.push
+					pathSegArrayPart.push
 					({ pathSegTypeAsLetter: pathSegTypeAsLetter,
 					   x: pathSeg.x, y: pathSeg.y,
 					   x2: pathSeg.x2, y2: pathSeg.y2 });
@@ -7146,17 +7379,17 @@ Adj.defineCommandForAlgorithm({
 					throw "unsupported path segment type '" + pathSegTypeAsLetter + "' used in arrow shape for a pathArrow command";
 			}
 		}
-		if (partNumber < pathSegListParts.length - 1) {
+		if (partNumber < pathSegArrayParts.length - 1) {
 			throw "not enough 'l' relative line to 0,0 markers in arrow shape for a pathArrow command";
 		}
-		var nockPathSegList = arrowPathSegListParts[0];
-		var leftPathSegList = arrowPathSegListParts[1];
-		var pointPathSegList = arrowPathSegListParts[2];
-		var rightPathSegList = arrowPathSegListParts[3];
-		var nockRightCorner = nockPathSegList[0]; // while a PathSeg nevertheless has .x and .y like a point
-		var nockLeftCorner = leftPathSegList[0];
-		var pointLeftCorner = pointPathSegList[0];
-		var pointRightCorner = rightPathSegList[0];
+		var nockPathSegArray = arrowPathSegArrayParts[0];
+		var leftPathSegArray = arrowPathSegArrayParts[1];
+		var pointPathSegArray = arrowPathSegArrayParts[2];
+		var rightPathSegArray = arrowPathSegArrayParts[3];
+		var nockRightCorner = nockPathSegArray[0]; // while a PathSeg nevertheless has .x and .y like a point
+		var nockLeftCorner = leftPathSegArray[0];
+		var pointLeftCorner = pointPathSegArray[0];
+		var pointRightCorner = rightPathSegArray[0];
 		var nockBaseWidth = Adj.decimal(Math.sqrt(Math.pow(nockLeftCorner.x - nockRightCorner.x, 2) + Math.pow(nockLeftCorner.y - nockRightCorner.y, 2)), 3);
 		var pointBaseWidth = Adj.decimal(Math.sqrt(Math.pow(pointRightCorner.x - pointLeftCorner.x, 2) + Math.pow(pointRightCorner.y - pointLeftCorner.y, 2)), 3);
 		if (nockBaseWidth !== pointBaseWidth) {
@@ -7169,8 +7402,8 @@ Adj.defineCommandForAlgorithm({
 		if (numberOfPathSegs < 2) {
 			throw "not enough path segments in path to follow for a pathArrow command";
 		}
-		var leftPathSegList = [];
-		var rightPathSegList = [];
+		var leftPathSegArray = [];
+		var rightPathSegArray = [];
 		var previousCoordinates = theSvgElement.createSVGPoint(); // keep track for when needed for converting absolute to relative, initialized to 0,0
 		var previousDirection;
 		var previousLeftCoordinates = theSvgElement.createSVGPoint(); // initialized to 0,0
@@ -7355,10 +7588,10 @@ Adj.defineCommandForAlgorithm({
 					rightCoordinates = rightAndLeftCoordinates.right;
 					leftCoordinates = rightAndLeftCoordinates.left;
 					//
-					leftPathSegList.push
+					leftPathSegArray.push
 					({ pathSegTypeAsLetter: 'L',
 					   x: leftCoordinates.x, y: leftCoordinates.y });
-					rightPathSegList.push
+					rightPathSegArray.push
 					({ pathSegTypeAsLetter: 'L',
 					   x: rightCoordinates.x, y: rightCoordinates.y });
 					break;
@@ -7389,12 +7622,12 @@ Adj.defineCommandForAlgorithm({
 					rightCoordinates2 = rightAndLeftCoordinates2.right;
 					leftCoordinates2 = rightAndLeftCoordinates2.left;
 					//
-					leftPathSegList.push
+					leftPathSegArray.push
 					({ pathSegTypeAsLetter: 'C',
 					   x1: leftCoordinates1.x, y1: leftCoordinates1.y,
 					   x2: leftCoordinates2.x, y2: leftCoordinates2.y,
 					   x: leftCoordinates.x, y: leftCoordinates.y });
-					rightPathSegList.push
+					rightPathSegArray.push
 					({ pathSegTypeAsLetter: 'C',
 					   x1: rightCoordinates1.x, y1: rightCoordinates1.y,
 					   x2: rightCoordinates2.x, y2: rightCoordinates2.y,
@@ -7420,11 +7653,11 @@ Adj.defineCommandForAlgorithm({
 					rightCoordinates1 = rightAndLeftCoordinates1.right;
 					leftCoordinates1 = rightAndLeftCoordinates1.left;
 					//
-					leftPathSegList.push
+					leftPathSegArray.push
 					({ pathSegTypeAsLetter: 'Q',
 					   x1: leftCoordinates1.x, y1: leftCoordinates1.y,
 					   x: leftCoordinates.x, y: leftCoordinates.y });
-					rightPathSegList.push
+					rightPathSegArray.push
 					({ pathSegTypeAsLetter: 'Q',
 					   x1: rightCoordinates1.x, y1: rightCoordinates1.y,
 					   x: rightCoordinates.x, y: rightCoordinates.y });
@@ -7442,10 +7675,10 @@ Adj.defineCommandForAlgorithm({
 					rightCoordinates = rightAndLeftCoordinates.right;
 					leftCoordinates = rightAndLeftCoordinates.left;
 					//
-					leftPathSegList.push
+					leftPathSegArray.push
 					({ pathSegTypeAsLetter: 'M',
 					   x: leftCoordinates.x, y: leftCoordinates.y });
-					rightPathSegList.push
+					rightPathSegArray.push
 					({ pathSegTypeAsLetter: 'M',
 					   x: rightCoordinates.x, y: rightCoordinates.y });
 					if (index === 0) {
@@ -7464,7 +7697,7 @@ Adj.defineCommandForAlgorithm({
 			previousRightCoordinates = rightCoordinates;
 		}
 		//
-		rightPathSegList = Adj.reversePathSegList(new Adj.PathSegList(rightPathSegList));
+		rightPathSegArray = Adj.reversePathSegList(new Adj.PathSegList(rightPathSegArray));
 		//
 		var nockRightCornerOnPath = nockRightAndLeftCoordinates.right;
 		var nockDirection = nockRightAndLeftCoordinates.direction;
@@ -7473,7 +7706,7 @@ Adj.defineCommandForAlgorithm({
 			.translate(nockRightCornerOnPath.x, nockRightCornerOnPath.y)
 			.rotate(Math.atan2(nockDirection.y, nockDirection.x) * 180 / Math.PI)
 			.translate(-nockRightCorner.x, -nockRightCorner.y);
-		nockPathSegList = Adj.transformPathSegList(new Adj.PathSegList(nockPathSegList), nockPlacementMatrix);
+		nockPathSegArray = Adj.transformPathSegList(new Adj.PathSegList(nockPathSegArray), nockPlacementMatrix);
 		//
 		var pointLeftCornerOnPath = pointRightAndLeftCoordinates.left;
 		var pointDirection = pointRightAndLeftCoordinates.direction;
@@ -7482,14 +7715,13 @@ Adj.defineCommandForAlgorithm({
 			.translate(pointLeftCornerOnPath.x, pointLeftCornerOnPath.y)
 			.rotate(Math.atan2(pointDirection.y, pointDirection.x) * 180 / Math.PI)
 			.translate(-pointLeftCorner.x, -pointLeftCorner.y);
-		pointPathSegList = Adj.transformPathSegList(new Adj.PathSegList(pointPathSegList), pointPlacementMatrix);
+		pointPathSegArray = Adj.transformPathSegList(new Adj.PathSegList(pointPathSegArray), pointPlacementMatrix);
 		//
-		leftPathSegList[0].pathSegTypeAsLetter = 'L';
-		pointPathSegList[0].pathSegTypeAsLetter = 'L';
-		rightPathSegList[0].pathSegTypeAsLetter = 'L';
-		var pathSegList = nockPathSegList.concat(leftPathSegList, pointPathSegList, rightPathSegList);
-		pathSegList = new Adj.PathSegList(pathSegList);
-		var d = Adj.pathSegListToDString(pathSegList);
+		leftPathSegArray[0].pathSegTypeAsLetter = 'L';
+		pointPathSegArray[0].pathSegTypeAsLetter = 'L';
+		rightPathSegArray[0].pathSegTypeAsLetter = 'L';
+		var pathSegArray = nockPathSegArray.concat(leftPathSegArray, pointPathSegArray, rightPathSegArray);
+		var d = Adj.pathSegListToDString(new Adj.PathSegList(pathSegArray));
 		arrowElement.setAttribute("d", d);
 	}]
 });
