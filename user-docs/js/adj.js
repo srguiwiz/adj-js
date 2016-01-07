@@ -247,7 +247,7 @@ Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObjec
 };
 
 // utility
-Adj.getPhaseHandlersForElementForName = function getPhaseHandlersForElementForName (target, algorithmName) {
+Adj.getPhaseHandlersForElementForAlgorithmName = function getPhaseHandlersForElementForAlgorithmName (target, algorithmName) {
 	var matchingPhaseHandlers = [];
 	var algorithm = Adj.algorithms[algorithmName];
 	if (!algorithm) {
@@ -4648,7 +4648,7 @@ Adj.defineCommandForAlgorithm({
 		if (explain) {
 			if (element instanceof SVGPathElement) {
 				// an SVG path
-				if (Adj.getPhaseHandlersForElementForName(element, "explain").length === 0) {
+				if (Adj.getPhaseHandlersForElementForAlgorithmName(element, "explain").length === 0) {
 					Adj.explainBasicGeometry(element);
 				} // else { // don't explain twice
 			} // else { // not a known case, as implemented
@@ -4790,17 +4790,24 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 	var theSvgElement = element.ownerSVGElement || element;
 	//
 	var parent = element.parentNode;
+	var explanationGElement = Adj.createExplanationElement(parent, "g");
+	// by now the necessary transform should be known
+	var transform = element.getAttribute("transform");
+	if (transform) {
+		explanationGElement.setAttribute("transform", transform);
+	}
+	parent.appendChild(explanationGElement);
 	if (element instanceof SVGPathElement) {
 		// an SVG path
 		var explainPathData = element.getAttribute("d");
-		var explanationElement = Adj.createExplanationElement(parent, "path");
+		var explanationElement = Adj.createExplanationElement(explanationGElement, "path");
 		explanationElement.setAttribute("d", explainPathData);
 		explanationElement.setAttribute("fill", "none");
 		explanationElement.setAttribute("fill-opacity", "0.1");
 		explanationElement.setAttribute("stroke", "blue");
 		explanationElement.setAttribute("stroke-width", "1");
 		explanationElement.setAttribute("stroke-opacity", "0.2");
-		parent.appendChild(explanationElement);
+		explanationGElement.appendChild(explanationElement);
 		//
 		// get static base values as floating point values, before animation
 		var pathSegList = element.pathSegList;
@@ -4824,142 +4831,142 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 					coordinates.y = pathSeg.y;
 					initialCoordinates.x = coordinates.x;
 					initialCoordinates.y = coordinates.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'm': // moveto, relative
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
 					initialCoordinates.x = coordinates.x;
 					initialCoordinates.y = coordinates.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'L': // lineto, absolute
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'l': // lineto, relative
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'H': // horizontal lineto, absolute
 					coordinates.x = pathSeg.x;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'h': // horizontal lineto, relative
 					coordinates.x += pathSeg.x;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'V': // vertical lineto, absolute
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'v': // vertical lineto, relative
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'C': // cubic Bézier curveto, absolute
 					controlPoint.x = pathSeg.x1;
 					controlPoint.y = pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = pathSeg.x2;
 					controlPoint.y = pathSeg.y2;
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'c': // cubic Bézier curveto, relative
 					controlPoint.x = coordinates.x + pathSeg.x1;
 					controlPoint.y = coordinates.y + pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = coordinates.x + pathSeg.x2;
 					controlPoint.y = coordinates.y + pathSeg.y2;
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'S': // smooth cubic curveto, absolute
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = pathSeg.x2;
 					controlPoint.y = pathSeg.y2;
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 's': // smooth cubic curveto, relative
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					controlPoint.x = coordinates.x + pathSeg.x2;
 					controlPoint.y = coordinates.y + pathSeg.y2;
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'Q': // quadratic Bézier curveto, absolute
 					controlPoint.x = pathSeg.x1;
 					controlPoint.y = pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'q': // quadratic Bézier curveto, relative
 					controlPoint.x = coordinates.x + pathSeg.x1;
 					controlPoint.y = coordinates.y + pathSeg.y1;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'T': // smooth quadratic curveto, absolute
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 't': // smooth quadratic curveto, relative
 					controlPoint.x = 2 * coordinates.x - controlPoint.x;
 					controlPoint.y = 2 * coordinates.y - controlPoint.y;
-					parent.appendChild(Adj.createExplanationLine(parent, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, coordinates.x, coordinates.y, controlPoint.x, controlPoint.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, controlPoint.x, controlPoint.y, "blue"));
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationLine(parent, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationLine(explanationGElement, controlPoint.x, controlPoint.y, coordinates.x, coordinates.y, "blue"));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'A': // elliptical arc, absolute
 					coordinates.x = pathSeg.x;
 					coordinates.y = pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				case 'a': // elliptical arc, relative
 					coordinates.x += pathSeg.x;
 					coordinates.y += pathSeg.y;
-					parent.appendChild(Adj.createExplanationPointCircle(parent, coordinates.x, coordinates.y, pointCircleFill));
+					explanationGElement.appendChild(Adj.createExplanationPointCircle(explanationGElement, coordinates.x, coordinates.y, pointCircleFill));
 					break;
 				default:
 			}
