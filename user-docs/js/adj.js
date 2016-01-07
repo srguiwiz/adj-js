@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:2, revision:0 };
+Adj.version = { major:5, minor:2, revision:1 };
 Adj.algorithms = {};
 
 // constants
@@ -1703,6 +1703,22 @@ Adj.Point.prototype.matrixTransform = function matrixTransform (matrix) {
 	return {
 		x: matrix.a * this.x + matrix.c * this.y + matrix.e,
 		y: matrix.b * this.x + matrix.d * this.y + matrix.f };
+};
+
+// utility
+Adj.isIdentityMatrix = function isIdentityMatrix (matrix) {
+	return matrix.a === 1 && matrix.b === 0 && matrix.c === 0
+		&& matrix.d === 1 && matrix.e === 0 && matrix.f === 0;
+};
+
+Adj.setAttributeTransformMatrix = function setAttributeTransformMatrix (element, matrix, evenIfIdentity) {
+	if (evenIfIdentity || !Adj.isIdentityMatrix(matrix)) {
+		element.setAttribute("transform",
+			"matrix(" + Adj.decimal(matrix.a) + "," + Adj.decimal(matrix.b) + "," + Adj.decimal(matrix.c) + ","
+			+ Adj.decimal(matrix.d) + "," + Adj.decimal(matrix.e) + "," + Adj.decimal(matrix.f) + ")");
+	} else {
+		element.removeAttribute("transform");
+	}
 };
 
 // utility
@@ -5248,6 +5264,8 @@ Adj.defineCommandForAlgorithm({
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["alpha", "beta"],
 	methods: [function tilt (element, parametersObject) {
+		var theSvgElement = element.ownerSVGElement || element;
+		//
 		var usedHow = "used in a parameter for a tilt command";
 		var variableSubstitutionsByName = {};
 		var alpha = Adj.doVarsArithmetic(element, parametersObject.alpha, 30, null, usedHow, variableSubstitutionsByName); // default alpha = 30
@@ -5255,13 +5273,12 @@ Adj.defineCommandForAlgorithm({
 		//
 		alpha = alpha * Math.PI / 180;
 		beta = beta * Math.PI / 180;
-		var a = Math.cos(alpha);
-		var b = Math.sin(alpha);
-		var c = -Math.sin(beta);
-		var d = Math.cos(beta);
-		var e = 0;
-		var f = 0;
-		element.setAttribute("transform", "matrix(" + Adj.decimal(a) + "," + Adj.decimal(b) + "," + Adj.decimal(c) + "," + Adj.decimal(d) + "," + Adj.decimal(e) + "," + Adj.decimal(f) + ")");
+		var matrix = theSvgElement.createSVGMatrix();
+		matrix.a = Math.cos(alpha);
+		matrix.b = Math.sin(alpha);
+		matrix.c = -Math.sin(beta);
+		matrix.d = Math.cos(beta);
+		Adj.setAttributeTransformMatrix(element, matrix);
 	}]
 });
 
@@ -7042,6 +7059,7 @@ Adj.defineCommandForAlgorithm({
 				throw "no path to follow given for a pathArrow command";
 			}
 		}
+		var matrixFromPathElement = pathElement.getTransformToElement(arrowElement);
 		//
 		// first time store if first time
 		Adj.firstTimeStoreAuthoringCoordinates(arrowElement);
@@ -7496,6 +7514,7 @@ Adj.defineCommandForAlgorithm({
 		rightPathSegArray[0].pathSegTypeAsLetter = 'L';
 		var pathSegArray = nockPathSegArray.concat(leftPathSegArray, pointPathSegArray, rightPathSegArray);
 		var d = Adj.pathSegListToDString(new Adj.PathSegList(pathSegArray));
+		Adj.setAttributeTransformMatrix(arrowElement, matrixFromPathElement);
 		arrowElement.setAttribute("d", d);
 	}]
 });
