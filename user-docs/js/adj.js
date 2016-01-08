@@ -7025,7 +7025,8 @@ Adj.defineCommandForAlgorithm({
 	notAnOrder1Element: true,
 	phaseHandlerNames: ["adjPhase7Up"],
 	parameters: ["path",
-				 "setback", "nockSetback", "pointSetback"],
+				 "setback", "nockSetback", "pointSetback",
+				 "explain"],
 	methods: [function pathArrow (element, parametersObject) {
 		var theSvgElement = element.ownerSVGElement || element;
 		//
@@ -7036,7 +7037,9 @@ Adj.defineCommandForAlgorithm({
 		var setback = Adj.doVarsArithmetic(element, parametersObject.setback, 0, null, usedHow, variableSubstitutionsByName); // default setback = 0
 		var nockSetback = Adj.doVarsArithmetic(element, parametersObject.nockSetback, setback, null, usedHow, variableSubstitutionsByName); // default nockSetback = setback
 		var pointSetback = Adj.doVarsArithmetic(element, parametersObject.pointSetback, setback, null, usedHow, variableSubstitutionsByName); // default pointSetback = setback
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
 		//
+		var parent = element.parentNode;
 		var arrowElement = element; // the arrow shape, a path itself, part of which will be bent
 		if (!(arrowElement instanceof SVGPathElement)) {
 			throw "not a path given as arrow shape for a pathArrow command";
@@ -7059,7 +7062,7 @@ Adj.defineCommandForAlgorithm({
 				throw "no path to follow given for a pathArrow command";
 			}
 		}
-		var matrixFromPathElement = pathElement.getTransformToElement(arrowElement);
+		var matrixFromPathElement = pathElement.getTransformToElement(parent);
 		//
 		// first time store if first time
 		Adj.firstTimeStoreAuthoringCoordinates(arrowElement);
@@ -7516,6 +7519,22 @@ Adj.defineCommandForAlgorithm({
 		var d = Adj.pathSegListToDString(new Adj.PathSegList(pathSegArray));
 		Adj.setAttributeTransformMatrix(arrowElement, matrixFromPathElement);
 		arrowElement.setAttribute("d", d);
+		//
+		// explain
+		if (explain) {
+			var explanationGElement = Adj.createExplanationElement(parent, "g");
+			Adj.setAttributeTransformMatrix(explanationGElement, matrixFromPathElement);
+			parent.appendChild(explanationGElement);
+			//
+			var explanationPathSeg = nockPathSegArray[0];
+			explanationGElement.appendChild(Adj.createExplanationPointCircle(parent, explanationPathSeg.x, explanationPathSeg.y, "green"));
+			explanationPathSeg = leftPathSegArray[0];
+			explanationGElement.appendChild(Adj.createExplanationPointCircle(parent, explanationPathSeg.x, explanationPathSeg.y, "blue"));
+			explanationPathSeg = pointPathSegArray[0];
+			explanationGElement.appendChild(Adj.createExplanationPointCircle(parent, explanationPathSeg.x, explanationPathSeg.y, "blue"));
+			explanationPathSeg = rightPathSegArray[0];
+			explanationGElement.appendChild(Adj.createExplanationPointCircle(parent, explanationPathSeg.x, explanationPathSeg.y, "red"));
+		}
 	}]
 });
 
