@@ -1079,7 +1079,7 @@ JavaScript).</p>
   </tbody>
 </table>
 
-<p>Optional parameters of <code>verticalList</code> are very similar to the
+<p>Optional parameters of <code>verticalList</code> are very similar to
 optional parameters of <code><a href="#L7357">horizontalList</a></code>.</p>
 
 <p>Notably different, there is <code>maxHeight</code> <span
@@ -1599,14 +1599,47 @@ final resolution of adjusting coordinates.</p>
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-087-circularList-packArc.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:circularList fromAngle="0" toAngle="90" packArc="true"/&gt;</span>
+    &lt;circle r="20" fill="#000"/&gt;
+    &lt;rect width="3" height="3" fill="#222"/&gt;
+    &lt;rect width="6" height="6" fill="#444"/&gt;
+    &lt;rect width="9" height="9" fill="#666"/&gt;
+    &lt;rect width="12" height="12" fill="#888"/&gt;
+    &lt;rect width="36" height="36" fill="#aaa"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="adj-ex-088-circularList-cAlign.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="90" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:circularList fromAngle="0" toAngle="90" packArc="true" cAlign="from"/&gt;</span>
+    &lt;circle r="20" fill="#000"/&gt;
+    &lt;rect width="3" height="3" fill="#222"/&gt;
+    &lt;rect width="6" height="6" fill="#444"/&gt;
+    &lt;rect width="9" height="9" fill="#666"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
   </tbody>
 </table>
 
 <p>First element is trunk in the center, remaining elements are branches. First
 element could be an empty group.</p>
 
-<p>The fraction in parameter <code>rAlign</code> accepts decimal numbers, but
-it also recognizes some symbols (strings in JavaScript).</p>
+<p>The fractions in parameters <code>rAlign</code> and <code>cAlign</code>
+accept decimal numbers, but they also recognize some symbols (strings in
+JavaScript).</p>
 
 <table border="1">
   <tbody>
@@ -1621,6 +1654,19 @@ it also recognizes some symbols (strings in JavaScript).</p>
     </tr>
     <tr>
       <td>outside</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td rowspan="3">cAlign</td>
+      <td>from</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>halfway</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>to</td>
       <td>1.0</td>
     </tr>
   </tbody>
@@ -1782,7 +1828,10 @@ optional parameters of <code>horizontalList</code>. These include
 <code>topGap</code>, <code>middleGap</code>, <code>bottomGap</code>, and
 <code>vAlign</code>.</p>
 
-<p>Parameter <code>hAlign</code> aligns a node relative to its children.</p>
+<p>Parameter <code>hAlign</code> aligns a node relative to its children. The
+fraction in parameter <code>hAlign</code> accepts decimal numbers, but it also
+recognizes some symbols (strings in JavaScript), similar to parameter
+<code>hAlign</code> of <code><a href="#L7357">horizontalList</a></code>.</p>
 
 <p>Parameter <code>autoParrots</code> lets siblings that have no child sit on
 the shoulders of subtrees headed by siblings that do have children.</p>
@@ -2477,9 +2526,8 @@ with the first line indented.
 </table>
 
 <p>The fraction in parameter <code>hAlign</code> accepts decimal numbers, but
-it also recognizes some symbols (strings in JavaScript), similar to the
-parameter <code>hAlign</code> of <code><a
-href="#L7357">horizontalList</a></code>.</p>
+it also recognizes some symbols (strings in JavaScript), similar to parameter
+<code>hAlign</code> of <code><a href="#L7357">horizontalList</a></code>.</p>
 
 <p>As implemented, command <code>paragraph</code> handles nested
 <code>tspan</code> and <code>a</code>. It is <span class="emphasize">not</span>
@@ -3271,7 +3319,7 @@ decimal numbers.</p>
       <td><code>circularList</code></td>
       <td><code>gap</code>, <code>rGap</code>, <code>cGap</code>,
         <code>fromAngle</code>, <code>toAngle</code>, <code>rAlign</code>,
-        <code>horizontalGap</code>, <code>leftGap</code>,
+        <code>cAlign</code>, <code>horizontalGap</code>, <code>leftGap</code>,
         <code>rightGap</code>, <code>verticalGap</code>, <code>topGap</code>,
         <code>bottomGap</code></td>
     </tr>
@@ -3372,7 +3420,7 @@ decimal numbers.</p>
     </tr>
     <tr>
       <td><code>circularList</code></td>
-      <td><code>explain</code></td>
+      <td><code>packArc</code>, <code>explain</code></td>
     </tr>
     <tr>
       <td><code>verticalTree</code></td>

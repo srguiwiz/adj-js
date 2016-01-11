@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:2, revision:1 };
+Adj.version = { major:5, minor:3, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -665,6 +665,7 @@ Adj.modifyMaybeRemoveChildren = function modifyMaybeRemoveChildren (node, modify
 Adj.leftCenterRight = { left:0, center:0.5, right:1 };
 Adj.topMiddleBottom = { top:0, middle:0.5, bottom:1 };
 Adj.insideMedianOutside = { inside:0, median:0.5, outside:1 };
+Adj.fromHalfwayTo = { from:0, halfway:0.5, to:1 };
 Adj.noneClearNear = { none:"none", clear:"clear", near:"near" };
 Adj.eastSouthWestNorth = { east:0, south:90, west:180, north:270 };
 
@@ -2908,6 +2909,7 @@ Adj.defineCommandForAlgorithm({
 	parameters: ["gap", "rGap", "cGap",
 				 "fromAngle", "toAngle",
 				 "rAlign",
+				 "packArc", "cAlign",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap",
 				 "explain"],
@@ -2922,6 +2924,8 @@ Adj.defineCommandForAlgorithm({
 		var fromAngle = Adj.doVarsArithmetic(element, parametersObject.fromAngle, 0, null, usedHow, variableSubstitutionsByName); // clockwise, 0 is x axis, default fromAngle = 0
 		var toAngle = Adj.doVarsArithmetic(element, parametersObject.toAngle, fromAngle + 360, null, usedHow, variableSubstitutionsByName); // larger than fromAngle is clockwise, default toAngle = fromAngle + 360 means full circle clockwise
 		var rAlign = Adj.doVarsArithmetic(element, parametersObject.rAlign, 0.5, Adj.insideMedianOutside, usedHow, variableSubstitutionsByName); // rAlign could be a number, default rAlign 0.5 == median
+		var packArc = Adj.doVarsBoolean(element, parametersObject.packArc, false, usedHow, variableSubstitutionsByName); // default packArc = false
+		var cAlign = Adj.doVarsArithmetic(element, parametersObject.cAlign, 0.5, Adj.fromHalfwayTo, usedHow, variableSubstitutionsByName); // cAlign could be a number, default cAlign 0.5 == halfway
 		// outside gaps
 		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
 		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
@@ -2938,6 +2942,7 @@ Adj.defineCommandForAlgorithm({
 		var trunkRecord;
 		var childRecords = [];
 		var maxBranchRadius = 0;
+		var minBranchRadius = 1 / 0; // Infinity
 		for (var child = element.firstChild; child; child = child.nextSibling) {
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
@@ -2974,11 +2979,18 @@ Adj.defineCommandForAlgorithm({
 			if (boundingCircle.r > maxBranchRadius) {
 				maxBranchRadius = boundingCircle.r;
 			}
+			if (boundingCircle.r < minBranchRadius) {
+				minBranchRadius = boundingCircle.r;
+			}
 		}
 		if (!trunkRecord) { // childRecords.length === 0
 			return; // defensive exit
 		}
-		var numberOfBranches = childRecords.length - 1;
+		var childRecordsLength = childRecords.length;
+		var numberOfBranches = childRecordsLength - 1;
+		if (numberOfBranches <= 0) { // no branch
+			minBranchRadius = 0; // prevent defect in case packArc
+		}
 		//
 		// process
 		// figure angles
@@ -3001,16 +3013,84 @@ Adj.defineCommandForAlgorithm({
 		} else {
 			angleStep = 180; // defensive default for later /sin(angleStep/2)
 		}
+		var angleStepRad = angleStep * Math.PI / 180;
 		// figure radius
-		var treeRadius = trunkRecord.boundingCircle.r + rGap + maxBranchRadius;
-		var necessaryRadius = Math.ceil((maxBranchRadius + cGap / 2) / Math.sin(Math.abs(angleStep) / 2 * Math.PI / 180));
-		if (necessaryRadius > treeRadius) {
-			treeRadius = necessaryRadius;
+		var cGap05 = cGap / 2;
+		var rAlign2 = rAlign * 2;
+		var trunkCausedRadius = trunkRecord.boundingCircle.r + rGap + maxBranchRadius;
+		var sinAngleStepAbsRad05 = Math.sin(Math.abs(angleStepRad) / 2);
+		var maxBranchesCausedRadius = Math.ceil((maxBranchRadius + cGap05) / sinAngleStepAbsRad05);
+		if (!packArc) {
+			if (maxBranchesCausedRadius <= trunkCausedRadius) {
+				var treeRadius = trunkCausedRadius;
+			} else {
+				treeRadius = maxBranchesCausedRadius;
+			}
+		} else { // packArc
+			// in here radians, not degrees
+			var angleCoveredAbsRad = Math.abs(angleCovered * Math.PI / 180);
+			var minBranchesCausedRadius = Math.ceil((minBranchRadius + cGap05) / sinAngleStepAbsRad05);
+			var minPossibleRadius = Math.max(minBranchesCausedRadius, trunkCausedRadius);
+			var angleCoveredAtTreeRadius = function angleCoveredAtTreeRadius (treeRadiusAt) {
+				var accumulatedAngleCovered05 = 0;
+				for (var childRecordIndex = 1; childRecordIndex < childRecordsLength; childRecordIndex++) {
+					var childRecord = childRecords[childRecordIndex];
+					var childBoundingCircleR = childRecord.boundingCircle.r;
+					var wiggleR = maxBranchRadius - childBoundingCircleR;
+					var currentRadius = treeRadiusAt - wiggleR + rAlign2 * wiggleR;
+					var angleCovered05 = Math.asin((childBoundingCircleR + cGap05) / currentRadius);
+					if (isNaN(angleCovered05)) { // possible if e.g. currentRadius == 0 (observed), or asin(2)
+						angleCovered05 = 0;
+					}
+					childRecord.angleCovered05 = angleCovered05; // other sections of this algorithm now depend on this
+					accumulatedAngleCovered05 += angleCovered05;
+				}
+				return 2 * accumulatedAngleCovered05;
+			};
+			if (maxBranchesCausedRadius <= minPossibleRadius) {
+				var treeRadius = minPossibleRadius;
+				var tentativeAngleCovered = angleCoveredAtTreeRadius(treeRadius);
+			} else {
+				var maxPossibleAngleCovered = angleCoveredAtTreeRadius(minPossibleRadius);
+				var tentativeTreeRadius = maxBranchesCausedRadius;
+				var tentativeAngleCovered = angleCoveredAtTreeRadius(tentativeTreeRadius);
+				var previousTentativeTreeRadius = tentativeTreeRadius;
+				while (true) {
+					var tentativeRemainingArc = (angleCoveredAbsRad - tentativeAngleCovered) * tentativeTreeRadius;
+					if (tentativeRemainingArc < 0.5) { // good enough
+						break;
+					}
+					// get closer
+					tentativeTreeRadius =
+						minPossibleRadius +
+						(angleCoveredAbsRad - maxPossibleAngleCovered) *
+						(tentativeTreeRadius - minPossibleRadius) /
+						(tentativeAngleCovered - maxPossibleAngleCovered);
+					if (tentativeTreeRadius < minPossibleRadius) {
+						tentativeTreeRadius = minPossibleRadius;
+					}
+					if (!(tentativeTreeRadius < previousTentativeTreeRadius)) { // possible if e.g. tentativeAngleCovered == maxPossibleAngleCovered
+						// prevent endless loop, gracious exit
+						tentativeTreeRadius = previousTentativeTreeRadius;
+						break;
+					}
+					tentativeAngleCovered = angleCoveredAtTreeRadius(tentativeTreeRadius);
+					if (tentativeTreeRadius <= minPossibleRadius) {
+						break;
+					}
+					previousTentativeTreeRadius = tentativeTreeRadius;
+				}
+				treeRadius = tentativeTreeRadius;
+			}
 		}
 		// now we know where to put it
 		var treeCenterX = treeRadius + maxBranchRadius;
 		var treeCenterY = treeRadius + maxBranchRadius;
-		var currentAngle = fromAngle;
+		// from here on radians, not degrees
+		var currentAngle = fromAngle * Math.PI / 180;
+		if (packArc) {
+			currentAngle += cAlign * (angleCoveredAbsRad - tentativeAngleCovered);
+		}
 		var minPlacedChildBoundingBoxX = 2 * treeCenterX;
 		var minPlacedChildBoundingBoxY = 2 * treeCenterY;
 		var maxPlacedChildBoundingBoxX = 0;
@@ -3028,10 +3108,19 @@ Adj.defineCommandForAlgorithm({
 				placedChildCy = treeCenterY;
 			} else {
 				var wiggleR = maxBranchRadius - childBoundingCircleR;
-				var currentRadius = treeRadius - wiggleR + rAlign * 2 * wiggleR;
-				placedChildCx = treeCenterX + currentRadius * Math.cos(currentAngle * Math.PI / 180);
-				placedChildCy = treeCenterY + currentRadius * Math.sin(currentAngle * Math.PI / 180);
-				currentAngle += angleStep; // increment
+				var currentRadius = treeRadius - wiggleR + rAlign2 * wiggleR;
+				// increment
+				if (packArc) {
+					currentAngle += childRecord.angleCovered05;
+				}
+				placedChildCx = treeCenterX + currentRadius * Math.cos(currentAngle);
+				placedChildCy = treeCenterY + currentRadius * Math.sin(currentAngle);
+				// increment
+				if (!packArc) {
+					currentAngle += angleStepRad;
+				} else { // packArc
+					currentAngle += childRecord.angleCovered05;
+				}
 			}
 			// now we know where to put it
 			childRecord.translationX = Math.round(placedChildCx - childBoundingCircle.cx);
