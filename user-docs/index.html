@@ -5,6 +5,8 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Adj Framework - User Guide</title>
+  <script type="text/javascript" src="js/adj.js">
+  </script>
   <style type="text/css">
 td {
   padding: 1.0ex;
@@ -70,10 +72,13 @@ h1,h2,h3,h4,h5,h6 {
 <body>
 <h1>Adj Framework</h1>
 
-<p class="deemphasize">Note: This user guide's SVG images show in modern
+<p class="showonload" style="display:none;">Presumably documentation for Adj
+version <strong class="adjversion">?</strong>.</p>
+
+<p class="deemphasize">This user guide's SVG images show fine in contemporary
 browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 11 or newer.
-Very old browsers show the <code>alt</code> tag text of those <code>img</code>
-elements instead.</p>
+Old browsers show the <code>alt</code> tag text of <code>img</code> elements
+instead.</p>
 
 <div class="toc">
 <ul>
@@ -1024,9 +1029,9 @@ Here is more.
   </tbody>
 </table>
 
-<p>The fractions in parameters <code>hAlign</code> and <code>vAlign</code>
-accept decimal numbers, but they also recognize some symbols (strings in
-JavaScript).</p>
+<p>The fractions in parameters <code>hAlign</code> (horizontally align) and
+<code>vAlign</code> (vertically align) accept decimal numbers, but they also
+recognize some symbols (strings in JavaScript).</p>
 
 <table border="1">
   <tbody>
@@ -1637,9 +1642,9 @@ final resolution of adjusting coordinates.</p>
 <p>First element is trunk in the center, remaining elements are branches. First
 element could be an empty group.</p>
 
-<p>The fractions in parameters <code>rAlign</code> and <code>cAlign</code>
-accept decimal numbers, but they also recognize some symbols (strings in
-JavaScript).</p>
+<p>The fractions in parameters <code>rAlign</code> (radially align) and
+<code>cAlign</code> (circumferentially align) accept decimal numbers, but they
+also recognize some symbols (strings in JavaScript).</p>
 
 <table border="1">
   <tbody>
@@ -4381,5 +4386,18 @@ style="max-width:95%;max-height:auto;"></img>
 
 <p>An example:</p>
 <img alt="example image 004" src="adj-ex-044-image.svg"
-style="max-width:95%;max-height:auto;"></img> </body>
+style="max-width:95%;max-height:auto;"></img> 
+<script type="text/javascript">
+//<![CDATA[
+	var versionInstances = document.querySelectorAll('.adjversion');
+	for (var i = 0, n = versionInstances.length; i < n; i++) {
+		versionInstances[i].innerHTML=Adj.version.major+'.'+Adj.version.minor+'.'+Adj.version.revision;
+	}
+	//
+	var toShowInstances = document.querySelectorAll('.showonload');
+	for (var i = 0, n = toShowInstances.length; i < n; i++) {
+		toShowInstances[i].removeAttribute('style');
+	}
+//]]></script>
+</body>
 </html>
