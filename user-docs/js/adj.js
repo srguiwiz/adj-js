@@ -493,24 +493,26 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 				break;
 		}
 	}
-	// then assign parameters to their appropriate commands
-	for (var adjAttributeName in adjAttributesByName) {
-		var commandNamesUsingParameterName = Adj.commandNamesUsingParameterName(adjAttributeName);
-		if (commandNamesUsingParameterName) {
-			var adjAttributeValue = Adj.parameterParse(adjAttributesByName[adjAttributeName].value);
-			for (var i in commandNamesUsingParameterName) {
-				var commandName = commandNamesUsingParameterName[i];
-				var commandParameters = commandParametersByName[commandName];
-				if (commandParameters) {
-					commandParameters[adjAttributeName] = adjAttributeValue;
+	if (Object.keys(commandParametersByName).length) { // as an optimization only if any command at all
+		// then assign parameters to their appropriate commands
+		for (var adjAttributeName in adjAttributesByName) {
+			var commandNamesUsingParameterName = Adj.commandNamesUsingParameterName(adjAttributeName);
+			if (commandNamesUsingParameterName) {
+				var adjAttributeValue = Adj.parameterParse(adjAttributesByName[adjAttributeName].value);
+				for (var i in commandNamesUsingParameterName) {
+					var commandName = commandNamesUsingParameterName[i];
+					var commandParameters = commandParametersByName[commandName];
+					if (commandParameters) {
+						commandParameters[adjAttributeName] = adjAttributeValue;
+					}
 				}
 			}
 		}
-	}
-	for (var commandName in commandParametersByName) {
-		// commandName === algorithmName, for now
-		Adj.setAlgorithm(node, commandName, commandParametersByName[commandName]);
-	}
+		for (var commandName in commandParametersByName) {
+			// commandName === algorithmName, for now
+			Adj.setAlgorithm(node, commandName, commandParametersByName[commandName]);
+		}
+	} // else { // e.g. an adj:rcGridPart
 	//
 	// then walk
 	for (var child = node.firstChild; child; child = child.nextSibling) {
@@ -7654,6 +7656,7 @@ Adj.defineCommandForAlgorithm({
 				 "verticalGap", "topGap", "middleGap", "bottomGap",
 				 "hAlign", "vAlign",
 				 "cellLeftGap", "cellRightGap", "cellTopGap", "cellBottomGap",
+				 "rcGridPart",
 				 "explain"],
 	methods: [function rcGrid (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
@@ -7675,7 +7678,16 @@ Adj.defineCommandForAlgorithm({
 		var cellRightGap = Adj.doVarsArithmetic(element, parametersObject.cellRightGap, Math.floor(centerGap / 2), null, usedHow, variableSubstitutionsByName); // default cellRightGap = Math.floor(centerGap / 2)
 		var cellTopGap = Adj.doVarsArithmetic(element, parametersObject.cellTopGap, Math.floor(middleGap / 2), null, usedHow, variableSubstitutionsByName); // default cellTopGap = Math.floor(middleGap / 2)
 		var cellBottomGap = Adj.doVarsArithmetic(element, parametersObject.cellBottomGap, Math.floor(middleGap / 2), null, usedHow, variableSubstitutionsByName); // default cellBottomGap = Math.floor(middleGap / 2)
+		var defaultPartType = parametersObject.rcGridPart || "row";
 		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
+		//
+		switch (defaultPartType) {
+			case "column":
+			case "row":
+				break;
+			default:
+				throw "attribute adj:rcGridPart= has invalid value \"" + defaultPartType + "\"";
+		}
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -7723,6 +7735,12 @@ Adj.defineCommandForAlgorithm({
 			var partParametersObject = Adj.parametersFromAttributes(Adj.adjAttributesByNameOf(child));
 			var partType = partParametersObject.rcGridPart;
 			switch (partType) {
+				case null:
+				case undefined:
+					//throw "required attribute adj:rcGridPart= missing in child of rcGrid";
+					partType = defaultPartType;
+			}
+			switch (partType) {
 				case "column":
 					if (previousPartType === "column") {
 						partColumn++; // increment even if nothing in column, an implementation choice, risky to change later on
@@ -7740,9 +7758,6 @@ Adj.defineCommandForAlgorithm({
 					partRow = ++maxRow; // increment even if nothing in row, an implementation choice, risky to change later on
 					usedHow = "used in a parameter for an rcGridPart row";
 					break;
-				case null:
-				case undefined:
-					throw "required attribute adj:rcGridPart= missing in child of rcGrid";
 				case "":
 				default:
 					throw "attribute adj:rcGridPart= has invalid value \"" + partType + "\"";

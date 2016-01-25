@@ -2721,16 +2721,14 @@ for that <a href="#L123304">group</a>.</p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="200" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:rcGrid gap="5"/&gt;</span>
+    <span class="example-code">&lt;adj:rcGrid adj:rcGridPart="column" gap="5"/&gt;</span>
     &lt;rect fill="#fff" width="0" height="0"&gt;
       &lt;adj:frameForParent/&gt;
     &lt;/rect&gt;
     &lt;g <span class="example-code">adj:rcGridPart="row" adj:vAlign="bottom"</span>&gt;
       &lt;circle r="10" fill="none" stroke="#000"/&gt;
       &lt;circle r="4" fill="#222"/&gt;
-      &lt;circle r="6" fill="#444"/&gt;
-      &lt;circle r="8" fill="#666"/&gt;
-      &lt;circle r="10" fill="#888"/&gt;
+      …
     &lt;/g&gt;
     &lt;g <span class="example-code">adj:rcGridPart="column" adj:hAlign="right"</span>&gt;
       &lt;rect fill="#eee" width="0" height="0"&gt;
@@ -2738,6 +2736,9 @@ for that <a href="#L123304">group</a>.</p>
       &lt;/rect&gt;
       &lt;rect width="10" height="10" fill="#000"/&gt;
       &lt;rect width="14" height="12" fill="#222"/&gt;
+      …
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:hAlign="left"</span>&gt;
       …
     &lt;/g&gt;
     …
@@ -2766,8 +2767,9 @@ optional parameters of <code><a href="#L7357">horizontalList</a></code>.</p>
 
 <p>Optional parameters <code>hAlign</code>, <code>vAlign</code>,
 <code>cellLeftGap</code>, <code>cellRightGap</code>, <code>cellTopGap</code>,
-<code>cellBottomGap</code> can be specified per grid or per grid part, with
-part specification overriding whole grid specification.</p>
+<code>cellBottomGap</code>, <code>rcGridPart</code> can be specified per grid
+and per grid part, with part specification overriding whole grid
+specification.</p>
 
 <p>Rules of combination are defined by implementation.</p>
 
