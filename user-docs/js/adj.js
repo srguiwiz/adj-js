@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:3, revision:0 };
+Adj.version = { major:5, minor:3, revision:1 };
 Adj.algorithms = {};
 
 // constants
@@ -413,12 +413,43 @@ Adj.elementNameInAdjNS = function elementNameInAdjNS (element) {
 	return elementName;
 };
 
+// utility
+// collect all Adj attributes of an element
+Adj.adjAttributesByNameOf = function adjAttributesByNameOf (element) {
+	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
+	//
+	// then look for newer alternative syntax Adj commands as attributes
+	var adjAttributesByName = {};
+	var attributes = element.attributes;
+	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
+		var attribute = attributes[i];
+		// normal-namespace-intent
+		if (attribute.namespaceURI === Adj.AdjNamespace) {
+			adjAttributesByName[Adj.mixedCasedName(attribute.localName)] = attribute;
+		} else if (namespaceImplementation !== "full") { // no-namespace-workaround
+			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
+			if (splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
+				adjAttributesByName[Adj.mixedCasedName(splitAttributeName.localPart)] = attribute;
+			}
+		}
+	}
+	return adjAttributesByName;
+};
+
+// utility
+// make parameters object from collected attributes
+Adj.parametersFromAttributes = function parametersFromAttributes (attributesByName) {
+	var parametersByName = {};
+	for (var attributeName in attributesByName) {
+		parametersByName[attributeName] = Adj.parameterParse(attributesByName[attributeName].value);
+	}
+	return parametersByName;
+}
+
 // read Adj elements and make or update phase handlers,
 // recursive walking of the tree,
 // expects node to be an SVG element, not to be an Adj element, but a child can be an Adj element
 Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (node) {
-	var namespaceImplementation = Adj.namespaceImplementation(node.ownerDocument); // no-namespace-workaround
-	//
 	// first clear node.adjSomething properties for a new start
 	delete node.adjPhaseHandlers;
 	delete node.adjProcessSubtreeOnlyInPhaseHandler;
@@ -434,20 +465,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	//delete node.adjIncluded; // intentionally not clearing flag, include only first time
 	//
 	// then look for newer alternative syntax Adj commands as attributes
-	var adjAttributesByName = {};
-	var attributes = node.attributes;
-	for (var i = 0, numberOfAttributes = attributes.length; i < numberOfAttributes; i++) {
-		var attribute = attributes[i];
-		// normal-namespace-intent
-		if (attribute.namespaceURI === Adj.AdjNamespace) {
-			adjAttributesByName[Adj.mixedCasedName(attribute.localName)] = attribute;
-		} else if (namespaceImplementation !== "full") { // no-namespace-workaround
-			var splitAttributeName = Adj.nameSplitByColon(attribute.name);
-			if (splitAttributeName.prefix === Adj.AdjNamespacePrefix) {
-				adjAttributesByName[Adj.mixedCasedName(splitAttributeName.localPart)] = attribute;
-			}
-		}
-	}
+	var adjAttributesByName = Adj.adjAttributesByNameOf(node);
 	// first find out which commands
 	var commandParametersByName = {};
 	for (var adjAttributeName in adjAttributesByName) {
@@ -676,7 +694,7 @@ Adj.fraction = function fraction (one, other, fraction, roundNoCloser, roundIfIn
 	roundIfIntegers = roundIfIntegers != undefined ? roundIfIntegers : true; // default roundIfInteger = true
 	fraction = one + (other - one) * fraction;
 	if (roundIfIntegers) {
-		if (one % 1 == 0 && other % 1 == 0) { // both are integers
+		if (one % 1 === 0 && other % 1 === 0) { // both are integers
 			if (Math.abs(other - one) >= roundNoCloser) { // exactly or further apart than roundNoCloser
 				return Math.round(fraction);
 			} else { // don't round closer
@@ -2344,7 +2362,7 @@ Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
 		var oneBoundingBoxY = oneBoundingBox.y;
 		var oneBoundingBoxWidth = oneBoundingBox.width;
 		var oneBoundingBoxHeight = oneBoundingBox.height;
-		if (oneBoundingBoxWidth == 0 && oneBoundingBoxHeight == 0) { // e.g. an empty group
+		if (oneBoundingBoxWidth === 0 && oneBoundingBoxHeight === 0) { // e.g. an empty group
 			continue; // skip
 		}
 		var matrixFromOneElement = oneElement.getTransformToElement(parent);
@@ -2559,7 +2577,7 @@ Adj.defineCommandForAlgorithm({
 						var zeroOverlapSamples = [];
 						for (var sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
 							var oneSample = samples[sampleIndex];
-							if (oneSample.maxOverlap == 0) {
+							if (oneSample.maxOverlap === 0) {
 								zeroOverlapSamples.push(oneSample);
 							}
 						}
@@ -2586,7 +2604,7 @@ Adj.defineCommandForAlgorithm({
 						var zeroOverlapSamples = [];
 						for (var sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
 							var oneSample = samples[sampleIndex];
-							if (oneSample.maxOverlap == 0) {
+							if (oneSample.maxOverlap === 0) {
 								zeroOverlapSamples.push(oneSample);
 							}
 						}
@@ -2997,7 +3015,7 @@ Adj.defineCommandForAlgorithm({
 		var angleCovered = toAngle - fromAngle;
 		var clockwise = angleCovered >= 0;
 		angleCovered = angleCovered % 360;
-		var fullCircle = angleCovered == 0;
+		var fullCircle = angleCovered === 0;
 		if (fullCircle) {
 			if (clockwise) {
 				angleCovered = 360;
@@ -3039,7 +3057,7 @@ Adj.defineCommandForAlgorithm({
 					var wiggleR = maxBranchRadius - childBoundingCircleR;
 					var currentRadius = treeRadiusAt - wiggleR + rAlign2 * wiggleR;
 					var angleCovered05 = Math.asin((childBoundingCircleR + cGap05) / currentRadius);
-					if (isNaN(angleCovered05)) { // possible if e.g. currentRadius == 0 (observed), or asin(2)
+					if (isNaN(angleCovered05)) { // possible if e.g. currentRadius === 0 (observed), or asin(2)
 						angleCovered05 = 0;
 					}
 					childRecord.angleCovered05 = angleCovered05; // other sections of this algorithm now depend on this
@@ -7191,7 +7209,7 @@ Adj.defineCommandForAlgorithm({
 				case 'l': // lineto
 				case 't': // smooth quadratic curveto
 					if (pathSegTypeAsLetter === 'l') {
-						if (pathSeg.x == 0 && pathSeg.y == 0) { // 'l' relative line to 0,0 marker to indicate next part
+						if (pathSeg.x === 0 && pathSeg.y === 0) { // 'l' relative line to 0,0 marker to indicate next part
 							partNumber++;
 							if (partNumber >= pathSegArrayParts.length) {
 								throw "too many 'l' relative line to 0,0 markers in arrow shape for a pathArrow command";
@@ -7623,6 +7641,362 @@ Adj.defineCommandForAlgorithm({
 			explanationGElement.appendChild(Adj.createExplanationPointCircle(parent, explanationPathSeg.x, explanationPathSeg.y, "blue"));
 			explanationPathSeg = rightPathSegArray[0];
 			explanationGElement.appendChild(Adj.createExplanationPointCircle(parent, explanationPathSeg.x, explanationPathSeg.y, "red"));
+		}
+	}]
+});
+
+// a specific algorithm
+Adj.defineCommandForAlgorithm({
+	algorithmName: "rcGrid",
+	phaseHandlerNames: ["adjPhase1Up"],
+	parameters: ["gap",
+				 "horizontalGap", "leftGap", "centerGap", "rightGap",
+				 "verticalGap", "topGap", "middleGap", "bottomGap",
+				 "hAlign", "vAlign",
+				 "cellLeftGap", "cellRightGap", "cellTopGap", "cellBottomGap",
+				 "explain"],
+	methods: [function rcGrid (element, parametersObject) {
+		var ownerDocument = element.ownerDocument;
+		//
+		var usedHow = "used in a parameter for an rcGrid command";
+		var variableSubstitutionsByName = {};
+		var gap = Adj.doVarsArithmetic(element, parametersObject.gap, 3, null, usedHow, variableSubstitutionsByName); // default gap = 3
+		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
+		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
+		var centerGap = Adj.doVarsArithmetic(element, parametersObject.centerGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default centerGap = horizontalGap
+		var rightGap = Adj.doVarsArithmetic(element, parametersObject.rightGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default rightGap = horizontalGap
+		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
+		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
+		var middleGap = Adj.doVarsArithmetic(element, parametersObject.middleGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default middleGap = verticalGap
+		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0.5, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0.5 == center
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0.5, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0.5 == middle
+		var cellLeftGap = Adj.doVarsArithmetic(element, parametersObject.cellLeftGap, Math.floor(centerGap / 2), null, usedHow, variableSubstitutionsByName); // default cellLeftGap = Math.floor(centerGap / 2)
+		var cellRightGap = Adj.doVarsArithmetic(element, parametersObject.cellRightGap, Math.floor(centerGap / 2), null, usedHow, variableSubstitutionsByName); // default cellRightGap = Math.floor(centerGap / 2)
+		var cellTopGap = Adj.doVarsArithmetic(element, parametersObject.cellTopGap, Math.floor(middleGap / 2), null, usedHow, variableSubstitutionsByName); // default cellTopGap = Math.floor(middleGap / 2)
+		var cellBottomGap = Adj.doVarsArithmetic(element, parametersObject.cellBottomGap, Math.floor(middleGap / 2), null, usedHow, variableSubstitutionsByName); // default cellBottomGap = Math.floor(middleGap / 2)
+		var explain = Adj.doVarsBoolean(element, parametersObject.explain, false, usedHow, variableSubstitutionsByName); // default explain = false
+		//
+		// determine which nodes to process,
+		// children that are instances of SVGElement rather than every DOM node,
+		// also skipping hiddenRect and skipping notAnOrder1Element
+		var hiddenRect;
+		var partRecords = []; // similar to childRecords in other algorithms
+		var partColumn;
+		var partRow;
+		var previousPartType;
+		var maxRow = -1; // inclusive
+		var columns = [];
+		var rows = [];
+		var columnWidths = [];
+		var columnLeftGaps = [];
+		var columnRightGaps = [];
+		var rowHeights = [];
+		var rowTopGaps = [];
+		var rowBottomGaps = [];
+		// loop through children, which are parts
+		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (!(child instanceof SVGElement)) {
+				continue; // skip if not an SVGElement, e.g. an XML #text
+			}
+			if (!child.getBBox) {
+				continue; // skip if not an SVGLocatable, e.g. a <script> element
+			}
+			if (!hiddenRect) { // needs a hidden rect, chose to require it to be first
+				// make hidden rect
+				hiddenRect = Adj.createSVGElement(ownerDocument, "rect", {adjPlacementArtifact:true});
+				hiddenRect.setAttribute("width", 0);
+				hiddenRect.setAttribute("height", 0);
+				hiddenRect.setAttribute("visibility", "hidden");
+				element.insertBefore(hiddenRect, child);
+			}
+			if (child.adjNotAnOrder1Element) {
+				continue;
+			}
+			if (child.adjHiddenByCommand) {
+				continue;
+			}
+			if (!(child instanceof SVGGElement)) {
+				throw "child of rcGrid must be g, not " + child.tagName;
+			}
+			// was var partType = Adj.elementGetAttributeInAdjNS(child, "rcGridPart");
+			var partParametersObject = Adj.parametersFromAttributes(Adj.adjAttributesByNameOf(child));
+			var partType = partParametersObject.rcGridPart;
+			switch (partType) {
+				case "column":
+					if (previousPartType === "column") {
+						partColumn++; // increment even if nothing in column, an implementation choice, risky to change later on
+					} else if (previousPartType === "row") {
+						partColumn = 0;
+						partRow = ++maxRow; // increment even if nothing in column, an implementation choice, risky to change later on
+					} else { // initially undefined
+						partColumn = 0;
+						partRow = 0;
+					}
+					usedHow = "used in a parameter for an rcGridPart column";
+					break;
+				case "row":
+					partColumn = 0; // implementation choice for simplicity, for now at least
+					partRow = ++maxRow; // increment even if nothing in row, an implementation choice, risky to change later on
+					usedHow = "used in a parameter for an rcGridPart row";
+					break;
+				case null:
+				case undefined:
+					throw "required attribute adj:rcGridPart= missing in child of rcGrid";
+				case "":
+				default:
+					throw "attribute adj:rcGridPart= has invalid value \"" + partType + "\"";
+			}
+			//
+			var partHAlign = Adj.doVarsArithmetic(child, partParametersObject.hAlign, hAlign, Adj.leftCenterRight, usedHow, variableSubstitutionsByName);
+			var partVAlign = Adj.doVarsArithmetic(child, partParametersObject.vAlign, vAlign, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName);
+			var partCellLeftGap = Adj.doVarsArithmetic(child, partParametersObject.cellLeftGap, cellLeftGap, null, usedHow, variableSubstitutionsByName);
+			var partCellRightGap = Adj.doVarsArithmetic(child, partParametersObject.cellRightGap, cellRightGap, null, usedHow, variableSubstitutionsByName);
+			var partCellTopGap = Adj.doVarsArithmetic(child, partParametersObject.cellTopGap, cellTopGap, null, usedHow, variableSubstitutionsByName);
+			var partCellBottomGap = Adj.doVarsArithmetic(child, partParametersObject.cellBottomGap, cellBottomGap, null, usedHow, variableSubstitutionsByName);
+			//
+			var grandchildAfterHiddenRect = null; // must be null
+			var cellRecords = []; // similar to what would we grandchildRecords in other algorithms
+			var cellColumn = partColumn;
+			var cellRow = partRow;
+			var cellInPartIndex = 0;
+			// loop through grandchildren, which are cells
+			for (var grandchild = child.firstChild; grandchild; grandchild = grandchild.nextSibling) {
+				if (!(grandchild instanceof SVGElement)) {
+					continue; // skip if not an SVGElement, e.g. an XML #text
+				}
+				if (!grandchild.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
+				}
+				if (!grandchildAfterHiddenRect) { // needs a hidden rect, chose to require it to be first
+					grandchildAfterHiddenRect = grandchild;
+				}
+				if (grandchild.adjNotAnOrder1Element) {
+					continue;
+				}
+				if (grandchild.adjHiddenByCommand) {
+					continue;
+				}
+				var boundingBox = grandchild.getBBox();
+				var cellRecord = {
+					boundingBox: boundingBox,
+					node: grandchild,
+					//
+					column: cellColumn,
+					row: cellRow,
+				}
+				//
+				var column = columns[cellColumn] || (columns[cellColumn] = []);
+				column[cellRow] = cellRecord;
+				var row = rows[cellRow] || (rows[cellRow] = []);
+				row[cellColumn] = cellRecord;
+				//
+				while (columnWidths.length <= cellColumn) {
+					columnWidths.push(0);
+					columnLeftGaps.push(0);
+					columnRightGaps.push(0);
+				}
+				columnWidths[cellColumn] = Math.max(columnWidths[cellColumn], boundingBox.width);
+				columnLeftGaps[cellColumn] = Math.max(columnLeftGaps[cellColumn], partCellLeftGap);
+				columnRightGaps[cellColumn] = Math.max(columnRightGaps[cellColumn], partCellRightGap);
+				while (rowHeights.length <= cellRow) {
+					rowHeights.push(0);
+					rowTopGaps.push(0);
+					rowBottomGaps.push(0);
+				}
+				rowHeights[cellRow] = Math.max(rowHeights[cellRow], boundingBox.height);
+				rowTopGaps[cellRow] = Math.max(rowTopGaps[cellRow], partCellTopGap);
+				rowBottomGaps[cellRow] = Math.max(rowBottomGaps[cellRow], partCellBottomGap);
+				//
+				cellRecords.push(cellRecord);
+				//
+				switch (partType) {
+					case "column":
+						if (cellRow > maxRow) {
+							maxRow = cellRow;
+						}
+						cellRow++;
+						break;
+					case "row":
+						cellColumn++;
+						break;
+					// never should get here with any other partType
+				}
+				cellInPartIndex++;
+			}
+			// make hidden rect
+			var partHiddenRect = Adj.createSVGElement(ownerDocument, "rect", {adjPlacementArtifact:true});
+			partHiddenRect.setAttribute("width", 0);
+			partHiddenRect.setAttribute("height", 0);
+			partHiddenRect.setAttribute("visibility", "hidden");
+			child.insertBefore(partHiddenRect, grandchildAfterHiddenRect);
+			//
+			partRecords.push({
+				boundingBox: child.getBBox(),
+				node: child,
+				//
+				hiddenRect: partHiddenRect,
+				cellRecords: cellRecords,
+				//
+				type: partType,
+				column: partColumn,
+				row: partRow,
+				//
+				// limit to values needed, for now
+				hAlign: partHAlign,
+				vAlign: partVAlign,
+			});
+			previousPartType = partType;
+		}
+		//
+		// process
+		var numberOfColumns = columns.length;
+		var numberOfColumns1 = numberOfColumns - 1;
+		var numberOfRows = rows.length;
+		var numberOfRows1 = numberOfRows - 1;
+		//
+		if (numberOfColumns) { // !== 0
+			leftGap = Math.max(leftGap, columnLeftGaps[0]);
+			rightGap = Math.max(rightGap, columnRightGaps[numberOfColumns1]);
+		}
+		if (numberOfRows) { // !== 0
+			topGap = Math.max(topGap, rowTopGaps[0]);
+			bottomGap = Math.max(bottomGap, rowBottomGaps[numberOfRows1]);
+		}
+		//
+		var columnXs = [ leftGap ];
+		for (var i = 0, n = numberOfColumns - 1; i < n; i++) {
+			columnXs.push(columnXs[i] + columnWidths[i] + columnRightGaps[i] + columnLeftGaps[i + 1]);
+		}
+		var rowYs = [ topGap ];
+		for (var i = 0, n = numberOfRows; i < n; i++) {
+			rowYs.push(rowYs[i] + rowHeights[i] + rowBottomGaps[i] + rowTopGaps[i + 1]);
+		}
+		//
+		for (var partRecordIndex in partRecords) {
+			var partRecord = partRecords[partRecordIndex];
+			var cellRecords = partRecord.cellRecords;
+			for (var cellRecordIndex in cellRecords) {
+				var cellRecord = cellRecords[cellRecordIndex];
+				var cellBoundingBox = cellRecord.boundingBox;
+				var cellElement = cellRecord.node;
+				var cellColumn = cellRecord.column;
+				var cellRow = cellRecord.row;
+				var columnX = columnXs[cellColumn];
+				var rowY = rowYs[cellRow];
+				var columnWidth = columnWidths[cellColumn];
+				var rowHeight = rowHeights[cellRow];
+				var cellX = cellBoundingBox.x;
+				var cellY = cellBoundingBox.y;
+				var cellWidth = cellBoundingBox.width;
+				var cellHeight = cellBoundingBox.height;
+				// now we know where to put it
+				var translationX = columnX - cellX + Adj.fraction(0, columnWidth - cellWidth, partRecord.hAlign);
+				var translationY = rowY - cellY + Adj.fraction(0, rowHeight - cellHeight, partRecord.vAlign);
+				cellElement.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
+			}
+			//
+			// size hidden rect for having a good bounding box when elsewhere this part's getBBox() gets called, e.g. from a frameForParent
+			var partHiddenRect = partRecord.hiddenRect;
+			if (partHiddenRect) {
+				if (cellRecords.length) {
+					var firstCellRecord = cellRecords[0];
+					var lastCellRecord = cellRecords[cellRecords.length - 1];
+					var column1 = firstCellRecord.column;
+					var row1 = firstCellRecord.row;
+					var column2 = lastCellRecord.column;
+					var row2 = lastCellRecord.row;
+					var x1 = columnXs[column1] - columnLeftGaps[column1];
+					var y1 = rowYs[row1] - rowTopGaps[row1];
+					var x2 = columnXs[column2] + columnWidths[column2] + columnRightGaps[column2];
+					var y2 = rowYs[row2] + rowHeights[row2] + rowBottomGaps[row2];
+				} else { // cellRecords.length === 0
+					var partType = partRecord.type;
+					var partColumn = partRecord.column;
+					var partRow = partRecord.row;
+					var x1 = columnXs[partColumn] - columnLeftGaps[partColumn];
+					var y1 = rowYs[partRow] - rowTopGaps[partRow];
+					var x2 = columnXs[partColumn] + columnRightGaps[partColumn];
+					var y2 = rowYs[partRow] + rowBottomGaps[partRow];
+					switch (partType) {
+						case "column":
+							x2 += columnWidths[partColumn];
+							break;
+						case "row":
+							y2 += rowHeights[partRow];
+							break;
+						// never should get here with any other partType
+					}
+				}
+				var partWidth = x2 - x1;
+				var partHeight = y2 - y1;
+				partHiddenRect.setAttribute("x", Adj.decimal(x1));
+				partHiddenRect.setAttribute("y", Adj.decimal(y1));
+				partHiddenRect.setAttribute("width", Adj.decimal(partWidth));
+				partHiddenRect.setAttribute("height", Adj.decimal(partHeight));
+				// explain
+				if (explain) {
+					partRecord.explainRect = {
+						x: x1,
+						y: y1,
+						width: partWidth,
+						height: partHeight
+					};
+				}
+			}
+		}
+		//
+		// size the hidden rect for having a good bounding box when from a level up this element's getBBox() gets called
+		if (hiddenRect) {
+			var totalWidth = Adj.decimal((numberOfColumns ? columnXs[numberOfColumns1] + columnWidths[numberOfColumns1] : leftGap) + rightGap);
+			var totalHeight = Adj.decimal((numberOfRows ? rowYs[numberOfRows1] + rowHeights[numberOfRows1] : topGap) + bottomGap);
+			hiddenRect.setAttribute("x", 0);
+			hiddenRect.setAttribute("y", 0);
+			hiddenRect.setAttribute("width", totalWidth);
+			hiddenRect.setAttribute("height", totalHeight);
+			// explain
+			if (explain) {
+				var explainRect = {
+					x: 0,
+					y: 0,
+					width: totalWidth,
+					height: totalHeight
+				};
+			}
+		}
+		//
+		// explain
+		if (explain) {
+			if (explainRect) {
+				var explanationElement = Adj.createExplanationElement(element, "rect");
+				explanationElement.setAttribute("x", 0);
+				explanationElement.setAttribute("y", 0);
+				explanationElement.setAttribute("width", explainRect.width);
+				explanationElement.setAttribute("height", explainRect.height);
+				explanationElement.setAttribute("fill", "white");
+				explanationElement.setAttribute("fill-opacity", "0.1");
+				explanationElement.setAttribute("stroke", "blue");
+				explanationElement.setAttribute("stroke-width", "1");
+				explanationElement.setAttribute("stroke-opacity", "0.2");
+				element.appendChild(explanationElement);
+			}
+			for (var partRecordIndex in partRecords) {
+				var partRecord = partRecords[partRecordIndex];
+				var partExplainRect = partRecord.explainRect;
+				if (partExplainRect) {
+					var explanationElement = Adj.createExplanationElement(element, "rect");
+					explanationElement.setAttribute("x", Adj.decimal(partExplainRect.x));
+					explanationElement.setAttribute("y", Adj.decimal(partExplainRect.y));
+					explanationElement.setAttribute("width", Adj.decimal(partExplainRect.width));
+					explanationElement.setAttribute("height", Adj.decimal(partExplainRect.height));
+					explanationElement.setAttribute("fill", "blue");
+					explanationElement.setAttribute("fill-opacity", "0.1");
+					explanationElement.setAttribute("stroke", "blue");
+					explanationElement.setAttribute("stroke-width", "1");
+					explanationElement.setAttribute("stroke-opacity", "0.1");
+					element.appendChild(explanationElement);
+				}
+			}
 		}
 	}]
 });

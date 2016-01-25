@@ -132,8 +132,9 @@ newer.</p>
           <li><a href="#L45423">1.11.19. Command telescopicTree Options</a></li>
           <li><a href="#L11198">1.11.20. Command paragraph Options</a></li>
           <li><a href="#L11940">1.11.21. Command pathArrow Options</a></li>
-          <li><a href="#L94550">1.11.22. Command hide Options</a></li>
-          <li><a href="#L3450">1.11.23. Command include Options</a></li>
+          <li><a href="#L16289">1.11.22. Command rcGrid Options</a></li>
+          <li><a href="#L94550">1.11.23. Command hide Options</a></li>
+          <li><a href="#L3450">1.11.24. Command include Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a>
@@ -818,9 +819,45 @@ Here is more.
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="80" fill="linen"/&gt;</span>
   &lt;path d="M15,20 q30,0 30,30 l50,0 30,-30 30,0" stroke="none" fill="none"/&gt;
-  &lt;path d="M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z" stroke="black" stroke-width="1" fill="white"&gt;
+  &lt;path d="M0,0" <span class="example-code">adj:d="</span>M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z"
+    stroke="black" stroke-width="1" fill="white"&gt;
     <span class="example-code">&lt;adj:<a href="#L11940">pathArrow</a>/&gt;</span>
   &lt;/path&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-089-rcGrid.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="170" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:<a href="#L16289">rcGrid</a>/&gt;</span>
+    &lt;g <span class="example-code">adj:rcGridPart="row"</span>&gt;
+      &lt;circle r="10" fill="none" stroke="#000"/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+      &lt;circle r="8" fill="#666"/&gt;
+      &lt;circle r="10" fill="#888"/&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="column"</span>&gt;
+      &lt;rect width="10" height="10" fill="#000"/&gt;
+      &lt;rect width="14" height="12" fill="#222"/&gt;
+      …
+    &lt;/g&gt;
+    …
+    &lt;g <span class="example-code">adj:rcGridPart="column"</span>/&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="column"</span>&gt;
+      &lt;rect width="22" height="16" fill="#000"/&gt;
+      …
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="row"</span>&gt;
+      &lt;g/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+      …
+    &lt;/g&gt;
+    …
+  &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -2638,7 +2675,105 @@ as arrow shape</strong> often should be <strong>together inside the same SVG
 group element</strong> <code>g</code>, even if this is the only raison d'être
 for that <a href="#L123304">group</a>.</p>
 
-<h4 id="L94550">1.11.22. Command hide Options</h4>
+<h4 id="L16289">1.11.22. Command rcGrid Options</h4>
+
+<p>Optional parameters of <code>rcGrid</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-089-rcGrid.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="170" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:rcGrid/&gt;</span>
+    &lt;g <span class="example-code">adj:rcGridPart="row"</span>&gt;
+      &lt;circle r="10" fill="none" stroke="#000"/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+      &lt;circle r="8" fill="#666"/&gt;
+      &lt;circle r="10" fill="#888"/&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="column"</span>&gt;
+      &lt;rect width="10" height="10" fill="#000"/&gt;
+      &lt;rect width="14" height="12" fill="#222"/&gt;
+      …
+    &lt;/g&gt;
+    …
+    &lt;g <span class="example-code">adj:rcGridPart="column"</span>/&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="column"</span>&gt;
+      &lt;rect width="22" height="16" fill="#000"/&gt;
+      …
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="row"</span>&gt;
+      &lt;g/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+      …
+    &lt;/g&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-090-rcGrid-motley.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="200" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:rcGrid gap="5"/&gt;</span>
+    &lt;rect fill="#fff" width="0" height="0"&gt;
+      &lt;adj:frameForParent/&gt;
+    &lt;/rect&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="row" adj:vAlign="bottom"</span>&gt;
+      &lt;circle r="10" fill="none" stroke="#000"/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+      &lt;circle r="8" fill="#666"/&gt;
+      &lt;circle r="10" fill="#888"/&gt;
+    &lt;/g&gt;
+    &lt;g <span class="example-code">adj:rcGridPart="column" adj:hAlign="right"</span>&gt;
+      &lt;rect fill="#eee" width="0" height="0"&gt;
+        &lt;adj:frameForParent/&gt;
+      &lt;/rect&gt;
+      &lt;rect width="10" height="10" fill="#000"/&gt;
+      &lt;rect width="14" height="12" fill="#222"/&gt;
+      …
+    &lt;/g&gt;
+    …
+    &lt;g <span class="example-code">adj:rcGridPart="column" adj:cellLeftGap="10" adj:cellRightGap="2" adj:cellTopGap="8" adj:cellBottomGap="2"</span>&gt;
+      &lt;rect width="26" height="18" fill="#000"/&gt;
+      …
+    &lt;/g&gt;
+    …
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>An <code>adj:rcGrid</code> group element <code>g</code> must have children
+which are group elements <code>g</code> with attribute
+<code>adj:rcGridPart</code> having value <code>row</code> or
+<code>column</code>.</p>
+
+<p>Optional parameters <code>gap</code>, <code>horizontalGap</code>,
+<code>leftGap</code>, <code>centerGap</code>, <code>rightGap</code>,
+<code>verticalGap</code>, <code>topGap</code>, <code>middleGap</code>,
+<code>bottomGap</code>, <code>hAlign</code>, <code>vAlign</code> are similar to
+optional parameters of <code><a href="#L7357">horizontalList</a></code>.</p>
+
+<p>Optional parameters <code>hAlign</code>, <code>vAlign</code>,
+<code>cellLeftGap</code>, <code>cellRightGap</code>, <code>cellTopGap</code>,
+<code>cellBottomGap</code> can be specified per grid or per grid part, with
+part specification overriding whole grid specification.</p>
+
+<p>Rules of combination are defined by implementation.</p>
+
+<p><span class="todo">TODO: neat examples</span></p>
+
+<h4 id="L94550">1.11.23. Command hide Options</h4>
 
 <p>Command <code>hide</code> has no options:</p>
 
@@ -2660,7 +2795,7 @@ for that <a href="#L123304">group</a>.</p>
   </tbody>
 </table>
 
-<h4 id="L3450">1.11.23. Command include Options</h4>
+<h4 id="L3450">1.11.24. Command include Options</h4>
 
 <table border="1">
   <tbody>
@@ -2732,8 +2867,8 @@ class="deemphasize">, e.g. 1.0.2,</span> is available.</p>
 <code>verticalList</code>, <code>horizontalList</code>,
 <code>connection</code>, <code>rider</code>, <code>circularList</code>,
 <code>verticalTree</code>, <code>vine</code>, <code>floater</code>,
-<code>telescopicTree</code>, <code>paragraph</code>, and
-<code>pathArrow</code>.</p>
+<code>telescopicTree</code>, <code>paragraph</code>, <code>pathArrow</code>,
+and <code>rcGrid</code>.</p>
 
 <table border="1">
   <tbody>
@@ -2932,6 +3067,29 @@ Here is more.
     stroke="black" stroke-width="1" fill="white"&gt;
     &lt;adj:<a href="#L11940">pathArrow</a> setback="10" <span class="example-code">explain="true"</span>/&gt;
   &lt;/path&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-089-rcGrid-explained.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="170" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:<a href="#L16289">rcGrid</a> <span class="example-code">explain="true"</span>/&gt;
+    &lt;g adj:rcGridPart="row"&gt;
+      &lt;circle r="10" fill="none" stroke="#000"/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+      &lt;circle r="8" fill="#666"/&gt;
+      &lt;circle r="10" fill="#888"/&gt;
+    &lt;/g&gt;
+    &lt;g adj:rcGridPart="column"&gt;
+      &lt;rect width="10" height="10" fill="#000"/&gt;
+      &lt;rect width="14" height="12" fill="#222"/&gt;
+      …
+    &lt;/g&gt;
+    …
+  &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -3393,6 +3551,13 @@ decimal numbers.</p>
         <code>pointSetback</code></td>
     </tr>
     <tr>
+      <td><code>rcGrid</code></td>
+      <td><code>gap</code>, <code>horizontalGap</code>, <code>leftGap</code>,
+        <code>centerGap</code>, <code>rightGap</code>,
+        <code>verticalGap</code>, <code>topGap</code>, <code>middleGap</code>,
+        <code>bottomGap</code>, <code>hAlign</code>, <code>vAlign</code></td>
+      , cellLeftGap, cellRightGap, cellTopGap, cellBottomGap </tr>
+    <tr>
       <td><code>skimpyList</code></td>
       <td><code>gap</code>, <code>horizontalGap</code>, <code>leftGap</code>,
         <code>rightGap</code>, <code>verticalGap</code>, <code>topGap</code>,
@@ -3448,6 +3613,14 @@ decimal numbers.</p>
     </tr>
     <tr>
       <td><code>paragraph</code></td>
+      <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>pathArrow</code></td>
+      <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>rcGrid</code></td>
       <td><code>explain</code></td>
     </tr>
   </tbody>
@@ -4032,7 +4205,8 @@ phases:</p>
         <code>circularList</code>, <code>verticalTree</code>,
         <code>horizontalTree</code>, <code>fit</code>,
         <code>stackFrames</code>, <code>tilt</code>, <code>skimpyList</code>,
-        <code>pinnedList</code>, <code>telescopicTree</code></td>
+        <code>pinnedList</code>, <code>telescopicTree</code>,
+        <code>rcGrid</code></td>
     </tr>
     <tr>
       <td><code>adjPhase3</code> with <br />
