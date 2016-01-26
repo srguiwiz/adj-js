@@ -2751,6 +2751,42 @@ for that <a href="#L123304">group</a>.</p>
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-091-rcGrid-templates.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:rcGrid gap="5"/&gt;</span>
+    &lt;g <span class="example-code">adj:vAlign="bottom"</span>&gt;
+      &lt;circle r="10" fill="none" stroke="#000"/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+    &lt;/g&gt;
+    <span class="example-code">&lt;adj:rcGridCellTemplates&gt;</span>
+      <span class="example-code">&lt;adj:rcGridCellTemplate hAlign="right"/&gt;</span>
+      <span class="example-code">&lt;adj:rcGridCellTemplate hAlign="left"/&gt;</span>
+    <span class="example-code">&lt;/adj:rcGridCellTemplates&gt;</span>
+    &lt;g&gt;
+      &lt;rect width="10" height="10" fill="#000"/&gt;
+      &lt;rect width="14" height="12" fill="#000"/&gt;
+      &lt;rect width="18" height="14" fill="#000"/&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;rect width="14" height="12" fill="#222"/&gt;
+      &lt;rect width="18" height="14" fill="#222"/&gt;
+      &lt;rect width="22" height="16" fill="#222"/&gt;
+    &lt;/g&gt;
+    …
+    <span class="example-code">&lt;adj:rcGridCellTemplates/&gt;</span>
+    &lt;g&gt;
+      &lt;circle r="10" fill="none" stroke="#000"/&gt;
+      &lt;circle r="4" fill="#222"/&gt;
+      &lt;circle r="6" fill="#444"/&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -2768,8 +2804,20 @@ optional parameters of <code><a href="#L7357">horizontalList</a></code>.</p>
 <p>Optional parameters <code>hAlign</code>, <code>vAlign</code>,
 <code>cellLeftGap</code>, <code>cellRightGap</code>, <code>cellTopGap</code>,
 <code>cellBottomGap</code>, <code>rcGridPart</code> can be specified per grid
-and per grid part, with part specification overriding whole grid
+and per grid part. Per part specification, if present, overrides whole grid
 specification.</p>
+
+<p>Optional elements <code>adj:rcGridCellTemplates</code> listing elements
+<code>adj:rcGridCellTemplate</code> are in effect for following parts until the
+next switch between <code>row</code> and <code>column</code> either way.
+Optional parameters <code>hAlign</code>, <code>vAlign</code>,
+<code>cellLeftGap</code>, <code>cellRightGap</code>, <code>cellTopGap</code>,
+<code>cellBottomGap</code>, can be specified per
+<code>adj:rcGridCellTemplate</code>. Per cell template specification, if
+present, overrides per part specification. Lack of specification means a level
+up is in effect, up to default values. Consequentially an empty
+<code>adj:rcGridCellTemplates</code> can be used to end the effect of an
+earlier <code>adj:rcGridCellTemplates</code>.</p>
 
 <p>Rules of combination are defined by implementation.</p>
 

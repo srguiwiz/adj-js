@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:3, revision:1 };
+Adj.version = { major:5, minor:3, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -6210,13 +6210,11 @@ Adj.defineCommandForAlgorithm({
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
 	algorithmName: "boom",
-	phaseHandlerNames: ["adjPhase1Down"],
+	phaseHandlerNames: [], // actual processing done in Adj.algorithms.telescopicTree, for now
 	parameters: ["from", "to",
 				 "angle",
 				 "gap"],
-	methods: [function boom (element, parametersObject) {
-		// actual processing done in Adj.algorithms.telescopicTree, for now
-	}]
+	methods: []
 });
 
 // constants
@@ -7706,8 +7704,46 @@ Adj.defineCommandForAlgorithm({
 		var rowHeights = [];
 		var rowTopGaps = [];
 		var rowBottomGaps = [];
+		var cellTemplates = [];
 		// loop through children, which are parts
 		for (var child = element.firstChild; child; child = child.nextSibling) {
+			if (child instanceof Element) { // if an XML element, e.g. not an XML #text
+				var childName = Adj.elementNameInAdjNS(child);
+				if (childName) { // if an Adj element
+					if (childName === "rcGridCellTemplates") {
+						cellTemplates = [];
+						// loop through grandchildren
+						for (var grandchild = child.firstChild; grandchild; grandchild = grandchild.nextSibling) {
+							if (!(grandchild instanceof Element)) {
+								continue; // skip if not an Element, e.g. an XML #text
+							}
+							var grandchildName = Adj.elementNameInAdjNS(grandchild);
+							if (!grandchildName) {
+								continue; // skip if not an Adj element
+							}
+							if (grandchildName === "rcGridCellTemplate") {
+								usedHow = "used in a parameter for an rcGridCellTemplate";
+								var templateParametersObject = Adj.collectParameters(grandchild);
+								var cellTemplate = {};
+								cellTemplate.hAlign = Adj.doVarsArithmetic(grandchild, templateParametersObject.hAlign, undefined, Adj.leftCenterRight, usedHow, variableSubstitutionsByName);
+								cellTemplate.vAlign = Adj.doVarsArithmetic(grandchild, templateParametersObject.vAlign, undefined, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName);
+								cellTemplate.cellLeftGap = Adj.doVarsArithmetic(grandchild, templateParametersObject.cellLeftGap, undefined, null, usedHow, variableSubstitutionsByName);
+								cellTemplate.cellRightGap = Adj.doVarsArithmetic(grandchild, templateParametersObject.cellRightGap, undefined, null, usedHow, variableSubstitutionsByName);
+								cellTemplate.cellTopGap = Adj.doVarsArithmetic(grandchild, templateParametersObject.cellTopGap, undefined, null, usedHow, variableSubstitutionsByName);
+								cellTemplate.cellBottomGap = Adj.doVarsArithmetic(grandchild, templateParametersObject.cellBottomGap, undefined, null, usedHow, variableSubstitutionsByName);
+								for (var propertyName in cellTemplate) {
+									if (cellTemplate[propertyName] === undefined) {
+										delete cellTemplate[propertyName];
+									}
+								}
+								cellTemplates.push(cellTemplate);
+							}
+						}
+						//console.log(cellTemplates);
+					}
+				}
+			}
+			//
 			if (!(child instanceof SVGElement)) {
 				continue; // skip if not an SVGElement, e.g. an XML #text
 			}
@@ -7742,20 +7778,28 @@ Adj.defineCommandForAlgorithm({
 			}
 			switch (partType) {
 				case "column":
-					if (previousPartType === "column") {
-						partColumn++; // increment even if nothing in column, an implementation choice, risky to change later on
-					} else if (previousPartType === "row") {
-						partColumn = 0;
-						partRow = ++maxRow; // increment even if nothing in column, an implementation choice, risky to change later on
-					} else { // initially undefined
-						partColumn = 0;
-						partRow = 0;
+					switch (previousPartType) {
+						case "column":
+							partColumn++; // increment even if nothing in column, an implementation choice, risky to change later on
+							break;
+						case "row":
+							partColumn = 0;
+							partRow = ++maxRow; // increment even if nothing in column, an implementation choice, risky to change later on
+							cellTemplates = []; // reset
+							break;
+						default:
+							partColumn = 0;
+							partRow = 0;
 					}
 					usedHow = "used in a parameter for an rcGridPart column";
 					break;
 				case "row":
 					partColumn = 0; // implementation choice for simplicity, for now at least
 					partRow = ++maxRow; // increment even if nothing in row, an implementation choice, risky to change later on
+					switch (previousPartType) {
+						case "column":
+							cellTemplates = []; // reset
+					}
 					usedHow = "used in a parameter for an rcGridPart row";
 					break;
 				case "":
@@ -7763,12 +7807,13 @@ Adj.defineCommandForAlgorithm({
 					throw "attribute adj:rcGridPart= has invalid value \"" + partType + "\"";
 			}
 			//
-			var partHAlign = Adj.doVarsArithmetic(child, partParametersObject.hAlign, hAlign, Adj.leftCenterRight, usedHow, variableSubstitutionsByName);
-			var partVAlign = Adj.doVarsArithmetic(child, partParametersObject.vAlign, vAlign, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName);
-			var partCellLeftGap = Adj.doVarsArithmetic(child, partParametersObject.cellLeftGap, cellLeftGap, null, usedHow, variableSubstitutionsByName);
-			var partCellRightGap = Adj.doVarsArithmetic(child, partParametersObject.cellRightGap, cellRightGap, null, usedHow, variableSubstitutionsByName);
-			var partCellTopGap = Adj.doVarsArithmetic(child, partParametersObject.cellTopGap, cellTopGap, null, usedHow, variableSubstitutionsByName);
-			var partCellBottomGap = Adj.doVarsArithmetic(child, partParametersObject.cellBottomGap, cellBottomGap, null, usedHow, variableSubstitutionsByName);
+			var partTemplate = {};
+			partTemplate.hAlign = Adj.doVarsArithmetic(child, partParametersObject.hAlign, hAlign, Adj.leftCenterRight, usedHow, variableSubstitutionsByName);
+			partTemplate.vAlign = Adj.doVarsArithmetic(child, partParametersObject.vAlign, vAlign, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName);
+			partTemplate.cellLeftGap = Adj.doVarsArithmetic(child, partParametersObject.cellLeftGap, cellLeftGap, null, usedHow, variableSubstitutionsByName);
+			partTemplate.cellRightGap = Adj.doVarsArithmetic(child, partParametersObject.cellRightGap, cellRightGap, null, usedHow, variableSubstitutionsByName);
+			partTemplate.cellTopGap = Adj.doVarsArithmetic(child, partParametersObject.cellTopGap, cellTopGap, null, usedHow, variableSubstitutionsByName);
+			partTemplate.cellBottomGap = Adj.doVarsArithmetic(child, partParametersObject.cellBottomGap, cellBottomGap, null, usedHow, variableSubstitutionsByName);
 			//
 			var grandchildAfterHiddenRect = null; // must be null
 			var cellRecords = []; // similar to what would we grandchildRecords in other algorithms
@@ -7792,6 +7837,13 @@ Adj.defineCommandForAlgorithm({
 				if (grandchild.adjHiddenByCommand) {
 					continue;
 				}
+				//
+				var cellParameters = Object.create(partTemplate);
+				var cellTemplate = cellTemplates[cellInPartIndex];
+				for (var propertyName in cellTemplate) {
+					cellParameters[propertyName] = cellTemplate[propertyName];
+				}
+				//
 				var boundingBox = grandchild.getBBox();
 				var cellRecord = {
 					boundingBox: boundingBox,
@@ -7799,6 +7851,8 @@ Adj.defineCommandForAlgorithm({
 					//
 					column: cellColumn,
 					row: cellRow,
+					//
+					parameters: cellParameters
 				}
 				//
 				var column = columns[cellColumn] || (columns[cellColumn] = []);
@@ -7812,16 +7866,16 @@ Adj.defineCommandForAlgorithm({
 					columnRightGaps.push(0);
 				}
 				columnWidths[cellColumn] = Math.max(columnWidths[cellColumn], boundingBox.width);
-				columnLeftGaps[cellColumn] = Math.max(columnLeftGaps[cellColumn], partCellLeftGap);
-				columnRightGaps[cellColumn] = Math.max(columnRightGaps[cellColumn], partCellRightGap);
+				columnLeftGaps[cellColumn] = Math.max(columnLeftGaps[cellColumn], cellParameters.cellLeftGap);
+				columnRightGaps[cellColumn] = Math.max(columnRightGaps[cellColumn], cellParameters.cellRightGap);
 				while (rowHeights.length <= cellRow) {
 					rowHeights.push(0);
 					rowTopGaps.push(0);
 					rowBottomGaps.push(0);
 				}
 				rowHeights[cellRow] = Math.max(rowHeights[cellRow], boundingBox.height);
-				rowTopGaps[cellRow] = Math.max(rowTopGaps[cellRow], partCellTopGap);
-				rowBottomGaps[cellRow] = Math.max(rowBottomGaps[cellRow], partCellBottomGap);
+				rowTopGaps[cellRow] = Math.max(rowTopGaps[cellRow], cellParameters.cellTopGap);
+				rowBottomGaps[cellRow] = Math.max(rowBottomGaps[cellRow], cellParameters.cellBottomGap);
 				//
 				cellRecords.push(cellRecord);
 				//
@@ -7857,9 +7911,7 @@ Adj.defineCommandForAlgorithm({
 				column: partColumn,
 				row: partRow,
 				//
-				// limit to values needed, for now
-				hAlign: partHAlign,
-				vAlign: partVAlign,
+				// was partTemplate: partTemplate
 			});
 			previousPartType = partType;
 		}
@@ -7897,6 +7949,7 @@ Adj.defineCommandForAlgorithm({
 				var cellElement = cellRecord.node;
 				var cellColumn = cellRecord.column;
 				var cellRow = cellRecord.row;
+				var cellParameters = cellRecord.parameters;
 				var columnX = columnXs[cellColumn];
 				var rowY = rowYs[cellRow];
 				var columnWidth = columnWidths[cellColumn];
@@ -7906,8 +7959,8 @@ Adj.defineCommandForAlgorithm({
 				var cellWidth = cellBoundingBox.width;
 				var cellHeight = cellBoundingBox.height;
 				// now we know where to put it
-				var translationX = columnX - cellX + Adj.fraction(0, columnWidth - cellWidth, partRecord.hAlign);
-				var translationY = rowY - cellY + Adj.fraction(0, rowHeight - cellHeight, partRecord.vAlign);
+				var translationX = columnX - cellX + Adj.fraction(0, columnWidth - cellWidth, cellParameters.hAlign);
+				var translationY = rowY - cellY + Adj.fraction(0, rowHeight - cellHeight, cellParameters.vAlign);
 				cellElement.setAttribute("transform", "translate(" + Adj.decimal(translationX) + "," + Adj.decimal(translationY) + ")");
 			}
 			//
@@ -8014,6 +8067,23 @@ Adj.defineCommandForAlgorithm({
 			}
 		}
 	}]
+});
+
+// a specific algorithm
+Adj.defineCommandForAlgorithm({
+	algorithmName: "rcGridCellTemplates",
+	phaseHandlerNames: [], // actual processing done in Adj.algorithms.rcGrid, for now
+	parameters: [],
+	methods: []
+});
+
+// a specific algorithm
+Adj.defineCommandForAlgorithm({
+	algorithmName: "rcGridCellTemplate",
+	phaseHandlerNames: [], // actual processing done in Adj.algorithms.rcGrid, for now
+	parameters: ["hAlign", "vAlign",
+				 "cellLeftGap", "cellRightGap", "cellTopGap", "cellBottomGap"],
+	methods: []
 });
 
 // polyfill for missing method getTransformToElement
