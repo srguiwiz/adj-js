@@ -4458,95 +4458,97 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 		}
 		var arithmeticField = idArithmeticMatch[2];
 		var arithmeticParameter = idArithmeticMatch[3];
-		var isX = false;
-		var isY = false;
-		var withoutEF = false;
-		var needsParameter = false;
 		var arithmeticX;
 		var arithmeticY;
 		switch (arithmeticField) {
 			case "x":
-				isX = true;
-				if (isNaN(arithmeticParameter)) {
-					arithmeticX = 0;
+				if (!isNaN(arithmeticParameter)) {
+					arithmeticX = parseFloat(arithmeticParameter);
 				} else {
-					needsParameter = true;
-					arithmeticX = arithmeticParameter;
+					arithmeticX = 0;
 				}
 				break;
 			case "y":
-				isY = true;
-				if (isNaN(arithmeticParameter)) {
-					arithmeticY = 0;
+				if (!isNaN(arithmeticParameter)) {
+					arithmeticY = parseFloat(arithmeticParameter);
 				} else {
-					needsParameter = true;
-					arithmeticY = arithmeticParameter;
+					arithmeticY = 0;
 				}
 				break;
 			case "xw":
-				isX = true;
 				arithmeticX = 1;
 				break;
 			case "yh":
-				isY = true;
 				arithmeticY = 1;
 				break;
 			case "cx":
-				isX = true;
 				arithmeticX = 0.5;
 				break;
 			case "cy":
-				isY = true;
 				arithmeticY = 0.5;
 				break;
 			case "w":
-				isX = true;
 				withoutEF = true;
 				break;
 			case "h":
-				isY = true;
+				withoutEF = true;
+				break;
+			case "d":
 				withoutEF = true;
 				break;
 			default:
 				throw "unknown # field \"" + arithmeticField + "\" " + usedHow;
 		}
-		if (needsParameter) {
-			if (isNaN(arithmeticParameter)) {
-				throw "not a number % parameter \"" + arithmeticParameter + "\" " + usedHow;
-			}
-		}
 		var arithmeticBoundingBox = idedElementRecord.boundingBox;
 		var matrixFromIdedElement = idedElementRecord.matrixFrom;
 		var arithmeticPoint = theSvgElement.createSVGPoint();
-		if (!withoutEF) {
-			if (isNaN(arithmeticX)) { // unknown for now
-				arithmeticX = 0.5;
-			}
-			if (isNaN(arithmeticY)) { // unknown for now
-				arithmeticY = 0.5;
-			}
-			arithmeticPoint.x = arithmeticBoundingBox.x + arithmeticBoundingBox.width * arithmeticX;
-			arithmeticPoint.y = arithmeticBoundingBox.y + arithmeticBoundingBox.height * arithmeticY;
-			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromIdedElement);
-		} else { // withoutEF
-			// relative coordinates must be transformed without translation's e and f
-			var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF;
-			if (matrixFromIdedElementWithoutEF === undefined) {
-				var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF = theSvgElement.createSVGMatrix();
-				matrixFromIdedElementWithoutEF.a = matrixFromIdedElement.a;
-				matrixFromIdedElementWithoutEF.b = matrixFromIdedElement.b;
-				matrixFromIdedElementWithoutEF.c = matrixFromIdedElement.c;
-				matrixFromIdedElementWithoutEF.d = matrixFromIdedElement.d;
-			}
-			arithmeticPoint.x = arithmeticBoundingBox.width;
-			arithmeticPoint.y = arithmeticBoundingBox.height;
-			arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromIdedElementWithoutEF);
+		switch (arithmeticField) {
+			case "w":
+			case "h":
+			case "d":
+				// relative coordinates must be transformed without translation's e and f
+				var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF;
+				if (matrixFromIdedElementWithoutEF === undefined) {
+					var matrixFromIdedElementWithoutEF = idedElementRecord.matrixFromWithoutEF = theSvgElement.createSVGMatrix();
+					matrixFromIdedElementWithoutEF.a = matrixFromIdedElement.a;
+					matrixFromIdedElementWithoutEF.b = matrixFromIdedElement.b;
+					matrixFromIdedElementWithoutEF.c = matrixFromIdedElement.c;
+					matrixFromIdedElementWithoutEF.d = matrixFromIdedElement.d;
+				}
+				arithmeticPoint.x = arithmeticBoundingBox.width;
+				arithmeticPoint.y = arithmeticBoundingBox.height;
+				arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromIdedElementWithoutEF);
+				break;
+			default:
+				if (isNaN(arithmeticX)) { // unknown for now
+					arithmeticX = 0.5;
+				}
+				if (isNaN(arithmeticY)) { // unknown for now
+					arithmeticY = 0.5;
+				}
+				arithmeticPoint.x = arithmeticBoundingBox.x + arithmeticBoundingBox.width * arithmeticX;
+				arithmeticPoint.y = arithmeticBoundingBox.y + arithmeticBoundingBox.height * arithmeticY;
+				arithmeticPoint = arithmeticPoint.matrixTransform(matrixFromIdedElement);
+				break;
 		}
 		var arithmeticCoordinate;
-		if (isX) {
-			arithmeticCoordinate = arithmeticPoint.x;
-		} else { // isY
-			arithmeticCoordinate = arithmeticPoint.y;
+		switch (arithmeticField) {
+			case "x":
+			case "xw":
+			case "cx":
+			case "w":
+				arithmeticCoordinate = arithmeticPoint.x;
+				break;
+			case "y":
+			case "yh":
+			case "cy":
+			case "h":
+				arithmeticCoordinate = arithmeticPoint.y;
+				break;
+			case "d":
+				arithmeticCoordinate = Math.sqrt(Math.pow(arithmeticPoint.x, 2) + Math.pow(arithmeticPoint.y, 2));
+				break;
+			// should never get to a default
 		}
 		arithmeticCoordinate = Adj.decimal(arithmeticCoordinate);
 		replacements.push({
