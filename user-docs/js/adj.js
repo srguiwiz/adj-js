@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:5, minor:3, revision:2 };
+Adj.version = { major:5, minor:4, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -2260,7 +2260,7 @@ Adj.totalLength = function totalLength (element) {
 };
 
 // utility
-Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
+Adj.distanceBetweenRectangles = function distanceBetweenRectangles (rect1, rect2) {
 	var r1x1 = rect1.x;
 	var r1x2 = r1x1 + rect1.width;
 	var r1y1 = rect1.y;
@@ -2271,8 +2271,6 @@ Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
 	var r2y2 = r2y1 + rect2.height;
 	var dx;
 	var dy;
-	var overlap;
-	var distance;
 	if (r2x1 > r1x2) {
 		dx = r2x1 - r1x2;
 	} else if (r1x1 > r2x2) {
@@ -2292,22 +2290,14 @@ Adj.overlapAndDistance = function overlapAndDistance (rect1, rect2) {
 		var ox2 = r1x2 < r2x2 ? r1x2 : r2x2;
 		var oy1 = r1y1 > r2y1 ? r1y1 : r2y1;
 		var oy2 = r1y2 < r2y2 ? r1y2 : r2y2;
-		overlap = (ox2 - ox1) * (oy2 - oy1);
-		distance = 0; // if overlap then distance = 0
+		return - Math.min(ox2 - ox1, oy2 - oy1); // if overlap then say distance = - overlap
 	} else if (dx === 0) { // dy !== 0
-		overlap = 0;
-		distance = dy;
+		return dy;
 	} else if (dy === 0) { // dx !== 0
-		overlap = 0;
-		distance = dx;
+		return dx;
 	} else { // dx !== 0 && dy !== 0
-		overlap = 0;
-		distance = Math.sqrt(dx * dx + dy * dy);
+		return Math.sqrt(dx * dx + dy * dy);
 	}
-	return {
-		overlap: overlap,
-		distance: distance
-	};
 };
 
 // utility
@@ -2401,19 +2391,12 @@ Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
 };
 
 // utility
-Adj.overlapAndDistances = function overlapAndDistances (rectangle, rectangles) {
-	var overlaps = [];
+Adj.distancesBetweenRectangles = function distancesBetweenRectangles (rectangle, rectangles) {
 	var distances = [];
 	for (var oneRectangleIndex in rectangles) {
-		var oneRectangle = rectangles[oneRectangleIndex];
-		var overlapAndDistance = Adj.overlapAndDistance(rectangle, oneRectangle);
-		overlaps.push(overlapAndDistance.overlap);
-		distances.push(overlapAndDistance.distance);
+		distances.push(Adj.distanceBetweenRectangles(rectangle, rectangles[oneRectangleIndex]));
 	}
-	return {
-		overlaps: overlaps,
-		distances: distances
-	};
+	return distances;
 };
 
 // a specific algorithm
@@ -2564,73 +2547,31 @@ Adj.defineCommandForAlgorithm({
 					var onePathFractionPoint = Adj.fractionPoint(path, onePathFraction);
 					oneTranslatedBoundingBox.x = boundingBox.x + (onePathFractionPoint.x - pinX); // effectively + translationX
 					oneTranslatedBoundingBox.y = boundingBox.y + (onePathFractionPoint.y - pinY);
-					var overlapAndDistances = Adj.overlapAndDistances(oneTranslatedBoundingBox, relativeBoundingBoxes);
-					var overlaps = overlapAndDistances.overlaps;
-					var distances = overlapAndDistances.distances;
-					var sample = {
-						pathFraction: onePathFraction
-					};
-					sample.maxOverlap = Math.max.apply(null, overlaps);
-					sample.minDistance = Math.min.apply(null, distances);
-					samples.push(sample);
+					samples.push({
+						pathFraction: onePathFraction,
+						distance: Math.min.apply(null, Adj.distancesBetweenRectangles(oneTranslatedBoundingBox, relativeBoundingBoxes))
+					});
 				}
 				switch (adjust) {
 					case "clear":
-						var zeroOverlapSamples = [];
 						for (var sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
 							var oneSample = samples[sampleIndex];
-							if (oneSample.maxOverlap === 0) {
-								zeroOverlapSamples.push(oneSample);
-							}
-						}
-						var numberOfZeroOverlaps = zeroOverlapSamples.length;
-						var bestSample = samples[0];
-						if (numberOfZeroOverlaps > 0) { // at least one that doesn't overlap
-							for (var sampleIndex = 0; sampleIndex < numberOfZeroOverlaps; sampleIndex++) {
-								var oneSample = zeroOverlapSamples[sampleIndex];
-								if (oneSample.minDistance > bestSample.minDistance) {
-									bestSample = oneSample;
-								}
-							}
-						} else { // not even one that doesn't overlap
-							for (var sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
-								var oneSample = samples[sampleIndex];
-								if (oneSample.maxOverlap < bestSample.maxOverlap) {
-									bestSample = oneSample;
-								}
+							if (oneSample.distance > bestSample.distance) { // further away
+								bestSample = oneSample;
 							}
 						}
 						bestPathFraction = bestSample.pathFraction;
 						break;
 					case "near":
-						var zeroOverlapSamples = [];
+						var bestSample = samples[0];
 						for (var sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
 							var oneSample = samples[sampleIndex];
-							if (oneSample.maxOverlap === 0) {
-								zeroOverlapSamples.push(oneSample);
-							}
-						}
-						var numberOfZeroOverlaps = zeroOverlapSamples.length;
-						var bestSample = samples[0];
-						if (numberOfZeroOverlaps > 0) { // at least one that doesn't overlap
-							for (var sampleIndex = 0; sampleIndex < numberOfZeroOverlaps; sampleIndex++) {
-								var oneSample = zeroOverlapSamples[sampleIndex];
-								if (bestSample.minDistance < gap) {
-									// test whether larger distance
-									if (oneSample.minDistance > bestSample.minDistance) {
-										bestSample = oneSample;
-									}
-								} else {
-									// test whether closer to gap
-									if (oneSample.minDistance < bestSample.minDistance && oneSample.minDistance >= gap) {
-										bestSample = oneSample;
-									}
+							if (bestSample.distance < gap) { // not enough distance yet
+								if (oneSample.distance > bestSample.distance) { // larger distance
+									bestSample = oneSample;
 								}
-							}
-						} else { // not even one that doesn't overlap
-							for (var sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
-								var oneSample = samples[sampleIndex];
-								if (oneSample.maxOverlap < bestSample.maxOverlap) {
+							} else { // bestSample.distance >= gap, enough distance already
+								if (oneSample.distance < bestSample.distance && oneSample.distance >= gap) { // closer to gap
 									bestSample = oneSample;
 								}
 							}
@@ -5743,6 +5684,11 @@ Adj.deepCloneObject = function deepCloneObject (object) {
 	return clone;
 };
 
+// utility
+Adj.roundAway = function roundAway (number) {
+	return number >= 0 ? Math.ceil(number) : Math.floor(number);
+}
+
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
 	algorithmName: "telescopicTree",
@@ -5863,16 +5809,18 @@ Adj.defineCommandForAlgorithm({
 				continue;
 			}
 			var childBoundingBox = child.getBBox();
+			childBoundingBox.d = Math.sqrt(Math.pow(childBoundingBox.width, 2) + Math.pow(childBoundingBox.height, 2)); // diagonal
 			childRecords.push({
 				boomConfiguration: childRecords.length ? Adj.deepCloneObject(currentBoomConfiguration) : undefined, // undefined for rootRecord
 				boundingBox: childBoundingBox,
 				node: child,
 				treeChildRecords: [],
-				positioningBox: { // x and y relative to ancestor being processed
+				positioningBox: { // x and y relative to ancestor being processed, at first
 					x: 0,
 					y: 0,
 					width: childBoundingBox.width,
-					height: childBoundingBox.height
+					height: childBoundingBox.height,
+					d: childBoundingBox.d
 				}
 			});
 		}
@@ -5992,85 +5940,84 @@ Adj.defineCommandForAlgorithm({
 				var sine = boomAngle % 180 ? Math.sin(boomAngle * Math.PI / 180) : 0;
 				var boomGap = boomConfiguration.gap;
 				//
+				var currentTreeParentBoundingBox = currentTreeParentRecord.boundingBox; // from
+				var currentChildBoundingBox = currentChildRecord.boundingBox; // to
 				var currentTreeParentBranchBox = currentTreeParentRecord.branchBox; // from
 				var currentChildBranchBox = currentChildRecord.branchBox; // to
 				//
-				var fromInside;
-				// was if (fromX > 0 && fromX < 1 && fromY > 0 && fromY < 1) {
-				var fromXInside, fromYInside;
-				if (cosine > 0) {
-					fromXInside = (currentTreeParentBranchBox.width - (currentTreeParentPositioningBox.x + fromPointRelativeX - currentTreeParentBranchBox.x)) / cosine;
-				} else if (cosine < 0) {
-					fromXInside = - (currentTreeParentPositioningBox.x + fromPointRelativeX - currentTreeParentBranchBox.x) / cosine;
-				} else {
-					fromXInside = undefined;
+				var deltaMin = boomGap;
+				var deltaMax = boomGap + (currentTreeParentBoundingBox.d + currentChildBranchBox.d) * 1.5; // to accommodate odd layouts
+				for (var i = 0, n = currentSiblingRecordIndex; i < n; i++) {
+					deltaMax += currentSiblingRecords[i].branchBox.d;
 				}
-				if (sine > 0) {
-					fromYInside = (currentTreeParentBranchBox.height - (currentTreeParentPositioningBox.y + fromPointRelativeY - currentTreeParentBranchBox.y)) / sine;
-				} else if (sine < 0) {
-					fromYInside = - (currentTreeParentPositioningBox.y + fromPointRelativeY - currentTreeParentBranchBox.y) / sine;
-				} else {
-					fromYInside = undefined;
+				var delta = currentTreeParentBoundingBox.d / 2 + boomGap + currentChildBoundingBox.d / 2;
+				var bestDelta = 1 / 0; // Infinity
+				var bestAccuracy = 1 / 0; // Infinity
+				var endOfIterating = false;
+				iterateDeltaLoop: while (true) {
+					if (endOfIterating) {
+						if (delta === bestDelta) { // most recent is best already
+							break iterateDeltaLoop;
+						} // else { // shift one more time to get back to best
+					}
+					//
+					var deltaX = delta * cosine;
+					var deltaY = delta * sine;
+					//
+					// correct first for connection points relative coordinates and then for already existing offset
+					deltaX = Adj.roundAway
+						((fromPointRelativeX + deltaX - toPointRelativeX) - (currentChildPositioningBox.x - currentTreeParentPositioningBox.x));
+					deltaY = Adj.roundAway
+						((fromPointRelativeY + deltaY - toPointRelativeY) - (currentChildPositioningBox.y - currentTreeParentPositioningBox.y));
+					//
+					// shift
+					currentChildPositioningBox.x += deltaX;
+					currentChildPositioningBox.y += deltaY;
+					currentChildBranchBox.x += deltaX;
+					currentChildBranchBox.y += deltaY;
+					//
+					if (endOfIterating) { // done
+						break iterateDeltaLoop;
+					}
+					//
+					var distance = Adj.distanceBetweenRectangles(currentTreeParentPositioningBox, currentChildBranchBox);
+					for (var i = 0, n = currentSiblingRecordIndex; i < n; i++) {
+						distance =
+							Math.min
+							(distance,
+							 Adj.distanceBetweenRectangles(currentSiblingRecords[i].branchBox, currentChildBranchBox));
+					}
+					//
+					var accuracy = distance - boomGap;
+					// extra precautions implemented to avoid endless loops in case of irregular patterns
+					if (accuracy >= 0 && accuracy < bestAccuracy) {
+						bestDelta = delta;
+						bestAccuracy = accuracy;
+					}
+					if (accuracy >= 0 && accuracy < 1) { // good enough
+						endOfIterating = true;
+						continue iterateDeltaLoop;
+					}
+					if (deltaMax - deltaMin < 0.5) { // good enough
+						endOfIterating = true;
+						continue iterateDeltaLoop;
+					}
+					if (distance < boomGap) {
+						if (delta > deltaMin) {
+							deltaMin = delta;
+						}
+					}
+					if (distance > boomGap) {
+						if (delta < deltaMax) {
+							deltaMax = delta;
+						}
+					}
+					delta = (deltaMin + deltaMax) / 2;
 				}
-				if (fromXInside === undefined) {
-					fromInside = fromYInside;
-				} else if (fromYInside === undefined) {
-					fromInside = fromXInside;
-				} else if (fromXInside < 0 || fromYInside < 0) {
-					fromInside = Math.max(fromXInside, fromYInside);
-				} else {
-					fromInside = Math.min(fromXInside, fromYInside);
-				}
-				var toInside;
-				var toXInside, toYInside;
-				if (cosine > 0) {
-					toXInside = (currentChildPositioningBox.x + toPointRelativeX - currentChildBranchBox.x) / cosine;
-				} else if (cosine < 0) {
-					toXInside = - (currentChildBranchBox.width - (currentChildPositioningBox.x + toPointRelativeX - currentChildBranchBox.x)) / cosine;
-				} else {
-					toXInside = undefined;
-				}
-				if (sine > 0) {
-					toYInside = (currentChildPositioningBox.y + toPointRelativeY - currentChildBranchBox.y) / sine;
-				} else if (sine < 0) {
-					toYInside = - (currentChildBranchBox.height - (currentChildPositioningBox.y + toPointRelativeY - currentChildBranchBox.y)) / sine;
-				} else {
-					toYInside = undefined;
-				}
-				if (toXInside === undefined) {
-					toInside = toYInside;
-				} else if (toYInside === undefined) {
-					toInside = toXInside;
-				} else if (toXInside < 0 || toYInside < 0) {
-					toInside = Math.max(toXInside, toYInside);
-				} else { // normal
-					toInside = Math.min(toXInside, toYInside);
-				}
-				var delta = fromInside + boomGap + toInside;
-				var deltaX = delta * cosine;
-				var deltaY = delta * sine;
-				//
-				// correct first for connection points relative coordinates and then for already existing offset
-				deltaX = (fromPointRelativeX + deltaX - toPointRelativeX) - (currentChildPositioningBox.x - currentTreeParentPositioningBox.x);
-				deltaY = (fromPointRelativeY + deltaY - toPointRelativeY) - (currentChildPositioningBox.y - currentTreeParentPositioningBox.y);
-				//
-				// shift
-				var currentChildBranchRecords = currentChildRecord.branchRecords;
-				var numberOfCurrentChildBranchRecords = currentChildBranchRecords.length;
-				// this loop inside a loop introduces a little bit of O(n^2) and might be possible to avoid
-				for (var branchRecordIndex = 0; branchRecordIndex < numberOfCurrentChildBranchRecords; branchRecordIndex++) {
-					var branchRecord = currentChildBranchRecords[branchRecordIndex];
-					var positioningBox = branchRecord.positioningBox;
-					positioningBox.x += deltaX;
-					positioningBox.y += deltaY;
-				}
-				currentChildBranchBox.x += deltaX;
-				currentChildBranchBox.y += deltaY;
 				//
 				// merge branches
 				var currentTreeParentBranchRecords = currentTreeParentRecord.branchRecords;
-				currentTreeParentRecord.branchRecords = currentTreeParentBranchRecords.concat(currentChildBranchRecords);
-				delete currentChildRecord.branchRecords; // release memory
+				currentTreeParentBranchRecords.push(currentChildRecord);
 				// merge branch boxes
 				var currentChildBranchBoxRight = currentChildBranchBox.x + currentChildBranchBox.width;
 				var currentChildBranchBoxBottom = currentChildBranchBox.y + currentChildBranchBox.height;
@@ -6090,6 +6037,7 @@ Adj.defineCommandForAlgorithm({
 					currentTreeParentBranchBoxBottom = currentChildBranchBoxBottom;
 				}
 				currentTreeParentBranchBox.height = currentTreeParentBranchBoxBottom - currentTreeParentBranchBox.y;
+				currentTreeParentBranchBox.d = Math.sqrt(Math.pow(currentTreeParentBranchBox.width, 2) + Math.pow(currentTreeParentBranchBox.height, 2));
 			}
 			//console.log("walkTreeLoop1 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
 			//
@@ -6113,18 +6061,83 @@ Adj.defineCommandForAlgorithm({
 			}
 		}
 		//
-		// whole tree
-		var rootRecordBranchBox = rootRecord.branchBox;
-		var rootShiftX = gap - rootRecordBranchBox.x;
-		var rootShiftY = gap - rootRecordBranchBox.y;
-		for (var childRecordIndex in childRecords) {
-			var childRecord = childRecords[childRecordIndex];
-			var childPositioningBox = childRecord.positioningBox;
-			childPositioningBox.x += rootShiftX;
-			childPositioningBox.y += rootShiftY;
+		// walk tree structure again
+		// tree walking variables
+		var currentSiblingRecords = [rootRecord];
+		var currentSiblingRecordIndex = 0;
+		var stack = [];
+		var onWayBack = false;
+		//
+		// walk
+		//console.log("walkTreeLoop2 starting");
+		walkTreeLoop2: while (currentSiblingRecordIndex < currentSiblingRecords.length) {
+			var currentChildRecord = currentSiblingRecords[currentSiblingRecordIndex];
+			var treeChildRecords = currentChildRecord.treeChildRecords;
+			var numberOfTreeChildren = treeChildRecords.length;
+			//
+			if (!onWayBack) {
+				if (currentSiblingRecordIndex === 0) {
+					//console.log("walkTreeLoop2 before first of siblings at level " + (stack.length + 1));
+				}
+				//console.log("walkTreeLoop2 on way there in node " + currentChildRecord.node + " node " + currentSiblingRecordIndex + " at level " + (stack.length + 1));
+				//
+				// determine position of current branch
+				var positioningBox = currentChildRecord.positioningBox;
+				// positioningBox.x and .y were relative to ancestor being processed until here
+				// positioningBox.x and .y will be relative to element from here
+				if (!stack.length) {
+					var rootRecordBranchBox = rootRecord.branchBox;
+					positioningBox.x += gap - rootRecordBranchBox.x;
+					positioningBox.y += gap - rootRecordBranchBox.y;
+				} else {
+					var currentTreeParentPositioningBox = currentChildRecord.treeParentRecord.positioningBox;
+					positioningBox.x += currentTreeParentPositioningBox.x;
+					positioningBox.y += currentTreeParentPositioningBox.y;
+				}
+				if (explain) {
+					if (stack.length) {
+						var branchBox = currentChildRecord.branchBox;
+						branchBox.x += currentTreeParentPositioningBox.x;
+						branchBox.y += currentTreeParentPositioningBox.y;
+					}
+				}
+				//
+				if (numberOfTreeChildren) {
+					//console.log("walkTreeLoop2 on way there to children of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					stack.push( { siblingRecords: currentSiblingRecords, index: currentSiblingRecordIndex } );
+					currentSiblingRecords = treeChildRecords;
+					currentSiblingRecordIndex = 0;
+					continue walkTreeLoop2;
+				} else { // childless node, aka leaf
+					//console.log("walkTreeLoop2 at childless node (leaf) " + currentChildRecord.node + " at level " + (stack.length + 1));
+				}
+			} else { // onWayBack
+				//console.log("walkTreeLoop2 on way back in node " + currentChildRecord.node + " at level " + (stack.length + 1));
+				//
+				onWayBack = false;
+			}
+			//
+			//console.log("walkTreeLoop2 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
+			//
+			currentSiblingRecordIndex += 1;
+			if (currentSiblingRecordIndex < currentSiblingRecords.length) {
+				continue walkTreeLoop2;
+			} else { // no more sibling
+				//console.log("walkTreeLoop2 after last of siblings at level " + (stack.length + 1));
+				if (stack.length > 0) {
+					//console.log("walkTreeLoop2 on way back to parent of node " + currentChildRecord.node + " from level " + (stack.length + 1));
+					var stackedPosition = stack.pop();
+					currentSiblingRecords = stackedPosition.siblingRecords;
+					currentSiblingRecordIndex = stackedPosition.index;
+					onWayBack = true;
+					continue walkTreeLoop2;
+				} else { // stack.length === 0
+					//console.log("walkTreeLoop2 done");
+					//
+					break walkTreeLoop2;
+				}
+			}
 		}
-		rootRecordBranchBox.x += rootShiftX;
-		rootRecordBranchBox.y += rootShiftY;
 		//
 		// now we know where to put each
 		for (var childRecordIndex in childRecords) {
@@ -6179,6 +6192,22 @@ Adj.defineCommandForAlgorithm({
 				//
 				var treeParentRecord = childRecord.treeParentRecord;
 				if (treeParentRecord) {
+					if (childRecord.treeChildRecords.length) {
+						var explainRect = childRecord.branchBox;
+						var explanationElement = Adj.createExplanationElement(element, "rect");
+						explanationElement.setAttribute("x", Adj.decimal(explainRect.x));
+						explanationElement.setAttribute("y", Adj.decimal(explainRect.y));
+						explanationElement.setAttribute("width", Adj.decimal(explainRect.width));
+						explanationElement.setAttribute("height", Adj.decimal(explainRect.height));
+						explanationElement.setAttribute("fill", "none");
+						explanationElement.setAttribute("fill-opacity", "0.1");
+						explanationElement.setAttribute("stroke", "blue");
+						explanationElement.setAttribute("stroke-dasharray", "3");
+						explanationElement.setAttribute("stroke-width", "1");
+						explanationElement.setAttribute("stroke-opacity", "0.1");
+						element.appendChild(explanationElement);
+					}
+					//
 					var boomConfiguration = childRecord.boomConfiguration;
 					var treeParentPositioningBox = treeParentRecord.positioningBox; // from
 					var childPositioningBox = childRecord.positioningBox; // to
