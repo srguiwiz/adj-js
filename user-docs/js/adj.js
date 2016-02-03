@@ -5946,11 +5946,13 @@ Adj.defineCommandForAlgorithm({
 				var currentChildBranchBox = currentChildRecord.branchBox; // to
 				//
 				var deltaMin = boomGap;
-				var deltaMax = boomGap + (currentTreeParentBoundingBox.d + currentChildBranchBox.d) * 1.5; // to accommodate odd layouts
+				var deltaMax = currentTreeParentBoundingBox.d + boomGap + currentChildBranchBox.d;
 				for (var i = 0, n = currentSiblingRecordIndex; i < n; i++) {
-					deltaMax += currentSiblingRecords[i].branchBox.d;
+					var siblingRecord = currentSiblingRecords[i];
+					deltaMax += siblingRecord.branchBox.d + siblingRecord.boomConfiguration.gap;
 				}
-				var delta = currentTreeParentBoundingBox.d / 2 + boomGap + currentChildBoundingBox.d / 2;
+				deltaMax *= 1.5; // accommodate odd layouts
+				var delta = currentTreeParentBoundingBox.d / 2 + boomGap + currentChildBoundingBox.d / 2; // reasonable
 				var bestDelta = 1 / 0; // Infinity
 				var bestAccuracy = 1 / 0; // Infinity
 				var endOfIterating = false;
