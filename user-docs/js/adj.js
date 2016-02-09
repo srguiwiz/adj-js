@@ -7199,7 +7199,7 @@ Adj.defineCommandForAlgorithm({
 			// simplified case
 			var pathElement = element.previousElementSibling;
 			if (!(pathElement instanceof SVGPathElement)) { // also if !pathElement
-				throw "no path to follow given for a pathArrow command";
+				throw "no path given to follow for a pathArrow command";
 			}
 		}
 		var matrixFromPathElement = pathElement.getTransformToElement(parent);
@@ -7335,7 +7335,7 @@ Adj.defineCommandForAlgorithm({
 		var pathSegList = pathElement.pathSegList;
 		var numberOfPathSegs = pathSegList.numberOfItems;
 		if (numberOfPathSegs < 2) {
-			throw "not enough path segments in path to follow for a pathArrow command";
+			throw "not enough path segments in path given to follow for a pathArrow command";
 		}
 		var leftPathSegArray = [];
 		var rightPathSegArray = [];
@@ -7348,7 +7348,7 @@ Adj.defineCommandForAlgorithm({
 		if (nextPathSeg.pathSegTypeAsLetter.toUpperCase() === 'M') {
 			nextPathSeg = { pathSegTypeAsLetter: 'M', x: nextPathSeg.x, y: nextPathSeg.y }; // normalize
 		} else {
-			throw "missing initial path segment type 'M' in path to follow for a pathArrow command";
+			throw "missing initial path segment type 'M' in path given to follow for a pathArrow command";
 		}
 		for (var index = 0; index < numberOfPathSegs; index++) {
 			var pathSeg = nextPathSeg;
@@ -7483,12 +7483,12 @@ Adj.defineCommandForAlgorithm({
 						break;
 					case 'M': // moveto
 					case 'm': // moveto
-						throw "unsupported use of path segment type '" + nextPathSegTypeAsLetter + "' in path to follow for a pathArrow command";
+						throw "unsupported use of path segment type '" + nextPathSegTypeAsLetter + "' in path given to follow for a pathArrow command";
 					case 'Z':  // closepath
 					case 'z':
 						// no support for closepath, for now at least
 					default:
-						throw "unsupported path segment type '" + nextPathSegTypeAsLetter + "' used in path to follow for a pathArrow command";
+						throw "unsupported path segment type '" + nextPathSegTypeAsLetter + "' used in path given to follow for a pathArrow command";
 				}
 			} else { // nextIndex === numberOfPathSegs
 				nextDirection = { x: 0, y: 0 };

@@ -2588,6 +2588,27 @@ command <code>paragraph</code>.</p>
 
 <h4 id="L11940">1.11.21. Command pathArrow Options</h4>
 
+<p>Command <code>pathArrow</code> takes a path given as arrow shape and
+stretches and bends its shaft along another path given to follow.</p>
+
+<p><img alt="example" src="adj-ex-082-pathArrow-illustrated.svg"></img> </p>
+
+<p>The path given as arrow shape has to be defined clockwise:</p>
+<ul>
+  <li>Start with the arrow's nock, then</li>
+  <li>a dividing mark in form of a no-op relative line of zero length
+    <code>l0,0</code>, then</li>
+  <li>left line of the arrow's shaft forward, then</li>
+  <li>another dividing mark no-op <code>l0,0</code>, then</li>
+  <li>the arrow's point, then</li>
+  <li>another dividing mark no-op <code>l0,0</code>, then</li>
+  <li>right line of the arrow's shaft backward, to close the path.</li>
+</ul>
+
+<p>The distance between the nock's two points of connection to the shaft must
+be equal to the distance between the point's two points of connection to the
+shaft.</p>
+
 <p>Optional parameters of <code>pathArrow</code>:</p>
 
 <table border="1">
@@ -2675,10 +2696,10 @@ Same <a href="#L2057">caveat</a> regarding <code>-</code> minus sign
 applies.</p>
 
 <p>For best results, to avoid unintended application of respectively different
-transformations, the <strong>path to follow</strong> and the <strong>path given
-as arrow shape</strong> often should be <strong>together inside the same SVG
-group element</strong> <code>g</code>, even if this is the only raison d'être
-for that <a href="#L123304">group</a>.</p>
+transformations, the <strong>path given to follow</strong> and the <strong>path
+given as arrow shape</strong> often should be <strong>together inside the same
+SVG group element</strong> <code>g</code>, even if this is the only raison
+d'être for that <a href="#L123304">group</a>.</p>
 
 <h4 id="L16289">1.11.22. Command rcGrid Options</h4>
 
@@ -2926,8 +2947,8 @@ should be identical. Their DOM trees then should be identical.</p>
 <p>Adj command <code>include</code> has been implemented if so stored then to
 display the stored included result of an earlier invocation, until a current
 inclusion completes successfully. This should give greater certainty that
-something useful will be displayed even if the origin of an inclusion has
-become unavailable.</p>
+something useful will be displayed even in case the origin of an inclusion
+becomes unavailable.</p>
 
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 

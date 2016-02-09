@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="180">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<rect width="200" height="180" fill="linen"/>
+	<path d="M25,20 q30,0 30,30 l50,0 30,-30 30,0" stroke="black" fill="none" adj:explain="true"/>
+	<path d="M35,85 l-5,5 ,-15,0 10,-10 ,-10,-10 15,0 5,5 0,0 30,0 0,0 0,-5 20,10 ,-20,10 0,-5 0,0 ,-30,0 z" stroke="black" stroke-width="1" fill="white"/>
+	<path d="M25,120 q30,0 30,30 l50,0 30,-30 30,0" stroke="none" fill="none"/>
+	<path d="M35,125 l-5,5 l-15,0 l10,-10 l-10,-10 l15,0 l5,5 L35,115 Q59.16,117.226 60,145 L102.929,145 L132.929,115 L155,115 L155,115 l0,-5 l20,10 l-20,10 l0,-5 L155,125 L137.071,125 L107.071,155 L50,155 Q50.84,122.774 35,125 " adj:d="M50,25 l-5,5 ,-15,0 10,-10 ,-10,-10 15,0 5,5 0,0 30,0 0,0 0,-5 20,10 ,-20,10 0,-5 0,0 ,-30,0 z" stroke="black" stroke-width="1" fill="white">
+		<adj:pathArrow setback="10" explain="true"/>
+	</path>
+	<g adj:explanation="true">
+		<path adj:explanation="true" d="M25,20 q30,0 30,30 l50,0 30,-30 30,0" fill="none" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="25" cy="20" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<line adj:explanation="true" x1="25" y1="20" x2="55" y2="20" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="55" cy="20" r="3" fill="blue" fill-opacity="0.2" stroke="none"/>
+		<line adj:explanation="true" x1="55" y1="20" x2="55" y2="50" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="55" cy="50" r="3" fill="blue" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="105" cy="50" r="3" fill="blue" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="135" cy="20" r="3" fill="blue" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="165" cy="20" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+	</g>
+	<g adj:explanation="true">
+		<circle adj:explanation="true" cx="35" cy="125" r="3" fill="green" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="35" cy="115" r="3" fill="blue" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="155" cy="115" r="3" fill="blue" fill-opacity="0.2" stroke="none"/>
+		<circle adj:explanation="true" cx="155" cy="125" r="3" fill="red" fill-opacity="0.2" stroke="none"/>
+	</g>
+</svg>
