@@ -2910,7 +2910,24 @@ href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">COR
 add-on <span class="product-name">File URI Scheme GET from Page Script</span>,
 from <a
 href="https://addons.mozilla.org/en-US/firefox/addon/file-scheme-get-from-script/">https://addons.mozilla.org/en-US/firefox/addon/file-scheme-get-from-script/</a><span
-class="deemphasize">, e.g. 1.0.2,</span> is available.</p>
+class="deemphasize">, e.g. 1.0.4,</span> is available.</p>
+
+<p>Notably, the same document can be stored <a
+href="adj-ex-080-include-short.svg">without (before)</a> or <a
+href="adj-ex-080-include.svg">with the result of (after) invoking Adj</a>. If
+inspecting in browser development tools, with command <code>include</code> a
+large difference in verbosity and hence size between such two documents as
+stored should be easy to recognize by viewing the sources of the documents
+respectively. Once processed by Adj, which in case there is a command
+<code>include</code> may mostly be paced by time it takes to remotely get an
+included document, once processed by Adj the two versions of the document
+should be identical. Their DOM trees then should be identical.</p>
+
+<p>Adj command <code>include</code> has been implemented if so stored then to
+display the stored included result of an earlier invocation, until a current
+inclusion completes successfully. This should give greater certainty that
+something useful will be displayed even if the origin of an inclusion has
+become unavailable.</p>
 
 <h3 id="L7600">1.12. Auxiliary Commands</h3>
 
@@ -3865,7 +3882,7 @@ not depend on the brand authoring tools used.</p>
           <li><span class="product-name">Save Back to File from DOM</span>,
             from <a
             href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/">https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/</a><span
-            class="deemphasize">, e.g. 1.0.26</span></li>
+            class="deemphasize">, e.g. 1.0.28</span></li>
         </ul>
       </li>
       <li>Set up a directory which will contain files</li>
