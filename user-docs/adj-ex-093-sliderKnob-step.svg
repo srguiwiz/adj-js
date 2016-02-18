@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (x64) (http://www.altova.com) by Leo Baschy (Niresip) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="160">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<rect width="200" height="160" fill="linen"/>
+	<g>
+		<adj:verticalList gap="20" hAlign="center"/>
+		<g transform="translate(20,20)">
+			<rect x="0" y="0" width="140" height="20" rx="10" ry="10" fill="white" stroke="dimgrey"/>
+			<rect x="6" y="6" width="128" height="8" rx="4" ry="4" fill="lightgrey" stroke="dimgrey"/>
+			<g transform="translate(43.404,0)">
+				<adj:sliderKnob min="0.3" max="5.0" step="0.1" preset="2.0"/>
+				<rect x="0" y="0" width="20" height="20" rx="10" ry="10" fill="gainsboro" stroke="black"/>
+				<rect x="7" y="3" width="6" height="14" rx="3" ry="7" fill="lightgrey" stroke="none"/>
+			</g>
+		</g>
+		<g id="setme" transform="translate(53,60)">
+			<adj:horizontalList gap="2" itemsH2V="2" toAngle="182"/>
+			<rect width="10" height="10" fill="#000" transform="translate(2,2)"/>
+			<rect width="10" height="10" fill="#111" transform="translate(14,2)"/>
+			<rect width="10" height="10" fill="#222" transform="translate(26,2)"/>
+			<rect width="10" height="10" fill="#333" transform="translate(38,2)"/>
+			<rect width="10" height="10" fill="#444" transform="translate(50,2)"/>
+			<rect width="10" height="10" fill="#555" transform="translate(62,2)"/>
+			<rect width="10" height="10" fill="#666" transform="translate(2,14)"/>
+			<rect width="10" height="10" fill="#777" transform="translate(14,14)"/>
+			<rect width="10" height="10" fill="#888" transform="translate(26,14)"/>
+			<rect width="10" height="10" fill="#999" transform="translate(38,14)"/>
+			<rect width="10" height="10" fill="#aaa" transform="translate(50,14)"/>
+			<rect width="10" height="10" fill="#bbb" transform="translate(62,14)"/>
+			<rect width="10" height="10" fill="#ccc" transform="translate(2,26)"/>
+			<rect width="10" height="10" fill="#ddd" transform="translate(14,26)"/>
+			<rect width="10" height="10" fill="#eee" transform="translate(26,26)"/>
+			<rect width="10" height="10" fill="#fff" transform="translate(38,26)"/>
+		</g>
+	</g>
+	<script><![CDATA[
+document.addEventListener("change", function (event) {
+	var elementToSet = document.getElementById("setme").firstElementChild;
+	elementToSet.setAttribute("itemsH2V", event.detail.value);
+	Adj.doSvg();
+});
+	]]></script>
+</svg>

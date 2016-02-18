@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:0, revision:0 };
+Adj.version = { major:6, minor:0, revision:1 };
 Adj.algorithms = {};
 
 // constants
@@ -446,6 +446,9 @@ Adj.parametersFromAttributes = function parametersFromAttributes (attributesByNa
 	return parametersByName;
 }
 
+// node.adjS could mean "Adj's" or "Adj Stuff" or "Adj's Stuff" and is meant to be extensible;
+// if needed a node.adjZ could be like node.adjS that, however, would be cleared
+
 // read Adj elements and make or update phase handlers,
 // recursive walking of the tree,
 // expects node to be an SVG element, not to be an Adj element, but a child can be an Adj element
@@ -463,6 +466,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 	delete node.adjLevel;
 	delete node.adjVariables;
 	//delete node.adjIncluded; // intentionally not clearing flag, include only first time
+	//delete node.adjS; // intentionally not deleting, set only first time
 	//
 	// then look for newer alternative syntax Adj commands as attributes
 	var adjAttributesByName = Adj.adjAttributesByNameOf(node);
@@ -6595,11 +6599,8 @@ Adj.defineCommandForAlgorithm({
 Adj.defineCommandForAlgorithm({
 	algorithmName: "hide",
 	hiddenByCommand: true,
-	phaseHandlerNames: ["adjPhase1Down"],
-	parameters: [],
-	methods: [function hide (element, parametersObject) {
-		// actual hiding done in Adj.setAlgorithm, for now
-	}]
+	phaseHandlerNames: [], // actual hiding done in Adj.setAlgorithm, for now
+	parameters: []
 });
 
 // utility
@@ -8117,6 +8118,263 @@ Adj.defineCommandForAlgorithm({
 	parameters: ["hAlign", "vAlign",
 				 "cellLeftGap", "cellRightGap", "cellTopGap", "cellBottomGap"],
 	methods: []
+});
+
+// one event listener function to be installed for document,
+// only one element can be dragged at a time,
+// mouseup and mousemove event may occur outside the dragged element
+Adj.documentDraggedListener = function documentDraggedListener (event) {
+	var type = event.type;
+	var target = event.target;
+	var ownerDocument = target.ownerDocument;
+	var dragged = ownerDocument.adjDragged;
+	switch (type) {
+		case "mouseup":
+			if (!dragged) { // a mousemove for another reason
+				// fast exit
+				return true;
+			}
+			//console.log(type);
+			var draggedMouseUpListener = dragged.draggedMouseUpListener;
+			if (draggedMouseUpListener) {
+				return draggedMouseUpListener(event);
+			}
+			ownerDocument.adjDragged = null;
+			return true;
+		case "mousemove":
+			if (!dragged) { // a mousemove for another reason
+				// fast exit
+				return true;
+			}
+			var draggedMouseMoveListener = dragged.draggedMouseMoveListener;
+			if (draggedMouseMoveListener) {
+				return draggedMouseMoveListener(event);
+			}
+			return true;
+	}
+	return true;
+}
+document.addEventListener("mouseup", Adj.documentDraggedListener);
+document.addEventListener("mousemove", Adj.documentDraggedListener);
+
+// companion class
+Adj.SliderKnob = function SliderKnob (knob, min, max, step) {
+	this.knob = knob;
+	// must be step before min before max
+	this.step = Math.abs(step);
+	this.min = min = Math.ceil(min / step) * step;
+	this.max = max = Math.max(Math.floor(max / step) * step, min);
+	this.range = max - min;
+};
+Object.defineProperty(Adj.SliderKnob.prototype, "value", {
+	get: function() {
+		return this._value;
+	},
+	set: function(value) {
+		var step = this.step;
+		var previousValue = this.value;
+		var newValue = Math.min(Math.max(Math.round(value / step) * step, this.min), this.max);
+		if (newValue !== previousValue) {
+			this._value = newValue;
+			this.update();
+			//
+			var knob = this.knob;
+			// https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
+			var event = knob.ownerDocument.createEvent("Event");
+			event.initEvent("change", true, true);
+			event.detail = { value: this.value };
+			knob.dispatchEvent(event);
+		}
+	}
+});
+Adj.SliderKnob.prototype.update = function sliderKnobUpdate () {
+	var knob = this.knob;
+	var slider = knob.parentNode;
+	var sliderBoundingBox = slider.getBBox();
+	var knobBoundingBox = knob.getBBox();
+	var sliderX = sliderBoundingBox.x;
+	var sliderY = sliderBoundingBox.y;
+	var freedomW = sliderBoundingBox.width - knobBoundingBox.width;
+	var freedomH = sliderBoundingBox.height - knobBoundingBox.height;
+	if (freedomW >= freedomH) {
+		var orientation = "horizontal";
+		var freedom = freedomW;
+	} else {
+		orientation = "vertical";
+		freedom = freedomH;
+	}
+	if (this.range) {
+		var offset = (this.value - this.min) / this.range * freedom;
+	} else {
+		offset = freedom / 2;
+	}
+	switch (orientation) {
+		case "horizontal":
+			var positionX = sliderX + offset;
+			var positionY = sliderY + freedomH / 2;
+			break;
+		case "vertical":
+			positionX = sliderX + freedomW / 2;
+			positionY = sliderY + offset;
+			break;
+	}
+	var translateX = positionX - knobBoundingBox.x;
+	var translateY = positionY - knobBoundingBox.y;
+	// now we know where to put it
+	knob.setAttribute("transform", "translate(" + Adj.decimal(translateX) + "," + Adj.decimal(translateY) + ")");
+};
+Adj.SliderKnob.prototype.interpret = function sliderKnobInterpret (translateX, translateY) {
+	var knob = this.knob;
+	var sliderBoundingBox = knob.parentNode.getBBox();
+	var knobBoundingBox = knob.getBBox();
+	var freedomW = sliderBoundingBox.width - knobBoundingBox.width;
+	var freedomH = sliderBoundingBox.height - knobBoundingBox.height;
+	if (freedomW >= freedomH) { // horizontal
+		var freedom = freedomW;
+		var offset = translateX + knobBoundingBox.x - sliderBoundingBox.x;
+	} else { // vertical
+		freedom = freedomH;
+		offset = translateY + knobBoundingBox.y - sliderBoundingBox.y;
+	}
+	return this.min + offset / freedom * this.range; // value
+};
+
+// one event listener function to be installed for any element that needs it
+Adj.sliderKnobListener = function sliderKnobListener (event) {
+	var type = event.type;
+	var target = event.target;
+	var ownerDocument = target.ownerDocument;
+	switch (type) {
+		case "mousedown":
+			var knob = target;
+			while (true) {
+				var adjS = knob.adjS;
+				if (adjS) {
+					var sliderKnobRecord = adjS.sliderKnobRecord;
+					if (sliderKnobRecord) { // found containing knob element
+						break;
+					}
+				}
+				knob = knob.parentNode;
+				if (!knob) {
+					return true;
+				}
+			}
+			var slider = knob.parentNode;
+			// relative coordinates must be transformed without translation's e and f
+			var clientToSliderMatrixWithoutEF = slider.getScreenCTM().inverse();
+			clientToSliderMatrixWithoutEF.e = 0;
+			clientToSliderMatrixWithoutEF.f = 0;
+			// only one element can be dragged at a time
+			ownerDocument.adjDragged = {
+				draggedMouseUpListener: knob.adjDraggedMouseUpListener,
+				draggedMouseMoveListener: knob.adjDraggedMouseMoveListener,
+				//
+				knob: knob,
+				initialPageXY: new Adj.Point(event.pageX, event.pageY),
+				initialKnobToSliderMatrix: knob.getTransformToElement(slider),
+				clientToSliderMatrixWithoutEF: clientToSliderMatrixWithoutEF,
+			};
+			//console.log(type, knob);
+			return false;
+		case "mouseup":
+			//console.log(type);
+			var dragged = ownerDocument.adjDragged;
+			if (dragged) {
+				ownerDocument.adjDragged = null;
+				return false;
+			}
+			return true;
+		case "mousemove":
+			var dragged = ownerDocument.adjDragged;
+			if (!dragged) { // a mousemove for another reason
+				// fast exit
+				return true;
+			}
+			var knob = dragged.knob;
+			if (!knob) { // dragging something else
+				return true;
+			}
+			var adjS = knob.adjS;
+			if (!adjS) { // dragging something else
+				return true;
+			}
+			var sliderKnobRecord = adjS.sliderKnobRecord;
+			if (!sliderKnobRecord) { // dragging something else
+				return true;
+			}
+			if (knob.ownerDocument !== ownerDocument) {
+				// defensive exit for possible oddity
+				ownerDocument.adjDragged = null;
+				return true;
+			}
+			// could further check knob.
+			var initialKnobToSliderMatrix = dragged.initialKnobToSliderMatrix;
+			var mouseRelativeToInitial = new Adj.Point(event.pageX - dragged.initialPageXY.x, event.pageY - dragged.initialPageXY.y);
+			mouseRelativeToInitial = mouseRelativeToInitial.matrixTransform(dragged.clientToSliderMatrixWithoutEF);
+			// new translate
+			var translateX = initialKnobToSliderMatrix.e + mouseRelativeToInitial.x;
+			var translateY = initialKnobToSliderMatrix.f + mouseRelativeToInitial.y;
+			// limit range
+			var slider = knob.parentNode;
+			var sliderBoundingBox = slider.getBBox();
+			var knobBoundingBox = knob.getBBox();
+			var sliderX = sliderBoundingBox.x;
+			var sliderY = sliderBoundingBox.y;
+			var sliderXW = sliderX + sliderBoundingBox.width;
+			var sliderYH = sliderY + sliderBoundingBox.height;
+			var knobX = knobBoundingBox.x;
+			var knobY = knobBoundingBox.y;
+			var knobXW = knobX + knobBoundingBox.width;
+			var knobYH = knobY + knobBoundingBox.height;
+			if (knobXW + translateX > sliderXW) {
+				translateX = sliderXW - knobXW;
+			}
+			if (knobX + translateX < sliderX) {
+				translateX = sliderX - knobX;
+			}
+			if (knobYH + translateY > sliderYH) {
+				translateY = sliderYH - knobYH;
+			}
+			if (knobY + translateY < sliderY) {
+				translateY = sliderY - knobY;
+			}
+			// now we know where to put it
+			// was knob.setAttribute("transform", "translate(" + Adj.decimal(translateX) + "," + Adj.decimal(translateY) + ")");
+			sliderKnobRecord.value = sliderKnobRecord.interpret(translateX, translateY); // enforces step
+			return false;
+	}
+	return true;
+}
+
+// a specific algorithm
+Adj.defineCommandForAlgorithm({
+	algorithmName: "sliderKnob",
+	phaseHandlerNames: ["adjPhase1Up"],
+	parameters: ["min", "max", "step",
+				 "preset"],
+	methods: [function sliderKnob (element, parametersObject) {
+		var usedHow = "used in a parameter for a sliderKnob command";
+		var variableSubstitutionsByName = {};
+		var min = Adj.doVarsArithmetic(element, parametersObject.min, 0, null, usedHow, variableSubstitutionsByName); // default min = 0
+		var max = Adj.doVarsArithmetic(element, parametersObject.max, 100, null, usedHow, variableSubstitutionsByName); // default max = 100
+		var step = Adj.doVarsArithmetic(element, parametersObject.step, 1, null, usedHow, variableSubstitutionsByName); // default step = 1
+		var preset = Adj.doVarsArithmetic(element, parametersObject.preset, min, null, usedHow, variableSubstitutionsByName); // default preset = min
+		//
+		var adjS = element.adjS || (element.adjS = {});
+		var sliderKnobRecord = adjS.sliderKnobRecord;
+		if (!sliderKnobRecord) { // onload but not each doSvg()
+			sliderKnobRecord = new Adj.SliderKnob (element, min, max, step);
+			adjS.sliderKnobRecord = sliderKnobRecord;
+			element.addEventListener("mousedown", Adj.sliderKnobListener);
+			element.adjDraggedMouseUpListener = Adj.sliderKnobListener;
+			element.adjDraggedMouseMoveListener = Adj.sliderKnobListener;
+			//
+			sliderKnobRecord.value = preset;
+		} else { // preexisting
+			sliderKnobRecord.update(); // in case slider resized even though value remained the same
+		}
+	}]
 });
 
 // polyfill for missing method getTransformToElement
