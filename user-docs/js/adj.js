@@ -77,11 +77,16 @@ Adj.doDoc = function doDoc (documentToDo, doDocDoneCallback) {
 	Adj.processAdjElements(documentToDo, doDocDoneCallback);
 };
 
-// shortcut
-// if not given a theSvgElement then default to doing all SVG elements in the document
+// main invocation
+// if not given a theSvgElement then default to doing all SVG elements in the document;
+//
 // doSvgDoneCallback is optional here and in most or all other functions defined in this library
-// will be called as doSvgDoneCallback(exception, oneSvgElementOrSvgElements)
-// also if (exception && !doSvgDoneCallback) { throw exception; }
+// will be called as doSvgDoneCallback(oneSvgElementOrSvgElements);
+//
+// most exceptions will be shown in the SVG element and swallowed;
+// UI failure should not prevent further execution of business logic and
+// have least possible impact on a potentially important course of action;
+// also https://www.google.com/search?q=exception+swallow
 Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 	if (!doSvgDoneCallback && typeof theSvgElement === "function") {
 		// accommodate sloppy parameter passing
@@ -96,29 +101,17 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 		// supposed to work for all instances of SVG elements inlined in an HTML document
 		var svgElements = document.getElementsByTagName("svg");
 		var processing = {};
-		var exceptions = new Array(svgElements.lnegth);
 		for (var i = 0, n = svgElements.length; i < n; i++) {
 			var oneSvgElement = svgElements[i];
-			Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (exception, oneSvgElement) {
+			Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (oneSvgElement) {
 				// keep track of elements processing
 				delete processing[Adj.runtimeId(oneSvgElement)];
-				//
-				if (exception) {
-					if (doSvgDoneCallback) {
-						window.setTimeout(function () {
-							doSvgDoneCallback(exception, oneSvgElement);
-						}, 0);
-						return;
-					} else {
-						throw exception;
-					}
-				}
 				//
 				if (doSvgDoneCallback) {
 					if (!Object.keys(processing).length) { // if 0
 						// no outstanding processing means done with all Adj.processAdjElements
 						window.setTimeout(function () {
-							doSvgDoneCallback(null, svgElements);
+							doSvgDoneCallback(svgElements);
 						}, 0);
 					}
 				}
@@ -135,17 +128,15 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 	var theSvgElement = documentNodeOrTheSvgElement.documentElement || documentNodeOrTheSvgElement;
 	//
 	if (!(theSvgElement instanceof SVGSVGElement)) {
-		var error = "Adj skipping because invoked with something other than required SVGSVGElement";
-		console.error(error);
+		console.error("Adj skipping because invoked with something other than required SVGSVGElement");
 		if (processDoneCallback) {
 			window.setTimeout(function () {
-				processDoneCallback(error, documentNodeOrTheSvgElement);
+				processDoneCallback(documentNodeOrTheSvgElement);
 			}, 0);
 			return;
-		} else {
-			throw error;
-		}
+		} // else { // swallow instead of throw error;
 	}
+	//
 	try {
 		//
 		// remove certain nodes for a new start, in case any such are present from earlier processing
@@ -178,7 +169,7 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 			if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
 				// no outstanding requests means done with all Adj.algorithms.include
 				window.setTimeout(function () {
-					processDoneCallback(null, documentNodeOrTheSvgElement);
+					processDoneCallback(documentNodeOrTheSvgElement);
 				}, 0);
 			}
 		}
@@ -187,11 +178,9 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 		//
 		if (processDoneCallback) {
 			window.setTimeout(function () {
-				processDoneCallback(exception, documentNodeOrTheSvgElement);
+				processDoneCallback(documentNodeOrTheSvgElement);
 			}, 0);
-		} else {
-			throw exception;
-		}
+		} // else { // swallow instead of throw exception;
 	}
 };
 
@@ -6667,6 +6656,8 @@ Adj.toggleHideSiblingsFollowing = function toggleHideSiblingsFollowing (element,
 
 // visual exception display
 Adj.displayException = function displayException (exception, theSvgElement) {
+	console.error(exception); // redundant logging in case a subsequent run of doSvg() replaces this visual exception display
+	//
 	var ownerDocument = theSvgElement.ownerDocument;
 	//
 	for (var child = theSvgElement.firstChild; child; child = child.nextSibling) {

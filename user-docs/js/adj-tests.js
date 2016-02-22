@@ -134,8 +134,7 @@ Adj.stashedDocumentResultAndRemove = function stashedDocumentResultAndRemove (do
 // for running automated tests
 // do all SVG elements in the document,
 // doSvgAndStashDoneCallback is optional here and in most or all other functions defined in this library,
-// will be called as doSvgAndStashDoneCallback(exception, oneSvgElementOrSvgElementsOrDocument),
-// also if (exception && !doSvgAndStashDoneCallback) { throw exception; }
+// will be called as doSvgAndStashDoneCallback(oneSvgElementOrSvgElementsOrDocument)
 Adj.doSvgAndStashIfNoStashYet = function doSvgAndStashIfNoStashYet (doSvgAndStashDoneCallback) {
 	if (Adj.apparentDocumentResultStashComment(document)) { // if apparently not first time
 		// then do nothing, bail out
@@ -145,19 +144,11 @@ Adj.doSvgAndStashIfNoStashYet = function doSvgAndStashIfNoStashYet (doSvgAndStas
 		return;
 	}
 	// do
-	Adj.doSvg(function (exception, oneSvgElementOrSvgElements) {
-		if (exception) {
-			if (doSvgAndStashDoneCallback) {
-				doSvgAndStashDoneCallback(exception);
-				return;
-			} else {
-				throw exception;
-			}
-		}
+	Adj.doSvg(function (oneSvgElementOrSvgElements) {
 		// put stash
 		Adj.stashDocumentResult(document);
 		if (doSvgAndStashDoneCallback) {
-			doSvgAndStashDoneCallback(exception, oneSvgElementOrSvgElements);
+			doSvgAndStashDoneCallback(oneSvgElementOrSvgElements);
 		}
 	});
 }
@@ -165,25 +156,16 @@ Adj.doSvgAndStashIfNoStashYet = function doSvgAndStashIfNoStashYet (doSvgAndStas
 // for running automated tests
 // do all SVG elements in the document,
 // doSvgAndStashDoneCallback is optional here and in most or all other functions defined in this library,
-// will be called as doSvgAndStashDoneCallback(exception, oneSvgElementOrSvgElementsOrDocument),
-// also if (exception && !doSvgAndStashDoneCallback) { throw exception; }
+// will be called as doSvgAndStashDoneCallback(oneSvgElementOrSvgElementsOrDocument)
 Adj.doSvgAndStash = function doSvgAndStash (doSvgAndStashDoneCallback) {
 	// remove previous stash
 	Adj.removeDocumentResultStash(document);
 	// do
-	Adj.doSvg(function (exception, oneSvgElementOrSvgElements) {
-		if (exception) {
-			if (doSvgAndStashDoneCallback) {
-				doSvgAndStashDoneCallback(exception);
-				return;
-			} else {
-				throw exception;
-			}
-		}
+	Adj.doSvg(function (oneSvgElementOrSvgElements) {
 		// put stash
 		Adj.stashDocumentResult(document);
 		if (doSvgAndStashDoneCallback) {
-			doSvgAndStashDoneCallback(exception, oneSvgElementOrSvgElements);
+			doSvgAndStashDoneCallback(oneSvgElementOrSvgElements);
 		}
 	});
 }
@@ -454,8 +436,7 @@ Adj.firstElementTag = function firstElementTag (documentString) {
 
 // for running automated tests,
 // doSvgAndVerifyDoneCallback called with string describing difference if failed,
-// or called with empty string if expected result if passed,
-// or called with exception if so
+// or called with empty string if expected result if passed
 Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolerance) {
 	if (!doSvgAndVerifyDoneCallback || typeof doSvgAndVerifyDoneCallback !== "function") {
 		throw "Adj.doSvgAndVerify cannot run unless first parameter is a callback function";
@@ -475,13 +456,8 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 		return;
 	}
 	// do
-	Adj.doSvg(function (exception, documentNodeOrRootElement) {
+	Adj.doSvg(function (documentNodeOrRootElement) {
 		try {
-			if (exception) {
-				doSvgAndVerifyDoneCallback(exception);
-				return;
-			}
-			//
 			// convert to text
 			var serializer = new XMLSerializer();
 			var documentAsString = serializer.serializeToString(document);
@@ -587,8 +563,8 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 				doSvgAndVerifyDoneCallback(differencesString);
 				return;
 			}
-		} catch (exception) {
-			doSvgAndVerifyDoneCallback(exception);
+		} catch (exception) { // probably unusual, nevertheless covered
+			doSvgAndVerifyDoneCallback(exception.toString());
 			return;
 		}
 	});
@@ -632,7 +608,7 @@ AdjTestWindow.receivesMessage = function receivesMessage (evt) {
 					// reply
 					evt.source.postMessage("Adj.didDocAndVerify|" + window.location.href + "|" + resultOfVerification, "*");
 				});
-			} catch (exception) {
+			} catch (exception) { // probably unusual, nevertheless covered
 				console.error("Adj.doSvgAndVerify exception", exception);
 				exceptionString = exception.toString();
 				// reply
@@ -640,7 +616,7 @@ AdjTestWindow.receivesMessage = function receivesMessage (evt) {
 			}
 			break;
 		case "Adj.doSvg":
-			Adj.doSvg(function (exception, oneSvgElementOrSvgElements) {
+			Adj.doSvg(function (oneSvgElementOrSvgElements) {
 				console.log('Adj.doSvg done');
 			});
 			break;
