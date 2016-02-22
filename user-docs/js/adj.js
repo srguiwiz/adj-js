@@ -60,23 +60,6 @@ Adj.XLinkNamespace = "http://www.w3.org/1999/xlink";
 Adj.AdjNamespacePrefix = "adj";
 Adj.XLinkNamespacePrefix = "xlink";
 
-// shortcut
-// if not given a documentToDo then default to doing _the_ document
-// doDocDoneCallback is optional here and in most or all other functions defined in this library
-// will be called as doDocDoneCallback(exception, documentNodeOrTheSvgElement)
-// also if (exception && !doDocDoneCallback) { throw exception; }
-Adj.doDoc = function doDoc (documentToDo, doDocDoneCallback) {
-	if (!doDocDoneCallback && typeof documentToDo === "function") {
-		// accommodate sloppy parameter passing
-		doDocDoneCallback = documentToDo;
-		documentToDo = undefined;
-	}
-	if (!documentToDo) {
-		documentToDo = document;
-	}
-	Adj.processAdjElements(documentToDo, doDocDoneCallback);
-};
-
 // main invocation
 // if not given a theSvgElement then default to doing all SVG elements in the document;
 //
