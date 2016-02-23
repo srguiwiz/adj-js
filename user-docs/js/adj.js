@@ -8183,6 +8183,9 @@ Object.defineProperty(Adj.SliderKnob.prototype, "value", {
 			var event = knob.ownerDocument.createEvent("Event");
 			event.initEvent("change", true, true);
 			event.detail = { value: this.value };
+			// per https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+			// event handlers run on a nested call stack: they block the caller until they complete,
+			// but exceptions do not propagate to the caller
 			knob.dispatchEvent(event);
 		}
 	}
