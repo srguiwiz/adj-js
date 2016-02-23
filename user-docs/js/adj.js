@@ -76,13 +76,28 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 		doSvgDoneCallback = theSvgElement;
 		theSvgElement = undefined;
 	}
+	//
 	// main-SVG-intent versus inlined-SVG-workaround
 	if (theSvgElement) {
 		// simple original intent
 		Adj.processAdjElements(theSvgElement, doSvgDoneCallback);
 	} else {
 		// supposed to work for all instances of SVG elements inlined in an HTML document
-		var svgElements = document.getElementsByTagName("svg");
+		var svgElements = Array.prototype.slice.call(document.querySelectorAll("svg"));
+		// limit to outermost SVG elements for this level invocation, in case any nested
+		var nestedSvgElements = document.querySelectorAll("svg svg");
+		for (var i = 0, n = nestedSvgElements.length, j = 0; i < n; i++) {
+			var nestedSvgElement = nestedSvgElements[i];
+			while (j < svgElements.length) {
+				if (nestedSvgElement.isEqualNode(svgElements[j])) {
+					svgElements.splice(j, 1);
+					break;
+				} else {
+					j++;
+				}
+			}
+		}
+		//
 		var processing = {};
 		for (var i = 0, n = svgElements.length; i < n; i++) {
 			var oneSvgElement = svgElements[i];
