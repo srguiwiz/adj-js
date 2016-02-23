@@ -182,7 +182,6 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 					// each callback asynchronously by itself, an implementation choice,
 					// see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
 					for (var i = 0, n = accumulatedCallbacks.length; i < n ; i++) {
-						// necessary closure to pass each callback by itself
 						window.setTimeout(function (oneCallback) {
 							oneCallback(documentNodeOrTheSvgElement);
 						}, 0, accumulatedCallbacks[i]);
