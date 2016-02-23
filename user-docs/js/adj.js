@@ -120,6 +120,23 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 		} // else { // swallow instead of throw error;
 	}
 	//
+	var adjProcessing = theSvgElement.adjProcessing;
+	if (!adjProcessing) {
+		adjProcessing = theSvgElement.adjProcessing = {
+			ongoing: false,
+			oneMore: false,
+			accumulatedCallbacks: []
+		};
+	}
+	if (processDoneCallback) {
+		adjProcessing.accumulatedCallbacks.push(processDoneCallback);
+	}
+	if (adjProcessing.ongoing) { // e.g. got here from an Adj.doSvg() in a "change" event listener
+		adjProcessing.oneMore = true;
+		return;
+	}
+	adjProcessing.ongoing = true;
+	//
 	try {
 		//
 		// remove certain nodes for a new start, in case any such are present from earlier processing
@@ -139,7 +156,7 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 		// for Adj.algorithms.include
 		theSvgElement.adjAsyncGetTextFileRequesters = theSvgElement.adjAsyncGetTextFileRequesters || {};
 		theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker || new Adj.DebouncedAsync(function () {
-			Adj.processAdjElements(documentNodeOrTheSvgElement, processDoneCallback);
+			Adj.processAdjElements(documentNodeOrTheSvgElement);
 		});
 		//
 		// read Adj elements and make or update phase handlers
@@ -147,23 +164,33 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 		//
 		// then process
 		Adj.processTheSvgElementWithPhaseHandlers(theSvgElement);
-		//
-		if (processDoneCallback) {
-			if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
-				// no outstanding requests means done with all Adj.algorithms.include
-				window.setTimeout(function () {
-					processDoneCallback(documentNodeOrTheSvgElement);
-				}, 0);
-			}
-		}
 	} catch (exception) {
 		Adj.displayException(exception, theSvgElement);
-		//
-		if (processDoneCallback) {
-			window.setTimeout(function () {
-				processDoneCallback(documentNodeOrTheSvgElement);
-			}, 0);
-		} // else { // swallow instead of throw exception;
+		// swallow instead of throw exception;
+	} finally {
+		adjProcessing.ongoing = false;
+		if (adjProcessing.oneMore) {
+			adjProcessing.oneMore = false;
+			// keep adjProcessing.accumulatedCallbacks
+			processAdjElements(theSvgElement);
+		} else {
+			var accumulatedCallbacks = adjProcessing.accumulatedCallbacks;
+			if (accumulatedCallbacks.length) {
+				if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
+					// no outstanding requests means done with all Adj.algorithms.include
+					//
+					// each callback asynchronously by itself, an implementation choice,
+					// see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
+					for (var i = 0, n = accumulatedCallbacks.length; i < n ; i++) {
+						// necessary closure to pass each callback by itself
+						window.setTimeout(function (oneCallback) {
+							oneCallback(documentNodeOrTheSvgElement);
+						}, 0, accumulatedCallbacks[i]);
+					}
+					adjProcessing.accumulatedCallbacks = [];
+				}
+			}
+		}
 	}
 };
 

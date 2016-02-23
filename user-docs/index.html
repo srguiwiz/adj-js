@@ -225,11 +225,10 @@ newer.</p>
       <li><a href="#L2357">1.26. Automated Testing</a></li>
       <li><a href="#L2374">1.27. Compatibility Issues</a>
         <ul>
-          <li><a href="#L2433">1.27.1. Internet Explorer 8 And Earlier</a></li>
-          <li><a href="#L2437">1.27.2. Internet Explorer 9</a></li>
-          <li><a href="#L2480">1.27.3. Internet Explorer 10</a></li>
-          <li><a href="#L46664">1.27.4. Internet Explorer 11</a></li>
-          <li><a href="#L46669">1.27.5. Firefox 32</a></li>
+          <li><a href="#L46664">1.27.1. Internet Explorer 11</a></li>
+          <li><a href="#L2480">1.27.2. Internet Explorer 10</a></li>
+          <li><a href="#L2433">1.27.3. Internet Explorer 9 And Earlier</a></li>
+          <li><a href="#L46669">1.27.4. Firefox 32</a></li>
         </ul>
       </li>
       <li><a href="#L11982">1.28. SVG inline in HTML</a></li>
@@ -331,7 +330,7 @@ Illustrator plug-in. Still there were good reasons to implement Adj.</p>
 <p>Adj leverages several existing technologies:</p>
 <ul>
   <li>SVG viewing is commonly possible with contemporary browsers: Firefox,
-    Chrome, Safari, Opera, and Internet Explorer since version 9</li>
+    Chrome, Safari, Opera, Internet Explorer 11 or newer</li>
   <li>SVG being XML can be generated and manipulated in automated ways, i.e.
     SVG documents can be created as output of a broad variety of scripts</li>
   <li>JavaScript manipulation of SVG, while not perfect, has been defined
@@ -4405,54 +4404,25 @@ Explorer 11 appear to have been achieved.</p>
 
 <p>Good results have been achieved with Firefox, Chrome, Safari, and Opera.</p>
 
-<h4 id="L2433">1.27.1. Internet Explorer 8 And Earlier</h4>
-
-<p>No go before Internet Explorer 9.</p>
-
-<h4 id="L2437">1.27.2. Internet Explorer 9</h4>
-
-<p>Probably since Adj version 2.0 in Internet Explorer 9, correctness appears
-broken when using a <code>line</code> or a <code>path</code> in a
-<code>connection</code> that has <a href="#L1888">saved back</a> different
-values for the coordinates in attributes <code>x1</code>, <code>y1</code>,
-<code>x2</code>, <code>y2</code>, or <code>d</code> than what has been <a
-href="#L443">stored away</a> as <a href="#L123334">authoring coordinates</a>.
-The problem appears to be around use of <code>setAttributeNS</code>, possibly
-<code>getAttributeNS</code> and related functions. Apparently Internet Explorer
-10 no longer has this problem.</p>
-
-<h4 id="L2480">1.27.3. Internet Explorer 10</h4>
-
-<p>Apparently in at least one pre-release of Internet Explorer 10, correctness
-is broken when using a <code>line</code> or a <code>path</code> in a
-<code>connection</code> that uses markers such as <code>marker-start</code>,
-<code>marker-mid</code>, or <code>marker-end</code>, for example for an
-arrowhead. Others also have <a
-href="http://social.msdn.microsoft.com/Forums/en-US/iewebdevelopment/thread/f772aab3-5ce3-4367-8eec-4fe58ad94b14">found
-a defect</a> where Internet Explorer 10 doesn't move markers when changing
-coordinates of a <code>line</code>. If you have a moment, please comment <a
-href="http://social.msdn.microsoft.com/Forums/en-US/iewebdevelopment/thread/f772aab3-5ce3-4367-8eec-4fe58ad94b14">there</a>
-(or even better in an actual defect reporting system at Microsoft if you know
-where that would be) in support of that defect being fixed. Someone tries to
-take that forum discussion the direction of "this isn't a problem", while not
-even using a marker in counterarguments.</p>
-
-<p>There is at least one <a href="adj-ex-041-workflow-version.svg">example
-file</a> which should show some or all of these problems. To see problems,
-because of security settings of some Internet Explorer versions, one may have
-to explicitly click to approve the Adj JavaScript library to run.</p>
-
-<p>These issues must not be showstoppers.</p>
-
-<p>There is no going back. Older versions of Adj are no longer compatible with
-more recent development.</p>
-
-<h4 id="L46664">1.27.4. Internet Explorer 11</h4>
+<h4 id="L46664">1.27.1. Internet Explorer 11</h4>
 
 <p>While problems may exist, it passes the <a href="tests.html">test
 suite</a>.</p>
 
-<h4 id="L46669">1.27.5. Firefox 32</h4>
+<p>Because of security settings of Internet Explorer, one may have to
+explicitly click to approve the Adj JavaScript library to run.</p>
+
+<h4 id="L2480">1.27.2. Internet Explorer 10</h4>
+
+<p>Support of Internet Explorer 10 and older versions has ended 2016-01-12. Adj
+is no longer suported for Internet Explorer 10 and earlier.</p>
+
+<h4 id="L2433">1.27.3. Internet Explorer 9 And Earlier</h4>
+
+<p>Adj version 6.0.1 is no longer compatible with Internet Explorer 9 and
+earlier.</p>
+
+<h4 id="L46669">1.27.4. Firefox 32</h4>
 
 <p>Apparently inside a <code>text</code> element extraneous whitespace near a
 hyperlink <code>a</code> element can cause line height calculation on Firefox
@@ -4475,7 +4445,9 @@ href="adj-ex-075-telescopicTree-motley-explained.html">075</a>, <a
 href="adj-ex-080-include.html">080</a>, <a
 href="adj-ex-081-include-fragment-from-html.html">081</a>, <a
 href="adj-ex-090-rcGrid-motley.html">090</a>, <a
-href="adj-ex-091-rcGrid-templates.html">091</a>, and <a
+href="adj-ex-091-rcGrid-templates.html">091</a>, <a
+href="adj-ex-092-sliderKnob.html">092</a>, <a
+href="adj-ex-093-sliderKnob-step.html">093</a>, and <a
 href="adj-ex-002-verticalList-and-more.html">more</a>.</p>
 
 <p><span class="todo">TODO: document Adj in SVG inline in HTML, with compelling
