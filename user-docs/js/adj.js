@@ -93,9 +93,9 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 				if (doSvgDoneCallback) {
 					if (!Object.keys(processing).length) { // if 0
 						// no outstanding processing means done with all Adj.processAdjElements
-						window.setTimeout(function () {
-							doSvgDoneCallback(svgElements);
-						}, 0);
+						window.setTimeout(function (doSvgDoneCallbackGiven, svgElementsDone) {
+							doSvgDoneCallbackGiven(svgElementsDone);
+						}, 0, doSvgDoneCallback, svgElements);
 					}
 				}
 			});
@@ -113,9 +113,9 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 	if (!(theSvgElement instanceof SVGSVGElement)) {
 		console.error("Adj skipping because invoked with something other than required SVGSVGElement");
 		if (processDoneCallback) {
-			window.setTimeout(function () {
-				processDoneCallback(documentNodeOrTheSvgElement);
-			}, 0);
+			window.setTimeout(function (processDoneCallbackGiven, documentNodeOrTheSvgElementDone) {
+				processDoneCallbackGiven(documentNodeOrTheSvgElementDone);
+			}, 0, processDoneCallback, documentNodeOrTheSvgElement);
 			return;
 		} // else { // swallow instead of throw error;
 	}
@@ -182,9 +182,9 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 					// each callback asynchronously by itself, an implementation choice,
 					// see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
 					for (var i = 0, n = accumulatedCallbacks.length; i < n ; i++) {
-						window.setTimeout(function (oneCallback) {
-							oneCallback(documentNodeOrTheSvgElement);
-						}, 0, accumulatedCallbacks[i]);
+						window.setTimeout(function (accumulatedCallback, documentNodeOrTheSvgElementDone) {
+							accumulatedCallback(documentNodeOrTheSvgElementDone);
+						}, 0, accumulatedCallbacks[i], documentNodeOrTheSvgElement);
 					}
 					adjProcessing.accumulatedCallbacks = [];
 				}
@@ -6962,10 +6962,10 @@ Adj.DebouncedAsync.prototype.invoke = function () {
 		var debouncedAsync = this;
 		// per https://html.spec.whatwg.org/multipage/webappapis.html#timers
 		// setTimeout returns an integer that is greater than zero
-		this.handle = window.setTimeout(function () {
-			debouncedAsync.handle = null; // reset
-			debouncedAsync.func.apply(debouncedAsync.thisToUse);
-		}, 0);
+		this.handle = window.setTimeout(function (debouncedAsyncInvoked) {
+			debouncedAsyncInvoked.handle = null; // reset
+			debouncedAsyncInvoked.func.apply(debouncedAsyncInvoked.thisToUse);
+		}, 0, debouncedAsync);
 	}
 };
 
@@ -6980,18 +6980,18 @@ if (!window.nrvrGetTextFile) {
 				// Chrome 46 has been observed to return synchronously to report
 				// XMLHttpRequest cannot load file:// … Cross origin requests are only supported for protocol schemes: http, …
 				// therefore we wrap with what otherwise could appear a frivolous setTimeout
-				window.setTimeout(function () {
-					gotFileCallback(xhr.responseText, xhr.status);
-				}, 0);
+				window.setTimeout(function (gotFileCallbackGiven, xhrLoadEnded) {
+					gotFileCallbackGiven(xhrLoadEnded.responseText, xhrLoadEnded.status);
+				}, 0, gotFileCallback, xhr);
 			};
 			xhr.open('GET', fileUrl, true);
 			xhr.responseType = 'text';
 			xhr.send();
 		} catch (e) {
 			console.error('error attempting to GET', fileUrl.href, e);
-			window.setTimeout(function () {
-				gotFileCallback('', 0);
-			}, 0);
+			window.setTimeout(function (gotFileCallbackGiven) {
+				gotFileCallbackGiven('', 0);
+			}, 0, gotFileCallback);
 		}
 	};
 }
