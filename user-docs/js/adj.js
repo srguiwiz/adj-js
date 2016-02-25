@@ -61,7 +61,7 @@ Adj.AdjNamespacePrefix = "adj";
 Adj.XLinkNamespacePrefix = "xlink";
 
 // main invocation
-// if not given a theSvgElement then default to doing all SVG elements in the document;
+// if not given a documentNodeOrAnElement then default to doing all SVG elements in the document;
 //
 // doSvgDoneCallback is optional here and in most or all other functions defined in this library
 // will be called as doSvgDoneCallback(oneSvgElementOrSvgElements);
@@ -70,22 +70,25 @@ Adj.XLinkNamespacePrefix = "xlink";
 // UI failure should not prevent further execution of business logic and
 // have least possible impact on a potentially important course of action;
 // also https://www.google.com/search?q=exception+swallow
-Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
-	if (!doSvgDoneCallback && typeof theSvgElement === "function") {
-		// accommodate sloppy parameter passing
-		doSvgDoneCallback = theSvgElement;
-		theSvgElement = undefined;
+Adj.doSvg = function doSvg (documentNodeOrAnElement, doSvgDoneCallback) {
+	// accommodate sloppy parameter passing
+	if (!doSvgDoneCallback && typeof documentNodeOrAnElement === "function") {
+		doSvgDoneCallback = documentNodeOrAnElement;
+		documentNodeOrAnElement = undefined;
 	}
+	documentNodeOrAnElement = documentNodeOrAnElement || document;
+	// under the document node, which isn't an element, is one root element, in an SVG document an <svg> element
+	var element = documentNodeOrAnElement.documentElement || documentNodeOrAnElement;
 	//
 	// main-SVG-intent versus inlined-SVG-workaround
-	if (theSvgElement) {
+	if (element instanceof SVGSVGElement) {
 		// simple original intent
-		Adj.processAdjElements(theSvgElement, doSvgDoneCallback);
+		Adj.processAdjElements(element, doSvgDoneCallback);
 	} else {
 		// supposed to work for all instances of SVG elements inlined in an HTML document
-		var svgElements = Array.prototype.slice.call(document.querySelectorAll("svg"));
+		var svgElements = Array.prototype.slice.call(documentNodeOrAnElement.querySelectorAll("svg"));
 		// limit to outermost SVG elements for this level invocation, in case any nested
-		var nestedSvgElements = document.querySelectorAll("svg svg");
+		var nestedSvgElements = documentNodeOrAnElement.querySelectorAll("svg svg");
 		for (var i = 0, n = nestedSvgElements.length, j = 0; i < n; i++) {
 			var nestedSvgElement = nestedSvgElements[i];
 			while (j < svgElements.length) {
@@ -124,14 +127,14 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 };
 
 // complete processing of all phases
-Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElement, processDoneCallback) {
-	// under the document node, which isn't an element, is one root element, in an SVG document an <svg> element
-	var theSvgElement = documentNodeOrTheSvgElement.documentElement || documentNodeOrTheSvgElement;
-	//
+//
+// processDoneCallback is optional here and in most or all other functions defined in this library
+// will be called as processDoneCallback(theSvgElement);
+Adj.processAdjElements = function processAdjElements (theSvgElement, processDoneCallback) {
 	if (!(theSvgElement instanceof SVGSVGElement)) {
 		console.error("Adj skipping because invoked with something other than required SVGSVGElement");
 		if (processDoneCallback) {
-			processDoneCallback(documentNodeOrTheSvgElement);
+			processDoneCallback(theSvgElement);
 			return;
 		} // else { // swallow instead of throw error;
 	}
@@ -178,9 +181,8 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 			//
 			// for Adj.algorithms.include
 			theSvgElement.adjAsyncGetTextFileRequesters = theSvgElement.adjAsyncGetTextFileRequesters || {};
-			theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker || new Adj.DebouncedAsync(function () {
-				Adj.processAdjElements(documentNodeOrTheSvgElement);
-			});
+			theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker ||
+				new Adj.DebouncedAsync(Adj.processAdjElements.bind(Adj, theSvgElement));
 			//
 			// read Adj elements and make or update phase handlers
 			Adj.parseTheSvgElementForAdjElements(theSvgElement);
@@ -202,7 +204,7 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 					adjProcessing.incallbacks = true;
 					try {
 						for (var i = 0, n = ongoingCallbacks.length; i < n ; i++) {
-							ongoingCallbacks[i](documentNodeOrTheSvgElement);
+							ongoingCallbacks[i](theSvgElement);
 						}
 					} finally {
 						adjProcessing.ongoingCallbacks = [];
@@ -6983,10 +6985,9 @@ Adj.defineCommandForAlgorithm({
 
 // utility class
 // for Adj.algorithms.include
-Adj.DebouncedAsync = function DebouncedAsync (func, thisToUse) {
+Adj.DebouncedAsync = function DebouncedAsync (func) {
 	this.handle = null;
 	this.func = func;
-	this.thisToUse = thisToUse;
 };
 Adj.DebouncedAsync.prototype.invoke = function () {
 	if (!this.handle) {
@@ -6995,7 +6996,7 @@ Adj.DebouncedAsync.prototype.invoke = function () {
 		// setTimeout returns an integer that is greater than zero
 		this.handle = window.setTimeout(function (debouncedAsyncInvoked) {
 			debouncedAsyncInvoked.handle = null; // reset
-			debouncedAsyncInvoked.func.apply(debouncedAsyncInvoked.thisToUse);
+			debouncedAsyncInvoked.func();
 		}, 0, debouncedAsync);
 	}
 };
