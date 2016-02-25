@@ -49,7 +49,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:0, revision:1 };
+Adj.version = { major:6, minor:0, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -98,24 +98,27 @@ Adj.doSvg = function doSvg (theSvgElement, doSvgDoneCallback) {
 			}
 		}
 		//
-		var processing = {};
+		var svgElementsProcessing = {};
+		// setting all svgElementsProcessing first, in case all processDoneCallback will be invoked synchronously,
+		// nevertheless need to keep track of elements processing, in case one will be invoked asynchronously
+		for (var i = 0, n = svgElements.length; i < n; i++) {
+			var oneSvgElement = svgElements[i];
+			// keep track of elements processing
+			svgElementsProcessing[Adj.runtimeId(oneSvgElement)] = oneSvgElement;
+		}
 		for (var i = 0, n = svgElements.length; i < n; i++) {
 			var oneSvgElement = svgElements[i];
 			Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (oneSvgElement) {
 				// keep track of elements processing
-				delete processing[Adj.runtimeId(oneSvgElement)];
+				delete svgElementsProcessing[Adj.runtimeId(oneSvgElement)];
 				//
 				if (doSvgDoneCallback) {
-					if (!Object.keys(processing).length) { // if 0
+					if (!Object.keys(svgElementsProcessing).length) { // if 0
 						// no outstanding processing means done with all Adj.processAdjElements
-						window.setTimeout(function (doSvgDoneCallbackGiven, svgElementsDone) {
-							doSvgDoneCallbackGiven(svgElementsDone);
-						}, 0, doSvgDoneCallback, svgElements);
+						doSvgDoneCallback(svgElements);
 					}
 				}
 			});
-			// keep track of elements processing
-			processing[Adj.runtimeId(oneSvgElement)] = oneSvgElement;
 		}
 	}
 };
@@ -128,9 +131,7 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 	if (!(theSvgElement instanceof SVGSVGElement)) {
 		console.error("Adj skipping because invoked with something other than required SVGSVGElement");
 		if (processDoneCallback) {
-			window.setTimeout(function (processDoneCallbackGiven, documentNodeOrTheSvgElementDone) {
-				processDoneCallbackGiven(documentNodeOrTheSvgElementDone);
-			}, 0, processDoneCallback, documentNodeOrTheSvgElement);
+			processDoneCallback(documentNodeOrTheSvgElement);
 			return;
 		} // else { // swallow instead of throw error;
 	}
@@ -139,70 +140,85 @@ Adj.processAdjElements = function processAdjElements (documentNodeOrTheSvgElemen
 	if (!adjProcessing) {
 		adjProcessing = theSvgElement.adjProcessing = {
 			ongoing: false,
+			ongoingCallbacks: [],
+			incallbacks: false,
 			oneMore: false,
-			accumulatedCallbacks: []
+			oneMoreCallbacks: []
 		};
 	}
-	if (processDoneCallback) {
-		adjProcessing.accumulatedCallbacks.push(processDoneCallback);
-	}
-	if (adjProcessing.ongoing) { // e.g. got here from an Adj.doSvg() in a "change" event listener
+	if (   adjProcessing.ongoing // e.g. got here from an Adj.doSvg() in a "change" event listener
+		|| adjProcessing.incallbacks) { // e.g. got here from an Adj.doSvg() in a doSvgDoneCallback
 		adjProcessing.oneMore = true;
+		if (processDoneCallback) {
+			adjProcessing.oneMoreCallbacks.push(processDoneCallback);
+		}
 		return;
 	}
 	adjProcessing.ongoing = true;
+	if (processDoneCallback) {
+		adjProcessing.ongoingCallbacks.push(processDoneCallback);
+	}
 	//
-	try {
-		//
-		// remove certain nodes for a new start, in case any such are present from earlier processing
-		Adj.modifyMaybeRemoveChildren
-		(theSvgElement,
-		 function (node,child) {
-			if (child.adjPermanentArtifact || Adj.elementGetAttributeInAdjNS(child, "artifact")) {
-				child.adjPermanentArtifact = true;
-				child.adjRemoveElement = true;
-			}
-			if (child.adjExplanationArtifact || Adj.elementGetAttributeInAdjNS(child, "explanation")) {
-				child.adjExplanationArtifact = true;
-				child.adjRemoveElement = true;
-			}
-		 });
-		//
-		// for Adj.algorithms.include
-		theSvgElement.adjAsyncGetTextFileRequesters = theSvgElement.adjAsyncGetTextFileRequesters || {};
-		theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker || new Adj.DebouncedAsync(function () {
-			Adj.processAdjElements(documentNodeOrTheSvgElement);
-		});
-		//
-		// read Adj elements and make or update phase handlers
-		Adj.parseTheSvgElementForAdjElements(theSvgElement);
-		//
-		// then process
-		Adj.processTheSvgElementWithPhaseHandlers(theSvgElement);
-	} catch (exception) {
-		Adj.displayException(exception, theSvgElement);
-		// swallow instead of throw exception;
-	} finally {
-		adjProcessing.ongoing = false;
-		if (adjProcessing.oneMore) {
-			adjProcessing.oneMore = false;
-			// keep adjProcessing.accumulatedCallbacks
-			processAdjElements(theSvgElement);
-		} else {
-			var accumulatedCallbacks = adjProcessing.accumulatedCallbacks;
-			if (accumulatedCallbacks.length) {
+	while (adjProcessing.ongoing) {
+		try {
+			//
+			// remove certain nodes for a new start, in case any such are present from earlier processing
+			Adj.modifyMaybeRemoveChildren
+			(theSvgElement,
+			 function (node,child) {
+				if (child.adjPermanentArtifact || Adj.elementGetAttributeInAdjNS(child, "artifact")) {
+					child.adjPermanentArtifact = true;
+					child.adjRemoveElement = true;
+				}
+				if (child.adjExplanationArtifact || Adj.elementGetAttributeInAdjNS(child, "explanation")) {
+					child.adjExplanationArtifact = true;
+					child.adjRemoveElement = true;
+				}
+			 });
+			//
+			// for Adj.algorithms.include
+			theSvgElement.adjAsyncGetTextFileRequesters = theSvgElement.adjAsyncGetTextFileRequesters || {};
+			theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker || new Adj.DebouncedAsync(function () {
+				Adj.processAdjElements(documentNodeOrTheSvgElement);
+			});
+			//
+			// read Adj elements and make or update phase handlers
+			Adj.parseTheSvgElementForAdjElements(theSvgElement);
+			//
+			// then process
+			Adj.processTheSvgElementWithPhaseHandlers(theSvgElement);
+			//
+		} catch (exception) {
+			Adj.displayException(exception, theSvgElement);
+			// swallow instead of throw exception;
+		} finally {
+			adjProcessing.ongoing = false;
+			//
+			var ongoingCallbacks = adjProcessing.ongoingCallbacks;
+			if (ongoingCallbacks.length) {
 				if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
 					// no outstanding requests means done with all Adj.algorithms.include
 					//
-					// each callback asynchronously by itself, an implementation choice,
-					// see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
-					for (var i = 0, n = accumulatedCallbacks.length; i < n ; i++) {
-						window.setTimeout(function (accumulatedCallback, documentNodeOrTheSvgElementDone) {
-							accumulatedCallback(documentNodeOrTheSvgElementDone);
-						}, 0, accumulatedCallbacks[i], documentNodeOrTheSvgElement);
+					adjProcessing.incallbacks = true;
+					try {
+						for (var i = 0, n = ongoingCallbacks.length; i < n ; i++) {
+							ongoingCallbacks[i](documentNodeOrTheSvgElement);
+						}
+					} finally {
+						adjProcessing.ongoingCallbacks = [];
+						adjProcessing.incallbacks = false;
 					}
-					adjProcessing.accumulatedCallbacks = [];
 				}
+			}
+			//
+			if (adjProcessing.oneMore) {
+				adjProcessing.oneMore = false;
+				adjProcessing.ongoingCallbacks = adjProcessing.oneMoreCallbacks;
+				adjProcessing.oneMoreCallbacks = [];
+				//
+				// was processAdjElements(theSvgElement);
+				// avoid recursion, hence instead of processAdjElements(theSvgElement) do
+				adjProcessing.ongoing = true;
 			}
 		}
 	}
