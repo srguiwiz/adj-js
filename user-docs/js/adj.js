@@ -42,14 +42,24 @@
 //
 // Commit list - https://github.com/srguiwiz/adj-js/commits/master
 
-// invoke Adj by doing Adj.doSvg(theSvgElement);
-// e.g. <svg onload="Adj.doSvg(this);">
-// optionally even shorter Adj.doSvg();
-// optionally try{Adj.doSvg();}catch(e){console.error(e)};
+// Invoke Adj by doing Adj.doSvg(theSvgElement), e.g. <svg onload="Adj.doSvg(this);">,
+// optionally even shorter <svg onload="Adj.doSvg()">.
+//
+// Adj.doSvg() runs asynchronously, hence optionally a callback function can be passed,
+// which optionally may use the SVG element or array of SVG elements it will be passed.
+//
+// In this example note the sequence when running
+//
+//   Adj.doSvg(function (svg) {
+//     console.log('done with', svg)
+//   });
+//   console.log('starting');
+//
+// Adj.doSvg() runs asynchronously, hence there is little benefit to catching exceptions.
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:0, revision:2 };
+Adj.version = { major:6, minor:1, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -61,7 +71,7 @@ Adj.AdjNamespacePrefix = "adj";
 Adj.XLinkNamespacePrefix = "xlink";
 
 // main invocation
-// if not given a documentNodeOrAnElement then default to doing all SVG elements in the document;
+// if not given a documentNodeOrAnSvgElement then default to doing all SVG elements in the document;
 //
 // doSvgDoneCallback is optional here and in most or all other functions defined in this library
 // will be called as doSvgDoneCallback(oneSvgElementOrSvgElements);
@@ -70,15 +80,15 @@ Adj.XLinkNamespacePrefix = "xlink";
 // UI failure should not prevent further execution of business logic and
 // have least possible impact on a potentially important course of action;
 // also https://www.google.com/search?q=exception+swallow
-Adj.doSvg = function doSvg (documentNodeOrAnElement, doSvgDoneCallback) {
+Adj.doSvg = function doSvg (documentNodeOrAnSvgElement, doSvgDoneCallback) {
 	// accommodate sloppy parameter passing
-	if (!doSvgDoneCallback && typeof documentNodeOrAnElement === "function") {
-		doSvgDoneCallback = documentNodeOrAnElement;
-		documentNodeOrAnElement = undefined;
+	if (!doSvgDoneCallback && typeof documentNodeOrAnSvgElement === "function") {
+		doSvgDoneCallback = documentNodeOrAnSvgElement;
+		documentNodeOrAnSvgElement = undefined;
 	}
-	documentNodeOrAnElement = documentNodeOrAnElement || document;
+	documentNodeOrAnSvgElement = documentNodeOrAnSvgElement || document;
 	// under the document node, which isn't an element, is one root element, in an SVG document an <svg> element
-	var element = documentNodeOrAnElement.documentElement || documentNodeOrAnElement;
+	var element = documentNodeOrAnSvgElement.documentElement || documentNodeOrAnSvgElement;
 	//
 	// main-SVG-intent versus inlined-SVG-workaround
 	if (element instanceof SVGSVGElement) {
@@ -86,9 +96,9 @@ Adj.doSvg = function doSvg (documentNodeOrAnElement, doSvgDoneCallback) {
 		Adj.processAdjElements(element, doSvgDoneCallback);
 	} else {
 		// supposed to work for all instances of SVG elements inlined in an HTML document
-		var svgElements = Array.prototype.slice.call(documentNodeOrAnElement.querySelectorAll("svg"));
+		var svgElements = Array.prototype.slice.call(documentNodeOrAnSvgElement.querySelectorAll("svg"));
 		// limit to outermost SVG elements for this level invocation, in case any nested
-		var nestedSvgElements = documentNodeOrAnElement.querySelectorAll("svg svg");
+		var nestedSvgElements = documentNodeOrAnSvgElement.querySelectorAll("svg svg");
 		for (var i = 0, n = nestedSvgElements.length, j = 0; i < n; i++) {
 			var nestedSvgElement = nestedSvgElements[i];
 			while (j < svgElements.length) {
@@ -102,26 +112,36 @@ Adj.doSvg = function doSvg (documentNodeOrAnElement, doSvgDoneCallback) {
 		}
 		//
 		var svgElementsProcessing = {};
-		// setting all svgElementsProcessing first, in case all processDoneCallback will be invoked synchronously,
-		// nevertheless need to keep track of elements processing, in case one will be invoked asynchronously
-		for (var i = 0, n = svgElements.length; i < n; i++) {
-			var oneSvgElement = svgElements[i];
-			// keep track of elements processing
-			svgElementsProcessing[Adj.runtimeId(oneSvgElement)] = oneSvgElement;
-		}
-		for (var i = 0, n = svgElements.length; i < n; i++) {
-			var oneSvgElement = svgElements[i];
-			Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (oneSvgElement) {
+		if (svgElements.length) {
+			// setting all svgElementsProcessing first, in case all processDoneCallback will be invoked synchronously,
+			// nevertheless need to keep track of elements processing, in case one will be invoked asynchronously
+			for (var i = 0, n = svgElements.length; i < n; i++) {
+				var oneSvgElement = svgElements[i];
 				// keep track of elements processing
-				delete svgElementsProcessing[Adj.runtimeId(oneSvgElement)];
-				//
-				if (doSvgDoneCallback) {
-					if (!Object.keys(svgElementsProcessing).length) { // if 0
-						// no outstanding processing means done with all Adj.processAdjElements
-						doSvgDoneCallback(svgElements);
+				svgElementsProcessing[Adj.runtimeId(oneSvgElement)] = oneSvgElement;
+			}
+			for (var i = 0, n = svgElements.length; i < n; i++) {
+				var oneSvgElement = svgElements[i];
+				Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (oneSvgElement) {
+					// keep track of elements processing
+					delete svgElementsProcessing[Adj.runtimeId(oneSvgElement)];
+					//
+					if (doSvgDoneCallback) {
+						if (!Object.keys(svgElementsProcessing).length) { // if 0
+							// no outstanding processing means done with all Adj.processAdjElements
+							doSvgDoneCallback(svgElements);
+						}
 					}
-				}
-			});
+				});
+			}
+		} else { // not even one SVG element
+			// make sure doSvgDoneCallback is called anyway
+			if (doSvgDoneCallback) {
+				// call asynchronously even in this case
+				window.setImmediate(function () {
+					doSvgDoneCallback(svgElements);
+				});
+			}
 		}
 	}
 };
@@ -130,39 +150,43 @@ Adj.doSvg = function doSvg (documentNodeOrAnElement, doSvgDoneCallback) {
 //
 // processDoneCallback is optional here and in most or all other functions defined in this library
 // will be called as processDoneCallback(theSvgElement);
-Adj.processAdjElements = function processAdjElements (theSvgElement, processDoneCallback) {
-	if (!(theSvgElement instanceof SVGSVGElement)) {
-		console.error("Adj skipping because invoked with something other than required SVGSVGElement");
-		if (processDoneCallback) {
-			processDoneCallback(theSvgElement);
+Adj.processAdjElements = (function() {
+	function processAdjElements (theSvgElement, processDoneCallback) {
+		if (!(theSvgElement instanceof SVGSVGElement)) {
+			console.error("Adj skipping because invoked with something other than required SVGSVGElement");
+			// make sure processDoneCallback is called anyway
+			if (processDoneCallback) {
+				// call asynchronously even in this case
+				window.setImmediate(function () {
+					processDoneCallback(theSvgElement);
+				});
+			} // else { // swallow instead of throw error;
 			return;
-		} // else { // swallow instead of throw error;
-	}
-	//
-	var adjProcessing = theSvgElement.adjProcessing;
-	if (!adjProcessing) {
-		adjProcessing = theSvgElement.adjProcessing = {
-			ongoing: false,
-			ongoingCallbacks: [],
-			incallbacks: false,
-			oneMore: false,
-			oneMoreCallbacks: []
-		};
-	}
-	if (   adjProcessing.ongoing // e.g. got here from an Adj.doSvg() in a "change" event listener
-		|| adjProcessing.incallbacks) { // e.g. got here from an Adj.doSvg() in a doSvgDoneCallback
-		adjProcessing.oneMore = true;
-		if (processDoneCallback) {
-			adjProcessing.oneMoreCallbacks.push(processDoneCallback);
 		}
-		return;
-	}
-	adjProcessing.ongoing = true;
-	if (processDoneCallback) {
-		adjProcessing.ongoingCallbacks.push(processDoneCallback);
-	}
+		//
+		var adjProcessing = theSvgElement.adjProcessing;
+		if (!adjProcessing) {
+			adjProcessing = theSvgElement.adjProcessing = {
+				// the only correct context to call method processAdjElementsCore, ever
+				singlifier: new Adj.Singlifier(processAdjElementsCore.bind(Adj, theSvgElement)),
+				ongoing: false,
+				ongoingCallbacks: [],
+				nextCallbacks: []
+			};
+		}
+		//
+		if (processDoneCallback) {
+			adjProcessing.nextCallbacks.push(processDoneCallback);
+		}
+		adjProcessing.singlifier.invokeSooner();
+	};
 	//
-	while (adjProcessing.ongoing) {
+	// private function to prevent inherently wrong calls from other context
+	function processAdjElementsCore (theSvgElement) {
+		var adjProcessing = theSvgElement.adjProcessing;
+		// there may be callbacks yet to be called in ongoingCallbacks
+		adjProcessing.ongoingCallbacks = adjProcessing.ongoingCallbacks.concat(adjProcessing.nextCallbacks);
+		adjProcessing.nextCallbacks = []; // reset
 		try {
 			//
 			// remove certain nodes for a new start, in case any such are present from earlier processing
@@ -181,8 +205,6 @@ Adj.processAdjElements = function processAdjElements (theSvgElement, processDone
 			//
 			// for Adj.algorithms.include
 			theSvgElement.adjAsyncGetTextFileRequesters = theSvgElement.adjAsyncGetTextFileRequesters || {};
-			theSvgElement.adjAsyncProcessAdjElementsInvoker = theSvgElement.adjAsyncProcessAdjElementsInvoker ||
-				new Adj.DebouncedAsync(Adj.processAdjElements.bind(Adj, theSvgElement));
 			//
 			// read Adj elements and make or update phase handlers
 			Adj.parseTheSvgElementForAdjElements(theSvgElement);
@@ -194,37 +216,30 @@ Adj.processAdjElements = function processAdjElements (theSvgElement, processDone
 			Adj.displayException(exception, theSvgElement);
 			// swallow instead of throw exception;
 		} finally {
-			adjProcessing.ongoing = false;
-			//
 			var ongoingCallbacks = adjProcessing.ongoingCallbacks;
 			if (ongoingCallbacks.length) {
 				if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
 					// no outstanding requests means done with all Adj.algorithms.include
 					//
-					adjProcessing.incallbacks = true;
 					try {
 						for (var i = 0, n = ongoingCallbacks.length; i < n ; i++) {
 							ongoingCallbacks[i](theSvgElement);
 						}
-					} finally {
-						adjProcessing.ongoingCallbacks = [];
-						adjProcessing.incallbacks = false;
+					} catch (exception) {
+						// silently swallow exceptions from callbacks,
+						// those should do their own exception handling if desired
 					}
+				} else {
+					// at least one outstanding request, put back ongoingCallbacks
+					adjProcessing.nextCallbacks = adjProcessing.ongoingCallbacks.concat(adjProcessing.nextCallbacks);
 				}
-			}
-			//
-			if (adjProcessing.oneMore) {
-				adjProcessing.oneMore = false;
-				adjProcessing.ongoingCallbacks = adjProcessing.oneMoreCallbacks;
-				adjProcessing.oneMoreCallbacks = [];
-				//
-				// was processAdjElements(theSvgElement);
-				// avoid recursion, hence instead of processAdjElements(theSvgElement) do
-				adjProcessing.ongoing = true;
+				adjProcessing.ongoingCallbacks = []; // let go
 			}
 		}
-	}
-};
+	};
+	//
+	return processAdjElements;
+})();
 
 // generic installer
 Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObject, element) {
@@ -6967,7 +6982,7 @@ Adj.defineCommandForAlgorithm({
 				}
 			})();
 			// above in a function to make sure all non-exceptional exits proceed here
-			theSvgElement.adjAsyncProcessAdjElementsInvoker.invoke();
+			theSvgElement.adjProcessing.singlifier.invokeLater();
 		});
 		// keep track of requests
 		theSvgElement.adjAsyncGetTextFileRequesters[Adj.runtimeId(element)] = element;
@@ -6984,20 +6999,41 @@ Adj.defineCommandForAlgorithm({
 });
 
 // utility class
-// for Adj.algorithms.include
-Adj.DebouncedAsync = function DebouncedAsync (func) {
-	this.handle = null;
+// for Adj.algorithms.include, at first
+// if needed use bind before passing func
+Adj.Singlifier = function Singlifier (func) {
+	// per https://html.spec.whatwg.org/multipage/webappapis.html#timers
+	// setTimeout returns an integer that is greater than zero
+	this.timeoutId = null;
+	this.immediateId = null;
 	this.func = func;
 };
-Adj.DebouncedAsync.prototype.invoke = function () {
-	if (!this.handle) {
-		var debouncedAsync = this;
-		// per https://html.spec.whatwg.org/multipage/webappapis.html#timers
-		// setTimeout returns an integer that is greater than zero
-		this.handle = window.setTimeout(function (debouncedAsyncInvoked) {
-			debouncedAsyncInvoked.handle = null; // reset
-			debouncedAsyncInvoked.func();
-		}, 0, debouncedAsync);
+// schedule invocation
+// intentionally takes no parameters
+Adj.Singlifier.prototype.invokeLater = function invokeLater () {
+	if (   !this.timeoutId // no timeout yet
+		&& !this.immediateId) { // neither immediate
+		var invocation = function singlifierLaterInvocation (singlifierInvoked) {
+			singlifierInvoked.timeoutId = null; // reset
+			singlifierInvoked.func();
+		};
+		this.timeoutId = window.setTimeout(invocation, 0, this);
+	}
+};
+// schedule invocation
+// intentionally takes no parameters
+Adj.Singlifier.prototype.invokeSooner = function invokeSooner () {
+	if (!this.immediateId) { // no immediate yet
+		var invocation = function singlifierSoonerInvocation (singlifierInvoked) {
+			singlifierInvoked.immediateId = null; // reset
+			singlifierInvoked.func();
+		};
+		this.immediateId = window.setImmediate(invocation, this);
+	}
+	if (this.timeoutId) { // a preexisting timeout
+		// prevent that second invocation
+		window.clearTimeout(this.timeoutId);
+		this.timeoutId = null;
 	}
 };
 
@@ -8642,6 +8678,65 @@ if (!window.SVGPathSegList) {
 			},
 			enumerable: true
 		});
+	})();
+}
+
+// polyfill for method setImmediate
+// see https://developer.mozilla.org/en-US/docs/Web/API/Window/setImmediate
+// implemented after reading https://github.com/YuzuJS/setImmediate
+// this implementation here doesn't go as far back in compatibility
+if (!window.setImmediate) {
+	(function() {
+		var funcs = {};
+		var nextFuncId = 1;
+		funcs.push = function setImmediateFuncsPush (func) {
+			var funcId = nextFuncId++;
+			this[funcId] = func;
+			return funcId;
+		}
+		funcs.unpush = function setImmediateFuncsUnpush (funcId) {
+			var func = this[funcId];
+			delete this[funcId];
+			return func;
+		}
+		function tryFunc (func) {
+			if (func) {
+				try {
+					func();
+				} catch (e) {
+					console.error('error in a function invoked by setImmediate', e);
+				}
+			}
+		}
+		window.clearImmediate = function(funcId) {
+			funcs.unpush(funcId);
+		}
+		if (window.MessageChannel) {
+			var channel = new MessageChannel();
+			channel.port1.onmessage = function setImmediateOnChannelMessage (event) {
+				tryFunc(funcs.unpush(event.data));
+			};
+			window.setImmediate = function(func) {
+				var funcId = funcs.push(Function.prototype.bind.apply(func, arguments));
+				channel.port2.postMessage(funcId);
+				return funcId;
+			}
+		} else { // e.g. a little bit older Firefox in some Linux
+			var messagePrefix = "Adj$setImmediate$" + Math.random() + "$";
+			window.addEventListener("message", function setImmediateOnPostMessage (event) {
+				var data = event.data;
+				if (   event.source === window
+					&& typeof data === "string"
+					&& data.indexOf(messagePrefix) === 0) {
+					tryFunc(funcs.unpush(+data.slice(messagePrefix.length)));
+				}
+			});
+			window.setImmediate = function(func) {
+				var funcId = funcs.push(Function.prototype.bind.apply(func, arguments));
+				window.postMessage(messagePrefix + funcId, "*");
+				return funcId;
+			}
+		}
 	})();
 }
 
