@@ -133,8 +133,9 @@ newer.</p>
           <li><a href="#L11198">1.11.20. Command paragraph Options</a></li>
           <li><a href="#L11940">1.11.21. Command pathArrow Options</a></li>
           <li><a href="#L16289">1.11.22. Command rcGrid Options</a></li>
-          <li><a href="#L94550">1.11.23. Command hide Options</a></li>
-          <li><a href="#L3450">1.11.24. Command include Options</a></li>
+          <li><a href="#L13254">1.11.23. Command sliderKnob Options</a></li>
+          <li><a href="#L94550">1.11.24. Command hide Options</a></li>
+          <li><a href="#L3450">1.11.25. Command include Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a>
@@ -863,6 +864,30 @@ Here is more.
     &lt;/g&gt;
     …
   &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-092-sliderKnob.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="80" fill="linen"/&gt;</span>
+  &lt;g transform="translate(20,20)"&gt;
+    &lt;rect x="0" y="0" width="140" height="20" fill="white" stroke="dimgrey"/&gt;
+    &lt;rect x="6" y="6" width="128" height="8" fill="lightgrey" stroke="dimgrey"/&gt;
+    &lt;g&gt;
+      <span class="example-code">&lt;adj:<a href="#L13254">sliderKnob</a>/&gt;</span>
+      &lt;rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black"/&gt;
+      &lt;rect x="3" y="3" width="14" height="14" fill="lightgrey" stroke="none"/&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+  &lt;text id="setme" style="font-size:10;font-family:sans-serif;" transform="translate(20,60)"&gt;0&lt;/text&gt;
+  &lt;script&gt;&lt;![CDATA[
+document.addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
+  var elementToSet = document.getElementById("setme");
+  elementToSet.textContent = <span class="example-code">event.detail.value</span>;
+  Adj.doSvg();
+});
+  ]]&gt;&lt;/script&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -2854,7 +2879,79 @@ earlier <code>adj:rcGridCellTemplates</code>.</p>
 
 <p><span class="todo">TODO: neat examples</span></p>
 
-<h4 id="L94550">1.11.23. Command hide Options</h4>
+<h4 id="L13254">1.11.23. Command sliderKnob Options</h4>
+
+<p>Optional parameters of <code>sliderKnob</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="adj-ex-092-sliderKnob.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="80" fill="linen"/&gt;</span>
+  &lt;g transform="translate(20,20)"&gt;
+    &lt;rect x="0" y="0" width="140" height="20" fill="white" stroke="dimgrey"/&gt;
+    &lt;rect x="6" y="6" width="128" height="8" fill="lightgrey" stroke="dimgrey"/&gt;
+    &lt;g&gt;
+      <span class="example-code">&lt;adj:sliderKnob/&gt;</span>
+      &lt;rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black"/&gt;
+      &lt;rect x="3" y="3" width="14" height="14" fill="lightgrey" stroke="none"/&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+  &lt;text id="setme" style="font-size:10;font-family:sans-serif;" transform="translate(20,60)"&gt;0&lt;/text&gt;
+  &lt;script&gt;&lt;![CDATA[
+document.addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
+  var elementToSet = document.getElementById("setme");
+  elementToSet.textContent = <span class="example-code">event.detail.value</span>;
+  Adj.doSvg();
+});
+  ]]&gt;&lt;/script&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example" src="adj-ex-093-sliderKnob-step.svg"></img> 
+
+        <p class="deemphasize">In case browser doesn't run scripts in SVG in an
+        <code>&lt;img</code> element you can view <a
+        href="adj-ex-093-sliderKnob-step.svg">SVG by itself</a> and drag the
+        <code>sliderKnob</code>.</p>
+      </td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="160" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:verticalList gap="20" hAlign="center"/&gt;
+    &lt;g&gt;
+      &lt;rect x="0" y="0" width="140" height="20" rx="10" ry="10" fill="white" stroke="dimgrey"/&gt;
+      &lt;rect x="6" y="6" width="128" height="8" rx="4" ry="4" fill="lightgrey" stroke="dimgrey"/&gt;
+      &lt;g&gt;
+        <span class="example-code">&lt;adj:sliderKnob min="0.3" max="5.0" step="0.1" preset="2.0"/&gt;</span>
+        &lt;rect x="0" y="0" width="20" height="20" rx="10" ry="10" fill="gainsboro" stroke="black"/&gt;
+        &lt;rect x="7" y="3" width="6" height="14" rx="3" ry="7" fill="lightgrey" stroke="none"/&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+    &lt;g id="setme"&gt;
+      &lt;adj:horizontalList gap="2" itemsH2V="2"/&gt;
+      &lt;rect width="10" height="10" fill="#000" transform="translate(2,2)"/&gt;
+      &lt;rect width="10" height="10" fill="#111" transform="translate(14,2)"/&gt;
+      &lt;rect width="10" height="10" fill="#222" transform="translate(26,2)"/&gt;
+      …
+    &lt;/g&gt;
+  &lt;/g&gt;
+  &lt;script&gt;&lt;![CDATA[
+document.addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
+  var elementToSet = document.getElementById("setme").firstElementChild;
+  elementToSet.setAttribute("itemsH2V", <span class="example-code">event.detail.value</span>);
+  Adj.doSvg();
+});
+  ]]&gt;&lt;/script&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="L94550">1.11.24. Command hide Options</h4>
 
 <p>Command <code>hide</code> has no options:</p>
 
@@ -2876,7 +2973,7 @@ earlier <code>adj:rcGridCellTemplates</code>.</p>
   </tbody>
 </table>
 
-<h4 id="L3450">1.11.24. Command include Options</h4>
+<h4 id="L3450">1.11.25. Command include Options</h4>
 
 <table border="1">
   <tbody>
@@ -3649,8 +3746,15 @@ decimal numbers.</p>
       <td><code>gap</code>, <code>horizontalGap</code>, <code>leftGap</code>,
         <code>centerGap</code>, <code>rightGap</code>,
         <code>verticalGap</code>, <code>topGap</code>, <code>middleGap</code>,
-        <code>bottomGap</code>, <code>hAlign</code>, <code>vAlign</code></td>
-      , cellLeftGap, cellRightGap, cellTopGap, cellBottomGap </tr>
+        <code>bottomGap</code>, <code>hAlign</code>, <code>vAlign</code>,
+        <code>cellLeftGap</code>, <code>cellRightGap</code>,
+        <code>cellTopGap</code>, <code>cellBottomGap</code></td>
+    </tr>
+    <tr>
+      <td><code>sliderKnob</code></td>
+      <td><code>min</code>, <code>max</code>, <code>step</code>,
+        <code>preset</code></td>
+    </tr>
     <tr>
       <td><code>skimpyList</code></td>
       <td><code>gap</code>, <code>horizontalGap</code>, <code>leftGap</code>,
@@ -4330,7 +4434,7 @@ phases:</p>
         <code>horizontalTree</code>, <code>fit</code>,
         <code>stackFrames</code>, <code>tilt</code>, <code>skimpyList</code>,
         <code>pinnedList</code>, <code>telescopicTree</code>,
-        <code>rcGrid</code></td>
+        <code>rcGrid</code>, <code>sliderKnob</code></td>
     </tr>
     <tr>
       <td><code>adjPhase3</code> with <br />
