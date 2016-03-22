@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="200">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="200" fill="linen"/>
+	<g>
+		<adj:rcGrid adj:rcGridPart="column" gap="5"/>
+		<rect fill="#fff" width="151" height="171" x="0.5" y="0.5">
+			<adj:frameForParent/>
+		</rect>
+		<g adj:rcGridPart="row" adj:vAlign="bottom">
+			<circle r="10" fill="none" stroke="#000" transform="translate(15,15)"/>
+			<circle r="4" fill="#222" transform="translate(40,21)"/>
+			<circle r="6" fill="#444" transform="translate(61,19)"/>
+			<circle r="8" fill="#666" transform="translate(88,17)"/>
+			<circle r="10" fill="#888" transform="translate(132,15)"/>
+		</g>
+		<g adj:rcGridPart="column" adj:hAlign="right">
+			<rect fill="#eee" width="23" height="91" x="3.5" y="27.5">
+				<adj:frameForParent/>
+			</rect>
+			<rect width="10" height="10" fill="#000" transform="translate(15,39)"/>
+			<rect width="14" height="12" fill="#222" transform="translate(11,72)"/>
+			<rect width="18" height="14" fill="#444" transform="translate(7,100)"/>
+		</g>
+		<g adj:hAlign="left">
+			<rect fill="#ddd" width="25" height="91" x="27.5" y="27.5">
+				<adj:frameForParent/>
+			</rect>
+			<rect width="14" height="12" fill="#000" transform="translate(29,38)"/>
+			<rect width="18" height="14" fill="#222" transform="translate(29,71)"/>
+			<rect width="22" height="16" fill="#444" transform="translate(29,99)"/>
+		</g>
+		<g adj:rcGridPart="column">
+			<rect fill="#ccc" width="15" height="9" x="53.5" y="27.5">
+				<adj:frameForParent/>
+			</rect>
+		</g>
+		<g>
+			<rect width="22" height="16" fill="#000" transform="translate(77,36)"/>
+			<rect width="26" height="18" fill="#222" transform="translate(75,69)"/>
+			<rect width="30" height="20" fill="#444" transform="translate(73,97)"/>
+			<rect width="34" height="22" fill="#666" transform="translate(71,121)"/>
+		</g>
+		<g adj:rcGridPart="column" adj:cellLeftGap="10" adj:cellRightGap="2" adj:cellTopGap="8" adj:cellBottomGap="2">
+			<rect width="26" height="18" fill="#000" transform="translate(119,35)"/>
+			<rect width="30" height="30" fill="#222" transform="translate(117,63)"/>
+		</g>
+		<g adj:rcGridPart="row">
+			<rect fill="#bbb" width="145" height="23" x="3.5" y="145.5">
+				<adj:frameForParent/>
+			</rect>
+			<g transform="translate(15,157)"/>
+			<circle r="4" fill="#222" transform="translate(40,157)"/>
+			<circle r="6" fill="#444" transform="translate(61,157)"/>
+			<circle r="8" fill="#666" transform="translate(88,157)"/>
+			<circle r="10" fill="#888" transform="translate(132,157)"/>
+		</g>
+	</g>
+</svg>

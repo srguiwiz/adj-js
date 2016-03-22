@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:1, revision:0 };
+Adj.version = { major:6, minor:1, revision:5 };
 Adj.algorithms = {};
 
 // constants

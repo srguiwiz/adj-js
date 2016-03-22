@@ -47,127 +47,40 @@
 // extension of Adj in order to facilitate running automated tests
 //
 
+// disclaimer:  this testing code is maintained with somewhat different, not to say
+// lesser, criteria than the library proper
+
 // constant
-Adj.documentResultStashHeader = "ExpectedResultForTestAutomation:";
-Adj.documentResultStashHeaderLength = Adj.documentResultStashHeader.length;
+Adj.documentResultEncodingHeader = "ExpectedResult:";
+Adj.documentResultEncodingHeaderLength = Adj.documentResultEncodingHeader.length;
 // recognize a double hyphen, not allowed in an XML comment
 Adj.doubleHyphenRegexp = /--/g;
+// recognize a vertical bar, used as argument separator in this test suite's messaging
+Adj.verticalLineRegexp = /\|/g;
+// recognize a colon, used as encoding separator in this test suite's messaging
+Adj.colonRegexp = /:/g;
 
 // for running automated tests
-Adj.encodeDocumentResultStash = function encodeDocumentResultStash (content) {
-	return Adj.documentResultStashHeader + encodeURIComponent(content).replace(Adj.doubleHyphenRegexp,"-%2D");
+Adj.encodeDocumentString = function encodeDocumentString (content) {
+	return Adj.documentResultEncodingHeader
+		+ encodeURIComponent(content)
+		.replace(Adj.doubleHyphenRegexp,"-%2D")
+		.replace(Adj.verticalLineRegexp,"%7C")
+		.replace(Adj.colonRegexp,"%3A");
 }
 
 // a predicate for running automated tests
-Adj.apparentlyEncodedDocumentResultStash = function apparentlyEncodedDocumentResultStash (encoded) {
-	return encoded.substring(0, Adj.documentResultStashHeaderLength) === Adj.documentResultStashHeader;
+Adj.apparentlyEncodedDocumentString = function apparentlyEncodedDocumentString (encoded) {
+	return encoded.substring(0, Adj.documentResultEncodingHeaderLength) === Adj.documentResultEncodingHeader;
 }
 
 // constant
 Adj.anyWhitespaceRegexp = /\s+/g;
 
 // for running automated tests
-Adj.decodeDocumentResultStash = function decodeDocumentResultStash (encoded) {
+Adj.decodeEncodedDocumentString = function decodeEncodedDocumentString (encoded) {
 	encoded = encoded.replace(Adj.anyWhitespaceRegexp, ""); // remove accidentally or erroneously introduced whitespace or newlines
 	return decodeURIComponent(encoded.substring(encoded.indexOf(":") + 1));
-}
-
-// for running automated tests
-// look for previous stash, if any then return its containing comment node else null
-Adj.apparentDocumentResultStashComment = function apparentDocumentResultStashComment (documentToDo) {
-	var documentElement = documentToDo.documentElement;
-	var node = documentElement.firstChild;
-	do {
-		if (node) {
-			if (node.nodeType == Node.COMMENT_NODE) {
-				var maybeStashContent = node.nodeValue;
-				if (Adj.apparentlyEncodedDocumentResultStash(maybeStashContent)) { // correct header
-					return node;
-				}
-			}
-			var nextSibling = node.nextSibling;
-			if (!nextSibling) { // not found
-				if (node.parentNode.tagName.toLowerCase() === "html") {
-					// in HTML comment from outside <body> has been found in DOM inside <body>,
-					// hence if not found outside body then continue searching inside body
-					nextSibling = node.parentNode.getElementsByTagName("body")[0].firstChild;
-				}
-			}
-			node = nextSibling;
-		}
-	} while (node);
-	return null;
-}
-
-// for running automated tests
-// put stash
-Adj.stashDocumentResult = function stashDocumentResult (documentToDo) {
-	// convert to text
-	var serializer = new XMLSerializer();
-	var documentAsString = serializer.serializeToString(documentToDo);
-	// encode
-	var comment = documentToDo.createComment(Adj.encodeDocumentResultStash(documentAsString));
-	documentToDo.documentElement.appendChild(comment);
-}
-
-// for running automated tests
-// return stash, decoded,
-// if not any then return null
-Adj.stashedDocumentResult = function stashedDocumentResult (documentToDo, removeDocumentResultStash) {
-	var apparentStashComment = Adj.apparentDocumentResultStashComment(documentToDo);
-	if (!apparentStashComment) {
-		return null;
-	}
-	if (removeDocumentResultStash) {
-		apparentStashComment.parentNode.removeChild(apparentStashComment);
-	}
-	return Adj.decodeDocumentResultStash(apparentStashComment.nodeValue);
-}
-
-// for running automated tests
-// return stash, decoded, and remove it from documentToDo,
-// if not any then return null
-Adj.stashedDocumentResultAndRemove = function stashedDocumentResultAndRemove (documentToDo) {
-	return Adj.stashedDocumentResult(documentToDo, true);
-}
-
-// for running automated tests
-// do all SVG elements in the document,
-// doSvgAndStashDoneCallback is optional here and in most or all other functions defined in this library,
-// will be called as doSvgAndStashDoneCallback(oneSvgElementOrSvgElementsOrDocument)
-Adj.doSvgAndStashIfNoStashYet = function doSvgAndStashIfNoStashYet (doSvgAndStashDoneCallback) {
-	if (Adj.apparentDocumentResultStashComment(document)) { // if apparently not first time
-		// then do nothing, bail out
-		if (doSvgAndStashDoneCallback) {
-			doSvgAndStashDoneCallback(null, document);
-		}
-		return;
-	}
-	// do
-	Adj.doSvg(function (oneSvgElementOrSvgElements) {
-		// put stash
-		Adj.stashDocumentResult(document);
-		if (doSvgAndStashDoneCallback) {
-			doSvgAndStashDoneCallback(oneSvgElementOrSvgElements);
-		}
-	});
-}
-
-// for running automated tests
-// do all SVG elements in the document,
-// doSvgAndStashDoneCallback is optional here and in most or all other functions defined in this library,
-// will be called as doSvgAndStashDoneCallback(oneSvgElementOrSvgElementsOrDocument)
-Adj.doSvgAndStash = function doSvgAndStash (doSvgAndStashDoneCallback) {
-	// remove previous stash
-	Adj.removeDocumentResultStash(document);
-	// do
-	Adj.doSvg(function (oneSvgElementOrSvgElements) {
-		// put stash
-		Adj.stashDocumentResult(document);
-		if (doSvgAndStashDoneCallback) {
-			doSvgAndStashDoneCallback(oneSvgElementOrSvgElements);
-		}
-	});
 }
 
 // constants
@@ -192,30 +105,32 @@ Adj.nameSplitAfterColonRegexp = /^(.*:)?(.*)$/;
 
 // rather specific to use in Adj.doSvgAndVerify(),
 // for correct results .normalize() MUST have been called on both nodes
-Adj.areEqualNodes = function areEqualNodes (stashedNode, currentNode, differences, tolerance) {
-	var stashedNodeType = stashedNode.nodeType;
+//
+// "expectd" is short for "expectedResult", same number of characters as "current" for readability
+Adj.areEqualNodes = function areEqualNodes (expectdNode, currentNode, differences, tolerance) {
+	var expectdNodeType = expectdNode.nodeType;
 	var currentNodeType = currentNode.nodeType;
-	if (currentNodeType != stashedNodeType) {
+	if (currentNodeType != expectdNodeType) {
 		differences.push("node types are different");
 		return false;
 	}
-	switch (stashedNodeType) {
+	switch (expectdNodeType) {
 		case Node.ELEMENT_NODE:
 			// compare the elements' sets of attributes
 			var areNotEqual = false;
-			var stashedAttributes = stashedNode.attributes;
+			var expectdAttributes = expectdNode.attributes;
 			var currentAttributes = currentNode.attributes;
-			var stashedAttributesLength = stashedAttributes.length;
+			var expectdAttributesLength = expectdAttributes.length;
 			var currentAttributesLength = currentAttributes.length;
-			var stashedAttributesByName = {};
+			var expectdAttributesByName = {};
 			var currentAttributesByName = {};
 			// attribute.name holds the qualified name
-			for (var i = 0; i < stashedAttributesLength; i++) {
-				var attribute = stashedAttributes.item(i);
+			for (var i = 0; i < expectdAttributesLength; i++) {
+				var attribute = expectdAttributes.item(i);
 				// workarounds mashed together to make it work
 				var match = Adj.nameSplitAfterColonRegexp.exec(attribute.name); // no-namespace-workaround
-				var stashedAttributeName = (match[1] ? match[1] : "") + Adj.mixedCasedName(match[2]); // lowercase-names-workaround
-				stashedAttributesByName[stashedAttributeName] = attribute;
+				var expectdAttributeName = (match[1] ? match[1] : "") + Adj.mixedCasedName(match[2]); // lowercase-names-workaround
+				expectdAttributesByName[expectdAttributeName] = attribute;
 			}
 			for (var i = 0; i < currentAttributesLength; i++) {
 				var attribute = currentAttributes.item(i);
@@ -224,32 +139,32 @@ Adj.areEqualNodes = function areEqualNodes (stashedNode, currentNode, difference
 				var currentAttributeName = (match[1] ? match[1] : "") + Adj.mixedCasedName(match[2]); // lowercase-names-workaround
 				currentAttributesByName[currentAttributeName] = attribute;
 			}
-			for (var stashedAttributeName in stashedAttributesByName) {
-				var stashedAttribute = stashedAttributesByName[stashedAttributeName];
-				var splitStashedAttributeName = Adj.nameSplitByColon(stashedAttribute.name); // no-namespace-workaround
-				if (stashedAttribute.prefix === "xmlns" || splitStashedAttributeName.prefix === "xmlns") {
+			for (var expectdAttributeName in expectdAttributesByName) {
+				var expectdAttribute = expectdAttributesByName[expectdAttributeName];
+				var splitExpectdAttributeName = Adj.nameSplitByColon(expectdAttribute.name); // no-namespace-workaround
+				if (expectdAttribute.prefix === "xmlns" || splitExpectdAttributeName.prefix === "xmlns") {
 					// ignore xmlns: attributes for now, because different browsers serialize them into different elements
-					delete stashedAttributesByName[stashedAttributeName];
+					delete expectdAttributesByName[expectdAttributeName];
 					continue;
 				}
-				if (stashedAttribute.name === "xmlns" || splitStashedAttributeName.localPart === "xmlns") {
+				if (expectdAttribute.name === "xmlns" || splitExpectdAttributeName.localPart === "xmlns") {
 					// ignore xmlns attributes for now, because different browsers serialize them into different elements
-					delete stashedAttributesByName[stashedAttributeName];
+					delete expectdAttributesByName[expectdAttributeName];
 					continue;
 				}
-				var currentAttribute = currentAttributesByName[stashedAttributeName];
+				var currentAttribute = currentAttributesByName[expectdAttributeName];
 				if (!currentAttribute) {
-					differences.push("now missing attribute " + stashedAttributeName + "=\"" + stashedAttribute.value + "\"");
+					differences.push("now missing attribute " + expectdAttributeName + "=\"" + expectdAttribute.value + "\"");
 					areNotEqual = true;
-					delete stashedAttributesByName[stashedAttributeName];
+					delete expectdAttributesByName[expectdAttributeName];
 					continue;
 				}
 				// compare one attribute
-				if (!Adj.areEqualNodes(stashedAttribute, currentAttribute, differences, tolerance)) {
+				if (!Adj.areEqualNodes(expectdAttribute, currentAttribute, differences, tolerance)) {
 					areNotEqual = true;
 				}
-				delete stashedAttributesByName[stashedAttributeName];
-				delete currentAttributesByName[stashedAttributeName];
+				delete expectdAttributesByName[expectdAttributeName];
+				delete currentAttributesByName[expectdAttributeName];
 			}
 			for (var currentAttributeName in currentAttributesByName) {
 				var currentAttribute = currentAttributesByName[currentAttributeName];
@@ -266,21 +181,21 @@ Adj.areEqualNodes = function areEqualNodes (stashedNode, currentNode, difference
 				}
 				differences.push("now extra attribute " + currentAttributeName + "=\"" + currentAttribute.value + "\"");
 				areNotEqual = true;
-				delete stashedAttributesByName[stashedAttributeName];
+				delete expectdAttributesByName[expectdAttributeName];
 			}
 			// compare the elements' lists of children
-			var stashedChildren = stashedNode.childNodes;
+			var expectdChildren = expectdNode.childNodes;
 			var currentChildren = currentNode.childNodes;
-			var stashedChildrenLength = stashedChildren.length;
+			var expectdChildrenLength = expectdChildren.length;
 			var currentChildrenLength = currentChildren.length;
-			if (currentChildrenLength != stashedChildrenLength) {
-				differences.push("a " + currentNode.tagName + " element now has " + currentChildrenLength + " children instead of " + stashedChildrenLength);
+			if (currentChildrenLength != expectdChildrenLength) {
+				differences.push("a " + currentNode.tagName + " element now has " + currentChildrenLength + " children instead of " + expectdChildrenLength);
 				return false;
 			}
-			for (var i = 0; i < stashedChildrenLength; i++) {
-				var stashedChild = stashedChildren.item(i);
+			for (var i = 0; i < expectdChildrenLength; i++) {
+				var expectdChild = expectdChildren.item(i);
 				var currentChild = currentChildren.item(i);
-				if (!Adj.areEqualNodes(stashedChild, currentChild, differences, tolerance)) {
+				if (!Adj.areEqualNodes(expectdChild, currentChild, differences, tolerance)) {
 					areNotEqual = true;
 				}
 			}
@@ -288,69 +203,69 @@ Adj.areEqualNodes = function areEqualNodes (stashedNode, currentNode, difference
 			break;
 		case Node.ATTRIBUTE_NODE:
 			// attribute.name holds the qualified name
-			var stashedAttributeName = stashedNode.name;
+			var expectdAttributeName = expectdNode.name;
 			var currentAttributeName = currentNode.name;
-			// don't expect to get here with currentAttributeName != stashedAttributeName,
+			// don't expect to get here with currentAttributeName != expectdAttributeName,
 			// if ever in the future because of namespace tricks, deal with it then
-			var stashedAttributeValue = stashedNode.value;
+			var expectdAttributeValue = expectdNode.value;
 			var currentAttributeValue = currentNode.value;
 			// deal with e.g. getting attribute transform="matrix(1 0 0 1 0 0)" instead of expected value ="matrix(1, 0, 0, 1, 0, 0)",
 			// replace every comma with a space
-			if (stashedAttributeName === "transform" && currentAttributeName === "transform") {
-				stashedAttributeValue = stashedAttributeValue.replace(Adj.commasRegexp, " ");
+			if (expectdAttributeName === "transform" && currentAttributeName === "transform") {
+				expectdAttributeValue = expectdAttributeValue.replace(Adj.commasRegexp, " ");
 				currentAttributeValue = currentAttributeValue.replace(Adj.commasRegexp, " ");
 			}
 			// deal with e.g. getting attribute adj:d="M 5 100 q 40 10 80 0 t 80 0" instead of expected value ="M5,100 q40,10 80,0 t80,0",
 			// after every letter before a decimal enter a space, replace every comma with a space
-			if (stashedAttributeName === "adj:d" && currentAttributeName === "adj:d") {
-				stashedAttributeValue = stashedAttributeValue.replace(Adj.letterDecimalsRegexp, "$1 $2").replace(Adj.commasRegexp, " ");
+			if (expectdAttributeName === "adj:d" && currentAttributeName === "adj:d") {
+				expectdAttributeValue = expectdAttributeValue.replace(Adj.letterDecimalsRegexp, "$1 $2").replace(Adj.commasRegexp, " ");
 				currentAttributeValue = currentAttributeValue.replace(Adj.letterDecimalsRegexp, "$1 $2").replace(Adj.commasRegexp, " ");
 			}
 			// trim and normalize any sequence of whitespace to a single space
-			stashedAttributeValue = stashedAttributeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
+			expectdAttributeValue = expectdAttributeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
 			currentAttributeValue = currentAttributeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
-			if (currentAttributeValue == stashedAttributeValue) {
+			if (currentAttributeValue == expectdAttributeValue) {
 				return true;
 			}
 			// try tolerance
 			var differenceScanningPosition = 0;
 			do {
-				var stashedAttributeValueLength = stashedAttributeValue.length;
+				var expectdAttributeValueLength = expectdAttributeValue.length;
 				var currentAttributeValueLength = currentAttributeValue.length;
-				var minLength = Math.min(stashedAttributeValueLength, currentAttributeValueLength);
+				var minLength = Math.min(expectdAttributeValueLength, currentAttributeValueLength);
 				var firstDifference = minLength;
-				if (differenceScanningPosition >= minLength) { // at least one at end (stashed or current)
+				if (differenceScanningPosition >= minLength) { // at least one at end (expected result or current)
 					break;
 				}
 				for (var i = differenceScanningPosition; i < minLength; i++) {
-					if (currentAttributeValue[i] != stashedAttributeValue[i]) {
+					if (currentAttributeValue[i] != expectdAttributeValue[i]) {
 						firstDifference = i;
 						break;
 					}
 				}
-				if (firstDifference >= stashedAttributeValueLength && firstDifference >= currentAttributeValueLength) { // both at end (stashed and current)
+				if (firstDifference >= expectdAttributeValueLength && firstDifference >= currentAttributeValueLength) { // both at end (expected result and current)
 					break;
 				}
-				if ((firstDifference >= stashedAttributeValueLength || !Adj.decimalCharacterRegexp.test(stashedAttributeValue[firstDifference])) && (firstDifference >= currentAttributeValueLength || !Adj.decimalCharacterRegexp.test(currentAttributeValue[firstDifference]))) {
+				if ((firstDifference >= expectdAttributeValueLength || !Adj.decimalCharacterRegexp.test(expectdAttributeValue[firstDifference])) && (firstDifference >= currentAttributeValueLength || !Adj.decimalCharacterRegexp.test(currentAttributeValue[firstDifference]))) {
 					// both either at end or not number
 					break; // cannot calculate tolerance if not number
 				}
 				var decimalBegin = firstDifference;
-				while (decimalBegin > 0 && Adj.decimalCharacterRegexp.test(stashedAttributeValue[decimalBegin-1])) {
+				while (decimalBegin > 0 && Adj.decimalCharacterRegexp.test(expectdAttributeValue[decimalBegin-1])) {
 					decimalBegin--;
 				}
-				var stashedDecimalMatch;
+				var expectdDecimalMatch;
 				Adj.decimalForToleranceRegexp.lastIndex = decimalBegin;
 				do {
-					var stashedDecimalMatch = Adj.decimalForToleranceRegexp.exec(stashedAttributeValue);
-				} while (stashedDecimalMatch && Adj.decimalForToleranceRegexp.lastIndex < firstDifference);
-				if (!stashedDecimalMatch) { // odd case, yet possible
+					var expectdDecimalMatch = Adj.decimalForToleranceRegexp.exec(expectdAttributeValue);
+				} while (expectdDecimalMatch && Adj.decimalForToleranceRegexp.lastIndex < firstDifference);
+				if (!expectdDecimalMatch) { // odd case, yet possible
 					break;
 				}
-				var stashedDecimalString = stashedDecimalMatch[0];
-				var stashedDecimalIndex = stashedDecimalMatch.index;
-				var stashedDecimalLastIndex = Adj.decimalForToleranceRegexp.lastIndex;
-				var stashedDecimal = parseFloat(stashedDecimalString);
+				var expectdDecimalString = expectdDecimalMatch[0];
+				var expectdDecimalIndex = expectdDecimalMatch.index;
+				var expectdDecimalLastIndex = Adj.decimalForToleranceRegexp.lastIndex;
+				var expectdDecimal = parseFloat(expectdDecimalString);
 				var currentDecimalMatch;
 				Adj.decimalForToleranceRegexp.lastIndex = decimalBegin;
 				do {
@@ -363,35 +278,35 @@ Adj.areEqualNodes = function areEqualNodes (stashedNode, currentNode, difference
 				var currentDecimalIndex = currentDecimalMatch.index;
 				var currentDecimalLastIndex = Adj.decimalForToleranceRegexp.lastIndex;
 				var currentDecimal = parseFloat(currentDecimalString);
-				var difference = Math.abs(currentDecimal - stashedDecimal);
+				var difference = Math.abs(currentDecimal - expectdDecimal);
 				if (difference > tolerance.inEffect) { // numerically more difference than tolerance.inEffect
 					break;
 				}
 				// fix up to match
-				if (stashedDecimalLastIndex < firstDifference) { // odd case, yet possible
+				if (expectdDecimalLastIndex < firstDifference) { // odd case, yet possible
 					break; // prevent endless loop
 				}
-				currentAttributeValue = currentAttributeValue.substring(0,currentDecimalIndex) + stashedDecimalString + currentAttributeValue.substring(currentDecimalLastIndex);
-				differenceScanningPosition = stashedDecimalLastIndex + 1; // + 1 OK because there must be at least one character that separates numbers
+				currentAttributeValue = currentAttributeValue.substring(0,currentDecimalIndex) + expectdDecimalString + currentAttributeValue.substring(currentDecimalLastIndex);
+				differenceScanningPosition = expectdDecimalLastIndex + 1; // + 1 OK because there must be at least one character that separates numbers
 			} while (true);
-			if (currentAttributeValue == stashedAttributeValue) {
+			if (currentAttributeValue == expectdAttributeValue) {
 				return true;
 			}
-			differences.push("now getting attribute " + stashedAttributeName + "=\"" + currentNode.value + "\" instead of expected value =\"" + stashedNode.value + "\"");
+			differences.push("now getting attribute " + expectdAttributeName + "=\"" + currentNode.value + "\" instead of expected value =\"" + expectdNode.value + "\"");
 			return false;
 			break;
 		case Node.TEXT_NODE:
 		case Node.CDATA_SECTION_NODE:
 		case Node.COMMENT_NODE:
-			var stashedNodeValue = stashedNode.nodeValue;
+			var expectdNodeValue = expectdNode.nodeValue;
 			var currentNodeValue = currentNode.nodeValue;
 			// trim and normalize any sequence of whitespace to a single space
-			stashedNodeValue = stashedNodeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
+			expectdNodeValue = expectdNodeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
 			currentNodeValue = currentNodeValue.replace(Adj.trimRegexp,"$1").replace(Adj.whitespacesRegexp," ");
-			if (currentNodeValue == stashedNodeValue) {
+			if (currentNodeValue == expectdNodeValue) {
 				return true;
 			} else {
-				differences.push("now getting \"…" + currentNodeValue + "…\" instead of expected \"…" + stashedNodeValue + "…\"");
+				differences.push("now getting \"…" + currentNodeValue + "…\" instead of expected \"…" + expectdNodeValue + "…\"");
 				return false;
 			}
 			break;
@@ -406,7 +321,7 @@ Adj.areEqualNodes = function areEqualNodes (stashedNode, currentNode, difference
 			return true; // ignore for now, pass them OK
 			break;
 		case Node.DOCUMENT_NODE:
-			return Adj.areEqualNodes(stashedNode.documentElement, currentNode.documentElement, differences, tolerance);
+			return Adj.areEqualNodes(expectdNode.documentElement, currentNode.documentElement, differences, tolerance);
 			break;
 		case Node.DOCUMENT_TYPE_NODE:
 		case Node.DOCUMENT_FRAGMENT_NODE:
@@ -437,9 +352,11 @@ Adj.firstElementTag = function firstElementTag (documentString) {
 // for running automated tests,
 // doSvgAndVerifyDoneCallback called with string describing difference if failed,
 // or called with empty string if expected result if passed
-Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolerance) {
+//
+// "expectd" is short for "expectedResult", same number of characters as "current" for readability
+Adj.doSvgAndVerify = function doSvgAndVerify (expectedResultEncodedDocumentString, doSvgAndVerifyDoneCallback, tolerance) {
 	if (!doSvgAndVerifyDoneCallback || typeof doSvgAndVerifyDoneCallback !== "function") {
-		throw "Adj.doSvgAndVerify cannot run unless first parameter is a callback function";
+		throw "Adj.doSvgAndVerify cannot run unless second parameter doSvgAndVerifyDoneCallback is a callback function";
 	}
 	if (!tolerance) {
 		tolerance = {
@@ -448,13 +365,20 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 		};
 	}
 	//
-	// get stash
-	var stashContent = Adj.stashedDocumentResultAndRemove(document);
-	if (!stashContent) { // apparently no stash
-		// cannot verify
-		doSvgAndVerifyDoneCallback("cannot verify because no stash found to compare against");
+	// get expectedResult
+	if (!expectedResultEncodedDocumentString) {
+		doSvgAndVerifyDoneCallback("cannot verify because no expectedResultEncodedDocumentString to compare against");
 		return;
 	}
+	if (typeof expectedResultEncodedDocumentString !== "string") {
+		throw "Adj.doSvgAndVerify cannot run unless first parameter expectedResultEncodedDocumentString is a string";
+		return;
+	}
+	if (!Adj.apparentlyEncodedDocumentString(expectedResultEncodedDocumentString)) {
+		throw "Adj.doSvgAndVerify will not run unless encoding of first parameter expectedResultEncodedDocumentString is recognized";
+		return;
+	}
+	var expectedResult = Adj.decodeEncodedDocumentString(expectedResultEncodedDocumentString);
 	// do
 	Adj.doSvg(function (documentNodeOrRootElement) {
 		try {
@@ -462,12 +386,12 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 			var serializer = new XMLSerializer();
 			var documentAsString = serializer.serializeToString(document);
 			// may have to become a bit more tolerant for different browsers and borderline cases, yet not slack
-			stashContent = stashContent.replace(Adj.whitespaceBetweenElementsRegexp, "> <");
-			stashContent = stashContent.replace(Adj.whitespaceAtEndRegexp, "");
-			stashContent = stashContent.replace(Adj.whitespacesRegexp, " ");
-			stashContent = stashContent.replace(Adj.xmlDeclarationRegexp, "");
-			//stashContent = stashContent.replace(Adj.useOfEmptilyDeclaredXmlnsRegexp, "$1");
-			//stashContent = stashContent.replace(Adj.emptilyDeclaredXmlnsRegexp, "");
+			expectedResult = expectedResult.replace(Adj.whitespaceBetweenElementsRegexp, "> <");
+			expectedResult = expectedResult.replace(Adj.whitespaceAtEndRegexp, "");
+			expectedResult = expectedResult.replace(Adj.whitespacesRegexp, " ");
+			expectedResult = expectedResult.replace(Adj.xmlDeclarationRegexp, "");
+			//expectedResult = expectedResult.replace(Adj.useOfEmptilyDeclaredXmlnsRegexp, "$1");
+			//expectedResult = expectedResult.replace(Adj.emptilyDeclaredXmlnsRegexp, "");
 			documentAsString = documentAsString.replace(Adj.whitespaceBetweenElementsRegexp, "> <");
 			documentAsString = documentAsString.replace(Adj.whitespaceAtEndRegexp, "");
 			documentAsString = documentAsString.replace(Adj.whitespacesRegexp, " ");
@@ -475,29 +399,29 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 			documentAsString = documentAsString.replace(Adj.useOfEmptilyDeclaredXmlnsRegexp, "$1");
 			documentAsString = documentAsString.replace(Adj.emptilyDeclaredXmlnsRegexp, "");
 			// compare serialized documents
-			if (documentAsString === stashContent) {
+			if (documentAsString === expectedResult) {
 				doSvgAndVerifyDoneCallback("");
 				return;
 			}
 			// compare as DOM
 			var parser = new DOMParser();
-			var stashedDom;
+			var expectdDom;
 			var currentDom;
 			var apparentlyGoodParse = false;
-			var stashedDomRootElement;
+			var expectdDomRootElement;
 			var currentDomRootElement;
 			try {
-				switch (Adj.firstElementTag(stashContent).toLowerCase()) {
+				switch (Adj.firstElementTag(expectedResult).toLowerCase()) {
 					case "svg":
-						stashedDom = parser.parseFromString(stashContent, "application/xml");
+						expectdDom = parser.parseFromString(expectedResult, "application/xml");
 						break;
 					case "html":
-						stashedDom = parser.parseFromString(stashContent, "text/html");
+						expectdDom = parser.parseFromString(expectedResult, "text/html");
 						break;
 					default:
 						throw "neither svg nor html";
 				}
-				stashedDomRootElement = stashedDom.documentElement;
+				expectdDomRootElement = expectdDom.documentElement;
 				switch (Adj.firstElementTag(documentAsString).toLowerCase()) {
 					case "svg":
 						currentDom = parser.parseFromString(documentAsString, "application/xml");
@@ -517,7 +441,7 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 			var apparentlyEqualDom = false;
 			if (apparentlyGoodParse) {
 				try {
-					apparentlyEqualDom = currentDomRootElement.isEqualNode(stashedDomRootElement);
+					apparentlyEqualDom = currentDomRootElement.isEqualNode(expectdDomRootElement);
 				} catch (exception) {
 					apparentlyEqualDom = false;
 				}
@@ -526,13 +450,13 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 			var differences = [];
 			if (!apparentlyEqualDom) {
 				try {
-					stashedDom.normalize();
+					expectdDom.normalize();
 					currentDom.normalize();
 					tolerance.inEffect = tolerance.generalInUnits; // default
-					if (stashedDom.getElementsByTagName("text").length) { // at least one SVG text element
-						tolerance.inEffect = tolerance.ifTextFractionOfTotal * Math.sqrt(Math.pow(parseFloat(stashedDomRootElement.getAttribute("width")),2)+Math.pow(parseFloat(stashedDomRootElement.getAttribute("height")),2));
+					if (expectdDom.getElementsByTagName("text").length) { // at least one SVG text element
+						tolerance.inEffect = tolerance.ifTextFractionOfTotal * Math.sqrt(Math.pow(parseFloat(expectdDomRootElement.getAttribute("width")),2)+Math.pow(parseFloat(expectdDomRootElement.getAttribute("height")),2));
 					}
-					apparentlyEqualDom = Adj.areEqualNodes(stashedDomRootElement, currentDomRootElement, differences, tolerance);
+					apparentlyEqualDom = Adj.areEqualNodes(expectdDomRootElement, currentDomRootElement, differences, tolerance);
 				} catch (exception) {
 					apparentlyEqualDom = false;
 				}
@@ -545,20 +469,20 @@ Adj.doSvgAndVerify = function doSvgAndVerify (doSvgAndVerifyDoneCallback, tolera
 				if (differences.length) {
 					differencesString = differences.join("; ");
 				} else {
-					var sLength = stashContent.length;
+					var sLength = expectedResult.length;
 					var dLength = documentAsString.length;
 					var minLength = Math.min(sLength, dLength);
 					var firstDifference = minLength;
 					for (var i = 0; i < minLength; i++) {
-						if (documentAsString[i] != stashContent[i]) {
+						if (documentAsString[i] != expectedResult[i]) {
 							firstDifference = i;
 							break;
 						}
 					}
 					var sectionFrom = Math.max(firstDifference - 10, 0);
-					var stashSection = stashContent.substring(sectionFrom, sectionFrom + 40);
+					var expectedSection = expectedResult.substring(sectionFrom, sectionFrom + 40);
 					var documentSection = documentAsString.substring(sectionFrom, sectionFrom + 40);
-					differencesString = "a difference near char " + firstDifference + ", now getting \"…" + documentSection + "…\" instead of expected \"…" + stashSection + "…\"";
+					differencesString = "a difference near char " + firstDifference + ", now getting \"…" + documentSection + "…\" instead of expected \"…" + expectedSection + "…\"";
 				}
 				doSvgAndVerifyDoneCallback(differencesString);
 				return;
@@ -582,6 +506,9 @@ var AdjTestWindow = {};
 // match command by itself, or command followed by one or two parameters separated by |
 AdjTestWindow.messageRegexp = /^([^|]*)(?:\|([^|]*))?(?:\|(.*))?$/;
 
+// at least in Internet Explorer XMLSerializer has been seen producing <script src="js/adj.js"/>, which then doesn't parse right
+AdjTestWindow.scriptSelfClosingTagRegexp = /(<\s*script(?:\s+[a-z]+="[^"]*?")+)(?:\s*\/>)/g;
+
 AdjTestWindow.receivesMessage = function receivesMessage (evt) {
 	// accept any evt.origin
 	var messageCommand;
@@ -600,19 +527,41 @@ AdjTestWindow.receivesMessage = function receivesMessage (evt) {
 			// navigate, load
 			window.location.href = messageParameter;
 			break;
+		case "Adj.encodeDocument":
+			try {
+				// convert to text
+				var serializer = new XMLSerializer();
+				var documentAsString = serializer.serializeToString(document);
+				// fix up to avoid self-closing script tags like <script src="js/adj.js"/>
+				documentAsString = documentAsString.replace(AdjTestWindow.scriptSelfClosingTagRegexp, "$1></script>");
+				// fix up to avoid extraneous namespace declarations and use like xmlns:NS1="" NS1:xmlns:adj="http://www.nrvr.com/2012/adj"
+				documentAsString = documentAsString.replace(Adj.useOfEmptilyDeclaredXmlnsRegexp, "$1");
+				documentAsString = documentAsString.replace(Adj.emptilyDeclaredXmlnsRegexp, "");
+				// encode
+				var encodedDocument = Adj.encodeDocumentString(documentAsString);
+				// reply
+				evt.source.postMessage("Adj.encodedDocument|" + window.location.href + "|" + encodedDocument, "*");
+			} catch (exception) { // probably unusual, nevertheless covered
+				console.error("Adj.encodeDocument exception", exception);
+				exceptionString = exception.toString();
+				// reply
+				evt.source.postMessage("Adj.encodedDocumentException|" + window.location.href + "|" + exceptionString, "*");
+			}
+			break;
 		case "Adj.doSvgAndVerify":
 			try {
+				var expectedResultEncodedDocumentString = messageParameter;
 				// do
-				Adj.doSvgAndVerify(function (resultOfVerification) {
+				Adj.doSvgAndVerify(expectedResultEncodedDocumentString, function (resultOfVerification) {
 					console.log("Adj.doSvgAndVerify done");
 					// reply
-					evt.source.postMessage("Adj.didDocAndVerify|" + window.location.href + "|" + resultOfVerification, "*");
+					evt.source.postMessage("Adj.didSvgAndVerify|" + window.location.href + "|" + resultOfVerification, "*");
 				});
 			} catch (exception) { // probably unusual, nevertheless covered
 				console.error("Adj.doSvgAndVerify exception", exception);
 				exceptionString = exception.toString();
 				// reply
-				evt.source.postMessage("Adj.didDocAndVerifyException|" + window.location.href + "|" + exceptionString, "*");
+				evt.source.postMessage("Adj.didSvgAndVerifyException|" + window.location.href + "|" + exceptionString, "*");
 			}
 			break;
 		case "Adj.doSvg":

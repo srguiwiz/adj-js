@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="180">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="180" fill="linen"/>
+	<g>
+		<adj:verticalTree leftGap="20" centerGap="30" childlessGap="10" middleGap="40"/>
+		<rect adj:id="o1" width="40" height="30" fill="#000" transform="translate(75,10)"/>
+		<rect adj:id="o2" adj:treeParent="o1" width="30" height="20" fill="#666" transform="translate(35,80)"/>
+		<rect adj:id="o3" adj:treeParent="o2" width="25" height="15" fill="#888" transform="translate(20,140)"/>
+		<rect adj:id="o4" adj:treeParent="o2" width="25" height="15" fill="#aaa" transform="translate(55,140)"/>
+		<rect adj:id="o5" adj:treeParent="o1" width="30" height="20" fill="#bbb" transform="translate(125,80)"/>
+		<rect adj:id="o6" adj:treeParent="o5" width="25" height="15" fill="#ccc" transform="translate(110,140)"/>
+		<rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd" transform="translate(145,140)"/>
+	</g>
+	<path d="M 65, 40  C 65, 50 25, 74 25, 90  S 10, 135.5 10, 147.5  C 10, 165 20, 165 32.5, 165  S 55, 165 67.5, 165  S 90, 165 90, 147.5  C 90, 120 65, 130 65, 120  S 65, 110 95, 110" stroke="#777" stroke-width="2" fill="none" adj:d="M ~o1#x - 10, ~o1#yh  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy  C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5 + 10 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5  S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10">
+		<adj:vine/>
+	</path>
+</svg>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvgAndStashIfNoStashYet();" width="200" height="100">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
 	<rect width="200" height="100" fill="linen"/>
@@ -10,5 +10,4 @@
 			</rect>
 		</g>
 	</g>
-	<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doSvgAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%22100%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cg%20adj%3Acommand%3D%22skimpyList%22%3E%0A%09%09%3Cg%20transform%3D%22translate(3%2C3)%22%3E%0A%09%09%09%3Crect%20width%3D%2250%22%20height%3D%2270%22%20stroke%3D%22black%22%20stroke-width%3D%221%22%20fill%3D%22%23888%22%20transform%3D%22matrix(0.966%2C0.259%2C0%2C1%2C0%2C0)%22%3E%0A%09%09%09%09%3Cadj%3Atilt%20alpha%3D%2215%22%2F%3E%0A%09%09%09%3C%2Frect%3E%0A%09%09%3C%2Fg%3E%0A%09%3C%2Fg%3E%0A%3C%2Fsvg%3E-->
 </svg>

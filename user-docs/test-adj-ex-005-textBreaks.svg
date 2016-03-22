@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvgAndStashIfNoStashYet();" width="300" height="150">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="300" height="150">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
 	<style type="text/css"><![CDATA[
@@ -19,11 +19,7 @@
 	<g>
 		<adj:textBreaks wordBreaks="true"/>
 		<adj:horizontalList maxWidth="210" gap="5" centerGap="6" topGap="10" leftGap="10"/>
-		<text transform="translate(11,27)">This</text>
-		<text transform="translate(68.016,27)">is</text>
-		<text transform="translate(101.031,27)">a</text>
-		<text transform="translate(11,54)">sentence</text>
-		<text transform="translate(116.016,54)">of</text>
+		<text transform="translate(11,27)">This is a sentence of</text>
 		<text transform="translate(150.016,54)">text</text>
 		<text transform="translate(11,81)">that</text>
 		<text transform="translate(70,81)">will</text>
@@ -35,5 +31,4 @@
 			<adj:frameForParent inset="1"/>
 		</rect>
 	</g>
-	<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doSvgAndStashIfNoStashYet()%3B%22%20width%3D%22300%22%20height%3D%22150%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Cstyle%20type%3D%22text%2Fcss%22%3E%3C!%5BCDATA%5B%0A%09%40font-face%20%7B%0A%09%09font-family%3A%20Liberation%20Mono%3B%0A%09%09src%3A%20local(%22Liberation%20Mono%22)%2C%20local(%22Liberation%20Mono%20Regular%22)%2C%20local(%22LiberationMono-Regular%22)%2C%0A%09%09%09url(fonts%2FLiberation%2FLiberationMono-Regular.ttf)%3B%0A%09%09font-weight%3A%20normal%3B%0A%09%09font-style%3A%20normal%3B%0A%09%7D%0A%09svg%20%7B%0A%09%09font-family%3A%20%22Liberation%20Mono%22%2C%22Courier%20New%22%3B%0A%09%09font-size%3A%2020px%3B%0A%09%7D%0A%09%5D%5D%3E%3C%2Fstyle%3E%0A%09%3Crect%20width%3D%22300%22%20height%3D%22150%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cg%3E%0A%09%09%3Cadj%3AtextBreaks%20wordBreaks%3D%22true%22%2F%3E%0A%09%09%3Cadj%3AhorizontalList%20maxWidth%3D%22210%22%20gap%3D%225%22%20centerGap%3D%226%22%20topGap%3D%2210%22%20leftGap%3D%2210%22%2F%3E%0A%09%09%3Ctext%20transform%3D%22translate(11%2C27)%22%3EThis%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(68.016%2C27)%22%3Eis%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(101.031%2C27)%22%3Ea%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(11%2C54)%22%3Esentence%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(116.016%2C54)%22%3Eof%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(150.016%2C54)%22%3Etext%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(11%2C81)%22%3Ethat%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(70%2C81)%22%3Ewill%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(129%2C81)%22%3Ewrap.%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(12%2C108)%22%3EHere%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(69.016%2C108)%22%3Eis%3C%2Ftext%3E%0A%09%09%3Ctext%20transform%3D%22translate(102.031%2C108)%22%3Emore.%3C%2Ftext%3E%0A%09%09%3Crect%20fill%3D%22none%22%20stroke%3D%22lightgray%22%20stroke-width%3D%222%22%20width%3D%22204.016%22%20height%3D%22116%22%20x%3D%221%22%20y%3D%221%22%3E%0A%09%09%09%3Cadj%3AframeForParent%20inset%3D%221%22%2F%3E%0A%09%09%3C%2Frect%3E%0A%09%3C%2Fg%3E%0A%3C%2Fsvg%3E-->
 </svg>

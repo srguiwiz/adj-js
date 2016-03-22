@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg(function(){console.log('Adj.doSvg done')});" width="200" height="170">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="170" fill="linen"/>
+	<g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1">
+		<rect width="40" height="80" fill="#222" transform="translate(2,2)"/>
+		<g adj:command="include" xlink:href="test-adj-ex-002-verticalList-and-more.html#example-id" transform="translate(44,2)"><g id="example-id">
+				<adj:verticallist gap="10"/>
+				<rect width="45" height="30" fill="#000" transform="translate(10,10)"/>
+				<rect width="40" height="25" fill="#444" transform="translate(10,50)"/>
+				<rect width="35" height="20" fill="#888" transform="translate(10,85)"/>
+			</g></g>
+		<rect width="40" height="40" fill="#666" transform="translate(2,119)"/>
+		<g adj:command="include" xlink:href="test-adj-ex-002-verticalList-and-more.html#example-adj-id" transform="translate(44,119)"><g gap="10" adj:command="horizontalList" adj:id="example-adj-id">
+				<rect width="45" height="30" fill="#999" transform="translate(3,3)"/>
+				<rect width="40" height="25" fill="#aaa" transform="translate(51,3)"/>
+				<rect width="35" height="20" fill="#bbb" transform="translate(94,3)"/>
+			</g></g>
+	</g>
+</svg>

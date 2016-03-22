@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<rect x="30" y="30" width="50" height="20" fill="#000"/>
+		<circle adj:command="circleForParent" r="26.926" stroke="gray" fill="gray" fill-opacity="0.2" cx="55" cy="40"/>
+	</g>
+</svg>

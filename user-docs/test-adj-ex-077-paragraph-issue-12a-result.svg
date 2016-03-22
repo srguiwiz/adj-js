@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Mono;
+		src: local("Liberation Mono"), local("Liberation Mono Regular"), local("LiberationMono-Regular"),
+			url(fonts/Liberation/LiberationMono-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Mono","Courier New";
+		font-size: 12px;
+	}
+	]]></style>
+	<rect width="200" height="100" fill="mistyrose"/>
+	<g>
+		<adj:verticalList/>
+		<text adj:command="paragraph" adj:maxWidth="155" x="0" y="0" transform="translate(5,13)"> 
+This is a sentence of  
+<tspan x="0" y="16">​﻿</tspan><tspan x="0" y="16">​﻿</tspan>text that will wrap. 
+<tspan x="0" y="32">​﻿</tspan><tspan x="0" y="32">​﻿</tspan>Here is more. 
+</text>
+		<rect fill="none" stroke="lightgray" stroke-width="2" width="162" height="50" x="1" y="1">
+			<adj:frameForParent inset="1"/>
+		</rect>
+	</g>
+</svg>

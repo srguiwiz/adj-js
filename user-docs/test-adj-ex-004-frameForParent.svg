@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvgAndStashIfNoStashYet();" width="200" height="100">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
 	<rect width="200" height="100" fill="linen"/>
@@ -12,5 +12,4 @@
 		<rect width="40" height="25" fill="#444" transform="translate(55,5)"/>
 		<rect width="35" height="20" fill="#888" transform="translate(100,5)"/>
 	</g>
-	<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doSvgAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%22100%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cg%3E%0A%09%09%3Cadj%3AhorizontalList%20gap%3D%225%22%2F%3E%0A%09%09%3Crect%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%20width%3D%22138%22%20height%3D%2238%22%20x%3D%221%22%20y%3D%221%22%3E%0A%09%09%09%3Cadj%3AframeForParent%20inset%3D%221%22%2F%3E%0A%09%09%3C%2Frect%3E%0A%09%09%3Crect%20width%3D%2245%22%20height%3D%2230%22%20fill%3D%22%23000%22%20transform%3D%22translate(5%2C5)%22%2F%3E%0A%09%09%3Crect%20width%3D%2240%22%20height%3D%2225%22%20fill%3D%22%23444%22%20transform%3D%22translate(55%2C5)%22%2F%3E%0A%09%09%3Crect%20width%3D%2235%22%20height%3D%2220%22%20fill%3D%22%23888%22%20transform%3D%22translate(100%2C5)%22%2F%3E%0A%09%3C%2Fg%3E%0A%3C%2Fsvg%3E-->
 </svg>

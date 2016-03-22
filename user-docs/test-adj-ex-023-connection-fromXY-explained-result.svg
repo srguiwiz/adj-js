@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<rect adj:id="one" x="5" y="5" width="40" height="30" fill="#aaa"/>
+	<rect adj:id="other" x="145" y="55" width="40" height="30" fill="#ccc"/>
+	<path d="M45,20 q20.528,21.444 50,25 t50,25 " stroke="#666" stroke-width="2" fill="none" adj:d="M5,80 q40,10 80,0 t80,0">
+		<adj:connection from="one%1,0.5" to="other%0,0.5" explain="true"/>
+	</path>
+<rect adj:explanation="true" x="5" y="5" width="40" height="30" transform="matrix(1, 0, 0, 1, 0, 0)" fill="green" fill-opacity="0.1" stroke="green" stroke-width="1" stroke-opacity="0.2"/><circle adj:explanation="true" cx="45" cy="20" r="3" fill="green" fill-opacity="0.2" stroke="none"/><rect adj:explanation="true" x="145" y="55" width="40" height="30" transform="matrix(1, 0, 0, 1, 0, 0)" fill="red" fill-opacity="0.1" stroke="red" stroke-width="1" stroke-opacity="0.2"/><circle adj:explanation="true" cx="145" cy="70" r="3" fill="red" fill-opacity="0.2" stroke="none"/></svg>

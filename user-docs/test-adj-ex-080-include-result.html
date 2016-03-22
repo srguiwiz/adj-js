@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+		<meta charset="UTF-8" />
+		<script src="js/adj.js"></script>
+		<script src="js/adj-tests.js"></script>
+	</head>
+	<body onclick="Adj.doSvg(function(){console.log('Adj.doSvg done')});">
+		<p>an example of Adj in SVG inline in HTML</p>
+		<svg height="126" width="126" xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<g adj:command="horizontalList" adj:gap="2" adj:itemsh2v="1">
+				<rect transform="translate(2,2)" width="40" height="80" fill="#222"/>
+				<g xlink:href="test-subdir-080/test-adj-ex-080-include-to-include.svg" adj:command="include" transform="translate(44,2)">
+	
+	<g adj:command="horizontalList" xmlns:adj="http://www.nrvr.com/2012/adj" adj:gap="1" adj:itemsH2V="1">
+		<circle r="19" fill="#222" transform="translate(20,20)"/>
+		<circle r="19" fill="#444" transform="translate(59,20)"/>
+		<g adj:command="include" xlink:href="test-subdir-080/test-adj-ex-080-include-to-include-2.svg" transform="translate(1,40)">
+	
+	<g adj:command="circularList" adj:gap="0" adj:fromAngle="180">
+		<path d="M0,0 l0,10 9,-5 z" fill="#222" transform="translate(15,14)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#444" transform="translate(1,14)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#666" transform="translate(10,1)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#888" transform="translate(26,6)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#aaa" transform="translate(26,22)"/>
+		<path d="M0,0 l0,10 9,-5 z" fill="#ccc" transform="translate(10,27)"/>
+	</g>
+</g>
+		<g adj:command="include" xlink:href="test-subdir-080/test-subdir-080-b/test-adj-ex-080-include-to-include-3.svg" transform="translate(37,40)">
+	
+	<adj:variable name="dummy" value="5"/>
+	<g adj:command="circularList" adj:gap="0" adj:fromAngle="270">
+		<g adj:command="include" xlink:href="test-subdir-080/test-subdir-080-c/test-adj-ex-080-include-to-include-4.svg" transform="translate(14,15)">
+	
+	<g adj:command="skimpyList" adj:gap="0">
+		<path d="M0,0 l10,0 -5,-9 z" fill="#222" transform="translate(0,9)"/>
+	</g>
+</g>
+		<path d="M0,0 l10,0 -5,9 z" fill="#444" transform="translate(14,1)"/>
+		<path d="M0,0 l10,0 -5,9 z" fill="#666" transform="translate(27,10)"/>
+		<path d="M0,0 l10,0 -5,9 z" fill="#888" transform="translate(22,26)"/>
+		<path d="M0,0 l10,0 -5,9 z" fill="#aaa" transform="translate(6,26)"/>
+		<path d="M0,0 l10,0 -5,9 z" fill="#ccc" transform="translate(1,10)"/>
+	</g>
+</g>
+	</g>
+</g>
+				<rect transform="translate(2,84)" width="40" height="40" fill="#666"/>
+				<rect transform="translate(44,84)" width="80" height="40" fill="#888"/>
+			</g>
+		</svg>
+	
+
+</body></html>

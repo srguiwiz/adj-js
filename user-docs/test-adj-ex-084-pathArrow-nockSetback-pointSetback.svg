@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvgAndStashIfNoStashYet();" width="200" height="80">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="80">
 	<script type="text/javascript" xlink:href="js/adj.js"/>
 	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
 	<rect width="200" height="80" fill="linen"/>
@@ -7,5 +7,4 @@
 	<path d="M0,0" adj:d="M50,25 c3,0 5,-2 5,-5 s-2,-5 ,-5,-5 l0,0 20,0 0,0 q5,0 5,5 t-5,5 l0,0 z" stroke="black" stroke-width="1" fill="white">
 		<adj:pathArrow nockSetback="-2" pointSetback="3"/>
 	</path>
-	<!--ExpectedResultForTestAutomation:%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0D%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Aadj%3D%22http%3A%2F%2Fwww.nrvr.com%2F2012%2Fadj%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20onload%3D%22Adj.doSvgAndStashIfNoStashYet()%3B%22%20width%3D%22200%22%20height%3D%2280%22%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj.js%22%2F%3E%0A%09%3Cscript%20type%3D%22text%2Fjavascript%22%20xlink%3Ahref%3D%22js%2Fadj-tests.js%22%2F%3E%0A%09%3Crect%20width%3D%22200%22%20height%3D%2280%22%20fill%3D%22linen%22%2F%3E%0A%09%3Cpath%20d%3D%22M15%2C20%20c20%2C0%2030%2C10%2030%2C30%20h20%20v-30%20q30%2C0%2045%2C15%20t45%2C15%22%20stroke%3D%22none%22%20fill%3D%22none%22%20transform%3D%22translate(0%2C15)%20rotate(-10)%22%2F%3E%0A%09%3Cpath%20d%3D%22M13%2C25%20c3%2C0%205%2C-2%205%2C-5%20s-2%2C-5%20-5%2C-5%20L13%2C15%20C38.42%2C16.352%2048.42%2C26.352%2050%2C45%20L60%2C45%20L60%2C15%20Q96.581%2C15.257%20113.536%2C31.464%20Q126.581%2C45.257%20152%2C45%20L152%2C45%20q5%2C0%205%2C5%20t-5%2C5%20L152%2C55%20Q123.419%2C54.743%20106.464%2C38.536%20Q93.419%2C24.743%2070%2C25%20L70%2C55%20L40%2C55%20C41.58%2C33.648%2031.58%2C23.648%2013%2C25%20%22%20adj%3Ad%3D%22M50%2C25%20c3%2C0%205%2C-2%205%2C-5%20s-2%2C-5%20%2C-5%2C-5%20l0%2C0%2020%2C0%200%2C0%20q5%2C0%205%2C5%20t-5%2C5%20l0%2C0%20z%22%20stroke%3D%22black%22%20stroke-width%3D%221%22%20fill%3D%22white%22%20transform%3D%22matrix(0.985%2C-0.174%2C0.174%2C0.985%2C0%2C15)%22%3E%0A%09%09%3Cadj%3ApathArrow%20nockSetback%3D%22-2%22%20pointSetback%3D%223%22%2F%3E%0A%09%3C%2Fpath%3E%0A%3C%2Fsvg%3E-->
 </svg>

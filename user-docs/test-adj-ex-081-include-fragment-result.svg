@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg(function(){console.log('Adj.doSvg done')});" width="200" height="140">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<rect width="200" height="140" fill="linen"/>
+	<g adj:command="horizontalList" adj:gap="2" adj:itemsH2V="1">
+		<rect width="40" height="80" fill="#222" transform="translate(2,2)"/>
+		<g transform="translate(63,21)"><adj:include xlink:href="test-subdir-081/test-adj-ex-081-include-to-include.svg#four"/><circle r="19" fill="#888" adj:id="four"/></g>
+		<rect width="40" height="40" fill="#666" transform="translate(2,84)"/>
+		<rect width="80" height="40" fill="#888" transform="translate(44,84)"/>
+	</g>
+</svg>

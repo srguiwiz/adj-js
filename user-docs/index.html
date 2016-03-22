@@ -62,6 +62,9 @@ h1,h2,h3,h4,h5,h6 {
  .product-name {
   font-family: sans-serif;
 }
+ .ui-label {
+  font-family: sans-serif;
+}
  .example-listing {
   white-space: pre-wrap;
   font-size: smaller;
@@ -229,7 +232,11 @@ newer.</p>
       </li>
       <li><a href="#L3983">1.26. Extending Adj With Your Own Commands And
         Algorithms</a></li>
-      <li><a href="#L2357">1.27. Automated Testing</a></li>
+      <li><a href="#L2357">1.27. Automated Testing</a>
+        <ul>
+          <li><a href="#L13579">1.27.1. Making More Test Cases</a></li>
+        </ul>
+      </li>
       <li><a href="#L2374">1.28. Compatibility Issues</a>
         <ul>
           <li><a href="#L46664">1.28.1. Internet Explorer 11</a></li>
@@ -238,7 +245,7 @@ newer.</p>
           <li><a href="#L46669">1.28.4. Firefox 32</a></li>
         </ul>
       </li>
-      <li><a href="#L11982">1.29. SVG inline in HTML</a></li>
+      <li><a href="#L11982">1.29. SVG Inline In HTML</a></li>
       <li><a href="#L1688">1.30. Example Files</a>
         <ul>
           <li><a href="#L5397">1.30.1. Example File 001 Source Code</a></li>
@@ -4505,30 +4512,63 @@ specific questions to justify the effort of documenting more details.</p>
 <h3 id="L2357">1.27. Automated Testing</h3>
 
 <p>To facilitate continuing compatibility as both Adj and browsers are moving
-along with respective new versions and code changes, an automated test suite
-has been <a href="tests.html">implemented here</a>.</p>
+along with new code, an automated test suite has been <a
+href="tests.html">implemented here</a>.</p>
 
-<p>For a set of somewhat prepared test documents, freshly computed results of
-Adj processing are compared with expected results.</p>
+<p>For a set of prepared test documents, freshly computed results of Adj
+processing are compared with expected results.</p>
 
 <p>Images that are made from graphic elements without text, hence not using
-fonts, should produce exactly the same results each time in each browser.
+fonts, should achieve exactly the same results each time in each browser.
 Variations in less significant digits do occur and are tolerated in order to
 pass.</p>
 
-<p>For images that contain text, an explicitly provided font should<span
-class="deemphasize">, someday hopefully will,</span> allow achieving the same
-results each time in each browser as well. Out of necessity, however<span
-class="deemphasize">, for now,</span> when text is present, larger variations
-are tolerated in order to pass.</p>
+<p>Furthermore, for images that contain text, an explicitly provided font
+should<span class="deemphasize">, someday hopefully will,</span> allow
+achieving the same results each time in each browser too. Out of necessity,
+however<span class="deemphasize">, for now,</span> when text is present, larger
+variations are tolerated in order to pass.</p>
 
 <p>For contributing to increasing the number of test cases, or with questions,
 please use contact and/or repository info provided <a
 href="#L4276">above</a>.</p>
 
-<p><span class="todo">TODO: describe use of
-<code>Adj.doSvgAndStashIfNoStashYet()</code> instead of
-<code>Adj.doSvg()</code> for preparing documents for testing</span></p>
+<h4 id="L13579">1.27.1. Making More Test Cases</h4>
+
+<p>An additional test case can be made by steps:</p>
+<ul>
+  <li>Pick an SVG file that contains Adj commands you want to test.</li>
+  <li>Make a copy with a suitable file name. For example <code><span
+    class="example-code">test-</span>adj-ex-002-verticalList.svg</code> .</li>
+  <li>Replace attribute <code>onload="Adj.doSvg();"</code> with differently
+    named attribute <code><span
+    class="example-code">onclick</span>="Adj.doSvg();"</code> .</li>
+  <li>After the <code>script</code> element loading <code>adj.js</code> add a
+    second <code>script</code> element loading <code
+    class="example-code">adj-tests.js</code> .</li>
+  <li>Have for example:</li>
+</ul>
+<pre class="example-listing">&lt;svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink"
+     <span class="example-code">onclick</span>="Adj.doSvg();"&gt;
+  &lt;script type="text/javascript" xlink:href="js/adj.js"/&gt;
+  <span class="example-code">&lt;script type="text/javascript" xlink:href="js/adj-tests.js"/&gt;</span>
+…</pre>
+<ul>
+  <li>Save file.</li>
+  <li>Open document in browser and use the <span
+    class="deemphasize">configurable</span> <span class="ui-label">Save to
+    Result File from DOM</span> command of Firefox add-on <a
+    href="https://addons.mozilla.org/en-US/firefox/addon/save-back-to-file-from-dom/"><span
+    class="product-name">Save Back to File from DOM</span></a> .</li>
+  <li>Have for example:</li>
+</ul>
+<pre class="example-listing"><span class="example-code">test-</span>adj-ex-002-verticalList.svg
+<span class="example-code">test-</span>adj-ex-002-verticalList<span class="example-code">-result</span>.svg</pre>
+<ul>
+  <li>Add a table row in <a href="tests.html#L2744">tests.html</a> like for
+    existing test cases.</li>
+</ul>
 
 <h3 id="L2374">1.28. Compatibility Issues</h3>
 
@@ -4564,7 +4604,7 @@ earlier.</p>
 hyperlink <code>a</code> element can cause line height calculation on Firefox
 to be wrong. See command <code><a href="#L11198">paragraph</a></code>.</p>
 
-<h3 id="L11982">1.29. SVG inline in HTML</h3>
+<h3 id="L11982">1.29. SVG Inline In HTML</h3>
 
 <p>Support for SVG inline in HTML is a relatively new addition since Adj
 5.0.1.</p>

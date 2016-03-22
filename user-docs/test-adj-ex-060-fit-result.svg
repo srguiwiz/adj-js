@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="150">
+	<script type="text/javascript" xlink:href="js/adj.js"/>
+	<script type="text/javascript" xlink:href="js/adj-tests.js"/>
+	<style type="text/css"><![CDATA[
+	circle {
+		stroke: black;
+		stroke-width: 1;
+	}
+	]]></style>
+	<rect width="200" height="150" fill="linen"/>
+	<g adj:command="horizontalList" adj:makeGrid="true" adj:maxWidth="200" adj:gap="10" adj:hAlign="center" adj:vAlign="middle">
+		<circle fill="#444" r="25" transform="translate(35,35)"/>
+		<g transform="translate(105,35)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:maxHeight="20" transform="scale(0.4)"/>
+		</g>
+		<g transform="translate(170,35)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:maxWidth="40" adj:maxHeight="30" transform="scale(0.6)"/>
+		</g>
+		<g transform="translate(35,105)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:maxWidth="100" transform="scale(1)"/>
+		</g>
+		<g transform="translate(105,105)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:height="70" transform="scale(1.4)"/>
+		</g>
+		<g transform="translate(170,105)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:width="120" adj:height="80" adj:maxWidth="40" transform="scale(0.8)"/>
+		</g>
+	</g>
+</svg>
