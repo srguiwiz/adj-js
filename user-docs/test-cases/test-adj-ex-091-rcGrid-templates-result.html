@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+		<meta charset="UTF-8" />
+		<script src="../js/adj.js"></script>
+		<script src="../js/adj-tests.js"></script>
+	</head>
+	<body onclick="Adj.doSvg();">
+		<p>an example of Adj in SVG inline in HTML</p>
+		<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns="http://www.w3.org/2000/svg" width="86" height="114">
+			<g>
+				<adj:rcgrid gap="5"/>
+				<g adj:valign="bottom">
+					<circle stroke="#000" fill="none" r="10" transform="translate(15,15)"/>
+					<circle fill="#222" r="4" transform="translate(40,21)"/>
+					<circle fill="#444" r="6" transform="translate(68,19)"/>
+				</g>
+				<adj:rcgridcelltemplates>
+					<adj:rcgridcelltemplate halign="right"/>
+					<adj:rcgridcelltemplate halign="left"/>
+				</adj:rcgridcelltemplates>
+				<g>
+					<rect fill="#000" height="10" width="10" transform="translate(15,31)"/>
+					<rect fill="#000" height="12" width="14" transform="translate(29,30)"/>
+					<rect fill="#000" height="14" width="18" transform="translate(59,29)"/>
+				</g>
+				<g>
+					<rect fill="#222" height="12" width="14" transform="translate(11,49)"/>
+					<rect fill="#222" height="14" width="18" transform="translate(29,48)"/>
+					<rect fill="#222" height="16" width="22" transform="translate(57,47)"/>
+				</g>
+				<g>
+					<rect fill="#444" height="14" width="18" transform="translate(7,69)"/>
+					<rect fill="#444" height="16" width="22" transform="translate(29,68)"/>
+					<rect fill="#444" height="18" width="26" transform="translate(55,67)"/>
+				</g>
+				<adj:rcgridcelltemplates/>
+				<g>
+					<circle stroke="#000" fill="none" r="10" transform="translate(15,99)"/>
+					<circle fill="#222" r="4" transform="translate(40,99)"/>
+					<circle fill="#444" r="6" transform="translate(68,99)"/>
+				</g>
+			</g>
+		</svg>
+	
+
+</body></html>

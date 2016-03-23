@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<script type="text/javascript" xlink:href="../js/adj-tests.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(fonts/Liberation/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 12px;
+	}
+	]]></style>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<adj:verticalList gap="15"/>
+		<text x="0" y="0" transform="translate(5,20)">
+			<adj:paragraph maxWidth="160" lineGap="2" hAlign="center"/> 
+Source line one is here, 
+source line <tspan font-style="italic">t<tspan font-weight="bolder">w</tspan>o</tspan> 
+is <a xlink:href="#"><tspan fill="blue">here</tspan></a> too. 
+And then there is more text.</text>
+		<rect fill="none" stroke="lightgray" stroke-width="2" width="120" height="80" x="1" y="1">
+			<adj:frameForParent inset="1"/>
+		</rect>
+	</g>
+</svg>

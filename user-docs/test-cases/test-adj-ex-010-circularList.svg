@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="140">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<script type="text/javascript" xlink:href="../js/adj-tests.js"/>
+	<rect width="200" height="140" fill="linen"/>
+	<g>
+		<adj:circularList gap="5"/>
+		<circle r="10" fill="#000" transform="translate(60,60)"/>
+		<rect width="30" height="20" fill="#222" transform="translate(91,54)"/>
+		<rect width="30" height="20" fill="#444" transform="translate(72,93)"/>
+		<rect width="30" height="20" fill="#666" transform="translate(40,103)"/>
+		<rect width="30" height="20" fill="#888" transform="translate(16,72)"/>
+		<rect width="30" height="20" fill="#aaa" transform="translate(16,36)"/>
+		<rect width="30" height="20" fill="#bbb"/>
+		<rect width="30" height="20" fill="#ccc" transform="translate(72,15)"/>
+	</g>
+</svg>

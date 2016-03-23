@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (x64) (http://www.altova.com) by Leo Baschy (Niresip) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="10" height="9">
+	<script type="text/javascript" xlink:href="../../../js/adj.js"/>
+	<g adj:command="skimpyList" adj:gap="0">
+		<path d="M0,0 l10,0 -5,-9 z" fill="#222" transform="translate(0,9)"/>
+	</g>
+</svg>

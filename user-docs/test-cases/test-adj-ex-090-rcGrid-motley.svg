@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="200">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<script type="text/javascript" xlink:href="../js/adj-tests.js"/>
+	<rect width="200" height="200" fill="linen"/>
+	<g>
+		<adj:rcGrid adj:rcGridPart="column" gap="5"/>
+		<rect fill="#fff" width="10" height="10">
+			<adj:frameForParent/>
+		</rect>
+		<g adj:rcGridPart="row" adj:vAlign="bottom">
+			<circle r="10" fill="none" stroke="#000"/>
+			<circle r="4" fill="#222"/>
+			<circle r="6" fill="#444"/>
+			<circle r="8" fill="#666"/>
+			<circle r="10" fill="#888"/>
+		</g>
+		<g adj:rcGridPart="column" adj:hAlign="right">
+			<rect fill="#eee" width="20" height="20">
+				<adj:frameForParent/>
+			</rect>
+			<rect width="10" height="10" fill="#000"/>
+			<rect width="14" height="12" fill="#222"/>
+			<rect width="18" height="14" fill="#444"/>
+		</g>
+		<g adj:hAlign="left">
+			<rect fill="#ddd" width="30" height="30">
+				<adj:frameForParent/>
+			</rect>
+			<rect width="14" height="12" fill="#000"/>
+			<rect width="18" height="14" fill="#222"/>
+			<rect width="22" height="16" fill="#444"/>
+		</g>
+		<g adj:rcGridPart="column">
+			<rect fill="#ccc" width="40" height="40">
+				<adj:frameForParent/>
+			</rect>
+		</g>
+		<g>
+			<rect width="22" height="16" fill="#000"/>
+			<rect width="26" height="18" fill="#222"/>
+			<rect width="30" height="20" fill="#444"/>
+			<rect width="34" height="22" fill="#666"/>
+		</g>
+		<g adj:rcGridPart="column" adj:cellLeftGap="10" adj:cellRightGap="2" adj:cellTopGap="8" adj:cellBottomGap="2">
+			<rect width="26" height="18" fill="#000"/>
+			<rect width="30" height="30" fill="#222"/>
+		</g>
+		<g adj:rcGridPart="row">
+			<rect fill="#bbb" width="50" height="50">
+				<adj:frameForParent/>
+			</rect>
+			<g/>
+			<circle r="4" fill="#222"/>
+			<circle r="6" fill="#444"/>
+			<circle r="8" fill="#666"/>
+			<circle r="10" fill="#888"/>
+		</g>
+	</g>
+</svg>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<script type="text/javascript" xlink:href="../js/adj-tests.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<adj:stackFrames stacking="3, -5, 5" inset="-1"/>
+		<rect fill="white" stroke="black" stroke-width="2" width="82" height="42" x="19" y="19" adj:artifact="true" transform="translate(-5,5)"/>
+		<rect fill="white" stroke="black" stroke-width="2" width="82" height="42" x="19" y="19"/>
+		<ellipse cx="60" cy="40" rx="40" ry="20" fill="#666"/>
+	</g>
+</svg>

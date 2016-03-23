@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onclick="Adj.doSvg();" width="200" height="140">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<script type="text/javascript" xlink:href="../js/adj-tests.js"/>
+	<rect width="200" height="140" fill="linen"/>
+	<g>
+		<adj:rcGrid gap="5"/>
+		<g adj:vAlign="bottom">
+			<circle r="10" fill="none" stroke="#000"/>
+			<circle r="4" fill="#222"/>
+			<circle r="6" fill="#444"/>
+		</g>
+		<adj:rcGridCellTemplates>
+			<adj:rcGridCellTemplate hAlign="right"/>
+			<adj:rcGridCellTemplate hAlign="left"/>
+		</adj:rcGridCellTemplates>
+		<g>
+			<rect width="10" height="10" fill="#000"/>
+			<rect width="14" height="12" fill="#000"/>
+			<rect width="18" height="14" fill="#000"/>
+		</g>
+		<g>
+			<rect width="14" height="12" fill="#222"/>
+			<rect width="18" height="14" fill="#222"/>
+			<rect width="22" height="16" fill="#222"/>
+		</g>
+		<g>
+			<rect width="18" height="14" fill="#444"/>
+			<rect width="22" height="16" fill="#444"/>
+			<rect width="26" height="18" fill="#444"/>
+		</g>
+		<adj:rcGridCellTemplates/>
+		<g>
+			<circle r="10" fill="none" stroke="#000"/>
+			<circle r="4" fill="#222"/>
+			<circle r="6" fill="#444"/>
+		</g>
+	</g>
+</svg>
