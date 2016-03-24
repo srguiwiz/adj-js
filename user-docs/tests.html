@@ -63,30 +63,20 @@ h1,h2,h3,h4,h5,h6 {
  .liberationMono {
   font-family: "Liberation Mono","Courier New";
 }
- .iframes {
+ .iframes > iframe {
+  min-width: 400px;
+  min-height: 300px;
+  margin: 3px;
+  padding: 3px;
   border: 1px solid #000;
 }
- .iframes > iframe {
-  min-height: 300px;
-  height: auto;
-  margin: 3px;
-  display: inline-block;
-}
 #tif {
-  width: 45%;
+  float: left;
   margin-right: 10px;
 }
 #erif {
-  width: 45%;
-}
-@media screen and (max-width: 600px) {
-  #tif {
-    width: 95%;
-    margin-right: 3px;
-  }
-  #erif {
-    width: 95%;
-  }
+  float: left;
+  margin-right: 10px;
 }
  .caption {
   font-family: sans-serif;
@@ -154,8 +144,12 @@ href="index.html#L3450"><code>include</code></a>)</span> often would
 <div class="iframes">
 <iframe id="tif" name="tif" src="test-cases/test-adj-ex-002-verticalList.svg">
 If you see this text then your browser doesn't support iframes.</iframe>
-<iframe id="erif" name="erif" src="test-cases/test-adj-ex-002-verticalList-result.svg">
+<iframe id="erif" name="erif"
+src="test-cases/test-adj-ex-002-verticalList-result.svg">
 If you see this text then your browser doesn't support iframes.</iframe>
+</div>
+
+<div style="clear:both;">
 </div>
 
 <p class="caption">Test <span class="progressCurrent">?</span> of of <span
@@ -223,7 +217,8 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-023-connection-fromXY-explained.svg</a></td>
+      <td><a
+        href="#">test-cases/test-adj-ex-023-connection-fromXY-explained.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
@@ -247,7 +242,8 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-056-explain-path-transform.svg</a></td>
+      <td><a
+      href="#">test-cases/test-adj-ex-056-explain-path-transform.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
@@ -288,7 +284,7 @@ can force an
     </tr>
     <tr>
       <td><a
-      href="#">test-cases/test-adj-ex-075-telescopicTree-motley-explained.svg</a></td>
+        href="#">test-cases/test-adj-ex-075-telescopicTree-motley-explained.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
@@ -298,7 +294,8 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-077-paragraph-issue-12a.svg</a><br />
+      <td><a href="#">test-cases/test-adj-ex-077-paragraph-issue-12a.svg</a><br
+        />
         <span class="deemphasize">has text, may suffer from font metrics
         differences</span></td>
       <td>?</td>
@@ -315,15 +312,17 @@ can force an
     </tr>
     <tr>
       <td><a
-      href="#">test-cases/test-adj-ex-084-pathArrow-nockSetback-pointSetback.svg</a></td>
+        href="#">test-cases/test-adj-ex-084-pathArrow-nockSetback-pointSetback.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-086-pathArrow-arithmetic.svg</a></td>
+      <td><a
+      href="#">test-cases/test-adj-ex-086-pathArrow-arithmetic.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-087-circularList-packArc.svg</a></td>
+      <td><a
+      href="#">test-cases/test-adj-ex-087-circularList-packArc.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
@@ -335,7 +334,8 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-093-sliderKnob-step-motley.svg</a></td>
+      <td><a
+      href="#">test-cases/test-adj-ex-093-sliderKnob-step-motley.svg</a></td>
       <td>?</td>
     </tr>
     <tr>
@@ -361,8 +361,9 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-023-connection-fromXY-explained.html</a>
-      HTML</td>
+      <td><a
+        href="#">test-cases/test-adj-ex-023-connection-fromXY-explained.html</a>
+        HTML</td>
       <td>?</td>
     </tr>
     <tr>
@@ -370,16 +371,19 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-075-telescopicTree-motley-explained.html</a>
+      <td><a
+        href="#">test-cases/test-adj-ex-075-telescopicTree-motley-explained.html</a>
         HTML</td>
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-090-rcGrid-motley.html</a> HTML</td>
+      <td><a href="#">test-cases/test-adj-ex-090-rcGrid-motley.html</a>
+      HTML</td>
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-091-rcGrid-templates.html</a> HTML</td>
+      <td><a href="#">test-cases/test-adj-ex-091-rcGrid-templates.html</a>
+      HTML</td>
       <td>?</td>
     </tr>
     <tr>
@@ -392,7 +396,8 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-002-verticalList-and-more.html</a> HTML<br />
+      <td><a href="#">test-cases/test-adj-ex-002-verticalList-and-more.html</a>
+        HTML<br />
         <span class="deemphasize">known to fail in file:// scheme unless
         browser permits or is set to permit;</span><br />
         <span class="deemphasize">if so then you should try running in http://
@@ -401,7 +406,9 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-081-include-fragment-from-html.html</a><br />
+      <td><a
+        href="#">test-cases/test-adj-ex-081-include-fragment-from-html.html</a><br
+        />
         <span class="deemphasize">known to fail in file:// scheme unless
         browser permits or is set to permit;</span><br />
         <span class="deemphasize">if so then you should try running in http://
@@ -410,7 +417,9 @@ can force an
       <td>?</td>
     </tr>
     <tr>
-      <td><a href="#">test-cases/test-adj-ex-081-include-fragment-from-html.svg</a><br />
+      <td><a
+        href="#">test-cases/test-adj-ex-081-include-fragment-from-html.svg</a><br
+        />
         <span class="deemphasize">known to fail in file:// scheme unless
         browser permits or is set to permit;</span><br />
         <span class="deemphasize">if so then you should try running in http://
