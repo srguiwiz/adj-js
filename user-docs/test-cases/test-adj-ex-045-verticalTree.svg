@@ -6,7 +6,7 @@
 	@font-face {
 		font-family: Liberation Mono;
 		src: local("Liberation Mono"), local("Liberation Mono Regular"), local("LiberationMono-Regular"),
-			url(fonts/Liberation/LiberationMono-Regular.ttf);
+			url(../fonts/Liberation/LiberationMono-Regular.ttf);
 		font-weight: normal;
 		font-style: normal;
 	}
