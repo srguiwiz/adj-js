@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<adj:horizontalList gap="10"/>
+		<rect fill="none" stroke="black" stroke-width="4" width="156" height="46" rx="4" ry="4" x="2" y="2">
+			<adj:frameForParent inset="2"/>
+		</rect>
+		<rect fill="none" stroke="gray" stroke-width="2" width="152" height="44" rx="2" ry="2" x="4" y="3">
+			<adj:frameForParent horizontalInset="4" verticalInset="3"/>
+		</rect>
+		<rect width="45" height="30" fill="#000" transform="translate(10,10)"/>
+		<rect width="40" height="25" fill="#444" transform="translate(65,10)"/>
+		<rect width="35" height="20" fill="#888" transform="translate(115,10)"/>
+	</g>
+</svg>

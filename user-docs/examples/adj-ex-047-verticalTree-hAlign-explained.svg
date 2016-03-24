@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="160">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(../fonts/Liberation/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 10px;
+	}
+	]]></style>
+	<rect width="200" height="160" fill="linen"/>
+	<g>
+		<adj:verticalTree autoParrots="true" hAlign="0.1" vAlign="0.2" gap="12" explain="true"/>
+		<text adj:id="r-1" font-size="25" transform="translate(25,35)">R1</text>
+		<text adj:id="r-2" transform="translate(70,25)">R2</text>
+		<text adj:id="l-1-1" font-size="20" adj:treeParent="r-1" transform="translate(14,70)">L11</text>
+		<text adj:id="n-1-2" font-size="15" adj:treeParent="r-1" transform="translate(61,67)">N12</text>
+		<text adj:id="n-1-2-1" font-size="12" adj:treeParent="n-1-2" transform="translate(62,99)">N121</text>
+		<text adj:id="l-1-2-1-1" adj:treeParent="n-1-2-1" transform="translate(52,124)">L1211</text>
+		<text adj:id="l-1-2-1-2" adj:treeParent="n-1-2-1" transform="translate(95,124)">L1212</text>
+		<text adj:id="l-1-2-1-3" adj:treeParent="n-1-2-1" transform="translate(138,124)">L1213</text>
+		<text adj:id="l-1-2-2" adj:treeParent="n-1-2" transform="translate(105,98)">L122</text>
+		<text adj:id="l-1-2-3" adj:treeParent="n-1-2" transform="translate(143,98)">L123</text>
+		<text adj:id="l-1-3" adj:treeParent="r-1" transform="translate(103,65)">L13</text>
+		<rect adj:explanation="true" x="0" y="0" width="179" height="138" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<path adj:explanation="true" d="m24,12 32,0 L56,41 167,53 167,126 l-155,0 L12,53 24,41 z" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="24" y="12" width="32" height="29" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="68" y="12" width="17" height="29" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="68" y="15" width="17" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="12" y="53" width="35" height="22" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="12" y="53" width="35" height="22" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<path adj:explanation="true" d="m59,53 30,0 L89,75 167,87 167,126 l-117,0 L50,87 59,75 z" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="59" y="54" width="30" height="17" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="101" y="53" width="21" height="22" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="101" y="55" width="21" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<path adj:explanation="true" d="m59,87 32,0 L91,102 167,114 167,126 l-117,0 L50,114 59,102 z" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="59" y="87" width="32" height="15" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="103" y="87" width="26" height="15" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="103" y="88" width="26" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="141" y="87" width="26" height="15" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="141" y="88" width="26" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="50" y="114" width="31" height="12" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="50" y="114" width="31" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="93" y="114" width="31" height="12" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="93" y="114" width="31" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="136" y="114" width="31" height="12" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<rect adj:explanation="true" x="136" y="114" width="31" height="12" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+	</g>
+</svg>

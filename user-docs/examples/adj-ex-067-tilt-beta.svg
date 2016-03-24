@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<g adj:command="skimpyList">
+		<g transform="translate(13.441,3)">
+			<rect width="90" height="60" stroke="black" stroke-width="1" fill="#888" transform="matrix(0.966,0.259,-0.174,0.985,0,0)">
+				<adj:tilt alpha="15" beta="10"/>
+			</rect>
+		</g>
+	</g>
+</svg>

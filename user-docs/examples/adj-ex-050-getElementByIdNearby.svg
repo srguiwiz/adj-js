@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="621" height="591">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<title>Adj.getElementByIdNearby Finding Attribute adj:id</title>
+	<!-- Illustration idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(../fonts/Liberation/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif Bold"), local("LiberationSerif-Bold"), url(../fonts/Liberation/LiberationSerif-Bold.ttf);
+		font-weight: bold;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 12px;
+	}
+	text {
+		fill: black;
+		stroke: none;
+	}
+	.arrow {
+		stroke: gray;
+		fill: none;
+	}
+	.example-code {
+		font-weight: bolder;
+		background-color: #ffff80;
+	}
+	.emphasize {
+		font-weight: bolder;
+	}
+	]]></style>
+	<defs>
+		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
+			<path d="M -3 1 L 0 0 L -3 -1"/>
+		</marker>
+	</defs>
+	<g font-size="12">
+		<adj:verticalList gap="5" middleGap="20"/>
+		<text style="fill:gray" transform="translate(7,17)">Sample drawing.</text>
+		<g transform="translate(5,40)">
+			<adj:horizontalList vAlign="middle" gap="5" centerGap="10"/>
+			<g transform="translate(5,5)">
+				<adj:verticalTree/>
+				<text adj:id="bta" adj:treeParent="btb" transform="translate(12,49)">A</text>
+				<text adj:id="btb" font-size="larger" transform="translate(34,23)">B</text>
+				<text adj:id="btc" adj:treeParent="btd" transform="translate(36,74)">C</text>
+				<text adj:id="btd" adj:treeParent="btb" transform="translate(47,49)">D</text>
+				<text adj:id="bte" adj:treeParent="btd" transform="translate(59,74)">E</text>
+				<line stroke="#888" stroke-width="3" x1="37.2" y1="27" x2="19.8" y2="37">
+					<adj:connection from="btb%0.3,1" to="bta%0.7,0"/>
+				</line>
+				<line stroke="#888" x1="42.8" y1="27" x2="49.2" y2="37">
+					<adj:connection from="btb%0.7,1" to="btd%0.3,0"/>
+				</line>
+				<line stroke="#888" x1="49.2" y1="52" x2="43.1" y2="62">
+					<adj:connection from="btd%0.3,1" to="btc%0.7,0"/>
+				</line>
+				<line stroke="#888" x1="54.8" y1="52" x2="60.9" y2="62">
+					<adj:connection from="btd%0.7,1" to="bte%0.3,0"/>
+				</line>
+			</g>
+			<g transform="translate(95,20)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">copied and balanced differently,</text>
+				<text transform="translate(5,33)">notably reusing same <tspan font-family="monospace">adj:id</tspan>s</text>
+				<text transform="translate(5,51)">resolving fine within each copy</text>
+			</g>
+			<g transform="translate(269,5)">
+				<adj:verticalTree/>
+				<text adj:id="bta" adj:treeParent="btb" transform="translate(12,74)">A</text>
+				<text adj:id="btb" font-size="larger" adj:treeParent="btd" transform="translate(23,48)">B</text>
+				<text adj:id="btc" adj:treeParent="btb" transform="translate(36,74)">C</text>
+				<text adj:id="btd" transform="translate(35,22)">D</text>
+				<text adj:id="bte" adj:treeParent="btd" transform="translate(59,48)">E</text>
+				<line stroke="#888" stroke-width="3" x1="26.2" y1="52" x2="19.8" y2="62">
+					<adj:connection from="btb%0.3,1" to="bta%0.7,0"/>
+				</line>
+				<line stroke="#888" x1="31.8" y1="52" x2="37.9" y2="62">
+					<adj:connection from="btb%0.7,1" to="btc%0.3,0"/>
+				</line>
+				<line stroke="#888" x1="37.2" y1="25" x2="31.8" y2="35">
+					<adj:connection from="btd%0.3,1" to="btb%0.7,0"/>
+				</line>
+				<line stroke="#888" x1="42.8" y1="25" x2="60.9" y2="36">
+					<adj:connection from="btd%0.7,1" to="bte%0.3,0"/>
+				</line>
+			</g>
+		</g>
+		<g transform="translate(5,157)">
+			<adj:verticalList gap="0" middleGap="3"/>
+			<text style="fill:gray" transform="translate(2,12)">Sample drawing source with an illustration of function <tspan font-family="monospace">Adj.getElementByIdNearby</tspan> as implemented</text>
+			<text style="fill:gray" transform="translate(2,30)">finding different respective "nearby" instances of <tspan font-family="monospace">adj:id</tspan> that are <tspan class="emphasize">not</tspan> unique per document.</text>
+		</g>
+		<g transform="translate(5,210)">
+			<adj:verticalTree autoParrots="true" gap="5" centerGap="10" middleGap="40" vAlign="top"/>
+			<path class="arrow" d="M255.4,332q-8.981,-166.423 -74.4,-198.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q60,50 80,0">
+				<adj:connection from="c1241e%0.9,-0.2" to="g12%1,0.9"/>
+			</path>
+			<path class="arrow" d="M118,133.5q-20.315,9.901 -25.8,62.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q20,15 80,0">
+				<adj:connection from="g12%0,0.9" to="t122e%0.8,-0.4"/>
+			</path>
+			<path class="arrow" d="M567.4,332q-13.957,-167.646 -80.4,-198.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q60,50 80,0">
+				<adj:connection from="c1441e%0.9,-0.2" to="g14%1,0.9"/>
+			</path>
+			<path class="arrow" d="M424,133.5q-21.482,8.655 -32.8,62.5" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M5,100 q20,15 80,0">
+				<adj:connection from="g14%0,0.9" to="t142e%0.8,-0.4"/>
+			</path>
+			<g adj:id="g1" transform="translate(291,5)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;g&gt;</text>
+			</g>
+			<text adj:id="e11" adj:treeParent="g1" transform="translate(94,78)">…</text>
+			<g adj:id="g12" adj:treeParent="g1" transform="translate(118,66)">
+				<adj:verticalList hAlign="center"/>
+				<text transform="translate(22,15)">&lt;g&gt;</text>
+				<text class="emphasize" transform="translate(5,33)">respective</text>
+				<text class="emphasize" transform="translate(9,51)">common</text>
+				<text class="emphasize" transform="translate(9,69)">ancestor</text>
+			</g>
+			<text adj:id="e121" adj:treeParent="g12" transform="translate(6,193)">…</text>
+			<g adj:id="t122" adj:treeParent="g12" transform="translate(30,181)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;text</text>
+				<g adj:id="t122e" class="example-code" transform="translate(3,21)">
+					<adj:verticalList gap="0"/>
+					<rect fill="#ffff80" stroke="none" width="74" height="15" x="0" y="0">
+						<adj:frameForParent inset="0"/>
+					</rect>
+					<text transform="translate(1,12)"> adj:id="btb"</text>
+				</g>
+				<text transform="translate(4,51)"> font-size="larger"</text>
+				<text transform="translate(4,69)"> &gt;B&lt;/text&gt;</text>
+			</g>
+			<text adj:id="e123" adj:treeParent="g12" transform="translate(140,193)">…</text>
+			<g adj:id="l124" adj:treeParent="g12" transform="translate(164,181)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;line</text>
+				<text transform="translate(4,33)"> stroke="#888"</text>
+				<text transform="translate(4,51)"> stroke-width="3"&gt;</text>
+			</g>
+			<g adj:id="c1241" adj:treeParent="l124" transform="translate(166,314)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;adj:connection</text>
+				<g adj:id="c1241e" class="example-code" transform="translate(3,21)">
+					<adj:verticalList gap="0"/>
+					<rect fill="#ffff80" stroke="none" width="96" height="15" x="0" y="0">
+						<adj:frameForParent inset="0"/>
+					</rect>
+					<text transform="translate(1,12)"> from="btb%0.3,1"</text>
+				</g>
+				<text transform="translate(4,51)"> to="bta%0.7,0"/&gt;</text>
+			</g>
+			<text adj:id="e125" adj:treeParent="g12" transform="translate(280,193)">…</text>
+			<g adj:id="g13" adj:treeParent="g1" transform="translate(191,66)">
+				<adj:verticalList hAlign="center"/>
+				<text transform="translate(5,15)">&lt;g&gt;</text>
+			</g>
+			<g adj:id="g14" adj:treeParent="g1" transform="translate(424,66)">
+				<adj:verticalList hAlign="center"/>
+				<text transform="translate(22,15)">&lt;g&gt;</text>
+				<text class="emphasize" transform="translate(5,33)">respective</text>
+				<text class="emphasize" transform="translate(9,51)">common</text>
+				<text class="emphasize" transform="translate(9,69)">ancestor</text>
+			</g>
+			<text adj:id="e141" adj:treeParent="g14" transform="translate(305,193)">…</text>
+			<g adj:id="t142" adj:treeParent="g14" transform="translate(329,181)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;text</text>
+				<g adj:id="t142e" class="example-code" transform="translate(3,21)">
+					<adj:verticalList gap="0"/>
+					<rect fill="#ffff80" stroke="none" width="74" height="15" x="0" y="0">
+						<adj:frameForParent inset="0"/>
+					</rect>
+					<text transform="translate(1,12)"> adj:id="btb"</text>
+				</g>
+				<text transform="translate(4,51)"> font-size="larger"</text>
+				<text transform="translate(4,69)"> adj:treeParent="btd"</text>
+				<text transform="translate(4,87)"> &gt;B&lt;/text&gt;</text>
+			</g>
+			<text adj:id="e143" adj:treeParent="g14" transform="translate(452,193)">…</text>
+			<g adj:id="l144" adj:treeParent="g14" transform="translate(476,181)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;line</text>
+				<text transform="translate(4,33)"> stroke="#888"</text>
+				<text transform="translate(4,51)"> stroke-width="3"&gt;</text>
+			</g>
+			<g adj:id="c1441" adj:treeParent="l144" transform="translate(478,314)">
+				<adj:verticalList/>
+				<text transform="translate(5,15)">&lt;adj:connection</text>
+				<g adj:id="c1441e" class="example-code" transform="translate(3,21)">
+					<adj:verticalList gap="0"/>
+					<rect fill="#ffff80" stroke="none" width="96" height="15" x="0" y="0">
+						<adj:frameForParent inset="0"/>
+					</rect>
+					<text transform="translate(1,12)"> from="btb%0.3,1"</text>
+				</g>
+				<text transform="translate(4,51)"> to="bta%0.7,0"/&gt;</text>
+			</g>
+			<text adj:id="e145" adj:treeParent="g14" transform="translate(592,193)">…</text>
+			<line stroke="#888" x1="300" y1="26" x2="162.1" y2="66">
+				<adj:connection from="g1%0.3,1" to="g12%0.7,0"/>
+			</line>
+			<line stroke="#888" x1="312" y1="26" x2="442.9" y2="66">
+				<adj:connection from="g1%0.7,1" to="g14%0.3,0"/>
+			</line>
+			<line stroke="#888" x1="136.9" y1="141" x2="79.5" y2="181">
+				<adj:connection from="g12%0.3,1" to="t122%0.5,0"/>
+			</line>
+			<line stroke="#888" x1="162.1" y1="141" x2="216.5" y2="181">
+				<adj:connection from="g12%0.7,1" to="l124%0.5,0"/>
+			</line>
+			<line stroke="#888" x1="216.5" y1="238" x2="217" y2="314">
+				<adj:connection from="l124%0.5,1" to="c1241%0.5,0"/>
+			</line>
+			<line stroke="#888" x1="442.9" y1="141" x2="385" y2="181">
+				<adj:connection from="g14%0.3,1" to="t142%0.5,0"/>
+			</line>
+			<line stroke="#888" x1="468.1" y1="141" x2="528.5" y2="181">
+				<adj:connection from="g14%0.7,1" to="l144%0.5,0"/>
+			</line>
+			<line stroke="#888" x1="528.5" y1="238" x2="529" y2="314">
+				<adj:connection from="l144%0.5,1" to="c1441%0.5,0"/>
+			</line>
+		</g>
+	</g>
+</svg>

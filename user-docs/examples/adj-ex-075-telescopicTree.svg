@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="170">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="170" fill="linen"/>
+	<g>
+		<adj:telescopicTree gap="5"/>
+		<rect width="30" height="20" fill="#000" adj:id="id1" transform="translate(17,7)"/>
+		<adj:boom/>
+		<rect width="32" height="22" fill="#222" transform="translate(52,6)"/>
+		<adj:boom angle="east"/>
+		<rect width="34" height="24" fill="#444" transform="translate(89,5)"/>
+		<adj:boom from="id1" angle="90" gap="15"/>
+		<rect width="36" height="26" fill="#666" adj:id="id2" transform="translate(14,44)"/>
+		<adj:boom angle="10"/>
+		<rect width="38" height="28" fill="#888" transform="translate(55,50)"/>
+		<rect width="40" height="30" fill="#aaa" transform="translate(98,56)"/>
+		<adj:boom from="id2%0.5,1" to="0.5,0" angle="100" gap="~id2#h * 0.5"/>
+		<rect width="42" height="32" fill="#bbb" transform="translate(5,108)"/>
+		<adj:boom angle="-10"/>
+		<rect width="44" height="34" fill="#ccc" transform="translate(52,99)"/>
+		<adj:boom angle="10"/>
+		<rect width="46" height="36" fill="#ddd" transform="translate(101,106)"/>
+	</g>
+</svg>

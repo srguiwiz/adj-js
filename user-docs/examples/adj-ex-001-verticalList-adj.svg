@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<adj:verticalList gap="5"/>
+		<rect width="45" height="30" fill="#000"/>
+		<rect width="40" height="25" fill="#444"/>
+		<rect width="35" height="20" fill="#888"/>
+	</g>
+</svg>

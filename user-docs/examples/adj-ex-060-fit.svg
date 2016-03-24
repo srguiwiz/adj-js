@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="150">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	circle {
+		stroke: black;
+		stroke-width: 1;
+	}
+	]]></style>
+	<rect width="200" height="150" fill="linen"/>
+	<g adj:command="horizontalList" adj:makeGrid="true" adj:maxWidth="200" adj:gap="10" adj:hAlign="center" adj:vAlign="middle">
+		<circle fill="#444" r="25" transform="translate(35,35)"/>
+		<g transform="translate(105,35)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:maxHeight="20" transform="scale(0.4)"/>
+		</g>
+		<g transform="translate(170,35)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:maxWidth="40" adj:maxHeight="30" transform="scale(0.6)"/>
+		</g>
+		<g transform="translate(35,105)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:maxWidth="100" transform="scale(1)"/>
+		</g>
+		<g transform="translate(105,105)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:height="70" transform="scale(1.4)"/>
+		</g>
+		<g transform="translate(170,105)">
+			<circle fill="#ccc" r="25" adj:command="fit" adj:width="120" adj:height="80" adj:maxWidth="40" transform="scale(0.8)"/>
+		</g>
+	</g>
+	<g adj:command="floater" adj:at="0,0" adj:pin="0,0" transform="translate(0,0)">
+		<adj:variable name="w" value="200"/>
+		<adj:variable name="h" value="150"/>
+		<path adj:command="vine" stroke="#777" stroke-width="1" opacity="0.2" fill="none" d="   M 0,10 h 200   M 0,20 h 200   M 0,30 h 200   M 0,40 h 200   M 0,50 h 200   M 0,60 h 200   M 0,70 h 200   M 0,80 h 200   M 0,90 h 200   M 0,100 h 200   M 0,110 h 200   M 0,120 h 200   M 0,130 h 200   M 0,140 h 200   M 10,0 v 150   M 20,0 v 150   M 30,0 v 150   M 40,0 v 150   M 50,0 v 150   M 60,0 v 150   M 70,0 v 150   M 80,0 v 150   M 90,0 v 150   M 100,0 v 150   M 110,0 v 150   M 120,0 v 150   M 130,0 v 150   M 140,0 v 150   M 150,0 v 150   M 160,0 v 150   M 170,0 v 150   M 180,0 v 150   M 190,0 v 150   " adj:d="   M 0,10 h ^w   M 0,20 h ^w   M 0,30 h ^w   M 0,40 h ^w   M 0,50 h ^w   M 0,60 h ^w   M 0,70 h ^w   M 0,80 h ^w   M 0,90 h ^w   M 0,100 h ^w   M 0,110 h ^w   M 0,120 h ^w   M 0,130 h ^w   M 0,140 h ^w   M 10,0 v ^h   M 20,0 v ^h   M 30,0 v ^h   M 40,0 v ^h   M 50,0 v ^h   M 60,0 v ^h   M 70,0 v ^h   M 80,0 v ^h   M 90,0 v ^h   M 100,0 v ^h   M 110,0 v ^h   M 120,0 v ^h   M 130,0 v ^h   M 140,0 v ^h   M 150,0 v ^h   M 160,0 v ^h   M 170,0 v ^h   M 180,0 v ^h   M 190,0 v ^h   "/>
+	</g>
+</svg>

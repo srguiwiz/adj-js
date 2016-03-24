@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="120">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="120" fill="linen"/>
+	<g>
+		<adj:circularList rAlign="inside" gap="2" explain="true"/>
+		<circle r="20" fill="#000" transform="translate(48,54)"/>
+		<rect width="3" height="3" fill="#222" transform="translate(81,53)"/>
+		<rect width="6" height="6" fill="#444" transform="translate(67,79)"/>
+		<rect width="9" height="9" fill="#666" transform="translate(35,87)"/>
+		<rect width="12" height="12" fill="#888" transform="translate(6,65)"/>
+		<rect width="15" height="15" fill="#aaa" transform="translate(3,28)"/>
+		<rect width="18" height="18" fill="#bbb" transform="translate(29,2)"/>
+		<rect width="21" height="21" fill="#ccc" transform="translate(66,8)"/>
+		<circle adj:explanation="true" cx="48" cy="54" r="61" fill="white" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		<circle adj:explanation="true" cx="48" cy="54" r="29" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="82" cy="54" r="3" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="70.446" cy="82.146" r="5" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="39.544" cy="91.047" r="7" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="11.961" cy="71.355" r="9" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="10.159" cy="35.777" r="11" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="38.209" cy="11.103" r="13" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+		<circle adj:explanation="true" cx="76.681" cy="18.036" r="15" fill="blue" fill-opacity="0.1" stroke="blue" stroke-width="1" stroke-opacity="0.1"/>
+	</g>
+</svg>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg(this);" width="574" height="558">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<title>HTTP Protocol</title>
+	<!-- Sample drawing idea and first version - Leo Baschy <srguiwiz12 AT nrvr DOT com> -->
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Sans;
+		src: local("Liberation Sans"), local("Liberation Sans Regular"), local("LiberationSans-Regular"),
+			url(../fonts/Liberation/LiberationSans-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Sans","Arial";
+		font-size: 9px;
+	}
+	.request {
+		fill: lightgray;
+		stroke: gray;
+		opacity: 0.9;
+	}
+	.arrow {
+		stroke: gray;
+		fill: none;
+	}
+	.server {
+		fill: lightsteelblue;
+		stroke: gray;
+	}
+	.client {
+		fill: whitesmoke;
+		stroke: gray;
+	}
+	]]></style>
+	<defs>
+		<marker id="arrowhead" class="arrow" markerUnits="strokeWidth" orient="auto" viewBox="-4 -2 5 4" refX="0" refY="0" markerWidth="5" markerHeight="4" stroke-width="1" fill="none">
+			<path d="M -3 1 L 0 0 L -3 -1"/>
+		</marker>
+	</defs>
+	<g>
+		<adj:horizontalList makeGrid="true" hAlign="left" vAlign="middle" maxPerRow="1" gap="0"/>
+		<text style="fill:gray" transform="translate(1,9)">Sample drawing only, not a real system design.</text>
+		<g transform="translate(0,12)">
+			<adj:horizontalList gap="5" centerGap="40" maxPerRow="3" makeGrid="true" hAlign="center" vAlign="middle"/>
+			<g>
+				<adj:connection from="client1 % 0, 0.7" to="server1 % 1, 0.3"/>
+				<path adj:id="request1path" class="arrow" d="M531,20.4q-255.53,22.609 -483,141.2" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,50 100,0"/>
+				<g transform="translate(456.309,18.404)">
+					<adj:rider adjust="near" gap="20" pin="1, 1"/>
+					<text>HTTP Request</text>
+				</g>
+			</g>
+			<g>
+				<adj:connection from="server1 % 1, 0.7" to="client2 % 0, 0.3"/>
+				<path adj:id="response1path" class="arrow" d="M48,170.4q223.431,140.221 483,187.2" stroke-width="3" marker-end="url(#arrowhead)" adj:d="M0,0 q50,50 100,0"/>
+				<g transform="translate(21.296,206.06)">
+					<adj:rider adjust="near" gap="20" pin="1, 0"/>
+					<text>HTTP Response</text>
+				</g>
+			</g>
+			<g transform="translate(27,16)"/>
+			<g transform="translate(290,16)"/>
+			<g adj:id="client1" transform="translate(531,5)">
+				<adj:verticalList gap="5"/>
+				<rect class="client" width="36" height="20" stroke-width="2" x="1" y="1">
+					<adj:frameForParent inset="1"/>
+				</rect>
+				<text transform="translate(6,14)">Client</text>
+			</g>
+			<g transform="translate(27,91)"/>
+			<g adj:id="request1" transform="translate(88,32)">
+				<adj:verticalList gap="5" middleGap="0"/>
+				<rect class="request" width="401" height="116" rx="3" ry="3" stroke-width="2" x="1" y="1">
+					<adj:frameForParent inset="1"/>
+				</rect>
+				<g transform="translate(5,5)">
+					<adj:horizontalList gap="3" bottomGap="0"/>
+					<text transform="translate(4,12)">GET</text>
+					<text transform="translate(31,12)">/</text>
+					<text transform="translate(42,12)">HTTP/1.1</text>
+				</g>
+				<g transform="translate(5,20)">
+					<adj:horizontalList gap="3" maxPerRow="2" makeGrid="true"/>
+					<text transform="translate(4,12)">Host:</text>
+					<text transform="translate(88,12)">www.example.com</text>
+					<text transform="translate(4,27)">User-Agent:</text>
+					<text transform="translate(88,27)">Mozilla/5.0 (Windows NT 5.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2</text>
+					<text transform="translate(5,42)">Accept:</text>
+					<text transform="translate(89,42)">text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</text>
+					<text transform="translate(5,57)">Accept-Language:</text>
+					<text transform="translate(88,57)">en-us,en;q=0.5</text>
+					<text transform="translate(5,72)">Accept-Encoding:</text>
+					<text transform="translate(88,72)">gzip, deflate</text>
+					<text transform="translate(4,87)">Connection:</text>
+					<text transform="translate(88,87)">keep-alive</text>
+				</g>
+			</g>
+			<g transform="translate(550,91)"/>
+			<g adj:id="server1" transform="translate(5,155)">
+				<adj:verticalList gap="5"/>
+				<rect class="server" width="41" height="20" stroke-width="2" x="1" y="1">
+					<adj:frameForParent inset="1"/>
+				</rect>
+				<text transform="translate(6,14)">Server</text>
+			</g>
+			<g transform="translate(290,166)"/>
+			<g transform="translate(550,166)"/>
+			<g transform="translate(27,362)"/>
+			<g adj:id="response1" transform="translate(171,182)">
+				<adj:verticalList gap="5" middleGap="0"/>
+				<rect class="request" width="236" height="357" rx="3" ry="3" stroke-width="2" x="1" y="1">
+					<adj:frameForParent inset="1"/>
+				</rect>
+				<g transform="translate(5,5)">
+					<adj:horizontalList gap="3" bottomGap="0"/>
+					<text transform="translate(4,12)">HTTP/1.1</text>
+					<text transform="translate(50,12)">200</text>
+					<text transform="translate(72,12)">OK</text>
+				</g>
+				<g transform="translate(5,20)">
+					<adj:horizontalList gap="3" bottomGap="0" maxPerRow="2" makeGrid="true"/>
+					<text transform="translate(4,12)">Date:</text>
+					<text transform="translate(79,12)">Sun, 26 Feb 2012 19:46:42 GMT</text>
+					<text transform="translate(4,27)">Server:</text>
+					<text transform="translate(80,27)">Apache/2</text>
+					<text transform="translate(4,42)">Last-Modified:</text>
+					<text transform="translate(80,42)">Thu, 23 Feb 2012 19:43:58 GMT</text>
+					<text transform="translate(5,57)">Accept-Ranges:</text>
+					<text transform="translate(80,57)">bytes</text>
+					<text transform="translate(4,72)">Content-Length:</text>
+					<text transform="translate(80,72)">64518</text>
+					<text transform="translate(4,87)">Cache-Control:</text>
+					<text transform="translate(80,87)">max-age=1200</text>
+					<text transform="translate(4,102)">Connection:</text>
+					<text transform="translate(80,102)">close</text>
+					<text transform="translate(4,117)">Content-Type:</text>
+					<text transform="translate(81,117)">text/html; charset=utf-8</text>
+					<text transform="translate(4,132)"> </text>
+				</g>
+				<g transform="translate(5,155)">
+					<adj:textBreaks/>
+					<adj:verticalList gap="3"/>
+					<text transform="translate(4,12)">&lt;!DOCTYPE html&gt;</text>
+					<text transform="translate(4,27)">&lt;html&gt;</text>
+					<text transform="translate(4,42)">&lt;head&gt;</text>
+					<text transform="translate(4,57)">&lt;title&gt;For Example A Dog&lt;/title&gt;</text>
+					<text transform="translate(4,72)">…</text>
+					<g adj:id="dog" transform="translate(-57,27.5)">
+						<g transform="scale(0.5)">
+							<path d="m182,220l13,-57c12.33333,-17.66667 26.66667,-29.33333 46,-29c35.33334,6.33333 31.66666,28.66667 55,28l67,-4l67,-9l36,28l-12,65l-97,-6l-69,9l-88,12c-13,-0.33331 -21,-7.66669 -18,-37z" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<path d="m193,243l-11,40l0,38l-26,-1l-1,16l43,1l6,-51l19,-50" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<path d="m234,249l-8,39l6,33l-21,3l3,13l38,-8l-12,-42l16,-48" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<path d="m383,237l-12,38l6,31l-26,3l5,14l36,-8l-4,-43l13,-38" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<path d="m429,237l-13,33l5,28l-20,5l5,14l35,-9l-7,-38l12,-39" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<path d="m443,171l40,-14l36,28l45,-5l-44,31l-39,-35l-33,8" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<path d="m215,148l-26,-47l-26,2l-10,24l-33,21l5,27l37,-14l35,31" stroke-width="5" stroke="#000000" fill="#C08040"/>
+							<ellipse ry="6.5" rx="4" cy="122.5" cx="172" stroke-width="5" stroke="#000000" fill="#FFFF00"/>
+						</g>
+					</g>
+				</g>
+			</g>
+			<g adj:id="client2" transform="translate(531,351)">
+				<adj:verticalList gap="5"/>
+				<rect class="client" width="36" height="20" stroke-width="2" x="1" y="1">
+					<adj:frameForParent inset="1"/>
+				</rect>
+				<text transform="translate(6,14)">Client</text>
+			</g>
+		</g>
+	</g>
+</svg>

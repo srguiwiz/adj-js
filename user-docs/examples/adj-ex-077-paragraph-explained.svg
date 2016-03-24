@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="100">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Serif;
+		src: local("Liberation Serif"), local("Liberation Serif Regular"), local("LiberationSerif-Regular"),
+			url(../fonts/Liberation/LiberationSerif-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Serif","Times New Roman";
+		font-size: 12px;
+	}
+	]]></style>
+	<rect width="200" height="100" fill="linen"/>
+	<g>
+		<adj:verticalList/>
+		<text adj:command="paragraph" adj:maxWidth="155" adj:explain="true" x="0" y="0" transform="translate(5,14)"> 
+This is a sentence of text that <tspan x="0" y="16">​﻿</tspan><tspan x="0" y="16">​﻿</tspan>will wrap. 
+Here is more. 
+		</text>
+		<g adj:explanation="true" transform="translate(5,14)">
+			<rect adj:explanation="true" x="-2" y="-11" width="155" height="32" fill="blue" fill-opacity="0.1" stroke="none"/>
+			<line adj:explanation="true" x1="-2" y1="21" x2="-2" y2="-11" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+			<line adj:explanation="true" x1="-2" y1="-11" x2="153" y2="-11" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+			<line adj:explanation="true" x1="153" y1="-11" x2="153" y2="21" stroke="blue" stroke-width="1" stroke-opacity="0.2"/>
+		</g>
+	</g>
+</svg>

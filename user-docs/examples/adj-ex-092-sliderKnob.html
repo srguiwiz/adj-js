@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<script src="../js/adj.js"></script>
+	</head>
+	<body onload="Adj.doSvg();">
+		<p>an example of Adj in SVG <a href="index.html#L11982">inline</a> in HTML</p>
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<g transform="translate(20,20)">
+				<rect x="0" y="0" width="140" height="20" fill="white" stroke="dimgrey"/>
+				<rect x="6" y="6" width="128" height="8" fill="lightgrey" stroke="dimgrey"/>
+				<g transform="translate(0,0)">
+					<adj:sliderKnob/>
+					<rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black"/>
+					<rect x="3" y="3" width="14" height="14" fill="lightgrey" stroke="none"/>
+				</g>
+			</g>
+			<text id="setme" style="font-size:10;font-family:sans-serif;" transform="translate(20,60)">0</text>
+			<script><![CDATA[
+document.addEventListener("change", function (event) {
+	var elementToSet = document.getElementById("setme");
+	elementToSet.textContent = event.detail.value;
+	Adj.doSvg();
+});
+			]]></script>
+		</svg>
+	</body>
+</html>
