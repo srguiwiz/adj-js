@@ -8,7 +8,7 @@
 		<g transform="translate(20,20)">
 			<rect x="0" y="0" width="140" height="20" rx="10" ry="10" fill="white" stroke="dimgrey"/>
 			<rect x="6" y="6" width="128" height="8" rx="4" ry="4" fill="lightgrey" stroke="dimgrey"/>
-			<g transform="translate(43.404,0)">
+			<g cursor="move" transform="translate(43.404,0)">
 				<adj:sliderKnob min="0.3" max="5.0" step="0.1" preset="2.0"/>
 				<rect x="0" y="0" width="20" height="20" rx="10" ry="10" fill="gainsboro" stroke="black"/>
 				<rect x="7" y="3" width="6" height="14" rx="3" ry="7" fill="lightgrey" stroke="none"/>

@@ -7,9 +7,9 @@
 		<adj:horizontalList gap="20" centerGap="10" vAlign="top"/>
 		<g transform="translate(20,20)">
 			<rect x="0" y="0" width="20" height="140" fill="white" stroke="dimgrey"/>
-			<g transform="translate(0,14.505)">
+			<g cursor="move" transform="translate(0,14.505)">
 				<adj:sliderKnob min="9" max="100" step="1" preset="20"/>
-				<rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black" cursor="move"/>
+				<rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black"/>
 			</g>
 		</g>
 		<g id="group" adj:command="horizontalList" adj:gap="2" adj:itemsH2V="0.9" transform="translate(50,20)">
