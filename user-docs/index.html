@@ -69,6 +69,9 @@ h1,h2,h3,h4,h5,h6 {
   white-space: pre-wrap;
   font-size: smaller;
 }
+ .separate {
+  margin-top: 3em;
+}
   </style>
 </head>
 
@@ -2938,8 +2941,13 @@ earlier <code>adj:rcGridCellTemplates</code>.</p>
 <table border="1">
   <tbody>
     <tr>
-      <td><img alt="example"
-      src="examples/adj-ex-092-sliderKnob.svg"></img></td>
+      <td><img alt="example" src="examples/adj-ex-092-sliderKnob.svg"></img> 
+
+        <p class="deemphasize separate">You can view <a
+        href="examples/adj-ex-092-sliderKnob.svg">SVG by itself</a> and drag
+        the <code>sliderKnob</code>. Contemporary browsers don't run scripts in
+        SVG in an <code>img</code> element.</p>
+      </td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="80" fill="linen"/&gt;</span>
   &lt;g transform="translate(20,20)"&gt;
@@ -2966,10 +2974,10 @@ document.addEventListener(<span class="example-code">"change"</span>, function (
       <td><img alt="example"
         src="examples/adj-ex-093-sliderKnob-step.svg"></img> 
 
-        <p class="deemphasize">In case browser doesn't run scripts in SVG in an
-        <code>&lt;img</code> element you can view <a
+        <p class="deemphasize separate">You can view <a
         href="examples/adj-ex-093-sliderKnob-step.svg">SVG by itself</a> and
-        drag the <code>sliderKnob</code>.</p>
+        drag the <code>sliderKnob</code>. Contemporary browsers don't run
+        scripts in SVG in an <code>img</code> element.</p>
       </td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="160" fill="linen"/&gt;</span>
@@ -3446,10 +3454,10 @@ instances of command <code><a href="#L94550">hide</a></code>.</p>
     <tr>
       <td><img alt="example" src="examples/adj-ex-073-toggle-hide.svg"></img> 
 
-        <p class="deemphasize">In case browser doesn't run <code>onclick</code>
-        script in SVG in an <code>&lt;img</code> element you can view <a
+        <p class="deemphasize separate">You can view <a
         href="examples/adj-ex-073-toggle-hide.svg">SVG by itself</a> and click
-        elements having <code>onclick</code>.</p>
+        elements having <code>onclick</code>. Contemporary browsers don't run
+        scripts in SVG in an <code>img</code> element.</p>
       </td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
