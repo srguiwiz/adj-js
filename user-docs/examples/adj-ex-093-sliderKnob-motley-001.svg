@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="209.201" height="200">
-	<script type="text/javascript" xlink:href="js/adj.js"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg(function(){console.log('log1')});" width="209.201" height="200">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
 	<rect width="200" height="200" fill="linen"/>
 	<g transform="rotate(5)">
 		<adj:verticalList gap="20"/>
@@ -27,8 +27,11 @@
 	<script><![CDATA[
 document.addEventListener("change", function (event) {
 	document.getElementById("setme").firstElementChild.setAttribute("toAngle", event.detail.value);
+	Adj.doSvg(function(){console.log('log2')});
 	document.getElementById("setme2").textContent = event.detail.value;
-	Adj.doSvg();
+// TODO remove this intentional exception
+//console.log({}.nothing.here);
+	Adj.doSvg(function(){console.log('log3')});
 });
 	]]></script>
 </svg>

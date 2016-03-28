@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (x64) (http://www.altova.com) by Leo Baschy (Niresip) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="180">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="180" fill="linen"/>
+	<g>
+		<adj:horizontalList gap="20" centerGap="10" vAlign="top"/>
+		<g transform="translate(20,20)">
+			<rect x="0" y="0" width="20" height="140" fill="white" stroke="dimgrey"/>
+			<g transform="translate(0,14.505)">
+				<adj:sliderKnob min="9" max="100" step="1" preset="20"/>
+				<rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black" cursor="move"/>
+			</g>
+		</g>
+		<g id="group" adj:command="horizontalList" adj:gap="2" adj:itemsH2V="0.9" transform="translate(50,20)">
+			<rect width="10" height="10" fill="rgb(0,0,0)" transform="translate(2,2)"/>
+		</g>
+	</g>
+	<script><![CDATA[
+document.addEventListener("change", function (event) {
+	var newCount = event.detail.value;
+	var groupElement = document.getElementById("group");
+	for (var i = groupElement.childElementCount, n = newCount; i < n; i++) {
+		var newChild = groupElement.lastElementChild.cloneNode();
+		var newBrightness = 200 - Math.round(1000 / (5 + i));
+		newChild.setAttribute("fill", "rgb(" + newBrightness + "," + newBrightness + "," + newBrightness + ")");
+		groupElement.appendChild(newChild);
+	}
+	for (var i = groupElement.childElementCount, n = newCount; i > n; i--) {
+		groupElement.removeChild(groupElement.lastElementChild);
+	}
+	Adj.doSvg();
+});
+	]]></script>
+</svg>
