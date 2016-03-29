@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:1, revision:5 };
+Adj.version = { major:6, minor:1, revision:6 };
 Adj.algorithms = {};
 
 // constants
@@ -8188,6 +8188,14 @@ Adj.defineCommandForAlgorithm({
 	methods: []
 });
 
+// utility
+Adj.setGlobalCursor = function setCursor (newCursor) {
+	document.documentElement.style.cursor = newCursor;
+}
+Adj.unsetGlobalCursor = function unsetCursor () {
+	document.documentElement.style.cursor = "";
+}
+
 // one event listener function to be installed for document,
 // only one element can be dragged at a time,
 // mouseup and mousemove event may occur outside the dragged element
@@ -8203,6 +8211,7 @@ Adj.documentDraggedListener = function documentDraggedListener (event) {
 				return true;
 			}
 			//console.log(type);
+			Adj.unsetGlobalCursor();
 			var draggedMouseUpListener = dragged.draggedMouseUpListener;
 			if (draggedMouseUpListener) {
 				return draggedMouseUpListener(event);
@@ -8283,16 +8292,19 @@ Adj.SliderKnob.prototype.update = function sliderKnobUpdate () {
 		case "horizontal":
 			var positionX = sliderX + offset;
 			var positionY = sliderY + freedomH / 2;
+			var cursor = "ew-resize";
 			break;
 		case "vertical":
 			positionX = sliderX + freedomW / 2;
 			positionY = sliderY + offset;
+			cursor = "ns-resize";
 			break;
 	}
 	var translateX = positionX - knobBoundingBox.x;
 	var translateY = positionY - knobBoundingBox.y;
 	// now we know where to put it
 	knob.setAttribute("transform", "translate(" + Adj.decimal(translateX) + "," + Adj.decimal(translateY) + ")");
+	knob.style.cursor = cursor;
 };
 Adj.SliderKnob.prototype.interpret = function sliderKnobInterpret (translateX, translateY) {
 	var knob = this.knob;
@@ -8346,6 +8358,7 @@ Adj.sliderKnobListener = function sliderKnobListener (event) {
 				initialKnobToSliderMatrix: knob.getTransformToElement(slider),
 				clientToSliderMatrixWithoutEF: clientToSliderMatrixWithoutEF,
 			};
+			Adj.setGlobalCursor(knob.style.cursor);
 			//console.log(type, knob);
 			return false;
 		case "mouseup":
