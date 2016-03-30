@@ -78,8 +78,8 @@ h1,h2,h3,h4,h5,h6 {
 <body>
 <h1>Adj Framework</h1>
 
-<p class="showonload" style="display:none;">Presumably documentation for Adj
-version <strong class="adjversion">?</strong>.</p>
+<p class="showonload" style="display:none;">Documentation for Adj version
+<strong class="adjversion">?</strong>.</p>
 
 <p class="deemphasize">This user guide's SVG images show fine in contemporary
 browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 11 or
@@ -4888,10 +4888,10 @@ style="max-width:95%;max-height:auto;"></img>
 	for (var i = 0, n = versionInstances.length; i < n; i++) {
 		versionInstances[i].innerHTML=Adj.version.major+'.'+Adj.version.minor+'.'+Adj.version.revision;
 	}
-	//
+	// only should get here if succeeded above
 	var toShowInstances = document.querySelectorAll('.showonload');
 	for (var i = 0, n = toShowInstances.length; i < n; i++) {
-		toShowInstances[i].removeAttribute('style');
+		toShowInstances[i].style.display = "";
 	}
 //]]></script>
 </body>
