@@ -1680,6 +1680,11 @@ Adj.getElementByIdNearby = function getElementByIdNearby (id, startingElement) {
 	return null; // failed to find any
 };
 
+// utility
+Adj.getElementById = function getElementById (id) {
+	return Adj.getElementByIdNearby(id, document.documentElement);
+}
+
 // constants
 // parse an id and optionally two more parameters, e.g. full "obj1 % 0.5, 1" or less specific "obj2"
 // note: as implemented tolerates extra parameters
