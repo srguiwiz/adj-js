@@ -931,6 +931,7 @@ Adj.createExplanationElement = function createExplanationElement (expectedAncest
 	if (!dontDisplayNone) {
 		Adj.hideByDisplayAttribute(explanationElement);
 	}
+	explanationElement.style["pointer-events"] = "none";
 	return explanationElement;
 };
 
