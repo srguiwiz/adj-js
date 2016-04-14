@@ -1520,6 +1520,20 @@ Adj.defineCommandForAlgorithm({
 });
 
 // utility
+Adj.getElementId = function getElementId (element) {
+	// chose to implement to recognize more than one kind of id
+	var adjId = Adj.elementGetAttributeInAdjNS(element, "id"); // first check for preferred attribute adj:id
+	if (adjId) {
+		return adjId;
+	}
+	var plainId = element.getAttribute("id"); // second check for acceptable attribute id
+	if (plainId) {
+		return plainId;
+	}
+	return null; // failed to find any
+}
+
+// utility
 Adj.buildIdsDictionary = function buildIdsDictionary (element, idsDictionary, level) {
 	if (idsDictionary === undefined) { idsDictionary = {}; } // ensure there is an idsDictionary
 	level = level || 1; // if no level given then 1
