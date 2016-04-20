@@ -579,7 +579,7 @@ Adj.parseAdjElementsToPhaseHandlers = function parseAdjElementsToPhaseHandlers (
 							if (!variables) {
 								variables = node.adjVariables = {};
 							}
-							if (variableValue != undefined) {
+							if (variableValue !== undefined) {
 								variables[variableName] = variableValue;
 							} else {
 								delete variables[variableName];
@@ -742,8 +742,8 @@ Adj.eastSouthWestNorth = { east:0, south:90, west:180, north:270 };
 // utility
 // if one and other both are integers and not too close then round result to be an integer as well
 Adj.fraction = function fraction (one, other, fraction, roundNoCloser, roundIfIntegers) {
-	roundNoCloser = roundNoCloser != undefined ? roundNoCloser : 0; // default roundNoCloser = 0
-	roundIfIntegers = roundIfIntegers != undefined ? roundIfIntegers : true; // default roundIfInteger = true
+	roundNoCloser = roundNoCloser !== undefined ? roundNoCloser : 0; // default roundNoCloser = 0
+	roundIfIntegers = roundIfIntegers !== undefined ? roundIfIntegers : true; // default roundIfInteger = true
 	fraction = one + (other - one) * fraction;
 	if (roundIfIntegers) {
 		if (one % 1 === 0 && other % 1 === 0) { // both are integers
@@ -762,7 +762,7 @@ Adj.fraction = function fraction (one, other, fraction, roundNoCloser, roundIfIn
 
 // utility
 Adj.decimal = function decimal (number, decimalDigits) {
-	decimalDigits = decimalDigits != undefined ? decimalDigits : 3; // default decimal = 3
+	decimalDigits = decimalDigits !== undefined ? decimalDigits : 3; // default decimal = 3
 	var factor = Math.pow(10, decimalDigits);
 	return Math.round(number * factor) / factor;
 };
@@ -917,7 +917,7 @@ Adj.createArtifactElement = function createArtifactElement (name, parent) {
 };
 // utility
 Adj.cloneArtifactElement = function cloneArtifactElement (element, deep) {
-	deep = deep != undefined ? deep : true; // default deep = true
+	deep = deep !== undefined ? deep : true; // default deep = true
 	var clone = element.cloneNode(deep);
 	Adj.elementSetAttributeInAdjNS(clone, "artifact", "true", element);
 	return clone;
@@ -1503,8 +1503,8 @@ Adj.defineCommandForAlgorithm({
 	parameters: ["wordBreaks",
 				 "lineBreaks"],
 	methods: [function textBreaks (element, parametersObject) {
-		var wordBreaks = parametersObject.wordBreaks != undefined ? parametersObject.wordBreaks : false; // default wordBreaks = false
-		var lineBreaks = parametersObject.lineBreaks != undefined ? parametersObject.lineBreaks : true; // default lineBreaks = true
+		var wordBreaks = parametersObject.wordBreaks !== undefined ? parametersObject.wordBreaks : false; // default wordBreaks = false
+		var lineBreaks = parametersObject.lineBreaks !== undefined ? parametersObject.lineBreaks : true; // default lineBreaks = true
 		//
 		// breaks, if any
 		if (wordBreaks || lineBreaks) {
@@ -4730,7 +4730,7 @@ Adj.doVarsArithmetic = function doVarsArithmetic (element, originalExpression, d
 	}
 	if (constantsByName) { // e.g. Adj.leftCenterRight
 		var constantValue = constantsByName[originalExpression];
-		if (constantValue != undefined) {
+		if (constantValue !== undefined) {
 			return constantValue;
 		}
 	}
@@ -5482,28 +5482,28 @@ Adj.defineCommandForAlgorithm({
 			var currentChildY = childBoundingBox.y;
 			var currentChildXW = currentChildX + childBoundingBox.width;
 			var currentChildYH = currentChildY + childBoundingBox.height;
-			if (minLeft != undefined) {
+			if (minLeft !== undefined) {
 				if (currentChildX < minLeft) {
 					minLeft = currentChildX;
 				}
 			} else {
 				minLeft = currentChildX;
 			}
-			if (minTop != undefined) {
+			if (minTop !== undefined) {
 				if (currentChildY < minTop) {
 					minTop = currentChildY;
 				}
 			} else {
 				minTop = currentChildY;
 			}
-			if (maxRight != undefined) {
+			if (maxRight !== undefined) {
 				if (currentChildXW > maxRight) {
 					maxRight = currentChildXW;
 				}
 			} else {
 				maxRight = currentChildXW;
 			}
-			if (maxBottom != undefined) {
+			if (maxBottom !== undefined) {
 				if (currentChildYH > maxBottom) {
 					maxBottom = currentChildYH;
 				}
@@ -5693,28 +5693,28 @@ Adj.defineCommandForAlgorithm({
 				currentChildY += pinTranslationY;
 			}
 			//
-			if (minLeft != undefined) {
+			if (minLeft !== undefined) {
 				if (currentChildX < minLeft) {
 					minLeft = currentChildX;
 				}
 			} else {
 				minLeft = currentChildX;
 			}
-			if (minTop != undefined) {
+			if (minTop !== undefined) {
 				if (currentChildY < minTop) {
 					minTop = currentChildY;
 				}
 			} else {
 				minTop = currentChildY;
 			}
-			if (maxRight != undefined) {
+			if (maxRight !== undefined) {
 				if (currentChildXW > maxRight) {
 					maxRight = currentChildXW;
 				}
 			} else {
 				maxRight = currentChildXW;
 			}
-			if (maxBottom != undefined) {
+			if (maxBottom !== undefined) {
 				if (currentChildYH > maxBottom) {
 					maxBottom = currentChildYH;
 				}
