@@ -960,6 +960,20 @@ Adj.createExplanationLine = function createExplanationLine (expectedAncestor, x1
 	return explanationElement;
 };
 
+// utility
+Adj.getBBox = function adjGetBBox (element) {
+	try {
+		return element.getBBox(); // normal case
+	} catch (e) {
+		if (!element.getBBox) { // not an SVGLocatable, e.g. a <script> element
+			throw e; // don't cover up for that kind of element
+		} else { // e.g. display="none"
+			// don't return element.ownerSVGElement.createSVGRect(); // all 0
+			return null;
+		}
+	}
+}
+
 // lower case element.tagName instead of mixed case element.tagName has been
 // observed when parsing Adj in SVG inline in HTML,
 // hence we are tolerating lower case, implemented by converting to intended mixed case,
@@ -1053,7 +1067,7 @@ Adj.defineCommandForAlgorithm({
 				continue;
 			}
 			childRecords.push({
-				boundingBox: child.getBBox(),
+				boundingBox: Adj.getBBox(child),
 				node: child
 			});
 		}
@@ -1280,7 +1294,7 @@ Adj.defineCommandForAlgorithm({
 				continue;
 			}
 			childRecords.push({
-				boundingBox: child.getBBox(),
+				boundingBox: Adj.getBBox(child),
 				node: child
 			});
 		}
@@ -1467,7 +1481,7 @@ Adj.defineCommandForAlgorithm({
 		var bottomInset = Adj.doVarsArithmetic(element, parametersObject.bottomInset, verticalInset, null, usedHow, variableSubstitutionsByName); // default bottomInset = verticalInset
 		//
 		var parent = element.parentNode;
-		var parentBoundingBox = parent.getBBox();
+		var parentBoundingBox = Adj.getBBox(parent);
 		element.setAttribute("x", Adj.decimal(parentBoundingBox.x + leftInset));
 		element.setAttribute("y", Adj.decimal(parentBoundingBox.y + topInset));
 		element.setAttribute("width", Adj.decimal(parentBoundingBox.width - leftInset - rightInset));
@@ -2155,7 +2169,7 @@ Adj.defineCommandForAlgorithm({
 		if (!fromElement) {
 			throw "nonresolving id \"" + fromId + "\" used in parameter from= for a connection command";
 		}
-		var fromBoundingBox = fromElement.getBBox();
+		var fromBoundingBox = Adj.getBBox(fromElement);
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
 		var fromPoint = theSvgElement.createSVGPoint();
 		fromPoint.x = fromBoundingBox.x + fromBoundingBox.width * fromX;
@@ -2166,7 +2180,7 @@ Adj.defineCommandForAlgorithm({
 		if (!toElement) {
 			throw "nonresolving id \"" + toId + "\" used in parameter to= for a connection command";
 		}
-		var toBoundingBox = toElement.getBBox();
+		var toBoundingBox = Adj.getBBox(toElement);
 		var matrixFromToElement = toElement.getTransformToElement(element);
 		var toPoint = theSvgElement.createSVGPoint();
 		toPoint.x = toBoundingBox.x + toBoundingBox.width * toX;
@@ -2415,7 +2429,7 @@ Adj.relativeBoundingBoxes = function relativeBoundingBoxes (element, elements) {
 		var oneElement = elements[oneElementIndex];
 		var oneBoundingBox;
 		try {
-			oneBoundingBox = oneElement.getBBox();
+			oneBoundingBox = Adj.getBBox(oneElement);
 		} catch (exception) {
 			// observed to get here in Firefox 19 when defs element has getBBox but expectably fails
 			continue; // can ignore as long as no requirement for matching indexes
@@ -2592,7 +2606,7 @@ Adj.defineCommandForAlgorithm({
 		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
 		// where on path to put it
-		var boundingBox = element.getBBox();
+		var boundingBox = Adj.getBBox(element);
 		var pinX = boundingBox.x + Adj.fraction(0, boundingBox.width, hFraction);
 		var pinY = boundingBox.y + Adj.fraction(0, boundingBox.height, vFraction);
 		var bestPathFraction = (pathFraction + pathFraction2) / 2;
@@ -2901,7 +2915,7 @@ Adj.defineCommandForAlgorithm({
 		var inset = Adj.doVarsArithmetic(element, parametersObject.inset, 0, null, usedHow, variableSubstitutionsByName); // default inset = 0
 		//
 		var parent = element.parentNode;
-		var parentBoundingBox = parent.getBBox();
+		var parentBoundingBox = Adj.getBBox(parent);
 		var parentBoundingCircle = Adj.circleAroundRect(parentBoundingBox);
 		element.setAttribute("cx", Adj.decimal(parentBoundingCircle.cx));
 		element.setAttribute("cy", Adj.decimal(parentBoundingCircle.cy));
@@ -2923,7 +2937,7 @@ Adj.defineCommandForAlgorithm({
 		var verticalInset = Adj.doVarsArithmetic(element, parametersObject.verticalInset, inset, null, usedHow, variableSubstitutionsByName); // default verticalInset = inset
 		//
 		var parent = element.parentNode;
-		var parentBoundingBox = parent.getBBox();
+		var parentBoundingBox = Adj.getBBox(parent);
 		var parentBoundingEllipse = Adj.ellipseAroundRect(parentBoundingBox);
 		element.setAttribute("cx", Adj.decimal(parentBoundingEllipse.cx));
 		element.setAttribute("cy", Adj.decimal(parentBoundingEllipse.cy));
@@ -2995,7 +3009,7 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
-			var boundingBox = child.getBBox();
+			var boundingBox = Adj.getBBox(child);
 			var boundingCircle = Adj.circleAroundRect(boundingBox);
 			boundingCircle.r = Math.ceil(boundingCircle.r);
 			childRecords.push({
@@ -3292,7 +3306,7 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
-			var childBoundingBox = child.getBBox();
+			var childBoundingBox = Adj.getBBox(child);
 			childRecords.push({
 				boundingBox: childBoundingBox,
 				node: child,
@@ -3850,7 +3864,7 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
-			var childBoundingBox = child.getBBox();
+			var childBoundingBox = Adj.getBBox(child);
 			childRecords.push({
 				boundingBox: childBoundingBox,
 				node: child,
@@ -4463,7 +4477,7 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 				throw "nonresolving ~ id \"" + arithmeticId + "\" " + usedHow;
 			}
 			idedElementRecord = idedElementRecordsById[arithmeticId] = {
-				boundingBox: idedElement.getBBox(),
+				boundingBox: Adj.getBBox(idedElement),
 				matrixFrom: idedElement.getTransformToElement(parent)
 			};
 		}
@@ -4832,7 +4846,7 @@ Adj.defineCommandForAlgorithm({
 		//
 		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
-		var boundingBox = element.getBBox();
+		var boundingBox = Adj.getBBox(element);
 		var pinX = boundingBox.x + Adj.fraction(0, boundingBox.width, hFraction);
 		var pinY = boundingBox.y + Adj.fraction(0, boundingBox.height, vFraction);
 		//
@@ -4881,7 +4895,7 @@ Adj.defineCommandForAlgorithm({
 		var maxWidth = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.maxWidth, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default maxWidth = null
 		var maxHeight = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.maxHeight, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default maxHeight = null
 		//
-		var boundingBox = element.getBBox();
+		var boundingBox = Adj.getBBox(element);
 		var boundingBoxWidth = boundingBox.width;
 		var boundingBoxHeight = boundingBox.height;
 		var hScale = null;
@@ -5194,7 +5208,7 @@ Adj.defineCommandForAlgorithm({
 			return; // defensive exit
 		}
 		//
-		var subjectBoundingBox = subject.getBBox();
+		var subjectBoundingBox = Adj.getBBox(subject);
 		frame.setAttribute("x", Adj.decimal(subjectBoundingBox.x + leftInset));
 		frame.setAttribute("y", Adj.decimal(subjectBoundingBox.y + topInset));
 		frame.setAttribute("width", Adj.decimal(subjectBoundingBox.width - leftInset - rightInset));
@@ -5287,7 +5301,7 @@ Adj.defineCommandForAlgorithm({
 		//
 		Adj.unhideByDisplayAttribute(element);
 		//
-		var fromBoundingBox = fromElement.getBBox();
+		var fromBoundingBox = Adj.getBBox(fromElement);
 		var matrixFromFromElement = fromElement.getTransformToElement(element);
 		var fromTopLeft = theSvgElement.createSVGPoint();
 		fromTopLeft.x = fromBoundingBox.x;
@@ -5306,7 +5320,7 @@ Adj.defineCommandForAlgorithm({
 		fromBottomRight.y = fromBoundingBox.y + fromBoundingBox.height;
 		fromBottomRight = fromBottomRight.matrixTransform(matrixFromFromElement);
 		//
-		var toBoundingBox = toElement.getBBox();
+		var toBoundingBox = Adj.getBBox(toElement);
 		var matrixFromToElement = toElement.getTransformToElement(element);
 		var toTopLeft = theSvgElement.createSVGPoint();
 		toTopLeft.x = toBoundingBox.x;
@@ -5451,7 +5465,7 @@ Adj.defineCommandForAlgorithm({
 				continue;
 			}
 			childRecords.push({
-				boundingBox: child.getBBox(),
+				boundingBox: Adj.getBBox(child),
 				node: child
 			});
 		}
@@ -5572,7 +5586,7 @@ Adj.defineCommandForAlgorithm({
 				continue;
 			}
 			childRecords.push({
-				boundingBox: child.getBBox(),
+				boundingBox: Adj.getBBox(child),
 				node: child
 			});
 		}
@@ -5655,14 +5669,14 @@ Adj.defineCommandForAlgorithm({
 					pinToY = 1.0; // default pinToY = 1.0
 				}
 				//
-				var pinToBoundingBox = pinToElement.getBBox();
+				var pinToBoundingBox = Adj.getBBox(pinToElement);
 				var matrixFromPinToElement = pinToElement.getTransformToElement(pinToSibling);
 				var pinToPoint = theSvgElement.createSVGPoint();
 				pinToPoint.x = pinToBoundingBox.x + pinToBoundingBox.width * pinToX;
 				pinToPoint.y = pinToBoundingBox.y + pinToBoundingBox.height * pinToY;
 				pinToPoint = pinToPoint.matrixTransform(matrixFromPinToElement);
 				//
-				var pinThisBoundingBox = pinThisElement.getBBox();
+				var pinThisBoundingBox = Adj.getBBox(pinThisElement);
 				var matrixFromPinThisElement = pinThisElement.getTransformToElement(pinThisSibling);
 				var pinThisPoint = theSvgElement.createSVGPoint();
 				pinThisPoint.x = pinThisBoundingBox.x + pinThisBoundingBox.width * pinThisX;
@@ -5878,7 +5892,7 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
-			var childBoundingBox = child.getBBox();
+			var childBoundingBox = Adj.getBBox(child);
 			childBoundingBox.d = Math.sqrt(Math.pow(childBoundingBox.width, 2) + Math.pow(childBoundingBox.height, 2)); // diagonal
 			childRecords.push({
 				boomConfiguration: childRecords.length ? Adj.deepCloneObject(currentBoomConfiguration) : undefined, // undefined for rootRecord
@@ -6499,7 +6513,7 @@ Adj.defineCommandForAlgorithm({
 				break breakLinesTry; // done
 			}
 			//
-			var oneLineBoundingBox = element.getBBox();
+			var oneLineBoundingBox = Adj.getBBox(element);
 			var lineStep = Math.round(oneLineBoundingBox.height) + lineGap;
 			if (oneLineBoundingBox.width <= lineZeroMaxWidth) {
 				break breakLinesTry; //done
@@ -6621,7 +6635,7 @@ Adj.defineCommandForAlgorithm({
 		// explain
 		if (explain) {
 			if (maxWidth) {
-				var textBoundingBox = element.getBBox();
+				var textBoundingBox = Adj.getBBox(element);
 				var x = Adj.decimal(textBoundingBox.x - Adj.fraction(0, maxWidth - textBoundingBox.width, hAlign));
 				var w = maxWidth;
 				var xw = x + w;
@@ -7966,7 +7980,7 @@ Adj.defineCommandForAlgorithm({
 					cellParameters[propertyName] = cellTemplate[propertyName];
 				}
 				//
-				var boundingBox = grandchild.getBBox();
+				var boundingBox = Adj.getBBox(grandchild);
 				var cellRecord = {
 					boundingBox: boundingBox,
 					node: grandchild,
@@ -8023,7 +8037,7 @@ Adj.defineCommandForAlgorithm({
 			child.insertBefore(partHiddenRect, grandchildAfterHiddenRect);
 			//
 			partRecords.push({
-				boundingBox: child.getBBox(),
+				boundingBox: Adj.getBBox(child),
 				node: child,
 				//
 				hiddenRect: partHiddenRect,
@@ -8290,8 +8304,8 @@ Object.defineProperty(Adj.SliderKnob.prototype, "value", {
 Adj.SliderKnob.prototype.update = function sliderKnobUpdate () {
 	var knob = this.knob;
 	var slider = knob.parentNode;
-	var sliderBoundingBox = slider.getBBox();
-	var knobBoundingBox = knob.getBBox();
+	var sliderBoundingBox = Adj.getBBox(slider);
+	var knobBoundingBox = Adj.getBBox(knob);
 	var sliderX = sliderBoundingBox.x;
 	var sliderY = sliderBoundingBox.y;
 	var freedomW = sliderBoundingBox.width - knobBoundingBox.width;
@@ -8328,8 +8342,8 @@ Adj.SliderKnob.prototype.update = function sliderKnobUpdate () {
 };
 Adj.SliderKnob.prototype.interpret = function sliderKnobInterpret (translateX, translateY) {
 	var knob = this.knob;
-	var sliderBoundingBox = knob.parentNode.getBBox();
-	var knobBoundingBox = knob.getBBox();
+	var sliderBoundingBox = Adj.getBBox(knob.parentNode);
+	var knobBoundingBox = Adj.getBBox(knob);
 	var freedomW = sliderBoundingBox.width - knobBoundingBox.width;
 	var freedomH = sliderBoundingBox.height - knobBoundingBox.height;
 	if (freedomW >= freedomH) { // horizontal
@@ -8421,8 +8435,8 @@ Adj.sliderKnobListener = function sliderKnobListener (event) {
 			var translateY = initialKnobToSliderMatrix.f + mouseRelativeToInitial.y;
 			// limit range
 			var slider = knob.parentNode;
-			var sliderBoundingBox = slider.getBBox();
-			var knobBoundingBox = knob.getBBox();
+			var sliderBoundingBox = Adj.getBBox(slider);
+			var knobBoundingBox = Adj.getBBox(knob);
 			var sliderX = sliderBoundingBox.x;
 			var sliderY = sliderBoundingBox.y;
 			var sliderXW = sliderX + sliderBoundingBox.width;
