@@ -1066,8 +1066,12 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
+			var childBoundingBox = Adj.getBBox(child);
+			if (!childBoundingBox) { // e.g. display="none"
+				continue; // skip
+			}
 			childRecords.push({
-				boundingBox: Adj.getBBox(child),
+				boundingBox: childBoundingBox,
 				node: child
 			});
 		}
@@ -1293,8 +1297,12 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
+			var childBoundingBox = Adj.getBBox(child);
+			if (!childBoundingBox) { // e.g. display="none"
+				continue; // skip
+			}
 			childRecords.push({
-				boundingBox: Adj.getBBox(child),
+				boundingBox: childBoundingBox,
 				node: child
 			});
 		}
@@ -3009,23 +3017,26 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
-			var boundingBox = Adj.getBBox(child);
-			var boundingCircle = Adj.circleAroundRect(boundingBox);
-			boundingCircle.r = Math.ceil(boundingCircle.r);
+			var childBoundingBox = Adj.getBBox(child);
+			if (!childBoundingBox) { // e.g. display="none"
+				continue; // skip
+			}
+			var childBoundingCircle = Adj.circleAroundRect(childBoundingBox);
+			childBoundingCircle.r = Math.ceil(childBoundingCircle.r);
 			childRecords.push({
-				boundingBox: boundingBox,
-				boundingCircle: boundingCircle,
+				boundingBox: childBoundingBox,
+				boundingCircle: childBoundingCircle,
 				node: child
 			});
 			if (!trunkRecord) { // needs a trunk, chose to require it to be first
 				trunkRecord = childRecords[0];
 				continue;
 			}
-			if (boundingCircle.r > maxBranchRadius) {
-				maxBranchRadius = boundingCircle.r;
+			if (childBoundingCircle.r > maxBranchRadius) {
+				maxBranchRadius = childBoundingCircle.r;
 			}
-			if (boundingCircle.r < minBranchRadius) {
-				minBranchRadius = boundingCircle.r;
+			if (childBoundingCircle.r < minBranchRadius) {
+				minBranchRadius = childBoundingCircle.r;
 			}
 		}
 		if (!trunkRecord) { // childRecords.length === 0
@@ -4847,6 +4858,9 @@ Adj.defineCommandForAlgorithm({
 		Adj.processElementWithPhaseHandlers(element, true, level); // process subtree separately, i.e. now
 		//
 		var boundingBox = Adj.getBBox(element);
+		if (!boundingBox) { // e.g. display="none"
+			return; // skip
+		}
 		var pinX = boundingBox.x + Adj.fraction(0, boundingBox.width, hFraction);
 		var pinY = boundingBox.y + Adj.fraction(0, boundingBox.height, vFraction);
 		//
@@ -4896,6 +4910,9 @@ Adj.defineCommandForAlgorithm({
 		var maxHeight = Adj.doVarsIdsArithmeticToGetNumber(element, parametersObject.maxHeight, null, usedHow, variableSubstitutionsByName, idedElementRecordsById); // default maxHeight = null
 		//
 		var boundingBox = Adj.getBBox(element);
+		if (!boundingBox) { // e.g. display="none"
+			return; // skip
+		}
 		var boundingBoxWidth = boundingBox.width;
 		var boundingBoxHeight = boundingBox.height;
 		var hScale = null;
@@ -5464,8 +5481,12 @@ Adj.defineCommandForAlgorithm({
 			if (child.adjHiddenByCommand) {
 				continue;
 			}
+			var childBoundingBox = Adj.getBBox(child);
+			if (!childBoundingBox) { // e.g. display="none"
+				continue; // skip
+			}
 			childRecords.push({
-				boundingBox: Adj.getBBox(child),
+				boundingBox: childBoundingBox,
 				node: child
 			});
 		}
@@ -5893,6 +5914,9 @@ Adj.defineCommandForAlgorithm({
 				continue;
 			}
 			var childBoundingBox = Adj.getBBox(child);
+			if (!childBoundingBox) { // e.g. display="none"
+				continue; // skip
+			}
 			childBoundingBox.d = Math.sqrt(Math.pow(childBoundingBox.width, 2) + Math.pow(childBoundingBox.height, 2)); // diagonal
 			childRecords.push({
 				boomConfiguration: childRecords.length ? Adj.deepCloneObject(currentBoomConfiguration) : undefined, // undefined for rootRecord
