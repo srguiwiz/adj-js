@@ -961,9 +961,19 @@ Adj.createExplanationLine = function createExplanationLine (expectedAncestor, x1
 };
 
 // utility
+// if display="none" then instead of throwing an exception return null as a flag
 Adj.getBBox = function adjGetBBox (element) {
 	try {
-		return element.getBBox(); // normal case
+		var boundingBox = element.getBBox(); // normal case
+		// make up for difference between browsers:
+		// in Firefox 45 if display="none" then getBBox throws an exception
+		// in Chrome 51 if display="none" then getBBox returns width and height 0
+		if (boundingBox.width === 0 && boundingBox.height === 0) { // could be display="none"
+			if (element.getAttribute("display") === "none") { // special case we want to know about
+				return null;
+			}
+		}
+		return boundingBox; // normal case
 	} catch (e) {
 		if (!element.getBBox) { // not an SVGLocatable, e.g. a <script> element
 			throw e; // don't cover up for that kind of element
