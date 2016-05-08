@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:1, revision:6 };
+Adj.version = { major:6, minor:1, revision:7 };
 Adj.algorithms = {};
 
 // constants
@@ -8497,7 +8497,7 @@ Adj.sliderKnobListener = function sliderKnobListener (event) {
 			return false;
 	}
 	return true;
-}
+};
 
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
@@ -8525,6 +8525,182 @@ Adj.defineCommandForAlgorithm({
 			sliderKnobRecord.value = preset;
 		} else { // preexisting
 			sliderKnobRecord.update(); // in case slider resized even though value remained the same
+		}
+	}]
+});
+
+// companion class
+Adj.ToggleButton = function ToggleButton (buttonElement, congruent) {
+	this.button = buttonElement;
+	this.alternatives = [];
+	this.values = [];
+	this.congruent = !!congruent;
+};
+Object.defineProperty(Adj.ToggleButton.prototype, "value", {
+	get: function() {
+		return this._value;
+	},
+	set: function(value) {
+		var previousValue = this.value;
+		if (value !== previousValue) {
+			this._value = value;
+			this.update();
+			//
+			var button = this.button;
+			// https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
+			var event = button.ownerDocument.createEvent("Event");
+			event.initEvent("change", true, true);
+			event.detail = { value: this.value };
+			// per https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+			// event handlers run on a nested call stack: they block the caller until they complete,
+			// but exceptions do not propagate to the caller
+			button.dispatchEvent(event);
+		}
+	}
+});
+Adj.ToggleButton.prototype.addAlternative = function toggleButtonAddAlternative (alternativeElement, value) {
+	var buttonElement = this.button;
+	this.alternatives.push(alternativeElement);
+	this.values.push(value);
+	//
+	alternativeElement.style.cursor = "pointer";
+	alternativeElement.addEventListener("click", Adj.toggleButtonListener);
+};
+Adj.ToggleButton.prototype.reckonValue = function toggleButtonReckonValue () {
+	var alternatives = this.alternatives;
+	var values = this.values;
+	for (var i = 0, n = alternatives.length; i < n; i++) {
+		if (alternatives[i].getAttribute("display") !== "none") {
+			this.value = values[i];
+			return;
+		}
+	}
+	if (i) { // at least one alternative has been added
+		this.value = values[0]; // default
+	}
+};
+Adj.ToggleButton.prototype.click = function toggleButtonClick (alternative) {
+	var alternatives = this.alternatives;
+	for (var i = 0, n = alternatives.length; i < n; i++) {
+		if (alternatives[i].isEqualNode(alternative)) {
+			break;
+		}
+	}
+	i++;
+	if (i >= n) {
+		i = 0;
+	}
+	this.value = this.values[i];
+};
+Adj.ToggleButton.prototype.update = function toggleButtonUpdate () {
+	var value = this.value;
+	var alternatives = this.alternatives;
+	var values = this.values;
+	if (!this.congruent) {
+		for (var i = 0, n = alternatives.length; i < n; i++) {
+			if (values[i] !== value) {
+				alternatives[i].setAttribute("display", "none");
+			} else {
+				alternatives[i].removeAttribute("display");
+			}
+		}
+		Adj.doSvg(this.button.ownerSVGElement);
+	} else { // congruent
+		for (var i = 0, n = alternatives.length; i < n; i++) {
+			var alternative = alternatives[i];
+			if (alternative.getAttribute("display") !== "none") {
+				var transform = alternative.getAttribute("transform");
+				break;
+			}
+		}
+		for (var i = 0, n = alternatives.length; i < n; i++) {
+			if (values[i] !== value) {
+				alternatives[i].setAttribute("display", "none");
+			} else {
+				var alternative = alternatives[i];
+				if (transform !== null) {
+					alternative.setAttribute("transform", transform);
+				} else { // if getAttribute got null then must use removeAttribute
+					alternative.removeAttribute("transform");
+				}
+				alternative.removeAttribute("display");
+			}
+		}
+	}
+};
+
+// one event listener function to be installed for any element that needs it
+Adj.toggleButtonListener = function toggleButtonListener (event) {
+	var type = event.type;
+	var target = event.target;
+	var ownerDocument = target.ownerDocument;
+	switch (type) {
+		case "click":
+			var alternative = target;
+			var toggle = alternative.parentNode;
+			while (true) {
+				var adjS = toggle.adjS;
+				if (adjS) {
+					var toggleButtonRecord = adjS.toggleButtonRecord;
+					if (toggleButtonRecord) { // found containing tuggle element
+						break;
+					}
+				}
+				alternative = toggle;
+				toggle = toggle.parentNode;
+				if (!toggle) {
+					return true;
+				}
+			}
+			//
+			toggleButtonRecord.click(alternative);
+			return false;
+	}
+	return true;
+};
+
+// a specific algorithm
+Adj.defineCommandForAlgorithm({
+	algorithmName: "toggleButton",
+	phaseHandlerNames: ["adjPhase1Down"],
+	parameters: ["preset",
+				 "congruent"],
+	methods: [function toggleButton (element, parametersObject) {
+		var usedHow = "used in a parameter for a toggleButton command";
+		var variableSubstitutionsByName = {};
+		var preset = parametersObject.preset || "";
+		var congruent = Adj.doVarsBoolean(element, parametersObject.congruent, false, usedHow, variableSubstitutionsByName); // default congruent = false
+		//
+		var adjS = element.adjS || (element.adjS = {});
+		var toggleButtonRecord = adjS.toggleButtonRecord;
+		if (!toggleButtonRecord) { // onload but not each doSvg()
+			toggleButtonRecord = new Adj.ToggleButton(element, congruent);
+			adjS.toggleButtonRecord = toggleButtonRecord;
+			for (var child = element.firstChild; child; child = child.nextSibling) {
+				if (!(child instanceof SVGElement)) {
+					continue; // skip if not an SVGElement, e.g. an XML #text
+				}
+				if (!child.getBBox) {
+					continue; // skip if not an SVGLocatable, e.g. a <script> element
+				}
+				if (child.adjNotAnOrder1Element) {
+					continue;
+				}
+				if (child.adjHiddenByCommand) {
+					continue;
+				}
+				var alternativeValue = Adj.elementGetAttributeInAdjNS(child, "alternativeValue");
+				if (alternativeValue) {
+					toggleButtonRecord.addAlternative(child, alternativeValue);
+				}
+			}
+			//
+			if (preset) {
+				toggleButtonRecord.value = preset;
+			} else {
+				toggleButtonRecord.reckonValue();
+			}
+		} else { // preexisting
 		}
 	}]
 });
