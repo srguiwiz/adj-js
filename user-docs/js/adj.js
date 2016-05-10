@@ -1887,7 +1887,7 @@ Adj.transformPathSegList = function transformPathSegList (pathSegList, matrix) {
 		var coordinates1;
 		var coordinates2;
 		switch (pathSegTypeAsLetter) {
-			case 'Z':  // closepath
+			case 'Z': // closepath
 			case 'z':
 				transformedPathSegArray.push
 				({ pathSegTypeAsLetter: pathSegTypeAsLetter });
@@ -2084,7 +2084,7 @@ Adj.pathSegListToDString = function pathSegListToDString (pathSegList) {
 		var pathSeg = pathSegList.getItem(index);
 		var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
 		switch (pathSegTypeAsLetter) {
-			case 'Z':  // closepath
+			case 'Z': // closepath
 			case 'z':
 				d += pathSegTypeAsLetter;
 				break;
@@ -2801,7 +2801,7 @@ Adj.relativatePath = function relativatePath (pathElement) {
 		var pathSeg = pathSegList.getItem(index);
 		var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
 		switch (pathSegTypeAsLetter) {
-			case 'Z':  // closepath
+			case 'Z': // closepath
 			case 'z':
 				d += pathSegTypeAsLetter;
 				break;
@@ -5021,7 +5021,7 @@ Adj.explainBasicGeometry = function explainBasicGeometry (element) {
 			var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
 			var pointCircleFill = index <= 0 ? "green" : index < numberOfLastPathSeg ? "blue" : "red";
 			switch (pathSegTypeAsLetter) {
-				case 'Z':  // closepath
+				case 'Z': // closepath
 				case 'z':
 					coordinates.x = initialCoordinates.x;
 					coordinates.y = initialCoordinates.y;
@@ -7252,7 +7252,7 @@ Adj.rightAndLeftOffsetPoints = function rightAndLeftOffsetPoints (point, offset,
 		directionY += d.y;
 		identifiableDirections += d.l;
 	}
-	var direction = { x: directionX, y:  directionY };
+	var direction = { x: directionX, y: directionY };
 	Adj.normalizeDirection(direction);
 	//
 	if (numberOfDirectionArguments === 2 && identifiableDirections === 2) { // if exactly two directions
@@ -7382,7 +7382,7 @@ Adj.defineCommandForAlgorithm({
 			var pathSeg = pathSegList.getItem(index);
 			var pathSegTypeAsLetter = pathSeg.pathSegTypeAsLetter;
 			switch (pathSegTypeAsLetter) {
-				case 'Z':  // closepath
+				case 'Z': // closepath
 				case 'z':
 					if (index < numberOfPathSegs - 1) {
 						throw "premature use of path segment type '" + pathSegTypeAsLetter + "' in arrow shape for a pathArrow command";
@@ -7644,7 +7644,7 @@ Adj.defineCommandForAlgorithm({
 					case 'M': // moveto
 					case 'm': // moveto
 						throw "unsupported use of path segment type '" + nextPathSegTypeAsLetter + "' in path given to follow for a pathArrow command";
-					case 'Z':  // closepath
+					case 'Z': // closepath
 					case 'z':
 						// no support for closepath, for now at least
 					default:
