@@ -8653,6 +8653,14 @@ Adj.ToggleButton.prototype.update = function toggleButtonUpdate () {
 		}
 	}
 };
+Adj.ToggleButton.prototype.getAlternative = function toggleButtonGetAlternative (value) {
+	var index = this.values.indexOf(value);
+	if (index >= 0) {
+		return this.alternatives[index];
+	} else {
+		return null;
+	}
+};
 
 // one event listener function to be installed for any element that needs it
 Adj.toggleButtonListener = function toggleButtonListener (event) {
