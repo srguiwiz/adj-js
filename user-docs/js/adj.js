@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:1, revision:7 };
+Adj.version = { major:6, minor:2, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -93,7 +93,7 @@ Adj.doSvg = function doSvg (documentNodeOrAnSvgElement, doSvgDoneCallback) {
 	// main-SVG-intent versus inlined-SVG-workaround
 	if (element instanceof SVGSVGElement) {
 		// simple original intent
-		Adj.processAdjElements(element, doSvgDoneCallback);
+		Adj.processAdjElements(element, {}, doSvgDoneCallback);
 	} else {
 		// supposed to work for all instances of SVG elements inlined in an HTML document
 		var svgElements = Array.prototype.slice.call(documentNodeOrAnSvgElement.querySelectorAll("svg"));
@@ -122,7 +122,7 @@ Adj.doSvg = function doSvg (documentNodeOrAnSvgElement, doSvgDoneCallback) {
 			}
 			for (var i = 0, n = svgElements.length; i < n; i++) {
 				var oneSvgElement = svgElements[i];
-				Adj.processAdjElements(oneSvgElement, function oneDoSvgDoneCallback (oneSvgElement) {
+				Adj.processAdjElements(oneSvgElement, {}, function oneDoSvgDoneCallback (oneSvgElement) {
 					// keep track of elements processing
 					delete svgElementsProcessing[Adj.runtimeId(oneSvgElement)];
 					//
@@ -146,22 +146,13 @@ Adj.doSvg = function doSvg (documentNodeOrAnSvgElement, doSvgDoneCallback) {
 	}
 };
 
-// complete processing of all phases
-//
-// processDoneCallback is optional here and in most or all other functions defined in this library
-// will be called as processDoneCallback(theSvgElement);
-Adj.processAdjElements = (function() {
-	function processAdjElements (theSvgElement, processDoneCallback) {
+// essential auxiliary
+Adj.getProcessingRecord = (function() {
+	function getProcessingRecord (theSvgElement) {
 		if (!(theSvgElement instanceof SVGSVGElement)) {
-			console.error("Adj skipping because invoked with something other than required SVGSVGElement");
-			// make sure processDoneCallback is called anyway
-			if (processDoneCallback) {
-				// call asynchronously even in this case
-				window.setImmediate(function () {
-					processDoneCallback(theSvgElement);
-				});
-			} // else { // swallow instead of throw error;
-			return;
+			var error = "Adj skipping because invoked with something other than required SVGSVGElement";
+			console.error(error);
+			throw error;
 		}
 		//
 		var adjProcessing = theSvgElement.adjProcessing;
@@ -175,10 +166,7 @@ Adj.processAdjElements = (function() {
 			};
 		}
 		//
-		if (processDoneCallback) {
-			adjProcessing.nextCallbacks.push(processDoneCallback);
-		}
-		adjProcessing.singlifier.invokeSooner();
+		return adjProcessing;
 	};
 	//
 	// private function to prevent inherently wrong calls from other context
@@ -221,13 +209,14 @@ Adj.processAdjElements = (function() {
 				if (!Object.keys(theSvgElement.adjAsyncGetTextFileRequesters).length) { // if 0
 					// no outstanding requests means done with all Adj.algorithms.include
 					//
-					try {
-						for (var i = 0, n = ongoingCallbacks.length; i < n ; i++) {
-							ongoingCallbacks[i](theSvgElement);
+					// use shift() to accommodate postponeOngoingCallbacks in the middle
+					while (ongoingCallbacks.length) {
+						try {
+							ongoingCallbacks.shift()(theSvgElement);
+						} catch (exception) {
+							// silently swallow exceptions from callbacks,
+							// those should do their own exception handling if desired
 						}
-					} catch (exception) {
-						// silently swallow exceptions from callbacks,
-						// those should do their own exception handling if desired
 					}
 				} else {
 					// at least one outstanding request, put back ongoingCallbacks
@@ -238,8 +227,40 @@ Adj.processAdjElements = (function() {
 		}
 	};
 	//
-	return processAdjElements;
+	return getProcessingRecord;
 })();
+
+// complete processing of all phases
+//
+// options is optional and may be omitted, or undefined, or may be empty or contain any or all of
+//   options.postponeOngoingCallbacks
+//   options.later
+//
+// processDoneCallback is optional here and in most or all other functions defined in this library
+// will be called as processDoneCallback(theSvgElement);
+Adj.processAdjElements = function processAdjElements (theSvgElement, options, processDoneCallback) {
+	// accommodate sloppy parameter passing
+	if (!processDoneCallback && typeof options === "function") {
+		processDoneCallback = options;
+		options = undefined;
+	}
+	options = options || {};
+	//
+	var adjProcessing = Adj.getProcessingRecord(theSvgElement);
+	if (options.postponeOngoingCallbacks) {
+		// there may be callbacks yet to be called in ongoingCallbacks
+		adjProcessing.nextCallbacks = adjProcessing.ongoingCallbacks.concat(adjProcessing.nextCallbacks);
+		adjProcessing.ongoingCallbacks = []; // reset
+	}
+	if (processDoneCallback) {
+		adjProcessing.nextCallbacks.push(processDoneCallback);
+	}
+	if (!options.later) { // default
+		adjProcessing.singlifier.invokeSooner();
+	} else {
+		adjProcessing.singlifier.invokeLater();
+	}
+};
 
 // generic installer
 Adj.setAlgorithm = function setAlgorithm (target, algorithmName, parametersObject, element) {
@@ -7050,7 +7071,9 @@ Adj.defineCommandForAlgorithm({
 				}
 			})();
 			// above in a function to make sure all non-exceptional exits proceed here
-			theSvgElement.adjProcessing.singlifier.invokeLater();
+			//
+			// similar to but different than Adj.doSvg(theSvgElement) must be
+			Adj.processAdjElements(theSvgElement, { later: true });
 		});
 		// keep track of requests
 		theSvgElement.adjAsyncGetTextFileRequesters[Adj.runtimeId(element)] = element;
@@ -8604,7 +8627,9 @@ Adj.ToggleButton.prototype.update = function toggleButtonUpdate () {
 				alternatives[i].removeAttribute("display");
 			}
 		}
-		Adj.doSvg(this.button.ownerSVGElement);
+		//
+		// similar to but different than Adj.doSvg(this.button.ownerSVGElement) must be
+		Adj.processAdjElements(this.button.ownerSVGElement, { postponeOngoingCallbacks: true });
 	} else { // congruent
 		for (var i = 0, n = alternatives.length; i < n; i++) {
 			var alternative = alternatives[i];
