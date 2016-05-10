@@ -354,9 +354,15 @@ Adj.firstElementTag = function firstElementTag (documentString) {
 // or called with empty string if expected result if passed
 //
 // "expectd" is short for "expectedResult", same number of characters as "current" for readability
-Adj.doSvgAndVerify = function doSvgAndVerify (expectedResultEncodedDocumentString, doSvgAndVerifyDoneCallback, tolerance) {
+Adj.doSvgAndVerify = function doSvgAndVerify
+(expectedResultEncodedDocumentString, extraWaitMilliseconds, doSvgAndVerifyDoneCallback, tolerance) {
+	// sanity checks
+	extraWaitMilliseconds = parseInt(extraWaitMilliseconds);
+	if (!(extraWaitMilliseconds >= -1)) { // e.g. undefined, NaN, -2
+		throw "Adj.doSvgAndVerify cannot run unless second parameter extraWaitMilliseconds is an integer >= -1";
+	}
 	if (!doSvgAndVerifyDoneCallback || typeof doSvgAndVerifyDoneCallback !== "function") {
-		throw "Adj.doSvgAndVerify cannot run unless second parameter doSvgAndVerifyDoneCallback is a callback function";
+		throw "Adj.doSvgAndVerify cannot run unless third parameter doSvgAndVerifyDoneCallback is a callback function";
 	}
 	if (!tolerance) {
 		tolerance = {
@@ -379,8 +385,7 @@ Adj.doSvgAndVerify = function doSvgAndVerify (expectedResultEncodedDocumentStrin
 		return;
 	}
 	var expectedResult = Adj.decodeEncodedDocumentString(expectedResultEncodedDocumentString);
-	// do
-	Adj.doSvg(function (documentNodeOrRootElement) {
+	var verify = function verify (documentNodeOrRootElement) {
 		try {
 			// convert to text
 			var serializer = new XMLSerializer();
@@ -491,6 +496,18 @@ Adj.doSvgAndVerify = function doSvgAndVerify (expectedResultEncodedDocumentStrin
 			doSvgAndVerifyDoneCallback(exception.toString());
 			return;
 		}
+	};
+	// do
+	Adj.doSvg(function (documentNodeOrRootElement) {
+		if (extraWaitMilliseconds <= -1) {
+			// simple original intent
+			verify(documentNodeOrRootElement);
+		} else { // extraWaitMilliseconds >= 0
+			// e.g. allow event handlers to run, if needed
+			window.setTimeout(function () {
+				verify(documentNodeOrRootElement);
+			}, extraWaitMilliseconds);
+		}
 	});
 }
 
@@ -517,6 +534,7 @@ AdjTestWindow.receivesMessage = function receivesMessage (evt) {
 	if (messageMatch) {
 		messageCommand = messageMatch[1];
 		messageParameter = messageMatch[2];
+		messageParameter2 = messageMatch[3];
 	} else {
 		messageCommand = "";
 	}
@@ -550,13 +568,25 @@ AdjTestWindow.receivesMessage = function receivesMessage (evt) {
 			break;
 		case "Adj.doSvgAndVerify":
 			try {
-				var expectedResultEncodedDocumentString = messageParameter;
+				// accommodate sloppy parameter passing
+				if (!messageParameter2) {
+					var expectedResultEncodedDocumentString = messageParameter;
+				} else {
+					var extraWaitMilliseconds = parseInt(messageParameter);
+					var expectedResultEncodedDocumentString = messageParameter2;
+				}
+				if (!(extraWaitMilliseconds >= -1)) { // e.g. undefined, NaN, -2
+					var extraWaitMilliseconds = -1;
+				}
 				// do
-				Adj.doSvgAndVerify(expectedResultEncodedDocumentString, function (resultOfVerification) {
+				Adj.doSvgAndVerify
+				(expectedResultEncodedDocumentString,
+				 extraWaitMilliseconds,
+				 function (resultOfVerification) {
 					console.log("Adj.doSvgAndVerify done");
 					// reply
 					evt.source.postMessage("Adj.didSvgAndVerify|" + window.location.href + "|" + resultOfVerification, "*");
-				});
+				 });
 			} catch (exception) { // probably unusual, nevertheless covered
 				console.error("Adj.doSvgAndVerify exception", exception);
 				exceptionString = exception.toString();
