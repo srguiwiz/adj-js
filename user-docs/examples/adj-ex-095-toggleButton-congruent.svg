@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="120">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="200" height="120" fill="linen"/>
+	<defs>
+		<radialGradient id="rg" gradientUnits="objectBoundingBox" cx="50%" cy="50%" r="50%">
+			<stop stop-color="#0000FF" offset="0"/>
+			<stop stop-color="#ffff00" offset="1"/>
+		</radialGradient>
+	</defs>
+	<g>
+		<adj:verticalList gap="20"/>
+		<g adj:id="switchIt" transform="translate(20,20)">
+			<adj:horizontalList gap="0" centerGap="5" vAlign="middle"/>
+			<adj:toggleButton preset="white" congruent="true"/>
+			<rect adj:alternativeValue="white" title="click to switch" width="12" height="12" fill="white" stroke="dimgrey" transform="translate(0,4)" style="cursor: pointer;"/>
+			<rect adj:alternativeValue="grey" title="click to switch" width="12" height="12" fill="grey" stroke="dimgrey" transform="translate(0,4)" style="cursor: pointer;" display="none"/>
+			<rect adj:alternativeValue="colorful" title="click to switch" width="12" height="12" fill="url(#rg)" stroke="dimgrey" transform="translate(0,4)" style="cursor: pointer;" display="none"/>
+			<rect adj:alternativeValue="black" title="click to switch" width="12" height="12" fill="black" stroke="dimgrey" transform="translate(0,4)" style="cursor: pointer;" display="none"/>
+			<text transform="translate(18,15)">switch</text>
+		</g>
+		<rect adj:id="switchThis" width="40" height="20" fill="white" stroke="dimgrey" transform="translate(20,59)"/>
+	</g>
+	<script><![CDATA[
+Adj.getElementById("switchIt").addEventListener("change", function (event) {
+	var newToggle = event.detail.value;
+	var switchThis = Adj.getElementById("switchThis");
+	// Internet Explorer 11 could not
+	//var alternativeValueElementSnapshot = document.evaluate("//*[@adj:alternativeValue='"+newToggle+"']",document,function(prefix){return prefix==="adj"?"http://www.nrvr.com/2012/adj":null},XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
+	//switchThis.setAttribute("fill", alternativeValueElementSnapshot.snapshotItem(0).getAttribute("fill"));
+	var switchIt = Adj.getElementById("switchIt");
+	var alternativeValueElement = switchIt.adjS.toggleButtonRecord.getAlternative(newToggle);
+	switchThis.setAttribute("fill", alternativeValueElement.getAttribute("fill"));
+});
+	]]></script>
+</svg>
