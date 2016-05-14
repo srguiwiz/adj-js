@@ -140,8 +140,9 @@ newer.</p>
           <li><a href="#L11940">1.11.21. Command pathArrow Options</a></li>
           <li><a href="#L16289">1.11.22. Command rcGrid Options</a></li>
           <li><a href="#L13254">1.11.23. Command sliderKnob Options</a></li>
-          <li><a href="#L94550">1.11.24. Command hide Options</a></li>
-          <li><a href="#L3450">1.11.25. Command include Options</a></li>
+          <li><a href="#L13706">1.11.24. Command toggleButton Options</a></li>
+          <li><a href="#L94550">1.11.25. Command hide Options</a></li>
+          <li><a href="#L3450">1.11.26. Command include Options</a></li>
         </ul>
       </li>
       <li><a href="#L7600">1.12. Auxiliary Commands</a>
@@ -911,6 +912,41 @@ Here is more.
 document.addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
   var elementToSet = document.getElementById("setme");
   elementToSet.textContent = <span class="example-code">event.detail.value</span>;
+  Adj.doSvg();
+});
+  ]]&gt;&lt;/script&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+      src="examples/adj-ex-094-toggleButton.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:skimpyList/&gt;
+    &lt;g&gt;
+      &lt;rect width="70" height="100" stroke="black" stroke-width="1" fill="darkgrey"/&gt;
+      &lt;g adj:id="lockThis"&gt;
+        &lt;adj:tilt alpha="0"/&gt;
+        &lt;rect width="70" height="100" stroke="dimgrey" stroke-width="1" fill="lightgrey"/&gt;
+        &lt;g adj:id="lockIt"&gt;
+          &lt;adj:floater at="45,50"/&gt;
+          <span class="example-code">&lt;adj:<a href="#L13706">toggleButton</a>/&gt;</span>
+          &lt;path <span class="example-code">adj:alternativeValue="lock"</span> title="click to flip"
+                d="M0,0 l0,-30 30,0 0,30 z M5,-30 l0,-10 q0,-10 10,-10 10,0 10,10 … z"
+                fill="darkgrey" stroke="black"/&gt;
+          &lt;path <span class="example-code">adj:alternativeValue="unlock"</span> title="click to flip"
+                d="M0,0 l0,-30 30,0 0,30 z M22,-30 l0,-10 q0,-10 10,-10 10,0 10,10 … z"
+                fill="darkgrey" stroke="black"/&gt;
+        &lt;/g&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+  &lt;script&gt;&lt;![CDATA[
+Adj.getElementById("lockIt").addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
+  var newToggle = <span class="example-code">event.detail.value</span>;
+  Adj.getElementById("lockThis").firstElementChild.setAttribute("alpha", newToggle === "lock" ? "0" : "15");
   Adj.doSvg();
 });
   ]]&gt;&lt;/script&gt;
@@ -2943,8 +2979,8 @@ earlier <code>adj:rcGridCellTemplates</code>.</p>
     <tr>
       <td><img alt="example" src="examples/adj-ex-092-sliderKnob.svg"></img> 
 
-        <p class="deemphasize separate">You can view <a
-        href="examples/adj-ex-092-sliderKnob.svg">SVG by itself</a> and drag
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-092-sliderKnob.svg">SVG by itself</a> and drag
         the <code>sliderKnob</code>. Contemporary browsers don't run scripts in
         SVG in an <code>img</code> element.</p>
       </td>
@@ -2974,8 +3010,8 @@ document.addEventListener(<span class="example-code">"change"</span>, function (
       <td><img alt="example"
         src="examples/adj-ex-093-sliderKnob-step.svg"></img> 
 
-        <p class="deemphasize separate">You can view <a
-        href="examples/adj-ex-093-sliderKnob-step.svg">SVG by itself</a> and
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-093-sliderKnob-step.svg">SVG by itself</a> and
         drag the <code>sliderKnob</code>. Contemporary browsers don't run
         scripts in SVG in an <code>img</code> element.</p>
       </td>
@@ -3021,7 +3057,105 @@ of horizontal or vertical</span></p>
 href="examples/adj-ex-093-sliderKnob-motley-001.svg">093-001</a>, and <a
 href="examples/adj-ex-093-sliderKnob-motley-003.svg">093-003</a>.</p>
 
-<h4 id="L94550">1.11.24. Command hide Options</h4>
+<h4 id="L13706">1.11.24. Command toggleButton Options</h4>
+
+<p>Optional parameters of <code>toggleButton</code>:</p>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <td><img alt="example" src="examples/adj-ex-094-toggleButton.svg"></img> 
+
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-094-toggleButton.svg">SVG by itself</a> and
+        click the <code>toggleButton</code>. Contemporary browsers don't run
+        scripts in SVG in an <code>img</code> element.</p>
+      </td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="140" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    &lt;adj:skimpyList/&gt;
+    &lt;g&gt;
+      &lt;rect width="70" height="100" stroke="black" stroke-width="1" fill="darkgrey"/&gt;
+      &lt;g adj:id="lockThis"&gt;
+        &lt;adj:tilt alpha="0"/&gt;
+        &lt;rect width="70" height="100" stroke="dimgrey" stroke-width="1" fill="lightgrey"/&gt;
+        &lt;g adj:id="lockIt"&gt;
+          &lt;adj:floater at="45,50"/&gt;
+          <span class="example-code">&lt;adj:toggleButton/&gt;</span>
+          &lt;path <span class="example-code">adj:alternativeValue="lock"</span> title="click to flip"
+                d="M0,0 l0,-30 30,0 0,30 z M5,-30 l0,-10 q0,-10 10,-10 10,0 10,10 … z"
+                fill="darkgrey" stroke="black"/&gt;
+          &lt;path <span class="example-code">adj:alternativeValue="unlock"</span> title="click to flip"
+                d="M0,0 l0,-30 30,0 0,30 z M22,-30 l0,-10 q0,-10 10,-10 10,0 10,10 … z"
+                fill="darkgrey" stroke="black"/&gt;
+        &lt;/g&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+  &lt;script&gt;&lt;![CDATA[
+Adj.getElementById("lockIt").addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
+  var newToggle = <span class="example-code">event.detail.value</span>;
+  Adj.getElementById("lockThis").firstElementChild.setAttribute("alpha", newToggle === "lock" ? "0" : "15");
+  Adj.doSvg();
+});
+  ]]&gt;&lt;/script&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><img alt="example"
+        src="examples/adj-ex-095-toggleButton-congruent.svg"></img> 
+
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-095-toggleButton-congruent.svg">SVG by
+        itself</a> and click the <code>toggleButton</code>. Contemporary
+        browsers don't run scripts in SVG in an <code>img</code> element.</p>
+      </td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="120" fill="linen"/&gt;
+  &lt;defs&gt;
+    &lt;radialGradient id="rg" gradientUnits="objectBoundingBox" cx="50%" cy="50%" r="50%"&gt;
+      &lt;stop stop-color="#0000FF" offset="0"/&gt;
+      &lt;stop stop-color="#ffff00" offset="1"/&gt;
+    &lt;/radialGradient&gt;
+  &lt;/defs&gt;</span>
+  &lt;g&gt;
+    &lt;adj:verticalList gap="20"/&gt;
+    &lt;g adj:id="switchIt"&gt;
+      &lt;adj:horizontalList gap="0" centerGap="5" vAlign="middle"/&gt;
+      <span class="example-code">&lt;adj:toggleButton preset="white" congruent="true"/&gt;</span>
+      &lt;rect <span class="example-code">adj:alternativeValue="white"</span> title="click to switch"
+            width="12" height="12" fill="white" stroke="dimgrey"/&gt;
+      &lt;rect <span class="example-code">adj:alternativeValue="grey"</span> title="click to switch"
+            width="12" height="12" fill="grey" stroke="dimgrey"/&gt;
+      &lt;rect <span class="example-code">adj:alternativeValue="colorful"</span> title="click to switch"
+            width="12" height="12" fill="url(#rg)" stroke="dimgrey"/&gt;
+      &lt;rect <span class="example-code">adj:alternativeValue="black"</span> title="click to switch"
+            width="12" height="12" fill="black" stroke="dimgrey"/&gt;
+      &lt;text&gt;switch&lt;/text&gt;
+    &lt;/g&gt;
+    &lt;rect adj:id="switchThis" width="40" height="20" fill="white" stroke="dimgrey"/&gt;
+  &lt;/g&gt;
+  &lt;script&gt;&lt;![CDATA[
+Adj.getElementById("switchIt").addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
+  var newToggle = <span class="example-code">event.detail.value</span>;
+  var switchThis = Adj.getElementById("switchThis");
+  var switchIt = Adj.getElementById("switchIt");
+  var alternativeValueElement = switchIt.adjS.toggleButtonRecord.getAlternative(newToggle);
+  switchThis.setAttribute("fill", alternativeValueElement.getAttribute("fill"));
+});
+  ]]&gt;&lt;/script&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><span class="todo">TODO: better document command toggleButton, event, many
+appearances possible, detection of value, alternative</span></p>
+
+<h4 id="L94550">1.11.25. Command hide Options</h4>
 
 <p>Command <code>hide</code> has no options:</p>
 
@@ -3043,7 +3177,7 @@ href="examples/adj-ex-093-sliderKnob-motley-003.svg">093-003</a>.</p>
   </tbody>
 </table>
 
-<h4 id="L3450">1.11.25. Command include Options</h4>
+<h4 id="L3450">1.11.26. Command include Options</h4>
 
 <table border="1">
   <tbody>
@@ -3454,10 +3588,10 @@ instances of command <code><a href="#L94550">hide</a></code>.</p>
     <tr>
       <td><img alt="example" src="examples/adj-ex-073-toggle-hide.svg"></img> 
 
-        <p class="deemphasize separate">You can view <a
-        href="examples/adj-ex-073-toggle-hide.svg">SVG by itself</a> and click
-        elements having <code>onclick</code>. Contemporary browsers don't run
-        scripts in SVG in an <code>img</code> element.</p>
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-073-toggle-hide.svg">SVG by itself</a> and
+        click elements having <code>onclick</code>. Contemporary browsers don't
+        run scripts in SVG in an <code>img</code> element.</p>
       </td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="120" fill="linen"/&gt;</span>
@@ -3897,6 +4031,10 @@ decimal numbers.</p>
     <tr>
       <td><code>rcGrid</code></td>
       <td><code>explain</code></td>
+    </tr>
+    <tr>
+      <td><code>toggleButton</code></td>
+      <td><code>congruent</code></td>
     </tr>
   </tbody>
 </table>
@@ -4506,7 +4644,8 @@ phases:</p>
     <tr>
       <td><code>adjPhase1Down</code></td>
       <td><code>textBreaks</code>, <code>paragraph</code>,
-        <code>relativate</code>, <code>include</code></td>
+        <code>relativate</code>, <code>include</code>,
+      <code>toggleButton</code></td>
     </tr>
     <tr>
       <td><code>adjPhase1Up</code></td>
