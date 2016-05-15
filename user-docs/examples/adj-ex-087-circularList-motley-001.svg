@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="360" height="360">
+	<title>Adj circularList motley.svg</title>
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<rect width="360" height="360" fill="linen"/>
+	<g>
+		<adj:rcGrid gap="20" centerGap="10" hAlign="left" vAlign="top"/>
+		<g>
+			<g transform="translate(20,20)">
+				<rect x="0" y="0" width="120" height="20" fill="white" stroke="dimgrey"/>
+				<g adj:id="knob" title="drag knob to change size of item" style="cursor: ew-resize;" transform="translate(45.946,0)">
+					<adj:sliderKnob min="3" max="40" step="1" preset="20"/>
+					<rect x="0" y="0" width="20" height="20" fill="gainsboro" stroke="black"/>
+				</g>
+			</g>
+			<g adj:id="explainIt" transform="translate(150,20)">
+				<adj:horizontalList vAlign="middle"/>
+				<adj:toggleButton congruent="true"/>
+				<rect adj:alternativeValue="off" title="click to explain" width="12" height="12" fill="white" stroke="dimgrey" transform="translate(3,7)" style="cursor: pointer;"/>
+				<g adj:alternativeValue="on" style="cursor: pointer;" display="none">
+					<rect title="click to hide" width="12" height="12" fill="white" stroke="dimgrey"/>
+					<line x1="0" y1="0" x2="12" y2="12" stroke="black"/>
+					<line x1="0" y1="12" x2="12" y2="0" stroke="black"/>
+				</g>
+				<text transform="translate(19,18)">explain</text>
+			</g>
+		</g>
+		<g adj:rcGridPart="column">
+			<text adj:command="paragraph" adj:maxWidth="110" x="0" y="0" transform="translate(21,80)">tighter with <tspan style="font-family:monospace">
+					<tspan x="0" y="21">​﻿</tspan>
+					<tspan x="0" y="21">​﻿</tspan>packArc="true"</tspan>
+			</text>
+			<g transform="translate(20,125)">
+				<adj:circularList fromAngle="0" toAngle="90" rAlign="inside" packArc="true" explain="false"/>
+				<circle r="20" fill="#000" transform="translate(23,23)"/>
+				<rect width="3" height="3" fill="#222" transform="translate(75,27)"/>
+				<rect width="6" height="6" fill="#444" transform="translate(74,36)"/>
+				<rect width="9" height="9" fill="#666" transform="translate(68,49)"/>
+				<rect width="12" height="12" fill="#888" transform="translate(55,63)"/>
+				<rect id="sizable" width="20" height="20" fill="#aaa" transform="translate(30,77)"/>
+			</g>
+		</g>
+		<g adj:rcGridPart="column">
+			<text adj:command="paragraph" adj:maxWidth="110" transform="translate(151,80)">original without</text>
+			<g transform="translate(150,125)">
+				<adj:circularList fromAngle="0" toAngle="90" rAlign="inside" explain="false"/>
+				<circle r="20" fill="#000" transform="translate(23,23)"/>
+				<rect width="3" height="3" fill="#222" transform="translate(95,22)"/>
+				<rect width="6" height="6" fill="#444" transform="translate(89,49)"/>
+				<rect width="9" height="9" fill="#666" transform="translate(73,73)"/>
+				<rect width="12" height="12" fill="#888" transform="translate(47,90)"/>
+				<rect id="sizable2" width="20" height="20" fill="#aaa" transform="translate(13,98)"/>
+			</g>
+		</g>
+	</g>
+	<script><![CDATA[
+Adj.getElementById("knob").addEventListener("change", function (event) {
+	var newSize = event.detail.value;
+	var sizableElement = document.getElementById("sizable");
+	sizableElement.setAttribute("width", newSize);
+	sizableElement.setAttribute("height", newSize);
+	var sizable2Element = document.getElementById("sizable2");
+	sizable2Element.setAttribute("width", newSize);
+	sizable2Element.setAttribute("height", newSize);
+	Adj.doSvg();
+});
+Adj.getElementById("explainIt").addEventListener("change", function (event) {
+	var newToggle = event.detail.value;
+	// Internet Explorer 11 could not
+	//var explainAttributesSnapshot = document.evaluate("//@explain",document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
+	//for (var i = 0; i < explainAttributesSnapshot.snapshotLength; i++) {
+	//	explainAttributesSnapshot.snapshotItem(i).value = newToggle === "on" ? "true" : "false";
+	//}
+	[].slice.call(document.querySelectorAll("[explain]")).forEach(function(element) {
+		element.setAttribute("explain", newToggle === "on" ? "true" : "false");
+	});
+	Adj.doSvg();
+});
+	]]></script>
+</svg>

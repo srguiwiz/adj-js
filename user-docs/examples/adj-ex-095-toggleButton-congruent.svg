@@ -24,13 +24,11 @@
 	<script><![CDATA[
 Adj.getElementById("switchIt").addEventListener("change", function (event) {
 	var newToggle = event.detail.value;
-	var switchThis = Adj.getElementById("switchThis");
 	// Internet Explorer 11 could not
 	//var alternativeValueElementSnapshot = document.evaluate("//*[@adj:alternativeValue='"+newToggle+"']",document,function(prefix){return prefix==="adj"?"http://www.nrvr.com/2012/adj":null},XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-	//switchThis.setAttribute("fill", alternativeValueElementSnapshot.snapshotItem(0).getAttribute("fill"));
-	var switchIt = Adj.getElementById("switchIt");
-	var alternativeValueElement = switchIt.adjS.toggleButtonRecord.getAlternative(newToggle);
-	switchThis.setAttribute("fill", alternativeValueElement.getAttribute("fill"));
+	//Adj.getElementById("switchThis").setAttribute("fill", alternativeValueElementSnapshot.snapshotItem(0).getAttribute("fill"));
+	var alternativeValueElement = Adj.getElementById("switchIt").adjS.toggleButtonRecord.getAlternative(newToggle);
+	Adj.getElementById("switchThis").setAttribute("fill", alternativeValueElement.getAttribute("fill"));
 });
 	]]></script>
 </svg>

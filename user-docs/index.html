@@ -894,8 +894,12 @@ Here is more.
       </td>
     </tr>
     <tr>
-      <td><img alt="example"
-      src="examples/adj-ex-092-sliderKnob.svg"></img></td>
+      <td><img alt="example" src="examples/adj-ex-092-sliderKnob.svg"></img> 
+
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-092-sliderKnob.svg">SVG by itself</a> and drag
+        the <code>sliderKnob</code>.</p>
+      </td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="80" fill="linen"/&gt;</span>
   &lt;g transform="translate(20,20)"&gt;
@@ -919,15 +923,19 @@ document.addEventListener(<span class="example-code">"change"</span>, function (
       </td>
     </tr>
     <tr>
-      <td><img alt="example"
-      src="examples/adj-ex-094-toggleButton.svg"></img></td>
+      <td><img alt="example" src="examples/adj-ex-094-toggleButton.svg"></img> 
+
+        <p class="deemphasize separate" style="width:200px;">You can view the
+        <a href="examples/adj-ex-094-toggleButton.svg">SVG by itself</a> and
+        click the <code>toggleButton</code>.</p>
+      </td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
   &lt;g&gt;
     &lt;adj:skimpyList/&gt;
     &lt;g&gt;
       &lt;rect width="70" height="100" stroke="black" stroke-width="1" fill="darkgrey"/&gt;
-      &lt;g adj:id="lockThis"&gt;
+      &lt;g&gt;
         &lt;adj:tilt alpha="0"/&gt;
         &lt;rect width="70" height="100" stroke="dimgrey" stroke-width="1" fill="lightgrey"/&gt;
         &lt;g adj:id="lockIt"&gt;
@@ -946,7 +954,7 @@ document.addEventListener(<span class="example-code">"change"</span>, function (
   &lt;script&gt;&lt;![CDATA[
 Adj.getElementById("lockIt").addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
   var newToggle = <span class="example-code">event.detail.value</span>;
-  Adj.getElementById("lockThis").firstElementChild.setAttribute("alpha", newToggle === "lock" ? "0" : "15");
+  document.querySelector("[alpha]").setAttribute("alpha", newToggle === "lock" ? "0" : "15");
   Adj.doSvg();
 });
   ]]&gt;&lt;/script&gt;
@@ -3077,7 +3085,7 @@ href="examples/adj-ex-093-sliderKnob-motley-003.svg">093-003</a>.</p>
     &lt;adj:skimpyList/&gt;
     &lt;g&gt;
       &lt;rect width="70" height="100" stroke="black" stroke-width="1" fill="darkgrey"/&gt;
-      &lt;g adj:id="lockThis"&gt;
+      &lt;g&gt;
         &lt;adj:tilt alpha="0"/&gt;
         &lt;rect width="70" height="100" stroke="dimgrey" stroke-width="1" fill="lightgrey"/&gt;
         &lt;g adj:id="lockIt"&gt;
@@ -3096,7 +3104,7 @@ href="examples/adj-ex-093-sliderKnob-motley-003.svg">093-003</a>.</p>
   &lt;script&gt;&lt;![CDATA[
 Adj.getElementById("lockIt").addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
   var newToggle = <span class="example-code">event.detail.value</span>;
-  Adj.getElementById("lockThis").firstElementChild.setAttribute("alpha", newToggle === "lock" ? "0" : "15");
+  document.querySelector("[alpha]").setAttribute("alpha", newToggle === "lock" ? "0" : "15");
   Adj.doSvg();
 });
   ]]&gt;&lt;/script&gt;
@@ -3140,10 +3148,8 @@ Adj.getElementById("lockIt").addEventListener(<span class="example-code">"change
   &lt;script&gt;&lt;![CDATA[
 Adj.getElementById("switchIt").addEventListener(<span class="example-code">"change"</span>, function (<span class="example-code">event</span>) {
   var newToggle = <span class="example-code">event.detail.value</span>;
-  var switchThis = Adj.getElementById("switchThis");
-  var switchIt = Adj.getElementById("switchIt");
-  var alternativeValueElement = switchIt.adjS.toggleButtonRecord.getAlternative(newToggle);
-  switchThis.setAttribute("fill", alternativeValueElement.getAttribute("fill"));
+  var alternativeValueElement = Adj.getElementById("switchIt").adjS.toggleButtonRecord.getAlternative(newToggle);
+  Adj.getElementById("switchThis").setAttribute("fill", alternativeValueElement.getAttribute("fill"));
 });
   ]]&gt;&lt;/script&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -3154,6 +3160,9 @@ Adj.getElementById("switchIt").addEventListener(<span class="example-code">"chan
 
 <p><span class="todo">TODO: better document command toggleButton, event, many
 appearances possible, detection of value, alternative</span></p>
+
+<p>Another example of command <code>toggleButton</code> is in <a
+href="examples/adj-ex-087-circularList-motley-001.svg">087-001</a>.</p>
 
 <h4 id="L94550">1.11.25. Command hide Options</h4>
 

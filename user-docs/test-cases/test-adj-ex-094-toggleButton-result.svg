@@ -7,7 +7,7 @@
 		<adj:skimpyList/>
 		<g transform="translate(3,3)">
 			<rect width="70" height="100" stroke="black" stroke-width="1" fill="darkgrey"/>
-			<g adj:id="lockThis" transform="matrix(0.966,0.259,0,1,0,0)">
+			<g transform="matrix(0.966,0.259,0,1,0,0)">
 				<adj:tilt alpha="15"/>
 				<rect width="70" height="100" stroke="dimgrey" stroke-width="1" fill="lightgrey"/>
 				<g adj:id="lockIt" transform="translate(24,75)">
@@ -22,12 +22,7 @@
 	<script><![CDATA[
 Adj.getElementById("lockIt").addEventListener("change", function (event) {
 	var newToggle = event.detail.value;
-	// Internet Explorer 11 could not
-	//var alphaAttributesSnapshot = document.evaluate("//@alpha",document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-	//for (var i = 0; i < alphaAttributesSnapshot.snapshotLength; i++) {
-	//	alphaAttributesSnapshot.snapshotItem(i).value = newToggle === "lock" ? "0" : "15";
-	//}
-	Adj.getElementById("lockThis").firstElementChild.setAttribute("alpha", newToggle === "lock" ? "0" : "15");
+	document.querySelector("[alpha]").setAttribute("alpha", newToggle === "lock" ? "0" : "15");
 	Adj.doSvg();
 });
 	]]></script>
