@@ -2976,6 +2976,9 @@ earlier <code>adj:rcGridCellTemplates</code>.</p>
 
 <p>Rules of combination are defined by implementation.</p>
 
+<p>Another example of command <code>rcGrid</code> is in <a
+href="examples/adj-ex-090-rcGrid-with-text-002.svg">090-002</a>.</p>
+
 <p><span class="todo">TODO: neat examples</span></p>
 
 <h4 id="L13254">1.11.23. Command sliderKnob Options</h4>
@@ -3057,13 +3060,20 @@ document.addEventListener(<span class="example-code">"change"</span>, function (
   </tbody>
 </table>
 
-<p><span class="todo">TODO: better document command sliderKnob, event, nesting
-in slider, widths and heights of groups, many appearances possible, detection
-of horizontal or vertical</span></p>
+<p>The knob moves within the rectangular size of its parent element, the
+slider. The slider's size for example may be defined by the size of a child
+<code>rect</code>, a sibling of the knob.</p>
+
+<p>There is no default look of sliders and knobs made with
+<code>sliderKnob</code>. An author has broad freedom of choice.</p>
 
 <p>More examples of command <code>sliderKnob</code> are <a
 href="examples/adj-ex-093-sliderKnob-motley-001.svg">093-001</a>, and <a
 href="examples/adj-ex-093-sliderKnob-motley-003.svg">093-003</a>.</p>
+
+<p><span class="todo">TODO: better document command sliderKnob, event, nesting
+in slider, widths and heights of groups, many appearances possible, detection
+of horizontal or vertical</span></p>
 
 <h4 id="L13706">1.11.24. Command toggleButton Options</h4>
 
@@ -3158,11 +3168,18 @@ Adj.getElementById("switchIt").addEventListener(<span class="example-code">"chan
   </tbody>
 </table>
 
-<p><span class="todo">TODO: better document command toggleButton, event, many
-appearances possible, detection of value, alternative</span></p>
+<p>Optional boolean parameter <code>congruent</code> should be set
+<code>true</code> if and only if all alternatives in their own coordinate
+system have the same location and size, e.g. all x=0, y=0, width=12, height=12.
+One benefit is avoiding on change an automatic invocation of
+<code>Adj.doSvg()</code>, which may or may not matter to an author. It is OK to
+not use parameter <code>congruent</code>.</p>
 
 <p>Another example of command <code>toggleButton</code> is in <a
 href="examples/adj-ex-087-circularList-motley-001.svg">087-001</a>.</p>
+
+<p><span class="todo">TODO: better document command toggleButton, event, many
+appearances possible, detection of value, alternative</span></p>
 
 <h4 id="L94550">1.11.25. Command hide Options</h4>
 
@@ -4074,7 +4091,7 @@ Elements</h3>
 
 <p>A newly implemented alternative syntax allows Adj commands to be attributes
 of SVG elements instead of requiring them to be XML elements of their own. This
-can be convenient for authors. Arguably there are distinct flavors of clarity
+can be convenient for an author. Arguably there are distinct flavors of clarity
 in using the two different syntaxes. Both syntaxes are supported in the
 foreseeable future.</p>
 
@@ -4142,7 +4159,7 @@ class="emphasize">no</span> sense to combine <code>vine</code> and
 <code>floater</code>.</p>
 
 <p>There is no complete list. Factual <a href="#L4276">feedback</a> about
-noteworthy combinations, maybe example files, from authors using Adj is
+noteworthy combinations, maybe example files, from an author using Adj is
 welcome.</p>
 
 <h4 id="L14093">1.17.1. Command Combinations Via adj: Attributes Instead Of Via

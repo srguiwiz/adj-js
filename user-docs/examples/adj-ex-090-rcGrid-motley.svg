@@ -3,7 +3,7 @@
 	<script type="text/javascript" xlink:href="../js/adj.js"/>
 	<rect width="200" height="200" fill="linen"/>
 	<g>
-		<adj:rcGrid adj:rcGridPart="column" gap="5"/>
+		<adj:rcGrid rcGridPart="column" gap="5"/>
 		<rect fill="#fff" width="151" height="171" x="0.5" y="0.5">
 			<adj:frameForParent/>
 		</rect>

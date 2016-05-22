@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="620" height="270">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	@font-face {
+		font-family: Liberation Sans;
+		src: local("Liberation Sans"), local("Liberation Sans Regular"), local("LiberationSans-Regular"),
+			url(../fonts/Liberation/LiberationSans-Regular.ttf);
+		font-weight: normal;
+		font-style: normal;
+	}
+	svg {
+		font-family: "Liberation Sans","Arial";
+		font-size: 12px;
+	}
+	.request > rect {
+		fill: whitesmoke;
+		stroke: gray;
+		opacity: 0.95;
+	}
+	.method {
+		font-weight: bold;
+	}
+	.headers > g > *:nth-child(1) {
+		font-weight: bold;
+	}
+	.flow {
+		fill: whitesmoke;
+		stroke: gray;
+		opacity: 0.95;
+	}
+	]]></style>
+	<adj:variable name="gap" value="5"/>
+	<adj:variable name="text.maxWidth" value="300"/>
+	<rect width="620" height="270" fill="linen"/>
+	<path d="M81,40 q231.603,77.086 452,182 " stroke="none" fill="none" adj:d="M15,50 q40,-15 80,0">
+		<adj:connection from="browser % 1, 0.5" to="server % 0, 0.5"/>
+	</path>
+	<path class="flow" d="M88.909,47.902 l6.323,-3.165 l-3.165,-6.323 L92.067,38.414 Q314.477,112.45 526.12,213.187 L526.12,213.187 l2.366,6.664 l-6.664,2.366 L521.822,222.216 Q310.729,121.722 88.909,47.902 " adj:d="M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z" stroke="black" stroke-width="1" fill="white">
+		<adj:pathArrow setback="10"/>
+	</path>
+	<g>
+		<adj:telescopicTree gap="30"/>
+		<g adj:id="browser" transform="translate(31,44)">
+			<text>Browser</text>
+		</g>
+		<adj:boom angle="20"/>
+		<g class="request" transform="translate(111,30)">
+			<adj:verticalList/>
+			<rect width="390.5" height="203" x="0.5" y="0.5">
+				<adj:frameForParent/>
+			</rect>
+			<g transform="translate(3,3)">
+				<adj:horizontalList gap="^gap" bottomGap="0"/>
+				<text class="method" transform="translate(6,16)">GET</text>
+				<text class="identifier" transform="translate(41.867,16)">/</text>
+				<text class="protocol" transform="translate(54.867,16)">HTTP/1.1</text>
+			</g>
+			<g class="headers" transform="translate(3,25)">
+				<adj:rcGrid rcGridPart="row" hAlign="left" vAlign="top" gap="^gap" middleGap="^gap * 2" explain="false"/>
+				<g>
+					<text transform="translate(6,16)">Host:</text>
+					<text transform="translate(121.5,16)">www.example.com</text>
+				</g>
+				<g>
+					<text transform="translate(6,40)">User-Agent:</text>
+					<text transform="translate(120.5,40)" x="0" y="0">
+						<adj:paragraph maxWidth="^text.maxWidth"/>Mozilla/5.0 (Windows NT 5.1; rv:10.0.2)  
+ 
+<tspan x="0" y="16">​﻿</tspan>
+						<tspan x="0" y="16">​﻿</tspan>Gecko/20100101 Firefox/10.0.2</text>
+				</g>
+				<g>
+					<text transform="translate(7,80)">Accept:</text>
+					<text transform="translate(121.5,80)" x="0" y="0">
+						<adj:paragraph maxWidth="^text.maxWidth"/>text/html,application/xhtml+xml,application/xml;  
+ 
+<tspan x="0" y="16">​﻿</tspan>
+						<tspan x="0" y="16">​﻿</tspan>q=0.9,*/*;q=0.8</text>
+				</g>
+				<g>
+					<text transform="translate(7,120)">Accept-Language:</text>
+					<text transform="translate(120.5,120)">en-us,en;q=0.5</text>
+				</g>
+				<g>
+					<text transform="translate(7,144)">Accept-Encoding:</text>
+					<text transform="translate(120.5,144)">gzip, deflate</text>
+				</g>
+				<g>
+					<text transform="translate(6,168)">Connection:</text>
+					<text transform="translate(120.5,168)">keep-alive</text>
+				</g>
+			</g>
+		</g>
+		<g adj:id="server" transform="translate(534,226)">
+			<text>Server</text>
+		</g>
+	</g>
+</svg>

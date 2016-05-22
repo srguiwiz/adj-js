@@ -4,7 +4,7 @@
 	<script type="text/javascript" xlink:href="../js/adj-tests.js"/>
 	<rect width="200" height="200" fill="linen"/>
 	<g>
-		<adj:rcGrid adj:rcGridPart="column" gap="5"/>
+		<adj:rcGrid rcGridPart="column" gap="5"/>
 		<rect fill="#fff" width="10" height="10">
 			<adj:frameForParent/>
 		</rect>
