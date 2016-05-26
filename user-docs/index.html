@@ -155,7 +155,9 @@ newer.</p>
       </li>
       <li><a href="#L23622">1.13. Auxiliary Functions</a>
         <ul>
-          <li><a href="#L23624">1.13.1. Function
+          <li><a href="#L18918">1.13.1. Functions hide, unhide, and
+            toggleHide</a></li>
+          <li><a href="#L23624">1.13.2. Function
           toggleHideSiblingsFollowing</a></li>
         </ul>
       </li>
@@ -3601,7 +3603,21 @@ padding for the whole list only rather than between elements.</p>
 
 <h3 id="L23622">1.13. Auxiliary Functions</h3>
 
-<h4 id="L23624">1.13.1. Function toggleHideSiblingsFollowing</h4>
+<h4 id="L18918">1.13.1. Functions hide, unhide, and toggleHide</h4>
+
+<p>Auxiliary function <code>Adj.toggleHide(element)</code> hides or unhides an
+element.</p>
+
+<p>As implemented, <code>toggleHide</code> inserts or removes an instance of
+command <code><a href="#L94550">hide</a></code>.</p>
+
+<p>An optional second parameter tells whether to invoke
+<code>Adj.doSvg()</code>.</p>
+
+<p>Similarly there are functions <code>Adj.hide(element)</code> and
+<code>Adj.unhide(element)</code>.</p>
+
+<h4 id="L23624">1.13.2. Function toggleHideSiblingsFollowing</h4>
 
 <p>Auxiliary function <code>toggleHideSiblingsFollowing</code> hides or unhides
 siblings.</p>

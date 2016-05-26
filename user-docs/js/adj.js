@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:2, revision:1 };
+Adj.version = { major:6, minor:2, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -6735,6 +6735,41 @@ Adj.defineCommandForAlgorithm({
 	phaseHandlerNames: [], // actual hiding done in Adj.setAlgorithm, for now
 	parameters: []
 });
+
+// utility
+Adj.hideUnhide = function hideUnhide (element, hide, doSvg) {
+	switch (hide) {
+		case "hide":
+		case "unhide":
+			break;
+		case "toggle":
+			if (element.adjHiddenByCommand) {
+				hide = "unhide";
+			} else {
+				hide = "hide";
+			}
+			break;
+		default:
+			hide = "unhide";
+	}
+	if (hide === "hide") {
+		Adj.elementSetAttributeInAdjNS(element, "hide", "true");
+	} else { // "unhide"
+		Adj.elementRemoveAttributeInAdjNS(element, "hide");
+	}
+	if (doSvg) {
+		Adj.doSvg(element.ownerSVGElement);
+	}
+}
+Adj.hide = function hide (element, doSvg) {
+	Adj.hideUnhide(element, "hide", doSvg);
+};
+Adj.unhide = function unhide (element, doSvg) {
+	Adj.hideUnhide(element, "unhide", doSvg);
+};
+Adj.toggleHide = function toggleHide (element, doSvg) {
+	Adj.hideUnhide(element, "toggle", doSvg);
+};
 
 // utility
 Adj.hideUnhideSiblingsFollowing = function hideUnhideSiblingsFollowing (element, hide, doSvg) {
