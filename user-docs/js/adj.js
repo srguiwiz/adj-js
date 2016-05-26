@@ -4525,19 +4525,17 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 		}
 		var arithmeticField = idArithmeticMatch[2];
 		var arithmeticParameter = idArithmeticMatch[3];
-		var arithmeticX;
-		var arithmeticY;
 		switch (arithmeticField) {
 			case "x":
 				if (!isNaN(arithmeticParameter)) {
-					arithmeticX = parseFloat(arithmeticParameter);
+					var arithmeticX = parseFloat(arithmeticParameter);
 				} else {
 					arithmeticX = 0;
 				}
 				break;
 			case "y":
 				if (!isNaN(arithmeticParameter)) {
-					arithmeticY = parseFloat(arithmeticParameter);
+					var arithmeticY = parseFloat(arithmeticParameter);
 				} else {
 					arithmeticY = 0;
 				}
@@ -4555,7 +4553,7 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 				arithmeticY = 0.5;
 				break;
 			case "w":
-				withoutEF = true;
+				var withoutEF = true;
 				break;
 			case "h":
 				withoutEF = true;
