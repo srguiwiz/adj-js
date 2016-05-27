@@ -674,11 +674,11 @@ browsers to keep providing consistently to remain compatible</span></p>
     &lt;rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd"/&gt;
   &lt;/g&gt;
   &lt;path d="M0,0" stroke="#777" stroke-width="2" fill="none" <span class="example-code">adj:d="M ~o1#x - 10, ~o1#yh</span>
-  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy
-  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy
-  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10
-  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10
-  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
+  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#yc
+  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#yc
+  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#xc, ~o3#yh + 10
+  S ~o4#x, ~o4#yh + 10 ~o4#xc, ~o4#yh + 10
+  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#yc
   C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, <span class="example-code">~o2#yh * 0.5 + ~o4#y * 0.5 + 10</span> ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
   S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
     <span class="example-code">&lt;adj:<a href="#L1796">vine</a>/&gt;</span>
@@ -695,7 +695,7 @@ browsers to keep providing consistently to remain compatible</span></p>
     &lt;rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/&gt;
     &lt;rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/&gt;
     &lt;path d="M0,0 l40,0 -20,-50 z" fill="#444"&gt;
-      <span class="example-code">&lt;adj:<a href="#L2184">floater</a> at="~one#cx*0.333+~other#cx*0.333+~another#cx*0.333,~one#cy*0.333+~other#cy*0.333+~another#cy*0.333"/&gt;</span>
+      <span class="example-code">&lt;adj:<a href="#L2184">floater</a> at="~one#xc*0.333+~other#xc*0.333+~another#xc*0.333,~one#yc*0.333+~other#yc*0.333+~another#yc*0.333"/&gt;</span>
     &lt;/path&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -2050,11 +2050,11 @@ optional parameters of <code><a href="#L8469">verticalTree</a></code>.</p>
     &lt;rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd"/&gt;
   &lt;/g&gt;
   &lt;path d="M0,0" stroke="#777" stroke-width="2" fill="none" <span class="example-code">adj:d="M ~o1#x - 10, ~o1#yh</span>
-  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy
-  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy
-  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10
-  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10
-  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
+  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#yc
+  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#yc
+  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#xc, ~o3#yh + 10
+  S ~o4#x, ~o4#yh + 10 ~o4#xc, ~o4#yh + 10
+  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#yc
   C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, <span class="example-code">~o2#yh * 0.5 + ~o4#y * 0.5 + 10</span> ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
   S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
     <span class="example-code">&lt;adj:vine/&gt;</span>
@@ -2114,13 +2114,13 @@ they also can be outside that range.</p>
       <td><code>#y%1</code>, which would be <code>y+height</code>, bottom</td>
     </tr>
     <tr>
-      <td><pre>~ identifier # cx</pre>
+      <td><pre>~ identifier # xc</pre>
       </td>
       <td><code>#x%.5</code>, same as <code>#x%0.5</code>, which would be
         <code>x+width/2</code>, horizontal center</td>
     </tr>
     <tr>
-      <td><pre>~ identifier # cy</pre>
+      <td><pre>~ identifier # yc</pre>
       </td>
       <td><code>#y%.5</code>, same as <code>#y%0.5</code>, which would be
         <code>y+height/2</code>, vertical center</td>
@@ -2248,7 +2248,7 @@ href="#L1796">vine</a></code>.</p>
     &lt;rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/&gt;
     &lt;rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/&gt;
     &lt;path d="M0,0 l40,0 -20,-50 z" fill="#444"&gt;
-      <span class="example-code">&lt;adj:floater pin="0.5,0" at="~one#cx*0.333+~other#cx*0.333+~another#cx*0.333,~one#cy*0.333+~other#cy*0.333+~another#cy*0.333"/&gt;</span>
+      <span class="example-code">&lt;adj:floater pin="0.5,0" at="~one#xc*0.333+~other#xc*0.333+~another#xc*0.333,~one#yc*0.333+~other#yc*0.333+~another#yc*0.333"/&gt;</span>
     &lt;/path&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -3408,11 +3408,11 @@ and <code>rcGrid</code>.</p>
     &lt;rect adj:id="o7" adj:treeParent="o5" width="25" height="15" fill="#ddd"/&gt;
   &lt;/g&gt;
   &lt;path d="M0,0" stroke="#777" stroke-width="2" fill="none" adj:d="M ~o1#x - 10, ~o1#yh
-  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#cy
-  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#cy
-  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#cx, ~o3#yh + 10
-  S ~o4#x, ~o4#yh + 10 ~o4#cx, ~o4#yh + 10
-  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#cy
+  C ~o1#x - 10, ~o1#yh + 10 ~o2#x - 10, ~o2#y%-0.3 ~o2#x - 10, ~o2#yc
+  S ~o3#x - 10, ~o3#y%-0.3 ~o3#x - 10, ~o3#yc
+  C ~o3#x - 10, ~o3#yh + 10 ~o3#x, ~o3#yh + 10 ~o3#xc, ~o3#yh + 10
+  S ~o4#x, ~o4#yh + 10 ~o4#xc, ~o4#yh + 10
+  S ~o4#xw + 10, ~o4#yh + 10 ~o4#xw + 10, ~o4#yc
   C ~o4#xw + 10, ~o4#y * 0.5 + ~o2#yh * 0.5 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5 + 10 ~o2#xw, ~o2#yh * 0.5 + ~o4#y * 0.5
   S ~o2#xw, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10 ~o2#xw * 0.5 + ~o5#x * 0.5, ~o2#yh * 0.5 + ~o5#yh * 0.5 + 10"&gt;
     &lt;adj:<a href="#L1796">vine</a> <span class="example-code">explain="true"</span>/&gt;
@@ -3430,7 +3430,7 @@ and <code>rcGrid</code>.</p>
     &lt;rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/&gt;
     &lt;rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/&gt;
     &lt;path d="M0,0 l40,0 -20,-50 z" fill="#ccc"&gt;
-      &lt;adj:<a href="#L2184">floater</a> pin="0.5,0" at="~one#cx*0.333+~other#cx*0.333+~another#cx*0.333,~one#cy*0.333+~other#cy*0.333+~another#cy*0.333" <span class="example-code">explain="true"</span>/&gt;
+      &lt;adj:<a href="#L2184">floater</a> pin="0.5,0" at="~one#xc*0.333+~other#xc*0.333+~another#xc*0.333,~one#yc*0.333+~other#yc*0.333+~another#yc*0.333" <span class="example-code">explain="true"</span>/&gt;
     &lt;/path&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
@@ -3828,9 +3828,9 @@ the referencing element. That is more narrow of a search than function
   &lt;rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/&gt;
   &lt;rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/&gt;
   &lt;path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="M0,0" adj:d="
-    M ~one#xw + <span class="example-code">^myvar</span>, ~one#cy
-    C ~one#xw + <span class="example-code">^myvar</span>, ~one#cy - 20  ~other#cx - 20, ~other#yh + <span class="example-code">^myvar</span>  ~other#cx, ~other#yh + <span class="example-code">^myvar</span>
-    S ~another#x - <span class="example-code">^myvar</span>, ~another#cy - 20  ~another#x - <span class="example-code">^myvar</span>, ~another#cy"/&gt;
+    M ~one#xw + <span class="example-code">^myvar</span>, ~one#yc
+    C ~one#xw + <span class="example-code">^myvar</span>, ~one#yc - 20  ~other#xc - 20, ~other#yh + <span class="example-code">^myvar</span>  ~other#xc, ~other#yh + <span class="example-code">^myvar</span>
+    S ~another#x - <span class="example-code">^myvar</span>, ~another#yc - 20  ~another#x - <span class="example-code">^myvar</span>, ~another#yc"/&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
@@ -3846,9 +3846,9 @@ the referencing element. That is more narrow of a search than function
     &lt;rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/&gt;
     &lt;rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/&gt;
     &lt;path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="M0,0" adj:d="
-      M ~one#xw + ^myvar, ~one#cy
-      C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar
-      S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/&gt;
+      M ~one#xw + ^myvar, ~one#yc
+      C ~one#xw + ^myvar, ~one#yc - 20  ~other#xc - 20, ~other#yh + ^myvar  ~other#xc, ~other#yh + ^myvar
+      S ~another#x - ^myvar, ~another#yc - 20  ~another#x - ^myvar, ~another#yc"/&gt;
   &lt;/g&gt;
   &lt;g transform="translate(0,100)"&gt;
     &lt;adj:variable <span class="example-code">name="myvar" value="17"</span> desc="in inner scope #2"/&gt;
@@ -3856,9 +3856,9 @@ the referencing element. That is more narrow of a search than function
     &lt;rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/&gt;
     &lt;rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/&gt;
     &lt;path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="M0,0" adj:d="
-      M ~one#xw + ^myvar, ~one#cy
-      C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar
-      S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/&gt;
+      M ~one#xw + ^myvar, ~one#yc
+      C ~one#xw + ^myvar, ~one#yc - 20  ~other#xc - 20, ~other#yh + ^myvar  ~other#xc, ~other#yh + ^myvar
+      S ~another#x - ^myvar, ~another#yc - 20  ~another#x - ^myvar, ~another#yc"/&gt;
   &lt;/g&gt;
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>

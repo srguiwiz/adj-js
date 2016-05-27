@@ -9,13 +9,13 @@
 		<rect adj:id="one" x="15" y="45" width="40" height="10" fill="#000"/>
 		<rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/>
 		<rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/>
-		<path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="  M 58, 50  C 58, 30  95, 28  115, 28  S 142, 60  142, 80" adj:d="  M ~one#xw + ^myvar, ~one#cy  C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar  S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/>
+		<path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="  M 58, 50  C 58, 30  95, 28  115, 28  S 142, 60  142, 80" adj:d="  M ~one#xw + ^myvar, ~one#yc  C ~one#xw + ^myvar, ~one#yc - 20  ~other#xc - 20, ~other#yh + ^myvar  ~other#xc, ~other#yh + ^myvar  S ~another#x - ^myvar, ~another#yc - 20  ~another#x - ^myvar, ~another#yc"/>
 	</g>
 	<g transform="translate(0,100)">
 		<adj:variable name="myvar" value="17" desc="in inner scope #2"/>
 		<rect adj:id="one" x="15" y="45" width="40" height="10" fill="#000"/>
 		<rect adj:id="other" x="95" y="15" width="40" height="10" fill="#666"/>
 		<rect adj:id="another" x="145" y="75" width="40" height="10" fill="#aaa"/>
-		<path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="  M 72, 50  C 72, 30  95, 42  115, 42  S 128, 60  128, 80" adj:d="  M ~one#xw + ^myvar, ~one#cy  C ~one#xw + ^myvar, ~one#cy - 20  ~other#cx - 20, ~other#yh + ^myvar  ~other#cx, ~other#yh + ^myvar  S ~another#x - ^myvar, ~another#cy - 20  ~another#x - ^myvar, ~another#cy"/>
+		<path adj:command="vine" stroke="#777" stroke-width="2" fill="none" d="  M 72, 50  C 72, 30  95, 42  115, 42  S 128, 60  128, 80" adj:d="  M ~one#xw + ^myvar, ~one#yc  C ~one#xw + ^myvar, ~one#yc - 20  ~other#xc - 20, ~other#yh + ^myvar  ~other#xc, ~other#yh + ^myvar  S ~another#x - ^myvar, ~another#yc - 20  ~another#x - ^myvar, ~another#yc"/>
 	</g>
 </svg>

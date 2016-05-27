@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:2, revision:2 };
+Adj.version = { major:6, minor:3, revision:0 };
 Adj.algorithms = {};
 
 // constants
@@ -4546,10 +4546,10 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 			case "yh":
 				arithmeticY = 1;
 				break;
-			case "cx":
+			case "xc":
 				arithmeticX = 0.5;
 				break;
-			case "cy":
+			case "yc":
 				arithmeticY = 0.5;
 				break;
 			case "w":
@@ -4600,13 +4600,13 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 		switch (arithmeticField) {
 			case "x":
 			case "xw":
-			case "cx":
+			case "xc":
 			case "w":
 				arithmeticCoordinate = arithmeticPoint.x;
 				break;
 			case "y":
 			case "yh":
-			case "cy":
+			case "yc":
 			case "h":
 				arithmeticCoordinate = arithmeticPoint.y;
 				break;

@@ -6,6 +6,6 @@
 	<rect adj:id="other" x="95" y="15" width="40" height="30" fill="#666"/>
 	<rect adj:id="another" x="145" y="115" width="40" height="30" fill="#aaa"/>
 	<path d="M0,0 l40,0 -20,-50 z" fill="#444" transform="translate(84.895,129.92)">
-		<adj:floater pin="0.5,0" at="~one#cx*0.333+~other#cx*0.333+~another#cx*0.333,~one#cy*0.333+~other#cy*0.333+~another#cy*0.333"/>
+		<adj:floater pin="0.5,0" at="~one#xc*0.333+~other#xc*0.333+~another#xc*0.333,~one#yc*0.333+~other#yc*0.333+~another#yc*0.333"/>
 	</path>
 </svg>
