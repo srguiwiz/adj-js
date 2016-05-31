@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj" xmlns:xlink="http://www.w3.org/1999/xlink" onload="Adj.doSvg();" width="200" height="170">
+	<script type="text/javascript" xlink:href="../js/adj.js"/>
+	<style type="text/css"><![CDATA[
+	svg {
+		font-family: "Liberation Serif","Times New Roman","serif";
+		font-size: 14px;
+		fill: drakslategrey;
+	}
+	.meta {
+		font-family: "Liberation Sans","Arial",sans-serif;
+		font-size: 14px;
+		font-weight: bold;
+	}
+	.background {
+		fill: white;
+		stroke: none;
+		opacity: 0.8;
+	}
+	.frame {
+		stroke: black;
+		stroke-width: 1px;
+		opacity: 0.9;
+	}
+	.attention {
+		fill: yellow;
+	}
+	]]></style>
+	<adj:variable name="theta1" value="5"/>
+	<adj:variable name="theta2" value="75"/>
+	<adj:variable name="gap" value="25"/>
+	<adj:variable name="stroke" value="10"/>
+	<path d="M0,0" stroke="none" stroke-width="1" fill="none" adj:d="M ~lisasApp#xc, ~lisasApp#y Q ~lisasApp#xc, ~initiate#yh ~initiate#xc, ~initiate#yc Q ~acme#x, ~acme#yc ~acme#xc, ~acme#yc Q ~acme#xw, ~acme#yc ~forward#xc, ~forward#yc Q ~bobsBrowser#xc, ~forward#yh ~bobsBrowser#xc, ~bobsBrowser#y">
+		<adj:vine/>
+	</path>
+	<path class="flow" d="M0,0" stroke="gray" stroke-width="1" fill="whitesmoke" adj:d="M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z">
+		<adj:pathArrow nockSetback="10" pointSetback="15"/>
+	</path>
+	<path d="M0,0" stroke="none" stroke-width="1" fill="none" adj:d="M ~bobsBrowser#x, ~bobsBrowser#yc Q ~response#xw, ~response#yc ~response#xc, ~response#yc Q ~response#x, ~response#yc ~lisasApp#xw, ~lisasApp#yc">
+		<adj:vine/>
+	</path>
+	<path class="flow" d="M0,0" stroke="gray" stroke-width="1" fill="whitesmoke" adj:d="M50,25 l5,-5 ,-5,-5 0,0 20,0 0,0 5,5 ,-5,5 0,0 z">
+		<adj:pathArrow nockSetback="10" pointSetback="15"/>
+	</path>
+	<g>
+		<adj:verticalList/>
+		<g class="meta">
+			<adj:rcGrid gap="^gap" centerGap="^gap*1.5" hAlign="left"/>
+			<g>
+				<g adj:id="showDevices">
+					<adj:horizontalList vAlign="middle" centerGap="^gap*.5"/>
+					<rect class="attention" adj:id="attention" fill="none" width="30" height="10">
+						<adj:frameForParent/>
+					</rect>
+					<adj:toggleButton congruent="true"/>
+					<rect adj:alternativeValue="off" title="click to show devices" width="12" height="12" fill="white" stroke="dimgrey"/>
+					<g adj:alternativeValue="on">
+						<rect title="click to hide" width="12" height="12" fill="white" stroke="dimgrey"/>
+						<line x1="0" y1="0" x2="12" y2="12" stroke="black"/>
+						<line x1="0" y1="12" x2="12" y2="0" stroke="black"/>
+					</g>
+					<text>show devices</text>
+				</g>
+				<g adj:id="explainIt">
+					<adj:horizontalList vAlign="middle" centerGap="^gap*.5"/>
+					<rect class="attention" adj:id="attention" fill="none" width="30" height="10">
+						<adj:frameForParent/>
+					</rect>
+					<adj:toggleButton congruent="true"/>
+					<rect adj:alternativeValue="off" title="click to explain" width="12" height="12" fill="white" stroke="dimgrey"/>
+					<g adj:alternativeValue="on">
+						<rect title="click to hide" width="12" height="12" fill="white" stroke="dimgrey"/>
+						<line x1="0" y1="0" x2="12" y2="12" stroke="black"/>
+						<line x1="0" y1="12" x2="12" y2="0" stroke="black"/>
+					</g>
+					<text>explain Adj telescopicTree</text>
+				</g>
+			</g>
+			<g>
+				<g adj:id="showPeople">
+					<adj:horizontalList vAlign="middle" centerGap="^gap*.5"/>
+					<rect class="attention" adj:id="attention" fill="none" width="30" height="10">
+						<adj:frameForParent/>
+					</rect>
+					<adj:toggleButton congruent="true"/>
+					<rect adj:alternativeValue="off" title="click to show people" width="12" height="12" fill="white" stroke="dimgrey"/>
+					<g adj:alternativeValue="on">
+						<rect title="click to hide" width="12" height="12" fill="white" stroke="dimgrey"/>
+						<line x1="0" y1="0" x2="12" y2="12" stroke="black"/>
+						<line x1="0" y1="12" x2="12" y2="0" stroke="black"/>
+					</g>
+					<text>show people</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<adj:telescopicTree gap="^gap" explain="false"/>
+			<g adj:id="acme">
+				<adj:skimpyList gap="20"/>
+				<rect class="background frame" width="0" height="0">
+					<adj:frameForParent/>
+				</rect>
+				<text style="font-weight:bolder;">Acme Corporation</text>
+			</g>
+			<adj:boom angle="180-^theta1" from="0,0.6" to="1,0.2"/>
+			<g adj:id="initiate">
+				<rect class="background" width="0" height="0">
+					<adj:frameForParent/>
+				</rect>
+				<text>Initiate Request</text>
+			</g>
+			<adj:boom angle="180-^theta2" gap="2*^gap"/>
+			<g>
+				<adj:verticalList hAlign="center"/>
+				<text adj:id="lisasApp">iPad App</text>
+				<g adj:hide="true" class="illustration">
+					<g adj:command="tilt" adj:alpha="5" adj:beta="5">
+						<g adj:command="skimpyList" adj:gap="15">
+							<rect fill="dimgrey" rx="15" ry="15" width="40" height="40" adj:command="frameForParent"/>
+							<rect fill="black" width="40" height="40" adj:command="frameForParent" adj:inset="10"/>
+							<g>
+								<switch>
+									<foreignObject width="600" height="800" requiredExtension="http://www.w3.org/1999/xhtml" transform="scale(0.2)">
+										<body xmlns="http://www.w3.org/1999/xhtml" style="background-color:white;height:100%;padding:20px;font-family:sans-serif;font-size:20px;">
+											<div style="overflow-y:auto;max-height:100vh;">
+												<h1 style="text-align:center;">Acme Messaging</h1>
+												<h2>Bob Smith</h2>
+												<table>
+													<tr>
+														<td style="padding:10px;">
+															<img src="../folks/avatar-002-m-bob-smith.png"/>
+														</td>
+														<td style="padding:10px;">
+															<input type="button" value="Connect" style="font-size:larger;background-color:green;"/>
+														</td>
+													</tr>
+												</table>
+												<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen. She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane.</p>
+											</div>
+										</body>
+									</foreignObject>
+									<g>
+										<!-- Internet Explorer 11 -->
+										<rect width="120" height="160" fill="white"/>
+										<g>
+											<adj:verticalList/>
+											<text>This browser</text>
+											<text>doesn't show</text>
+											<text>this content.</text>
+										</g>
+									</g>
+								</switch>
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+			<adj:boom angle="90+^theta2*.2" gap="^gap*.5"/>
+			<g>
+				<adj:verticalList hAlign="center"/>
+				<g class="person" adj:hide="true">
+					<image xlink:href="../folks/avatar-009-f-lisa-lee-b.png" width="80" height="80">
+						<adj:tilt alpha="5"/>
+					</image>
+				</g>
+				<text adj:id="lisa">Lisa</text>
+			</g>
+			<adj:boom angle="^theta1" from="acme%1,0.6" to="0,0.2"/>
+			<g adj:id="forward">
+				<rect class="background" width="0" height="0">
+					<adj:frameForParent/>
+				</rect>
+				<text>Forward Request</text>
+			</g>
+			<adj:boom angle="^theta2" gap="2*^gap"/>
+			<g>
+				<adj:verticalList hAlign="center"/>
+				<text adj:id="bobsBrowser">Notebook Browser</text>
+				<g adj:command="pinnedList" adj:hide="true" class="illustration">
+					<g>
+						<g adj:command="tilt" adj:alpha="-5" adj:beta="-5">
+							<g adj:command="skimpyList" adj:gap="15" adj:id="notebookCover">
+								<rect fill="dimgrey" rx="15" ry="15" width="40" height="40" adj:command="frameForParent"/>
+								<rect fill="black" width="40" height="40" adj:command="frameForParent" adj:inset="10"/>
+								<g>
+									<switch>
+										<foreignObject width="800" height="500" requiredExtension="http://www.w3.org/1999/xhtml" transform="scale(0.4)">
+											<body xmlns="http://www.w3.org/1999/xhtml">
+												<iframe id="bobsBrowserIframe" width="800" height="500" src="about:blank" style="display:none"/>
+												<div style="background-color:white;height:100%;padding:20px;font-family:sans-serif;font-size:16px;">
+													<div id="bobsBrowserDiv" style="overflow-y:auto;max-height:100vh;">
+														<h1 style="text-align:center;">Acme Messaging</h1>
+														<h2>Lisa Lee</h2>
+														<table>
+															<tr>
+																<td style="padding:20px;">
+																	<img src="../folks/avatar-009-f-lisa-lee.png" width="160" height="160"/>
+																</td>
+																<td style="padding:20px;">
+																	<input type="button" value="Connect" style="font-size:larger;background-color:green;"/>
+																</td>
+																<td style="padding:20px;">
+																	<input type="button" value="Email" style="font-size:larger;background-color:green;" onclick="document.querySelector('#bobsBrowserDiv').setAttribute('style','display:none;');document.querySelector('#bobsBrowserIframe').setAttribute('src','http://mail.google.com/');document.querySelector('#bobsBrowserIframe').removeAttribute('style');"/>
+																</td>
+															</tr>
+														</table>
+														<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen. She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane.</p>
+													</div>
+												</div>
+											</body>
+										</foreignObject>
+										<g>
+											<!-- Internet Explorer 11 -->
+											<rect width="320" height="200" fill="white"/>
+											<g>
+												<adj:verticalList/>
+												<text>This browser</text>
+												<text>doesn't show</text>
+												<text>this content.</text>
+											</g>
+										</g>
+									</switch>
+								</g>
+							</g>
+						</g>
+					</g>
+					<g adj:pinThis="notebookBody % 0, 0" adj:pinTo="notebookCover % 0, 1">
+						<g adj:command="tilt" adj:alpha="-5" adj:beta="-40">
+							<g adj:command="verticalList" adj:gap="15" adj:hAlign="center" adj:id="notebookBody">
+								<rect fill="dimgrey" rx="15" ry="15" width="40" height="40" adj:command="frameForParent"/>
+								<g>
+									<rect fill="black" width="800" height="200" transform="scale(0.4)"/>
+								</g>
+								<g>
+									<rect fill="black" width="200" height="100" transform="scale(0.4)"/>
+								</g>
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+			<adj:boom angle="90-^theta2*.3" gap="^gap*.5"/>
+			<g>
+				<adj:verticalList hAlign="center"/>
+				<g class="person" adj:hide="true">
+					<image xlink:href="../folks/avatar-002-m-bob-smith-b.png" width="80" height="80">
+						<adj:tilt alpha="-5"/>
+					</image>
+				</g>
+				<text adj:id="bob">Bob</text>
+			</g>
+			<adj:boom angle="90" from="acme" gap="^gap"/>
+			<g adj:id="response">
+				<rect class="background" width="0" height="0">
+					<adj:frameForParent/>
+				</rect>
+				<text>Direct Response</text>
+			</g>
+		</g>
+	</g>
+	<rect width="400" height="300" fill="white" adj:hide="true">
+		<!-- here to avoid initial visual artifact while loading complete webpage in an iframe -->
+	</rect>
+	<script><![CDATA[
+Adj.getElementById("showDevices").addEventListener("change", function (event) {
+	var newToggle = event.detail.value;
+	[].slice.call(document.querySelectorAll(".illustration")).forEach(function(element) {
+		if (newToggle === "on") {
+			Adj.unhide(element);
+			//document.querySelector("#bobsBrowserIframe").setAttribute("src","http://mail.google.com/");
+		} else {
+			Adj.hide(element);
+		}
+	});
+	if (newToggle === "on") {
+		var element = Adj.getElementByIdNearby("attention", event.target);
+		//element.classList.remove("attention"); // fails in IE 11
+		element.setAttribute("class", element.getAttribute("class").replace("attention",""));
+	}
+	Adj.doSvg();
+});
+Adj.getElementById("showPeople").addEventListener("change", function (event) {
+	var newToggle = event.detail.value;
+	[].slice.call(document.querySelectorAll(".person")).forEach(function(element) {
+		if (newToggle === "on") {
+			Adj.unhide(element);
+		} else {
+			Adj.hide(element);
+		}
+	});
+	if (newToggle === "on") {
+		var element = Adj.getElementByIdNearby("attention", event.target);
+		//element.classList.remove("attention"); // fails in IE 11
+		element.setAttribute("class", element.getAttribute("class").replace("attention",""));
+	}
+	Adj.doSvg();
+});
+Adj.getElementById("explainIt").addEventListener("change", function (event) {
+	var newToggle = event.detail.value;
+	[].slice.call(document.querySelectorAll("[explain]")).forEach(function(element) {
+		element.setAttribute("explain", newToggle === "on" ? "true" : "false");
+	});
+	if (newToggle === "on") {
+		var element = Adj.getElementByIdNearby("attention", event.target);
+		//element.classList.remove("attention"); // fails in IE 11
+		element.setAttribute("class", element.getAttribute("class").replace("attention",""));
+	}
+	Adj.doSvg();
+});
+	]]></script>
+</svg>
