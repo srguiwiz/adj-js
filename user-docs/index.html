@@ -72,6 +72,19 @@ h1,h2,h3,h4,h5,h6 {
  .separate {
   margin-top: 3em;
 }
+ .commands-gallery > span {
+  display: inline-table;
+  margin: 1ex;
+}
+ .commands-gallery > span span {
+  display: block;
+  text-align: center;
+}
+@media not screen, screen and (max-width: 1000px) {
+  .only-if-wide-screen {
+    display: none;
+  }
+}
   </style>
 </head>
 
@@ -83,11 +96,63 @@ h1,h2,h3,h4,h5,h6 {
 class="product-name"><a
 href="https://leosbog.nrvr.com/category/elasticdraw/">ElasticDraw</a></span>.</p>
 
-<p class="deemphasize">This user guide's SVG images show fine in contemporary
-browsers, i.e. Firefox, Chrome, Safari, Opera, Internet Explorer 11 or
-newer.</p>
+<p class="commands-gallery only-if-wide-screen"><span
+style="width:200px;height:100px;vertical-align:middle;text-align:center;">You
+can <a href="#toc">skip</a> this gallery.</span><span><a href="#L7357"><img
+alt="horizontalList"
+src="examples/adj-ex-003-horizontalList.svg"></img><span>horizontalList</span></a></span>
+<span><a href="#L7545"><img alt="verticalList"
+src="examples/adj-ex-002-verticalList.svg"></img><span>verticalList</span></a></span>
+<span><a href="#L12321"><img alt="frameForParent"
+src="examples/adj-ex-004-frameForParent.svg"></img><span>frameForParent</span></a></span>
+<span><a href="#L2589"><img alt="textBreaks"
+src="examples/adj-ex-005-textBreaks.svg"></img><span>textBreaks</span></a></span>
+<span><a href="#L1740"><img alt="connection"
+src="examples/adj-ex-006-connection.svg"></img><span>connection</span></a></span>
+<span><a href="#L8701"><img alt="rider"
+src="examples/adj-ex-007-rider.svg"></img><span>rider</span></a></span>
+<span><a href="#L9691"><img alt="circleForParent"
+src="examples/adj-ex-008-circleForParent.svg"></img><span>circleForParent</span></a></span>
+<span><a href="#L9743"><img alt="ellipseForParent"
+src="examples/adj-ex-009-ellipseForParent.svg"></img><span>ellipseForParent</span></a></span>
+<span><a href="#L20521"><img alt="circularList"
+src="examples/adj-ex-010-circularList.svg"></img><span>circularList</span></a></span>
+<span><a href="#L8469"><img alt="verticalTree"
+src="examples/adj-ex-045-verticalTree.svg"></img><span>verticalTree</span></a></span>
+<span><a href="#L1773"><img alt="horizontalTree"
+src="examples/adj-ex-051-horizontalTree.svg"></img><span>horizontalTree</span></a></span>
+<span><a href="#L1796"><img alt="vine"
+src="examples/adj-ex-053-vine.svg"></img><span>vine</span></a></span> <span><a
+href="#L2184"><img alt="floater"
+src="examples/adj-ex-054-floater.svg"></img><span>floater</span></a></span>
+<span><a href="#L2299"><img alt="fit"
+src="examples/adj-ex-060-fit.svg"></img><span>fit</span></a></span> <span><a
+href="#L2518"><img alt="stackFrames"
+src="examples/adj-ex-061-stackFrames.svg"></img><span>stackFrames</span></a></span>
+<span><a href="#L2604"><img alt="zoomFrames"
+src="examples/adj-ex-063-zoomFrames.svg"></img><span>zoomFrames</span></a></span>
+<span><a href="#L2672"><img alt="tilt"
+src="examples/adj-ex-066-tilt.svg"></img><span>tilt</span></a></span> <span><a
+href="#L2717"><img alt="pinnedList"
+src="examples/adj-ex-070-pinnedList.svg"></img><span>pinnedList</span></a></span>
+<span><a href="#L45423"><img alt="telescopicTree"
+src="examples/adj-ex-075-telescopicTree.svg"></img><span>telescopicTree</span></a></span>
+<span><a href="#L11198"><img alt="paragraph"
+src="examples/adj-ex-077-paragraph.svg"></img><span>paragraph</span></a></span>
+<span><a href="#L11940"><img alt="pathArrow"
+src="examples/adj-ex-082-pathArrow.svg"></img><span>pathArrow</span></a></span>
+<span><a href="#L16289"><img alt="rcGrid"
+src="examples/adj-ex-089-rcGrid.svg"></img><span>rcGrid</span></a></span>
+<span><a href="#L13254"><img alt="sliderKnob"
+src="examples/adj-ex-092-sliderKnob.svg"></img><span>sliderKnob</span></a></span>
+<span><a href="#L13706"><img alt="toggleButton"
+src="examples/adj-ex-094-toggleButton.svg"></img><span>toggleButton</span></a></span>
+<span><a href="#L94550"><img alt="hide"
+src="examples/adj-ex-072-hide.svg"></img><span>hide</span></a></span> <span><a
+href="#L3450"><img alt="include"
+src="examples/adj-ex-080-include.svg"></img><span>include</span></a></span></p>
 
-<div class="toc">
+<div id="toc" class="toc">
 <ul>
   <li><a href="#L7142">1. User Guide</a>
     <ul>
@@ -478,11 +543,11 @@ browsers to keep providing consistently to remain compatible</span></p>
   <tbody>
     <tr>
       <td><img alt="example"
-      src="examples/adj-ex-002-verticalList.svg"></img></td>
+      src="examples/adj-ex-003-horizontalList.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:<a href="#L7545">verticalList</a> gap="5"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L7357">horizontalList</a> gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -492,11 +557,11 @@ browsers to keep providing consistently to remain compatible</span></p>
     </tr>
     <tr>
       <td><img alt="example"
-      src="examples/adj-ex-003-horizontalList.svg"></img></td>
+      src="examples/adj-ex-002-verticalList.svg"></img></td>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="100" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:<a href="#L7357">horizontalList</a> gap="5"/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L7545">verticalList</a> gap="5"/&gt;</span>
     &lt;rect width="45" height="30" fill="#000"/&gt;
     &lt;rect width="40" height="25" fill="#444"/&gt;
     &lt;rect width="35" height="20" fill="#888"/&gt;
@@ -644,7 +709,7 @@ browsers to keep providing consistently to remain compatible</span></p>
       <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
   &lt;rect width="200" height="140" fill="linen"/&gt;</span>
   &lt;g&gt;
-    <span class="example-code">&lt;adj:<a href="#L8469">horizontalTree</a>/&gt;</span>
+    <span class="example-code">&lt;adj:<a href="#L1773">horizontalTree</a>/&gt;</span>
     &lt;text <span class="example-code">adj:id="r-1"</span>&gt;R1&lt;/text&gt;
     &lt;text adj:id="l-1-1" <span class="example-code">adj:treeParent="r-1"</span>&gt;L11&lt;/text&gt;
     &lt;text adj:id="n-1-2" adj:treeParent="r-1"&gt;N12&lt;/text&gt;
