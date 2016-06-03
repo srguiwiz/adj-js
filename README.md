@@ -2,12 +2,12 @@
 
 Adj commands modify SVG.
 
-One significant feature is "relative constraints".
+One significant feature is "constraints".
 
 The original purpose of the Adj framework has been to facilitate
 creation and long term maintenance of system diagrams.
 Adj has been designed specifically for diagrams of large complexity.
-Quite unrelated uses are expected.
+Unrelated uses are expected.
 
 Start by reading the User Guide at **user-docs/index.html**, also
 [online here](http://srguiwiz.github.com/adj-js/user-docs/).
