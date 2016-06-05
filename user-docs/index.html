@@ -82,11 +82,15 @@ h1,h2,h3,h4,h5,h6 {
   padding: .5ex 1em;
   background-color: whitesmoke;
 }
+ .commands-gallery img {
+  width: 200px;
+}
  .commands-gallery > span {
   display: inline-table;
   margin: 1em;
   background-color: white;
   border: 1ex solid white;
+  vertical-align: middle;
 }
  .commands-gallery > span span {
   display: block;
@@ -125,58 +129,165 @@ href="#commands-gallery">explore</a>, <a href="#toc">skip</a> or
 onclick="document.getElementById('commands-gallery').style.display='none'; document.getElementById('show-commands-gallery').style.display=null; return false;"
 value="Hide this Gallery" />.</p>
 
-<p class="commands-gallery"><span><a href="#L7357"><img alt="horizontalList"
-src="examples/adj-ex-003-horizontalList.svg"></img><span>horizontalList</span></a></span>
-<span><a href="#L7545"><img alt="verticalList"
-src="examples/adj-ex-002-verticalList.svg"></img><span>verticalList</span></a></span><span><a
-href="#L12321"><img alt="frameForParent"
-src="examples/adj-ex-004-frameForParent.svg"></img><span>frameForParent</span></a></span>
-<span><a href="#L2589"><img alt="textBreaks"
-src="examples/adj-ex-005-textBreaks.svg"></img><span>textBreaks</span></a></span>
-<span><a href="#L1740"><img alt="connection"
-src="examples/adj-ex-006-connection.svg"></img><span>connection</span></a></span>
-<span><a href="#L8701"><img alt="rider"
-src="examples/adj-ex-007-rider.svg"></img><span>rider</span></a></span>
-<span><a href="#L9691"><img alt="circleForParent"
-src="examples/adj-ex-008-circleForParent.svg"></img><span>circleForParent</span></a></span>
-<span><a href="#L9743"><img alt="ellipseForParent"
-src="examples/adj-ex-009-ellipseForParent.svg"></img><span>ellipseForParent</span></a></span>
-<span><a href="#L20521"><img alt="circularList"
-src="examples/adj-ex-010-circularList.svg"></img><span>circularList</span></a></span>
-<span><a href="#L8469"><img alt="verticalTree"
-src="examples/adj-ex-045-verticalTree.svg"></img><span>verticalTree</span></a></span>
-<span><a href="#L1773"><img alt="horizontalTree"
-src="examples/adj-ex-051-horizontalTree.svg"></img><span>horizontalTree</span></a></span>
-<span><a href="#L1796"><img alt="vine"
-src="examples/adj-ex-053-vine.svg"></img><span>vine</span></a></span> <span><a
-href="#L2184"><img alt="floater"
-src="examples/adj-ex-054-floater.svg"></img><span>floater</span></a></span><span><a
-href="#L2299"><img alt="fit"
-src="examples/adj-ex-060-fit.svg"></img><span>fit</span></a></span> <span><a
-href="#L2518"><img alt="stackFrames"
-src="examples/adj-ex-061-stackFrames.svg"></img><span>stackFrames</span></a></span>
-<span><a href="#L2604"><img alt="zoomFrames"
-src="examples/adj-ex-063-zoomFrames.svg"></img><span>zoomFrames</span></a></span>
-<span><a href="#L2672"><img alt="tilt"
-src="examples/adj-ex-066-tilt.svg"></img><span>tilt</span></a></span> <span><a
-href="#L2717"><img alt="pinnedList"
-src="examples/adj-ex-070-pinnedList.svg"></img><span>pinnedList</span></a></span>
-<span><a href="#L45423"><img alt="telescopicTree"
-src="examples/adj-ex-075-telescopicTree.svg"></img><span>telescopicTree</span></a></span>
-<span><a href="#L11198"><img alt="paragraph"
-src="examples/adj-ex-077-paragraph.svg"></img><span>paragraph</span></a></span>
-<span><a href="#L11940"><img alt="pathArrow"
-src="examples/adj-ex-082-pathArrow.svg"></img><span>pathArrow</span></a></span>
-<span><a href="#L16289"><img alt="rcGrid"
-src="examples/adj-ex-089-rcGrid.svg"></img><span>rcGrid</span></a></span>
-<span><a href="#L13254"><img alt="sliderKnob"
-src="examples/adj-ex-092-sliderKnob.svg"></img><span>sliderKnob</span></a></span>
-<span><a href="#L13706"><img alt="toggleButton"
-src="examples/adj-ex-094-toggleButton.svg"></img><span>toggleButton</span></a></span>
-<span><a href="#L94550"><img alt="hide"
-src="examples/adj-ex-072-hide.svg"></img><span>hide</span></a></span> <span><a
-href="#L3450"><img alt="include"
-src="examples/adj-ex-080-include.svg"></img><span>include</span></a></span></p>
+<p class="commands-gallery">
+	<span>
+		<a href="#L7357">
+			<img alt="horizontalList" src="examples/adj-ex-003-horizontalList.svg"/>
+			<span>horizontalList</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L20521">
+			<img alt="circularList" src="examples/adj-ex-010-circularList.svg"/>
+			<span>circularList</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L45423">
+			<img alt="telescopicTree" src="examples/adj-ex-075-telescopicTree.svg"/>
+			<span>telescopicTree</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2717">
+			<img alt="pinnedList" src="examples/adj-ex-070-pinnedList.svg"/>
+			<span>pinnedList</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L1796">
+			<img alt="vine" src="examples/adj-ex-053-vine.svg"/>
+			<span>vine</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L8701">
+			<img alt="rider" src="examples/adj-ex-007-rider.svg"/>
+			<span>rider</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L12321">
+			<img alt="frameForParent" src="examples/adj-ex-004-frameForParent.svg"/>
+			<span>frameForParent</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L11198">
+			<img alt="paragraph" src="examples/adj-ex-077-paragraph.svg"/>
+			<span>paragraph</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L16289">
+			<img alt="rcGrid" src="examples/adj-ex-089-rcGrid.svg"/>
+			<span>rcGrid</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L11940">
+			<img alt="pathArrow" src="examples/adj-ex-082-pathArrow.svg"/>
+			<span>pathArrow</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L1740">
+			<img alt="connection" src="examples/adj-ex-006-connection.svg"/>
+			<span>connection</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L8469">
+			<img alt="verticalTree" src="examples/adj-ex-045-verticalTree.svg"/>
+			<span>verticalTree</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L3450">
+			<img alt="include" src="examples/adj-ex-080-include.svg"/>
+			<span>include</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2184">
+			<img alt="floater" src="examples/adj-ex-054-floater.svg"/>
+			<span>floater</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2299">
+			<img alt="fit" src="examples/adj-ex-060-fit.svg"/>
+			<span>fit</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L94550">
+			<img alt="hide" src="examples/adj-ex-072-hide.svg"/>
+			<span>hide</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2518">
+			<img alt="stackFrames" src="examples/adj-ex-061-stackFrames.svg"/>
+			<span>stackFrames</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2604">
+			<img alt="zoomFrames" src="examples/adj-ex-063-zoomFrames.svg"/>
+			<span>zoomFrames</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L13254">
+			<img alt="sliderKnob" src="examples/adj-ex-092-sliderKnob.svg"/>
+			<span>sliderKnob</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L13706">
+			<img alt="toggleButton" src="examples/adj-ex-094-toggleButton.svg"/>
+			<span>toggleButton</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L7545">
+			<img alt="verticalList" src="examples/adj-ex-002-verticalList.svg"/>
+			<span>verticalList</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2672">
+			<img alt="tilt" src="examples/adj-ex-066-tilt.svg"/>
+			<span>tilt</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L9743">
+			<img alt="ellipseForParent" src="examples/adj-ex-009-ellipseForParent.svg"/>
+			<span>ellipseForParent</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L1773">
+			<img alt="horizontalTree" src="examples/adj-ex-051-horizontalTree.svg"/>
+			<span>horizontalTree</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L2589">
+			<img alt="textBreaks" src="examples/adj-ex-005-textBreaks.svg"/>
+			<span>textBreaks</span>
+		</a>
+	</span>
+	<span>
+		<a href="#L9691">
+			<img alt="circleForParent" src="examples/adj-ex-008-circleForParent.svg"/>
+			<span>circleForParent</span>
+		</a>
+	</span>
+</p>
+
 </div>
 </div>
 
