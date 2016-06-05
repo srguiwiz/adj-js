@@ -1,4 +1,4 @@
-# Adj Framework - Repository README
+# Adj aka ElasticDraw - Repository README
 
 Adj commands modify SVG.
 
