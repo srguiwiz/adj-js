@@ -5,8 +5,10 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Adj Framework - User Guide</title>
-  <script type="text/javascript" src="js/adj.js"></script>
-  <script type="text/javascript" src="js/toc.js"></script>
+  <script type="text/javascript" src="js/adj.js">
+  </script>
+  <script type="text/javascript" src="js/toc.js">
+  </script>
   <style type="text/css">
 td {
   padding: 1.0ex;
@@ -90,7 +92,7 @@ h1,h2,h3,h4,h5,h6 {
   display: block;
   text-align: center;
 }
-@media not screen, screen and (max-width: 1000px) {
+@media not screen, screen and (max-width: 800px) {
   .only-if-wide-screen {
     display: none;
   }
@@ -106,12 +108,19 @@ h1,h2,h3,h4,h5,h6 {
 class="product-name"><a
 href="http://www.elasticdraw.com/">ElasticDraw</a></span>.</p>
 
+<div>
+<p id="show-commands-gallery" class="commands-gallery only-if-wide-screen"
+style="display:none;">
+<input name="putaway" type="button"
+onclick="document.getElementById('show-commands-gallery').style.display='none'; document.getElementById('commands-gallery').style.display=null; return false;"
+value="Show Gallery" /></p>
+
 <p id="commands-gallery" class="commands-gallery only-if-wide-screen"><span
-style="vertical-align:middle;"><span style="width:200px;">You can use, <a
+style="vertical-align:middle;"><span style="width:200px;">You can explore, <a
 href="#toc">skip</a> or 
-<input name="" type="button"
-onclick="document.getElementById('commands-gallery').style.display='none'; return false;"
-value="Put Away" /> this gallery.</span></span><span><a href="#L7357"><img
+<input name="putaway" type="button"
+onclick="document.getElementById('commands-gallery').style.display='none'; document.getElementById('show-commands-gallery').style.display=null; return false;"
+value="Hide" /> this gallery.</span></span><span><a href="#L7357"><img
 alt="horizontalList"
 src="examples/adj-ex-003-horizontalList.svg"></img><span>horizontalList</span></a></span>
 <span><a href="#L7545"><img alt="verticalList"
@@ -164,6 +173,7 @@ src="examples/adj-ex-094-toggleButton.svg"></img><span>toggleButton</span></a></
 src="examples/adj-ex-072-hide.svg"></img><span>hide</span></a></span> <span><a
 href="#L3450"><img alt="include"
 src="examples/adj-ex-080-include.svg"></img><span>include</span></a></span></p>
+</div>
 
 <div id="toc" class="toc">
 <ul>
