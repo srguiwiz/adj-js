@@ -6,9 +6,9 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Adj Framework - User Guide</title>
   <script type="text/javascript" src="js/adj.js">
-  </script>
+ </script>
   <script type="text/javascript" src="js/toc.js">
-  </script>
+ </script>
   <style type="text/css">
 td {
   padding: 1.0ex;
@@ -74,12 +74,12 @@ h1,h2,h3,h4,h5,h6 {
  .separate {
   margin-top: 3em;
 }
- .commands-gallery {
+ .gallery-frame {
   border-top: 1ex solid gainsboro;
   border-right: none;
   border-bottom: 1ex solid gainsboro;
   border-left: none;
-  padding: 1em;
+  padding: .5ex 1em;
   background-color: whitesmoke;
 }
  .commands-gallery > span {
@@ -91,6 +91,9 @@ h1,h2,h3,h4,h5,h6 {
  .commands-gallery > span span {
   display: block;
   text-align: center;
+}
+ .commands-gallery-instruction {
+  margin-left: 1em;
 }
 @media not screen, screen and (max-width: 800px) {
   .only-if-wide-screen {
@@ -108,20 +111,21 @@ h1,h2,h3,h4,h5,h6 {
 class="product-name"><a
 href="http://www.elasticdraw.com/">ElasticDraw</a></span>.</p>
 
-<div>
-<p id="show-commands-gallery" class="commands-gallery only-if-wide-screen"
+<div class="gallery-frame only-if-wide-screen">
+<p id="show-commands-gallery" class="commands-gallery-instruction"
 style="display:none;">
 <input name="putaway" type="button"
 onclick="document.getElementById('show-commands-gallery').style.display='none'; document.getElementById('commands-gallery').style.display=null; return false;"
 value="Show Gallery" /></p>
 
-<p id="commands-gallery" class="commands-gallery only-if-wide-screen"><span
-style="vertical-align:middle;"><span style="width:200px;">You can explore, <a
-href="#toc">skip</a> or 
+<div id="commands-gallery">
+<p class="commands-gallery-instruction">You can <a
+href="#commands-gallery">explore</a>, <a href="#toc">skip</a> or 
 <input name="putaway" type="button"
 onclick="document.getElementById('commands-gallery').style.display='none'; document.getElementById('show-commands-gallery').style.display=null; return false;"
-value="Hide" /> this gallery.</span></span><span><a href="#L7357"><img
-alt="horizontalList"
+value="Hide this Gallery" />.</p>
+
+<p class="commands-gallery"><span><a href="#L7357"><img alt="horizontalList"
 src="examples/adj-ex-003-horizontalList.svg"></img><span>horizontalList</span></a></span>
 <span><a href="#L7545"><img alt="verticalList"
 src="examples/adj-ex-002-verticalList.svg"></img><span>verticalList</span></a></span><span><a
@@ -173,6 +177,7 @@ src="examples/adj-ex-094-toggleButton.svg"></img><span>toggleButton</span></a></
 src="examples/adj-ex-072-hide.svg"></img><span>hide</span></a></span> <span><a
 href="#L3450"><img alt="include"
 src="examples/adj-ex-080-include.svg"></img><span>include</span></a></span></p>
+</div>
 </div>
 
 <div id="toc" class="toc">
@@ -4981,7 +4986,7 @@ style="max-width:95%;max-height:auto;"></img>
 
 <p>An example:</p>
 <img alt="example image 004" src="examples/adj-ex-044-image.svg"
-style="max-width:95%;max-height:auto;"></img> 
+style="max-width:95%;max-height:auto;"></img>
 <script type="text/javascript">
 //<![CDATA[
  var versionInstances = document.querySelectorAll('.adjversion');
