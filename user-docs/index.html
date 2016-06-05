@@ -5,8 +5,8 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>Adj Framework - User Guide</title>
-  <script type="text/javascript" src="js/adj.js">
-  </script>
+  <script type="text/javascript" src="js/adj.js"></script>
+  <script type="text/javascript" src="js/toc.js"></script>
   <style type="text/css">
 td {
   padding: 1.0ex;
@@ -167,181 +167,7 @@ src="examples/adj-ex-080-include.svg"></img><span>include</span></a></span></p>
 
 <div id="toc" class="toc">
 <ul>
-  <li><a href="#L7142">1. User Guide</a>
-    <ul>
-      <li><a href="#L4238">1.1. Simplified BSD License</a></li>
-      <li><a href="#L4276">1.2. Contributors</a></li>
-      <li><a href="#L4291">1.3. Contact</a></li>
-      <li><a href="#L8534">1.4. Repository</a>
-        <ul>
-          <li><a href="#L47363">1.4.1. Staying Current</a></li>
-        </ul>
-      </li>
-      <li><a href="#L38358">1.5. For The Impatient</a></li>
-      <li><a href="#L26102">1.6. Introduction</a></li>
-      <li><a href="#L25888">1.7. Purpose</a></li>
-      <li><a href="#L25990">1.8. Implementation Rationale</a></li>
-      <li><a href="#L7144">1.9. Modifying SVG</a>
-        <ul>
-          <li><a href="#L378">1.9.1. Applying Transformations</a></li>
-          <li><a href="#L443">1.9.2. Storing Away Authoring Coordinates</a></li>
-          <li><a href="#L61380">1.9.3. Storing Away Original Attributes</a></li>
-          <li><a href="#L48445">1.9.4. Paragraph Alignment</a></li>
-        </ul>
-      </li>
-      <li><a href="#L7202">1.10. Commands Overview</a></li>
-      <li><a href="#L7353">1.11. Commands Options</a>
-        <ul>
-          <li><a href="#L7357">1.11.1. Command horizontalList Options</a></li>
-          <li><a href="#L7545">1.11.2. Command verticalList Options</a></li>
-          <li><a href="#L12321">1.11.3. Command frameForParent Options</a></li>
-          <li><a href="#L2589">1.11.4. Command textBreaks Options</a></li>
-          <li><a href="#L1740">1.11.5. Command connection Options</a></li>
-          <li><a href="#L8701">1.11.6. Command rider Options</a></li>
-          <li><a href="#L9691">1.11.7. Command circleForParent Options</a></li>
-          <li><a href="#L9743">1.11.8. Command ellipseForParent Options</a></li>
-          <li><a href="#L20521">1.11.9. Command circularList Options</a></li>
-          <li><a href="#L8469">1.11.10. Command verticalTree Options</a></li>
-          <li><a href="#L1773">1.11.11. Command horizontalTree Options</a></li>
-          <li><a href="#L1796">1.11.12. Command vine Options</a>
-            <ul>
-              <li><a href="#L2057">1.11.12.1. Caveat Regarding <code>-</code>
-                Minus Sign</a></li>
-            </ul>
-          </li>
-          <li><a href="#L2184">1.11.13. Command floater Options</a></li>
-          <li><a href="#L2299">1.11.14. Command fit Options</a></li>
-          <li><a href="#L2518">1.11.15. Command stackFrames Options</a></li>
-          <li><a href="#L2604">1.11.16. Command zoomFrames Options</a></li>
-          <li><a href="#L2672">1.11.17. Command tilt Options</a></li>
-          <li><a href="#L2717">1.11.18. Command pinnedList Options</a></li>
-          <li><a href="#L45423">1.11.19. Command telescopicTree Options</a></li>
-          <li><a href="#L11198">1.11.20. Command paragraph Options</a></li>
-          <li><a href="#L11940">1.11.21. Command pathArrow Options</a></li>
-          <li><a href="#L16289">1.11.22. Command rcGrid Options</a></li>
-          <li><a href="#L13254">1.11.23. Command sliderKnob Options</a></li>
-          <li><a href="#L13706">1.11.24. Command toggleButton Options</a></li>
-          <li><a href="#L94550">1.11.25. Command hide Options</a></li>
-          <li><a href="#L3450">1.11.26. Command include Options</a></li>
-        </ul>
-      </li>
-      <li><a href="#L7600">1.12. Auxiliary Commands</a>
-        <ul>
-          <li><a href="#L7602">1.12.1. Option explain</a></li>
-          <li><a href="#L2422">1.12.2. Command explain</a></li>
-          <li><a href="#L7627">1.12.3. Command relativate</a></li>
-          <li><a href="#L2936">1.12.4. Command skimpyList</a></li>
-        </ul>
-      </li>
-      <li><a href="#L23622">1.13. Auxiliary Functions</a>
-        <ul>
-          <li><a href="#L18918">1.13.1. Functions hide, unhide, and
-            toggleHide</a></li>
-          <li><a href="#L23624">1.13.2. Function
-          toggleHideSiblingsFollowing</a></li>
-        </ul>
-      </li>
-      <li><a href="#L1780">1.14. Referencing By Identifier Attribute</a>
-        <ul>
-          <li><a href="#L5174">1.14.1. Need</a></li>
-          <li><a href="#L1807">1.14.2. Attribute adj:id</a></li>
-          <li><a href="#L1842">1.14.3. Function
-          Adj.getElementByIdNearby</a></li>
-          <li><a href="#L1875">1.14.4. Different Search Strategies</a></li>
-        </ul>
-      </li>
-      <li><a href="#L2629">1.15. Substitution Of Variables</a>
-        <ul>
-          <li><a href="#L172620">1.15.1. Predefined Variables</a></li>
-        </ul>
-      </li>
-      <li><a href="#L2572">1.16. Issuing Commands Via adj: Attributes Instead
-        Of Via adj: Elements</a></li>
-      <li><a href="#L2579">1.17. Command Combinations</a>
-        <ul>
-          <li><a href="#L14093">1.17.1. Command Combinations Via adj:
-            Attributes Instead Of Via adj: Elements</a></li>
-        </ul>
-      </li>
-      <li><a href="#L1888">1.18. Complete Authoring Workflow</a></li>
-      <li><a href="#L6329">1.19. Invocation</a>
-        <ul>
-          <li><a href="#L6331">1.19.1. Explicit Invocation</a></li>
-          <li><a href="#L3737">1.19.2. Explicit Invocation And Saving Processed
-            Document</a></li>
-          <li><a href="#L6345">1.19.3. No Invocation – If Saving Processed
-            Document</a></li>
-          <li><a href="#L">1.19.4. Implicit Invocation</a></li>
-        </ul>
-      </li>
-      <li><a href="#L73646">1.20. Invocation Parameters</a>
-        <ul>
-          <li><a href="#L73659">1.20.1. What SVG Element</a></li>
-          <li><a href="#L73677">1.20.2. Asynchronicity And Completion</a></li>
-        </ul>
-      </li>
-      <li><a href="#L86788">1.21. More Details</a>
-        <ul>
-          <li><a href="#L123304">1.21.1. Using SVG Group Element g</a></li>
-          <li><a href="#L123314">1.21.2. Overwriting Preexisting Transform
-            Attributes</a></li>
-          <li><a href="#L123334">1.21.3. Transforming An SVG Path</a>
-            <ul>
-              <li><a href="#L123341">1.21.3.1. Changing Points</a></li>
-              <li><a href="#L6338">1.21.3.2. Storing Away Authoring
-                Coordinates</a></li>
-              <li><a href="#L123364">1.21.3.3. Transforming Arcs Is Not
-                Supported</a></li>
-            </ul>
-          </li>
-          <li><a href="#L4599">1.21.4. Exception Handling</a></li>
-          <li><a href="#L2915">1.21.5. Bad Command Handling</a></li>
-        </ul>
-      </li>
-      <li><a href="#L4606">1.22. Helpful Hints</a>
-        <ul>
-          <li><a href="#L4608">1.22.1. Defining An SVG rect Element</a></li>
-          <li><a href="#L4638">1.22.2. Considerations For Nesting</a></li>
-        </ul>
-      </li>
-      <li><a href="#L2289">1.23. Extending SVG With The Adj Namespace</a></li>
-      <li><a href="#L6360">1.24. Alternate Syntax – JavaScript Instead Of
-        XML</a></li>
-      <li><a href="#L123374">1.25. Implementation Details</a>
-        <ul>
-          <li><a href="#L2440">1.25.1. Need Driven</a></li>
-          <li><a href="#L2469">1.25.2. Sizing From Small Parts To Whole
-            Image</a></li>
-          <li><a href="#L123378">1.25.3. Execution Path</a></li>
-          <li><a href="#L3845">1.25.4. More Implementation Details</a></li>
-        </ul>
-      </li>
-      <li><a href="#L3983">1.26. Extending Adj With Your Own Commands And
-        Algorithms</a></li>
-      <li><a href="#L2357">1.27. Automated Testing</a>
-        <ul>
-          <li><a href="#L13579">1.27.1. Making More Test Cases</a></li>
-        </ul>
-      </li>
-      <li><a href="#L2374">1.28. Compatibility Issues</a>
-        <ul>
-          <li><a href="#L46664">1.28.1. Internet Explorer 11</a></li>
-          <li><a href="#L2480">1.28.2. Internet Explorer 10</a></li>
-          <li><a href="#L2433">1.28.3. Internet Explorer 9 And Earlier</a></li>
-          <li><a href="#L46669">1.28.4. Firefox 32</a></li>
-        </ul>
-      </li>
-      <li><a href="#L11982">1.29. SVG Inline In HTML</a></li>
-      <li><a href="#L1688">1.30. Example Files</a>
-        <ul>
-          <li><a href="#L5397">1.30.1. Example File 001 Source Code</a></li>
-          <li><a href="#L5412">1.30.2. Example File 002</a></li>
-          <li><a href="#L1730">1.30.3. Example File 003</a></li>
-          <li><a href="#L5916">1.30.4. Example File 004</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+  <li><a href="#L7142">1. User Guide</a></li>
 </ul>
 </div>
 
@@ -399,7 +225,7 @@ on your own, consider:</p>
     href="https://github.com/srguiwiz/adj-js">this project's repository</a></li>
 </ul>
 
-<h3 id="L26102">1.6. Introduction<a></a><a></a></h3>
+<h3 id="L26102">1.6. Introduction</h3>
 
 <p>Adj commands modify SVG.</p>
 
@@ -5157,6 +4983,8 @@ style="max-width:95%;max-height:auto;"></img>
  for (var i = 0, n = toShowInstances.length; i < n; i++) {
   toShowInstances[i].style.display = "";
  }
+ //
+ makeTableOfContents();
 //]]></script>
 </body>
 </html>
