@@ -117,17 +117,20 @@ class="product-name"><a
 href="http://www.elasticdraw.com/">ElasticDraw</a></span>.</p>
 
 <div class="gallery-frame only-if-wide-screen">
-<p id="show-commands-gallery" class="commands-gallery-instruction"
-style="display:none;">
+<div  id="show-commands-gallery" style="display:none;">
+
+<p class="commands-gallery-instruction">
 <input name="putaway" type="button"
-onclick="document.getElementById('show-commands-gallery').style.display='none'; document.getElementById('commands-gallery').style.display=null; return false;"
+onclick="document.getElementById('show-commands-gallery').style.display='none'; document.getElementById('commands-gallery').style.display=''; return false;"
 value="Show Gallery" /></p>
 
+</div>
 <div id="commands-gallery">
+
 <p class="commands-gallery-instruction">You can <a
 href="#commands-gallery">explore</a>, <a href="#toc">skip</a> or 
 <input name="putaway" type="button"
-onclick="document.getElementById('commands-gallery').style.display='none'; document.getElementById('show-commands-gallery').style.display=null; return false;"
+onclick="document.getElementById('commands-gallery').style.display='none'; document.getElementById('show-commands-gallery').style.display=''; return false;"
 value="Hide this Gallery" />.</p>
 
 <p class="commands-gallery">
