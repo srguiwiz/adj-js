@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:4, revision:0 };
+Adj.version = { major:6, minor:4, revision:1 };
 Adj.algorithms = {};
 
 // constants
@@ -6875,6 +6875,14 @@ Adj.leadingDotDotSlashRegExp = /^(\.\.\/)?(.*)$/;
 Adj.tailingDirRegExp = /^(.*?)([^\/]+\/)$/;
 Adj.firstTagRegExp = /^(?:[\s\S]*?<)([A-Za-z0-9]+)/;
 
+Adj.newAdjIncludedSemaphore = function newAdjIncludedSemaphore (href, error) {
+	return {
+		href: href,
+		error: error,
+		when: new Date()
+	};
+}
+
 // a specific algorithm
 Adj.defineCommandForAlgorithm({
 	algorithmName: "include",
@@ -6890,7 +6898,7 @@ Adj.defineCommandForAlgorithm({
 			throw "missing parameter xlink:href= for an include command";
 		}
 		//
-		if (element.adjIncluded) {
+		if (element.adjIncluded && element.adjIncluded.href === href) {
 			// don't include a second time
 			return;
 		}
@@ -6911,7 +6919,7 @@ Adj.defineCommandForAlgorithm({
 				//
 				if (status != 200) { // 200 OK
 					var errorMessage = "HTTP GET status " + status + " for " + href;
-					element.adjIncluded = errorMessage; // prevent endless loop
+					element.adjIncluded = Adj.newAdjIncludedSemaphore(href, errorMessage); // prevent endless loop
 					console.error(errorMessage);
 					return;
 				}
@@ -6933,20 +6941,20 @@ Adj.defineCommandForAlgorithm({
 						textFileDom = domParser.parseFromString(responseText, "text/html");
 					}
 				} catch (exception) {
-					element.adjIncluded = exception; // prevent endless loop
+					element.adjIncluded = Adj.newAdjIncludedSemaphore(href, exception); // prevent endless loop
 					console.error(exception);
 					return;
 				}
 				var documentElementToIncludeFrom = textFileDom.documentElement;
 				if (documentElementToIncludeFrom.nodeName === "parsererror") {
-					element.adjIncluded = documentElementToIncludeFrom; // prevent endless loop
+					element.adjIncluded = Adj.newAdjIncludedSemaphore(href, documentElementToIncludeFrom); // prevent endless loop
 					console.error(documentElementToIncludeFrom);
 					return;
 				}
 				var ownerDocument = element.ownerDocument;
 				if (!ownerDocument) { // defensive check for asynchronous removal
 					var errorMessage = "apparently element has been removed";
-					element.adjIncluded = errorMessage; // prevent endless loop
+					element.adjIncluded = Adj.newAdjIncludedSemaphore(href, errorMessage); // prevent endless loop
 					console.error(errorMessage);
 					return;
 				}
@@ -6976,7 +6984,7 @@ Adj.defineCommandForAlgorithm({
 						}
 						if (!toIncludeElement) {
 							var errorMessage = "nonresolving id in include attribute xlink:href=\"" + href + "\"";
-							element.adjIncluded = errorMessage; // prevent endless loop
+							element.adjIncluded = Adj.newAdjIncludedSemaphore(href, errorMessage); // prevent endless loop
 							console.error(errorMessage);
 							return;
 						}
@@ -7025,7 +7033,7 @@ Adj.defineCommandForAlgorithm({
 					element.normalize();
 				} finally {
 					// prevent endless loop
-					element.adjIncluded = element.adjIncluded || new Date();
+					element.adjIncluded = element.adjIncluded || Adj.newAdjIncludedSemaphore(href);
 				}
 				// fix up URIs
 				// terms used for three logical levels are document, include, link
