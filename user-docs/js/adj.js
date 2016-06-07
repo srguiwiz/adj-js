@@ -38,9 +38,11 @@
 //
 // Stable releases (recent) - https://github.com/srguiwiz/adj-js/releases
 //
-// Blog - http://leosbog.nrvr.com/category/adj/
+// Blog - http://leosbog.nrvr.com/category/elasticdraw/
 //
 // Commit list - https://github.com/srguiwiz/adj-js/commits/master
+//
+// Easy URL - http://www.elasticdraw.com/
 
 // Invoke Adj by doing Adj.doSvg(theSvgElement), e.g. <svg onload="Adj.doSvg(this);">,
 // optionally even shorter <svg onload="Adj.doSvg()">.
