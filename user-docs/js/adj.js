@@ -61,7 +61,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:4, revision:1 };
+Adj.version = { major:6, minor:4, revision:2 };
 Adj.algorithms = {};
 
 // constants
@@ -816,15 +816,28 @@ Adj.prefixName = (function () {
 
 // abstraction
 Adj.elementGetAttributeInNS = function elementGetAttributeInNS (element, namespace, prefix, name) {
-	var namespaceImplementation = Adj.namespaceImplementation(element.ownerDocument); // no-namespace-workaround
+	var ownerDocument = element.ownerDocument;
+	var namespaceImplementation = Adj.namespaceImplementation(ownerDocument); // no-namespace-workaround
 	if (namespaceImplementation === "full") {
 		// normal-namespace-intent
 		return element.getAttributeNS(namespace, name);
-	} else if (namespaceImplementation === "obtuse") { // no-namespace-workaround
-		return element.getAttribute(Adj.prefixName(prefix, name));
-	} else { // holstein-namespace-workaround
-		return element.getAttributeNS(namespace, name)
-			|| element.getAttribute(Adj.prefixName(prefix, name));
+	} else {
+		var prefixedName = Adj.prefixName(prefix, name);
+		var namecaseImplementation = Adj.namecaseImplementation(ownerDocument); // lowercased-workaround
+		if (namecaseImplementation === "lower") { // lowercased-workaround
+			var lowerCasedName = Adj.lowerCasedName(name);
+			var prefixedLowerCasedName = Adj.prefixName(prefix, lowerCasedName);
+		}
+		if (namespaceImplementation === "obtuse") { // no-namespace-workaround
+			return (element.hasAttribute(prefixedName) || !lowerCasedName) ?
+				element.getAttribute(prefixedName) :
+				element.getAttribute(prefixedLowerCasedName);
+		} else { // holstein-namespace-workaround
+			return element.getAttributeNS(namespace, name)
+				|| ((element.hasAttribute(prefixedName) || !lowerCasedName) ?
+				element.getAttribute(prefixedName) :
+				element.getAttribute(prefixedLowerCasedName));
+		}
 	}
 };
 // abstraction
@@ -1017,10 +1030,12 @@ Adj.getBBox = function adjGetBBox (element) {
 // throughout Adj source code, a comment may or may not be used for clarity:
 // lowercase-names-workaround
 Adj.mixedCasedNames = {}; // by lower case name, only if mixed case, for now
+Adj.lowerCasedNames = {};
 Adj.registerMixedCasedName = function registerMixedCasedName(nameToRegister) {
 	var nameToRegisterLowerCase = nameToRegister.toLowerCase();
 	if (nameToRegisterLowerCase !== nameToRegister) {
 		Adj.mixedCasedNames[nameToRegisterLowerCase] = nameToRegister;
+		Adj.lowerCasedNames[nameToRegister] = nameToRegisterLowerCase;
 	}
 };
 //
@@ -1028,9 +1043,18 @@ Adj.mixedCasedName = function mixedCasedName (uncertainlyCasedName) {
 	// looked up or as is
 	return Adj.mixedCasedNames[uncertainlyCasedName] || uncertainlyCasedName;
 };
+//
+Adj.lowerCasedName = function lowerCasedName (mixedCasedName) {
+	// looked up or toLowerCase()
+	return Adj.lowerCasedNames[mixedCasedName] || mixedCasedName.toLowerCase();
+};
 
 // essential wrapper
 Adj.defineCommandForAlgorithm = function defineCommandForAlgorithm (algorithm) {
+	// fixups
+	algorithm.parameters = algorithm.parameters || [];
+	algorithm.keywords = algorithm.keywords || [];
+	//
 	var algorithmName = algorithm.algorithmName;
 	Adj.algorithms[algorithmName] = algorithm;
 	//
@@ -1038,6 +1062,10 @@ Adj.defineCommandForAlgorithm = function defineCommandForAlgorithm (algorithm) {
 	var parameterNames = algorithm.parameters;
 	for (var i in parameterNames) {
 		Adj.registerMixedCasedName(parameterNames[i]);
+	}
+	var keywords = algorithm.keywords;
+	for (var i in keywords) {
+		Adj.registerMixedCasedName(keywords[i]);
 	}
 };
 
@@ -3304,6 +3332,7 @@ Adj.defineCommandForAlgorithm({
 				 "hAlign", "vAlign",
 				 "autoParrots",
 				 "explain"],
+	keywords: ["treeParent"],
 	methods: [function verticalTree (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
 		//
@@ -3862,6 +3891,7 @@ Adj.defineCommandForAlgorithm({
 				 "hAlign", "vAlign",
 				 "autoParrots",
 				 "explain"],
+	keywords: ["treeParent"],
 	methods: [function horizontalTree (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
 		//
@@ -5598,6 +5628,7 @@ Adj.defineCommandForAlgorithm({
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap"],
+	keywords: ["pinThis", "pinTo"],
 	methods: [function pinnedList (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
 		var theSvgElement = element.ownerSVGElement || element;
@@ -6736,7 +6767,8 @@ Adj.defineCommandForAlgorithm({
 	algorithmName: "hide",
 	hiddenByCommand: true,
 	phaseHandlerNames: [], // actual hiding done in Adj.setAlgorithm, for now
-	parameters: []
+	parameters: [],
+	keywords: ["originalDisplay"]
 });
 
 // utility
@@ -7212,29 +7244,56 @@ if (!window.nrvrGetTextFile) {
 // http://dev.w3.org/SVG/proposals/svg-html/svg-html-proposal.html
 //
 // "full", "obtuse", or "fullYetSomeObtuse"
-Adj.namespaceImplementation = function namespaceImplementation (document) {
-	var documentNamespaceImplementation = document.adjNamespaceImplementation;
-	if (documentNamespaceImplementation) { // cached
-		return documentNamespaceImplementation; // quick return
-	}
-	// determine
+//
+// also, deal with name casing being lowercase when parsing Adj in SVG inline in HTML,
+// aka lowercased-workaround
+//
+// throughout Adj source code, two comments are used, by convention:
+// normal-correct-cased-intent versus lowercased-workaround
+//
+// "correct", or "lower"
+//
+// determine
+Adj.determineNameAndNamespaceImplementation = function determineNameAndNamespaceImplementation (document) {
 	if (document.documentElement.tagName === "svg") {
 		// assume normality
-		documentNamespaceImplementation = "full";
+		var documentNamespaceImplementation = "full";
+		var documentNamecaseImplementation = "correct";
 	} else {
 		// test Adj in SVG inline in HTML
 		var domParser = new DOMParser();
 		var dummyDom = domParser.parseFromString(
-'<!DOCTYPE html><html><body><svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"><adj:dummy/><rect width="30" height="20"/></svg></body></html>',
+'<!DOCTYPE html><html><body><svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"><adj:dummyElement/><rect width="30" height="20"/></svg></body></html>',
 			"text/html");
-		if (dummyDom.getElementsByTagName("svg")[0].firstElementChild.namespaceURI === Adj.AdjNamespace) { // maybe someday will be lucky
+		var dummyElement = dummyDom.getElementsByTagName("svg")[0].firstElementChild;
+		if (dummyElement.namespaceURI === Adj.AdjNamespace) { // maybe someday will be lucky
 			documentNamespaceImplementation = "full";
 		} else { // Adj.SvgNamespace commonly observed
 			documentNamespaceImplementation = "obtuse";
 		}
+		if (dummyElement.localName.indexOf("dummyelement") >= 0) { // lowercase "dummyelement" commonly observed
+			documentNamecaseImplementation = "lower";
+		} else { // assume correct "dummyElement", for now, until another case would be observed
+			// maybe someday will be lucky
+			documentNamecaseImplementation = "correct";
+		}
 	}
 	document.adjNamespaceImplementation = documentNamespaceImplementation;
-	return documentNamespaceImplementation;
+	document.adjNamecaseImplementation = documentNamecaseImplementation;
+	return {
+		documentNamespaceImplementation: documentNamespaceImplementation,
+		documentNamecaseImplementation: documentNamecaseImplementation,
+	};
+};
+//
+Adj.namespaceImplementation = function namespaceImplementation (document) {
+	return document.adjNamespaceImplementation // cached
+		|| Adj.determineNameAndNamespaceImplementation(document).documentNamespaceImplementation;
+};
+//
+Adj.namecaseImplementation = function namecaseImplementation (document) {
+	return document.adjNamecaseImplementation // cached
+		|| Adj.determineNameAndNamespaceImplementation(document).documentNamecaseImplementation;
 };
 //
 Adj.nameSplitByColonRegexp = /^(?:(.*?):)?(.*)$/;
@@ -7893,6 +7952,7 @@ Adj.defineCommandForAlgorithm({
 				 "cellLeftGap", "cellRightGap", "cellTopGap", "cellBottomGap",
 				 "rcGridPart",
 				 "explain"],
+	keywords: ["rcGridPart"],
 	methods: [function rcGrid (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
 		//
@@ -8310,8 +8370,7 @@ Adj.defineCommandForAlgorithm({
 Adj.defineCommandForAlgorithm({
 	algorithmName: "rcGridCellTemplates",
 	phaseHandlerNames: [], // actual processing done in Adj.algorithms.rcGrid, for now
-	parameters: [],
-	methods: []
+	parameters: []
 });
 
 // a specific algorithm
@@ -8742,6 +8801,7 @@ Adj.defineCommandForAlgorithm({
 	phaseHandlerNames: ["adjPhase1Down"],
 	parameters: ["preset",
 				 "congruent"],
+	keywords: ["alternativeValue"],
 	methods: [function toggleButton (element, parametersObject) {
 		var usedHow = "used in a parameter for a toggleButton command";
 		var variableSubstitutionsByName = {};
