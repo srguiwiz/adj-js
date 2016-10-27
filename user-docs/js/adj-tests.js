@@ -96,7 +96,7 @@ Adj.emptilyDeclaredXmlnsRegexp = /xmlns:NS[0-9]+=""/g;
 Adj.commasRegexp = /,/g;
 Adj.letterDecimalsRegexp = /([A-Za-z])([0-9.+-])/g;
 //
-Adj.trimRegexp = /^\s*(.*?)\s*$/;
+Adj.trimRegexp = /^\s*([\S\s]*?)\s*$/; // [\S\s] matches newline too, which . doesn't
 //
 Adj.decimalForToleranceRegexp = /[+-]?[0-9]+\.?[0-9]*|[0-9]*\.?[0-9]/g;
 Adj.decimalCharacterRegexp = /[0-9.+-]/;
