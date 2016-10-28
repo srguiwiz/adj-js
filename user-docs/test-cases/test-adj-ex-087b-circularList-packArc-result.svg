@@ -8,7 +8,7 @@
 		<circle r="20" fill="#000" transform="translate(23,23)"/>
 		<rect width="3" height="3" fill="#222" transform="translate(26,96)"/>
 		<rect width="6" height="6" fill="#444" transform="translate(36,93)"/>
-		<rect width="9" height="9" fill="#666" transform="translate(48,87)"/>
+		<rect width="9" height="9" fill="#666" transform="translate(49,87)"/>
 		<rect width="12" height="12" fill="#888" transform="translate(63,76)"/>
 		<rect width="36" height="36" fill="#aaa" transform="translate(74,33)"/>
 	</g>
