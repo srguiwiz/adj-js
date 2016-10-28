@@ -61,7 +61,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:4, revision:2 };
+Adj.version = { major:6, minor:4, revision:3 };
 Adj.algorithms = {};
 
 // constants
@@ -3160,7 +3160,7 @@ Adj.defineCommandForAlgorithm({
 					if (isNaN(angleCovered05)) { // possible if e.g. currentRadius === 0 (observed), or asin(2)
 						angleCovered05 = 0;
 					}
-					childRecord.angleCovered05 = angleCovered05; // other sections of this algorithm now depend on this
+					childRecord.angleCovered05 = clockwise ? angleCovered05 : -angleCovered05; // other sections of this algorithm now depend on this
 					accumulatedAngleCovered05 += angleCovered05;
 				}
 				return 2 * accumulatedAngleCovered05;
