@@ -3113,16 +3113,16 @@ Adj.defineCommandForAlgorithm({
 		// process
 		// figure angles
 		var angleCovered = toAngle - fromAngle;
-		var clockwise = angleCovered >= 0;
 		angleCovered = angleCovered % 360;
 		var fullCircle = angleCovered === 0;
 		if (fullCircle) {
-			if (clockwise) {
+			if (angleCovered >= 0) { // clockwise
 				angleCovered = 360;
 			} else {
 				angleCovered = -360;
 			}
 		}
+		var clockSign = Math.sign(angleCovered); // 1 or -1
 		toAngle = fromAngle + angleCovered;
 		var numberOfSteps = fullCircle ? numberOfBranches : numberOfBranches - 1;
 		var angleStep;
@@ -3160,7 +3160,7 @@ Adj.defineCommandForAlgorithm({
 					if (isNaN(angleCovered05)) { // possible if e.g. currentRadius === 0 (observed), or asin(2)
 						angleCovered05 = 0;
 					}
-					childRecord.angleCovered05 = clockwise ? angleCovered05 : -angleCovered05; // other sections of this algorithm now depend on this
+					childRecord.angleCovered05 = clockSign * angleCovered05; // other sections of this algorithm now depend on this
 					accumulatedAngleCovered05 += angleCovered05;
 				}
 				return 2 * accumulatedAngleCovered05;
@@ -3207,7 +3207,7 @@ Adj.defineCommandForAlgorithm({
 		// from here on radians, not degrees
 		var currentAngle = fromAngle * Math.PI / 180;
 		if (packArc) {
-			currentAngle += cAlign * (angleCoveredAbsRad - tentativeAngleCovered);
+			currentAngle += clockSign * cAlign * (angleCoveredAbsRad - tentativeAngleCovered);
 		}
 		var minPlacedChildBoundingBoxX = 2 * treeCenterX;
 		var minPlacedChildBoundingBoxY = 2 * treeCenterY;
