@@ -3031,6 +3031,7 @@ Adj.defineCommandForAlgorithm({
 				 "fromAngle", "toAngle",
 				 "rAlign",
 				 "packArc", "cAlign",
+				 "dullness",
 				 "horizontalGap", "leftGap", "rightGap",
 				 "verticalGap", "topGap", "bottomGap",
 				 "explain"],
