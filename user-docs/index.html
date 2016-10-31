@@ -1821,15 +1821,35 @@ final resolution of adjusting coordinates.</p>
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
+    <tr>
+      <td><img alt="example"
+        src="examples/adj-ex-096-circularList-dullness.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:circularList fromAngle="135" toAngle="45" dullness="0.8"/&gt;</span>
+    &lt;rect width="15" height="15" fill="#000"/&gt;
+    &lt;rect width="15" height="15" fill="#222"/&gt;
+    &lt;rect width="15" height="15" fill="#444"/&gt;
+    &lt;rect width="15" height="15" fill="#666"/&gt;
+    &lt;rect width="15" height="15" fill="#888"/&gt;
+    &lt;rect width="15" height="15" fill="#aaa"/&gt;
+    &lt;rect width="15" height="15" fill="#bbb"/&gt;
+    &lt;rect width="15" height="15" fill="#ccc"/&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
   </tbody>
 </table>
 
 <p>First element is trunk in the center, remaining elements are branches. First
 element could be an empty group.</p>
 
-<p>The fractions in parameters <code>rAlign</code> (radially align) and
-<code>cAlign</code> (circumferentially align) accept decimal numbers, but they
-also recognize some symbols (strings in JavaScript).</p>
+<p>The fractions in parameters <code>rAlign</code> (radially align),
+<code>cAlign</code> (circumferentially align), and <code>dullness</code> accept
+decimal numbers, but they also recognize some symbols (strings in
+JavaScript).</p>
 
 <table border="1">
   <tbody>
@@ -1857,6 +1877,15 @@ also recognize some symbols (strings in JavaScript).</p>
     </tr>
     <tr>
       <td>to</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td rowspan="2">dullness</td>
+      <td>pointed</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>dull</td>
       <td>1.0</td>
     </tr>
   </tbody>
@@ -3964,9 +3993,9 @@ decimal numbers.</p>
       <td><code>circularList</code></td>
       <td><code>gap</code>, <code>rGap</code>, <code>cGap</code>,
         <code>fromAngle</code>, <code>toAngle</code>, <code>rAlign</code>,
-        <code>cAlign</code>, <code>horizontalGap</code>, <code>leftGap</code>,
-        <code>rightGap</code>, <code>verticalGap</code>, <code>topGap</code>,
-        <code>bottomGap</code></td>
+        <code>cAlign</code>, <code>dullness</code>, <code>horizontalGap</code>,
+        <code>leftGap</code>, <code>rightGap</code>, <code>verticalGap</code>,
+        <code>topGap</code>, <code>bottomGap</code></td>
     </tr>
     <tr>
       <td><code>verticalTree</code></td>
