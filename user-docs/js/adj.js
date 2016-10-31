@@ -759,6 +759,7 @@ Adj.leftCenterRight = { left:0, center:0.5, right:1 };
 Adj.topMiddleBottom = { top:0, middle:0.5, bottom:1 };
 Adj.insideMedianOutside = { inside:0, median:0.5, outside:1 };
 Adj.fromHalfwayTo = { from:0, halfway:0.5, to:1 };
+Adj.pointedDull = { pointed:0, dull:1 };
 Adj.noneClearNear = { none:"none", clear:"clear", near:"near" };
 Adj.eastSouthWestNorth = { east:0, south:90, west:180, north:270 };
 
@@ -1829,6 +1830,11 @@ Adj.endPoints = function endPoints (element) {
 		return null;
 	}
 };
+
+// utility
+Adj.hypotenuse = function hypotenuse (c1, c2) {
+	return Math.sqrt(c1 * c1 + c2 * c2);
+}
 
 // utility
 Adj.displacementAndAngle = function displacementAndAngle (fromPoint, toPoint) {
@@ -3041,6 +3047,7 @@ Adj.defineCommandForAlgorithm({
 		var rAlign = Adj.doVarsArithmetic(element, parametersObject.rAlign, 0.5, Adj.insideMedianOutside, usedHow, variableSubstitutionsByName); // rAlign could be a number, default rAlign 0.5 == median
 		var packArc = Adj.doVarsBoolean(element, parametersObject.packArc, false, usedHow, variableSubstitutionsByName); // default packArc = false
 		var cAlign = Adj.doVarsArithmetic(element, parametersObject.cAlign, 0.5, Adj.fromHalfwayTo, usedHow, variableSubstitutionsByName); // cAlign could be a number, default cAlign 0.5 == halfway
+		var dullness = Adj.doVarsArithmetic(element, parametersObject.dullness, 0, Adj.pointedDull, usedHow, variableSubstitutionsByName); // dullness could be a number, default dullness 0 == pointed
 		// outside gaps
 		var horizontalGap = Adj.doVarsArithmetic(element, parametersObject.horizontalGap, gap, null, usedHow, variableSubstitutionsByName); // default horizontalGap = gap
 		var leftGap = Adj.doVarsArithmetic(element, parametersObject.leftGap, horizontalGap, null, usedHow, variableSubstitutionsByName); // default leftGap = horizontalGap
@@ -3209,11 +3216,7 @@ Adj.defineCommandForAlgorithm({
 		if (packArc) {
 			currentAngle += clockSign * cAlign * (angleCoveredAbsRad - tentativeAngleCovered);
 		}
-		var minPlacedChildBoundingBoxX = 2 * treeCenterX;
-		var minPlacedChildBoundingBoxY = 2 * treeCenterY;
-		var maxPlacedChildBoundingBoxX = 0;
-		var maxPlacedChildBoundingBoxY = 0;
-		// first determine the respective translations
+		// first determine respective translations
 		for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var childBoundingCircle = childRecord.boundingCircle;
@@ -3243,12 +3246,84 @@ Adj.defineCommandForAlgorithm({
 			// now we know where to put it
 			childRecord.translationX = Math.round(placedChildCx - childBoundingCircle.cx);
 			childRecord.translationY = Math.round(placedChildCy - childBoundingCircle.cy);
-			// figure how to fix up translations to be top left aligned
+			// for figuring how to fix up translations to be top left aligned
+			childRecord.cx = placedChildCx;
+			childRecord.cy = placedChildCy;
+			childRecord.r = childBoundingCircle.r;
+		}
+		//
+		// adjust for dullness
+		if (   dullness // other than 0
+		    && childRecords.length >= 2) { // at least one other than trunk
+			var childRecord1 = childRecords[1];
+			var childRecordN1 = childRecords[childRecords.length - 1];
+			var preShiftCx = trunkRecord.cx;
+			var preShiftCy = trunkRecord.cy;
+			var trunkR = trunkRecord.r;
+			var dull1Dx = (childRecord1.cx + childRecordN1.cx) / 2 - preShiftCx;
+			var dull1Dy = (childRecord1.cy + childRecordN1.cy) / 2 - preShiftCy;
+			var dull1Distance = Adj.hypotenuse(dull1Dx, dull1Dy);
+			//
+			// ensure rGap is observed
+			var goodDullness = 0;
+			var otherDullness = dullness;
+			var testDullness = dullness;
+			var testStep = testDullness - goodDullness;
+			while (true) {
+				var dullShiftX = testDullness * dull1Dx;
+				var dullShiftY = testDullness * dull1Dy;
+				shiftedCx = preShiftCx + dullShiftX;
+				shiftedCy = preShiftCy + dullShiftY;
+				var closest = 2 * Math.abs(rGap);
+				for (var childRecordIndex = 1; childRecordIndex < childRecordsLength; childRecordIndex++) {
+					var childRecord = childRecords[childRecordIndex];
+					var oneDistance = Adj.hypotenuse(childRecord.cx - shiftedCx, childRecord.cy - shiftedCy) - trunkR - childRecord.r;
+					if (oneDistance < closest) {
+						closest = oneDistance;
+					}
+				}
+				var farEnough = closest >= rGap;
+				testStep /= 2;
+				var testStepDistance = testStep * dull1Distance;
+				if (farEnough) {
+					if (   testStepDistance < 0.5 // good enough
+						|| testDullness >= dullness) { // special case perfect dullness
+						break;
+					}
+					goodDullness = testDullness;
+					testDullness += testStep;
+				} else { // !farEnough
+					if (testStepDistance < 0.5) { // good enough
+						if (testDullness === goodDullness) { // boundary case
+							break; // prevent endless loop
+						}
+						// get some variables on one last run
+						testDullness = goodDullness;
+						continue;
+					}
+					otherDullness = testDullness;
+					testDullness -= testStep;
+				}
+			}
+			//
+			trunkRecord.cx += dullShiftX;
+			trunkRecord.cy += dullShiftY;
+			trunkRecord.translationX = Math.round(trunkRecord.translationX + dullShiftX);
+			trunkRecord.translationY = Math.round(trunkRecord.translationY + dullShiftY);
+		}
+		//
+		// figure how to fix up translations to be top left aligned
+		var minPlacedChildBoundingBoxX = 2 * treeCenterX;
+		var minPlacedChildBoundingBoxY = 2 * treeCenterY;
+		var maxPlacedChildBoundingBoxX = 0;
+		var maxPlacedChildBoundingBoxY = 0;
+		for (var childRecordIndex in childRecords) {
+			var childRecord = childRecords[childRecordIndex];
 			var childBoundingBox = childRecord.boundingBox;
 			var childBoundingBoxWidth = childBoundingBox.width;
 			var childBoundingBoxHeight = childBoundingBox.height;
-			var placedChildBoundingBoxX = placedChildCx - childBoundingBoxWidth / 2;
-			var placedChildBoundingBoxY = placedChildCy - childBoundingBoxHeight / 2;
+			var placedChildBoundingBoxX = childRecord.cx - childBoundingBoxWidth / 2;
+			var placedChildBoundingBoxY = childRecord.cy - childBoundingBoxHeight / 2;
 			if (placedChildBoundingBoxX < minPlacedChildBoundingBoxX) {
 				minPlacedChildBoundingBoxX = placedChildBoundingBoxX;
 			}
@@ -3262,14 +3337,6 @@ Adj.defineCommandForAlgorithm({
 			}
 			if (placedChildBoundingBoxYPlusHeight > maxPlacedChildBoundingBoxY) {
 				maxPlacedChildBoundingBoxY = placedChildBoundingBoxYPlusHeight;
-			}
-			// explain
-			if (explain) {
-				childRecord.explainCircle = {
-					cx: placedChildCx,
-					cy: placedChildCy,
-					r: childBoundingCircle.r
-				};
 			}
 		}
 		// how to fix up translations to be top left aligned
@@ -3306,11 +3373,10 @@ Adj.defineCommandForAlgorithm({
 			element.appendChild(explanationElement);
 			for (var childRecordIndex in childRecords) {
 				var childRecord = childRecords[childRecordIndex];
-				var explainCircle = childRecord.explainCircle;
 				var explanationElement = Adj.createExplanationElement(element, "circle");
-				explanationElement.setAttribute("cx", Adj.decimal(explainCircle.cx - topLeftAlignmentFixX));
-				explanationElement.setAttribute("cy", Adj.decimal(explainCircle.cy - topLeftAlignmentFixY));
-				explanationElement.setAttribute("r", Adj.decimal(explainCircle.r));
+				explanationElement.setAttribute("cx", Adj.decimal(childRecord.cx - topLeftAlignmentFixX));
+				explanationElement.setAttribute("cy", Adj.decimal(childRecord.cy - topLeftAlignmentFixY));
+				explanationElement.setAttribute("r", Adj.decimal(childRecord.r));
 				explanationElement.setAttribute("fill", "blue");
 				explanationElement.setAttribute("fill-opacity", "0.1");
 				explanationElement.setAttribute("stroke", "blue");
@@ -4644,7 +4710,7 @@ Adj.resolveIdArithmetic = function resolveIdArithmetic (element, originalExpress
 				arithmeticCoordinate = arithmeticPoint.y;
 				break;
 			case "d":
-				arithmeticCoordinate = Math.sqrt(Math.pow(arithmeticPoint.x, 2) + Math.pow(arithmeticPoint.y, 2));
+				arithmeticCoordinate = Adj.hypotenuse(arithmeticPoint.x, arithmeticPoint.y);
 				break;
 			// should never get to a default
 		}
@@ -5420,10 +5486,10 @@ Adj.defineCommandForAlgorithm({
 		//
 		Adj.hideByDisplayAttribute(element);
 		//
-		var deltaTopLeft = Math.sqrt(Math.pow(toTopLeft.x - fromTopLeft.x, 2) + Math.pow(toTopLeft.y - fromTopLeft.y, 2));
-		var deltaTopRight = Math.sqrt(Math.pow(toTopRight.x - fromTopRight.x, 2) + Math.pow(toTopRight.y - fromTopRight.y, 2));
-		var deltaBottomLeft = Math.sqrt(Math.pow(toBottomLeft.x - fromBottomLeft.x, 2) + Math.pow(toBottomLeft.y - fromBottomLeft.y, 2));
-		var deltaBottomRight = Math.sqrt(Math.pow(toBottomRight.x - fromBottomRight.x, 2) + Math.pow(toBottomRight.y - fromBottomRight.y, 2));
+		var deltaTopLeft = Adj.hypotenuse(toTopLeft.x - fromTopLeft.x, toTopLeft.y - fromTopLeft.y);
+		var deltaTopRight = Adj.hypotenuse(toTopRight.x - fromTopRight.x, toTopRight.y - fromTopRight.y);
+		var deltaBottomLeft = Adj.hypotenuse(toBottomLeft.x - fromBottomLeft.x, toBottomLeft.y - fromBottomLeft.y);
+		var deltaBottomRight = Adj.hypotenuse(toBottomRight.x - fromBottomRight.x, toBottomRight.y - fromBottomRight.y);
 		var delta = (deltaTopLeft + deltaTopRight + deltaBottomLeft + deltaBottomRight) / 4;
 		//
 		if (step < 1) {
@@ -5980,7 +6046,7 @@ Adj.defineCommandForAlgorithm({
 			if (!childBoundingBox) { // e.g. display="none"
 				continue; // skip
 			}
-			childBoundingBox.d = Math.sqrt(Math.pow(childBoundingBox.width, 2) + Math.pow(childBoundingBox.height, 2)); // diagonal
+			childBoundingBox.d = Adj.hypotenuse(childBoundingBox.width, childBoundingBox.height); // diagonal
 			childRecords.push({
 				boomConfiguration: childRecords.length ? Adj.deepCloneObject(currentBoomConfiguration) : undefined, // undefined for rootRecord
 				boundingBox: childBoundingBox,
@@ -6210,7 +6276,7 @@ Adj.defineCommandForAlgorithm({
 					currentTreeParentBranchBoxBottom = currentChildBranchBoxBottom;
 				}
 				currentTreeParentBranchBox.height = currentTreeParentBranchBoxBottom - currentTreeParentBranchBox.y;
-				currentTreeParentBranchBox.d = Math.sqrt(Math.pow(currentTreeParentBranchBox.width, 2) + Math.pow(currentTreeParentBranchBox.height, 2));
+				currentTreeParentBranchBox.d = Adj.hypotenuse(currentTreeParentBranchBox.width, currentTreeParentBranchBox.height);
 			}
 			//console.log("walkTreeLoop1 finishing at node " + currentChildRecord.node + " at level " + (stack.length + 1));
 			//
@@ -7318,7 +7384,7 @@ Adj.runtimeId = (function () {
 Adj.normalizeDirection = function normalizeDirection(direction) {
 	if (isNaN(direction.l)) {
 		// l as in length of direction vector
-		var l = Math.sqrt(Math.pow(direction.x, 2) + Math.pow(direction.y, 2));
+		var l = Adj.hypotenuse(direction.x, direction.y);
 		direction.x /= l;
 		direction.y /= l;
 		direction.l = 1;
@@ -7588,8 +7654,8 @@ Adj.defineCommandForAlgorithm({
 		var nockLeftCorner = leftPathSegArray[0];
 		var pointLeftCorner = pointPathSegArray[0];
 		var pointRightCorner = rightPathSegArray[0];
-		var nockBaseWidth = Adj.decimal(Math.sqrt(Math.pow(nockLeftCorner.x - nockRightCorner.x, 2) + Math.pow(nockLeftCorner.y - nockRightCorner.y, 2)), 3);
-		var pointBaseWidth = Adj.decimal(Math.sqrt(Math.pow(pointRightCorner.x - pointLeftCorner.x, 2) + Math.pow(pointRightCorner.y - pointLeftCorner.y, 2)), 3);
+		var nockBaseWidth = Adj.decimal(Adj.hypotenuse(nockLeftCorner.x - nockRightCorner.x, nockLeftCorner.y - nockRightCorner.y), 3);
+		var pointBaseWidth = Adj.decimal(Adj.hypotenuse(pointRightCorner.x - pointLeftCorner.x, pointRightCorner.y - pointLeftCorner.y), 3);
 		if (nockBaseWidth !== pointBaseWidth) {
 			throw "mismatched nock width and point width in arrow shape for a pathArrow command";
 		}
