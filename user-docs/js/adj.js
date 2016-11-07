@@ -61,7 +61,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:4, revision:3 };
+Adj.version = { major:6, minor:4, revision:4 };
 Adj.algorithms = {};
 
 // constants
@@ -3130,7 +3130,7 @@ Adj.defineCommandForAlgorithm({
 				angleCovered = -360;
 			}
 		}
-		var clockSign = Math.sign(angleCovered); // 1 or -1
+		var clockSign = Adj.sign(angleCovered); // 1 or -1
 		toAngle = fromAngle + angleCovered;
 		var numberOfSteps = fullCircle ? numberOfBranches : numberOfBranches - 1;
 		var angleStep;
@@ -7394,9 +7394,9 @@ Adj.normalizeDirection = function normalizeDirection(direction) {
 			return;
 		} else if (isFinite(direction.x)) {
 			direction.x = 0;
-			direction.y = Math.sign(direction.y);
+			direction.y = Adj.sign(direction.y);
 		} else if (isFinite(direction.y)) {
-			direction.x = Math.sign(direction.x);
+			direction.x = Adj.sign(direction.x);
 			direction.y = 0;
 		} else {
 			direction.l = 0; // no identifiable direction
@@ -9199,6 +9199,11 @@ if (!window.setImmediate) {
 			}
 		}
 	})();
+}
+
+// some kind of replacement for method Math.sign, which IE 11 doesn't provide
+Adj.sign = function(x) {
+	return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
 
 // make available
