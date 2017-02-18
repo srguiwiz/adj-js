@@ -1,4 +1,4 @@
-# Adj aka ElasticDraw - Repository README
+# Adj - Repository README
 
 Adj commands modify SVG.
 
@@ -19,8 +19,6 @@ If you are here for running the test suite, it is at **user-docs/tests.html**
 and [online here](http://srguiwiz.github.com/adj-js/user-docs/tests.html).
 
 There is a
-[dedicated category in a blog](http://leosbog.nrvr.com/category/elasticdraw/).
+[dedicated category in a blog](http://leosbog.nrvr.com/category/adj/).
 
 A fledgling Wiki is [online here](https://github.com/srguiwiz/adj-js/wiki).
-
-Adj now can also be called [ElasticDraw](http://www.elasticdraw.com/).
