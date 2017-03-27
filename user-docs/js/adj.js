@@ -59,7 +59,7 @@
 
 // the singleton
 var Adj = {};
-Adj.version = { major:6, minor:5, revision:0 };
+Adj.version = { major:6, minor:5, revision:1 };
 Adj.algorithms = {};
 
 // constants
@@ -5568,7 +5568,8 @@ Adj.defineCommandForAlgorithm({
 	phaseHandlerNames: ["adjPhase1Up"],
 	parameters: ["gap",
 				 "horizontalGap", "leftGap", "rightGap",
-				 "verticalGap", "topGap", "bottomGap"],
+				 "verticalGap", "topGap", "bottomGap",
+				 "minWidth", "minHeight", "hAlign", "vAlign"],
 	methods: [function skimpyList (element, parametersObject) {
 		var ownerDocument = element.ownerDocument;
 		//
@@ -5581,6 +5582,10 @@ Adj.defineCommandForAlgorithm({
 		var verticalGap = Adj.doVarsArithmetic(element, parametersObject.verticalGap, gap, null, usedHow, variableSubstitutionsByName); // default verticalGap = gap
 		var topGap = Adj.doVarsArithmetic(element, parametersObject.topGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default topGap = verticalGap
 		var bottomGap = Adj.doVarsArithmetic(element, parametersObject.bottomGap, verticalGap, null, usedHow, variableSubstitutionsByName); // default bottomGap = verticalGap
+		var minWidth = Adj.doVarsArithmetic(element, parametersObject.minWidth, null, null, usedHow, variableSubstitutionsByName); // allowed, default minWidth = null means no limit
+		var minHeight = Adj.doVarsArithmetic(element, parametersObject.minHeight, null, null, usedHow, variableSubstitutionsByName); // allowed, default minHeight = null means no limit
+		var hAlign = Adj.doVarsArithmetic(element, parametersObject.hAlign, 0, Adj.leftCenterRight, usedHow, variableSubstitutionsByName); // hAlign could be a number, default hAlign 0 == left
+		var vAlign = Adj.doVarsArithmetic(element, parametersObject.vAlign, 0, Adj.topMiddleBottom, usedHow, variableSubstitutionsByName); // vAlign could be a number, default vAlign 0 == top
 		//
 		// determine which nodes to process,
 		// children that are instances of SVGElement rather than every DOM node,
@@ -5663,13 +5668,21 @@ Adj.defineCommandForAlgorithm({
 		minTop = minTop || 0;
 		maxRight = maxRight || 0;
 		maxBottom = maxBottom || 0;
+		var maxWidth = maxRight - minLeft;
+		if (maxWidth < minWidth) {
+			maxRight = minLeft + minWidth;
+		}
+		var maxHeight = maxBottom - minTop;
+		if (maxHeight < minHeight) {
+			maxBottom = minTop + minHeight;
+		}
 		minLeft -= leftGap;
 		minTop -= topGap;
 		maxRight += rightGap;
 		maxBottom += bottomGap;
 		// now we know where to put it
-		var translationX = -minLeft;
-		var translationY = -minTop;
+		var translationX = -minLeft + (minWidth ? Adj.fraction(0, minWidth - maxWidth, hAlign) : 0);
+		var translationY = -minTop + (minHeight ? Adj.fraction(0, minHeight - maxHeight, vAlign) : 0);
 		childRecordsLoop: for (var childRecordIndex in childRecords) {
 			var childRecord = childRecords[childRecordIndex];
 			var child = childRecord.node;
