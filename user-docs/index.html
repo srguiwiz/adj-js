@@ -3657,13 +3657,27 @@ authoring, e.g. when using <code>tilt</code>.</p>
 <span class="deemphasize-code">&lt;/svg&gt;</span></pre>
       </td>
     </tr>
+    <tr>
+      <td><img alt="example"
+      src="examples/adj-ex-097-skimpyList-minWidth.svg"></img></td>
+      <td><pre class="example-listing"><span class="deemphasize-code">&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:adj="http://www.nrvr.com/2012/adj"&gt;
+  &lt;rect width="200" height="100" fill="linen"/&gt;</span>
+  &lt;g&gt;
+    <span class="example-code">&lt;adj:skimpyList minWidth="100" minHeight="40" hAlign="left" vAlign="middle"/&gt;</span>
+    &lt;rect fill="white" stroke="black" stroke-width="1" width="20" height="5"&gt;&lt;adj:frameForParent/&gt;&lt;/rect&gt;
+    &lt;text&gt;Joe&lt;/text&gt;
+  &lt;/g&gt;
+<span class="deemphasize-code">&lt;/svg&gt;</span></pre>
+      </td>
+    </tr>
   </tbody>
 </table>
 
 <p>Optional parameters <code>gap</code>, <code>horizontalGap</code>,
 <code>leftGap</code>, <code>rightGap</code>, <code>verticalGap</code>,
-<code>topGap</code>, <code>bottomGap</code> are equivalent to optional
-parameters of <code><a href="#L7357">horizontalList</a></code>, yet effecting
+<code>topGap</code>, <code>bottomGap</code>, <code>hAlign</code>, <code>vAlign</code>
+are equivalent to optional parameters of
+<code><a href="#L7357">horizontalList</a></code>, yet effecting
 padding for the whole list only rather than between elements.</p>
 
 <h3 id="L23622">1.13. Auxiliary Functions</h3>
